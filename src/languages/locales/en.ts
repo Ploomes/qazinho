@@ -1405,6 +1405,12 @@ export const en = {
     DOUBT_NOT_SENT: 'Not sent yet',
     SOURCES: 'From',
     WAITS_ON: 'Waits on',
+    GHERKIN_LANGUAGE: 'en',
+    GHERKIN_FEATURE: 'Feature',
+    GHERKIN_SCENARIO: 'Scenario',
+    GHERKIN_GIVEN: 'Given',
+    GHERKIN_WHEN: 'When',
+    GHERKIN_THEN: 'Then',
     KEPT_BY:
       'Published from QAzinho. Publishing again writes the plan as it stands over this page.',
   },

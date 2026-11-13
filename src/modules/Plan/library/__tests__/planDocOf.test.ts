@@ -41,6 +41,14 @@ const WORDS: IPlanDocWords = {
     skipped: 'skipped',
   },
   keptBy: 'Kept by QAzinho.',
+  gherkin: {
+    language: 'en',
+    feature: 'Feature',
+    scenario: 'Scenario',
+    given: 'Given',
+    when: 'When',
+    then: 'Then',
+  },
 };
 
 const COUPON: ITestCase = {
@@ -253,5 +261,50 @@ describe('planDocOf', () => {
         { label: 'Waits on', value: 'D2', url: null },
       ]) as unknown,
     });
+  });
+
+  /** O modelo do time escolhe a ordem, os títulos e o formato dos casos. */
+  it('lays the page out by the team’s template, with the cases in Gherkin', () => {
+    const blocks = planDocOf({
+      name: 'Cupom no checkout',
+      plan: [COUPON],
+      run: null,
+      when: '13/11/2026',
+      story: { key: 'SHOP-878', url: 'https://shop.atlassian.net/browse/SHOP-878' },
+      page: null,
+      design: null,
+      words: WORDS,
+      template: {
+        id: 't-plan',
+        kind: 'plan',
+        name: 'Plano do time',
+        title: '',
+        parts: [
+          { kind: 'text', text: 'Plano {{plan}}, da {{story}}, em {{date}}.' },
+          { kind: 'section', field: 'cases', heading: 'Cenários' },
+        ],
+        cases: 'gherkin',
+        updatedAt: '',
+      },
+    });
+
+    expect(blocks).toEqual([
+      { kind: 'paragraph', text: 'Plano Cupom no checkout, da SHOP-878, em 13/11/2026.' },
+      { kind: 'heading', text: 'Cenários' },
+      {
+        kind: 'code',
+        text: [
+          '# language: en',
+          'Feature: Cupom no checkout',
+          '',
+          '  @P1',
+          '  Scenario: TC-01 Apply a coupon',
+          '    When Type SAVE10',
+          '    Then The field holds it',
+          '    When Apply',
+          '    Then The total drops 10%',
+        ].join('\n'),
+      },
+    ]);
   });
 });

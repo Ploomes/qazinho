@@ -25,5 +25,13 @@ export interface IPlanDocWords {
   sources: string;
   waitsOn: string;
   verdicts: Record<StepVerdict, string>;
+  gherkin: {
+    language: string;
+    feature: string;
+    scenario: string;
+    given: string;
+    when: string;
+    then: string;
+  };
   keptBy: string;
 }

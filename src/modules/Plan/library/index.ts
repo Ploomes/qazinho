@@ -9,6 +9,7 @@ export * from './editCase';
 export * from './editStep';
 export * from './frameUrlOf';
 export * from './freeVariableName';
+export * from './gherkinOf';
 export * from './heldDoubtsOf';
 export * from './isReadyStatus';
 export * from './keepVerdicts';

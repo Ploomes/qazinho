@@ -3,7 +3,8 @@ import type { BugReportBlock } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { planDocOf } from '@/modules/Plan/library';
 import { DOC_VERDICT_KEYS } from '@/modules/Plan/screens/Plan/constants';
-import { useSettingsStore } from '@/store';
+import { templateFor } from '@/modules/Template/library';
+import { useAppStore, useSettingsStore, useTemplateStore } from '@/store';
 
 export const usePlanDocument = () => {
   const { t } = useTranslation();
@@ -15,13 +16,30 @@ export const usePlanDocument = () => {
     documentOf: (
       workspace: Pick<
         IWorkspace,
-        'plan' | 'runs' | 'issue' | 'sourcePage' | 'design' | 'strategy' | 'doubts'
+        | 'name'
+        | 'projectId'
+        | 'plan'
+        | 'runs'
+        | 'issue'
+        | 'sourcePage'
+        | 'design'
+        | 'strategy'
+        | 'doubts'
       >,
     ): BugReportBlock[] => {
       const run = workspace.runs.find(({ kind }) => kind !== 'explore') ?? null;
       const { issue, sourcePage } = workspace;
 
       return planDocOf({
+        name: workspace.name,
+        template: templateFor({
+          kind: 'plan',
+          chosen: useAppStore
+            .getState()
+            .projects.find(({ id }) => id === workspace.projectId)?.templates,
+          templates: useTemplateStore.getState().templates,
+          orgDefault: null,
+        }),
         plan: workspace.plan,
         strategy: workspace.strategy ?? null,
         doubts: workspace.doubts ?? [],
@@ -88,6 +106,14 @@ export const usePlanDocument = () => {
             skipped: t(DOC_VERDICT_KEYS.skipped),
           },
           keptBy: t('PLAN_DOC.KEPT_BY'),
+          gherkin: {
+            language: t('PLAN_DOC.GHERKIN_LANGUAGE'),
+            feature: t('PLAN_DOC.GHERKIN_FEATURE'),
+            scenario: t('PLAN_DOC.GHERKIN_SCENARIO'),
+            given: t('PLAN_DOC.GHERKIN_GIVEN'),
+            when: t('PLAN_DOC.GHERKIN_WHEN'),
+            then: t('PLAN_DOC.GHERKIN_THEN'),
+          },
         },
       });
     },

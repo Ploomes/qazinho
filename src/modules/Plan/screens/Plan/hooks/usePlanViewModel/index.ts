@@ -261,11 +261,15 @@ export const usePlanViewModel = () => {
     const outcome = await Confluence.publish({
       ...props,
       blocks: documentOf({
+        name: workspace?.name ?? '',
+        projectId: workspace?.projectId ?? '',
         plan,
         runs: workspace?.runs ?? [],
         issue,
         sourcePage,
         design: workspace?.design ?? null,
+        strategy: workspace?.strategy ?? null,
+        doubts: workspace?.doubts ?? [],
       }),
     });
 

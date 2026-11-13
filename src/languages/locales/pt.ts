@@ -1415,6 +1415,12 @@ export const pt: typeof en = {
     DOUBT_NOT_SENT: 'Ainda não enviada',
     SOURCES: 'Vem de',
     WAITS_ON: 'Espera',
+    GHERKIN_LANGUAGE: 'pt',
+    GHERKIN_FEATURE: 'Funcionalidade',
+    GHERKIN_SCENARIO: 'Cenário',
+    GHERKIN_GIVEN: 'Dado',
+    GHERKIN_WHEN: 'Quando',
+    GHERKIN_THEN: 'Então',
     KEPT_BY:
       'Publicado pelo QAzinho. Publicar de novo escreve o plano como está por cima desta página.',
   },
