@@ -45,6 +45,7 @@ import type {
   ISkill,
   ISkillDraftFile,
   ISkillImport,
+  ISourceSnapshot,
   IStartBuild,
   IStartRun,
   IStoryAnswersAsk,
@@ -135,6 +136,7 @@ import {
   SkillLibrary,
   SkillWriter,
   StorageKeeper,
+  storyTextOf,
   updateFeedOf,
   UsageReader,
   VariableVault,
@@ -1219,6 +1221,34 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
       );
 
     const answer = turn.isError ? null : harness.readChat(turn.text);
+    const writtenAt = new Date().toISOString();
+    const snapshots: ISourceSnapshot[] = answer?.plan
+      ? [
+          ...(storyRead === null
+            ? []
+            : [
+                {
+                  kind: 'story' as const,
+                  key: storyRead.story.key,
+                  url: storyRead.story.url,
+                  text: storyTextOf(storyRead.story),
+                  at: writtenAt,
+                },
+              ]),
+          ...(pageRead === null
+            ? []
+            : [
+                {
+                  kind: 'page' as const,
+                  pageId: pageRead.page.id,
+                  title: pageRead.page.title,
+                  url: pageRead.page.url,
+                  text: pageRead.text,
+                  at: writtenAt,
+                },
+              ]),
+        ]
+      : [];
 
     if (answer?.plan && code !== null) await codeCopies.release(ask.workspaceId);
     if (answer?.plan && storyRead !== null) await jiraStories.release(ask.workspaceId);
@@ -1247,6 +1277,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
               url: storyRead.story.url,
             },
       ...(storyRead?.readiness === undefined ? {} : { readiness: storyRead.readiness }),
+      ...(snapshots.length === 0 ? {} : { snapshots }),
       page: pageRead?.page ?? null,
       followed: turn.isError ? [] : followed,
     };

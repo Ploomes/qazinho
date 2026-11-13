@@ -892,6 +892,32 @@ describe('useChatViewModel', () => {
       expect(ask.mock.calls[0]?.[0].readyStatuses).toEqual(['Ready for QA']);
     });
 
+    /** É contra esse retrato que "Conferir mudanças" acha, sem IA, o que mudou depois. */
+    it('keeps how the story read when the plan was written from it', async () => {
+      const snapshot = {
+        kind: 'story' as const,
+        key: 'SHOP-878',
+        url: 'https://shop.atlassian.net/browse/SHOP-878',
+        text: 'C3. Bloquear depois de 3 tentativas',
+        at: '2026-11-13T13:00:00.000Z',
+      };
+
+      answering({ answer: DRAFTED, snapshots: [snapshot] });
+
+      const view = renderHook(() => useChatViewModel());
+
+      act(() => {
+        view.result.current.onDraftChange('Plan SHOP-878');
+      });
+      act(() => {
+        view.result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.snapshots).toEqual([snapshot]);
+      });
+    });
+
     it('lets go of the wait once a turn reads the story arrived for testing', async () => {
       useWorkspaceStore.setState({
         workspaces: [{ ...makeWorkspace([]), storyStage: 'ahead' }],

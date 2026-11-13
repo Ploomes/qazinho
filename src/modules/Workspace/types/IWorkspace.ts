@@ -14,6 +14,7 @@ import type {
   IDesignLink,
   IPlanDoubt,
   IPlanStrategy,
+  ISourceSnapshot,
   IUnreadPlan,
 } from '@/shared/types';
 
@@ -39,6 +40,7 @@ export interface IWorkspace {
   strategy?: IPlanStrategy | null;
   doubts?: IPlanDoubt[];
   storyStage?: StoryStage;
+  snapshots?: ISourceSnapshot[];
   unreadPlan: IUnreadPlan | null;
   plainValues: string[];
   planSource: ICodeSource | null;

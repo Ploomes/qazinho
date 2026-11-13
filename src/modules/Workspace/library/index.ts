@@ -18,6 +18,7 @@ export * from './outcomeOfFinding';
 export * from './messageOfSaved';
 export * from './panelWidthOf';
 export * from './resumeRun';
+export * from './snapshotsOf';
 export * from './startRun';
 export * from './takeSuggestion';
 export * from './toSaved';

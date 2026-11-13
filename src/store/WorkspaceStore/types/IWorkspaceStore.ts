@@ -11,6 +11,7 @@ import type {
   WorkspaceTab,
 } from '@/modules/Workspace';
 import type {
+  ISourceSnapshot,
   RunMode,
   CodeStep,
   IChatAttachment,
@@ -110,6 +111,7 @@ export interface IWorkspaceStore {
     source: ICodeSource | null;
     story: IJiraIssueRef | null;
     strategy?: IPlanStrategy | null;
+    snapshots?: ISourceSnapshot[];
     page: IConfluencePageRef | null;
     who: string;
     agentId: string;

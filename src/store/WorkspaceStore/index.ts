@@ -292,6 +292,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
     summary,
     plan,
     strategy,
+    snapshots,
     source,
     story,
     page,
@@ -318,6 +319,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
           return {
             ...appendPlanCard({ workspace: said, plan, at: formatClock(new Date()) }),
             strategy: strategy ?? workspace.strategy ?? null,
+            ...(snapshots === undefined || snapshots.length === 0 ? {} : { snapshots }),
             planSource: source,
             sourcePage: page ?? workspace.sourcePage,
             issue:

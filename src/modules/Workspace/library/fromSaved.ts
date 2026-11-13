@@ -6,6 +6,7 @@ import { planExtrasOfYaml, planOfYaml } from '@/modules/Plan/library';
 import { bugOfSaved } from './bugOfSaved';
 import { codeSourceOf } from './codeSourceOf';
 import { messageOfSaved } from './messageOfSaved';
+import { snapshotsOf } from './snapshotsOf';
 
 type SavedRun = Omit<IRun, 'endedBy' | 'costUsd' | 'video'> &
   Partial<Pick<IRun, 'endedBy' | 'costUsd' | 'video'>> & {
@@ -45,6 +46,9 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     ...(read.storyStage === 'ahead' || read.storyStage === 'arrived'
       ? { storyStage: read.storyStage }
       : {}),
+    ...(snapshotsOf(read.snapshots).length === 0
+      ? {}
+      : { snapshots: snapshotsOf(read.snapshots) }),
     design: read.design ?? null,
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
     plan: planOfYaml(saved.planYaml),

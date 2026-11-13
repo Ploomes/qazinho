@@ -201,6 +201,7 @@ export const useChatAgent = () => {
           summary: answer.reply,
           plan,
           strategy: answer.plan?.strategy ?? null,
+          ...(turn.snapshots === undefined ? {} : { snapshots: turn.snapshots }),
           source: turn.code,
           story: turn.story,
           page: turn.page,
