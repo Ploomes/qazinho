@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
-import type { ITargetCardProps } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
+import type { ITargetCardProps } from '@/modules/Project/components/TargetCard/types';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { useTargetCardViewModel } from '@/modules/Project/components/ProjectModal/components/TargetCard/hooks/useTargetCardViewModel';
+import { useTargetCardViewModel } from '@/modules/Project/components/TargetCard/hooks/useTargetCardViewModel';
 
 const SET_UP = {
   label: 'Set up Android',

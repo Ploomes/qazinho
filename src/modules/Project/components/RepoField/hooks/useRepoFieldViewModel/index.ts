@@ -1,5 +1,5 @@
-import type { IRepoFieldProps } from '@/modules/Project/components/ProjectModal/components/RepoField/types';
-import type { ITargetLock } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
+import type { IRepoFieldProps } from '@/modules/Project/components/RepoField/types';
+import type { ITargetLock } from '@/modules/Project/components/TargetCard/types';
 import type { IBranchList, IRepositoryList, IRepositoryRef } from '@/shared/types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

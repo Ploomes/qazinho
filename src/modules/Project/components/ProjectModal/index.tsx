@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { MemoriesPane } from '@/modules/Memory/components/MemoriesPane';
 import { ProjectProPane } from '@/modules/Pro/components/ProjectProPane';
+import { RepoField } from '@/modules/Project/components/RepoField';
+import { TargetCard } from '@/modules/Project/components/TargetCard';
 import { Button, Eyebrow, Input, Switch } from '@/shared/components/atoms';
 import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
@@ -9,8 +11,6 @@ import {
   ProjectNav,
   ProjectPane,
   ReadyField,
-  RepoField,
-  TargetCard,
   TemplateChoice,
   VariableField,
 } from './components';

@@ -1,7 +1,7 @@
 import type { IRepoFieldProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { TargetCard } from '@/modules/Project/components/ProjectModal/components/TargetCard';
+import { TargetCard } from '@/modules/Project/components/TargetCard';
 import { GithubSignIn } from '@/modules/Setup';
 import { IconButton } from '@/shared/components/atoms';
 import { SearchList } from '@/shared/components/molecules';

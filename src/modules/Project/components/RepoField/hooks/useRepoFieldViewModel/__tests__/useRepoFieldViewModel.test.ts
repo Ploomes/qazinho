@@ -2,7 +2,7 @@
 import type { IProjectRepository } from '@/modules/Project/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useRepoFieldViewModel } from '@/modules/Project/components/ProjectModal/components/RepoField/hooks/useRepoFieldViewModel';
+import { useRepoFieldViewModel } from '@/modules/Project/components/RepoField/hooks/useRepoFieldViewModel';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useSettingsStore, useSetupStore } from '@/store';
 

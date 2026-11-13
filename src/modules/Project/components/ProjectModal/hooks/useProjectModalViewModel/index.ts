@@ -1,6 +1,6 @@
 import type { IProjectNavItem } from '@/modules/Project/components/ProjectModal/components/ProjectNav/types';
-import type { ITargetLock } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
+import type { ITargetLock } from '@/modules/Project/components/TargetCard/types';
 import type {
   IProjectRepository,
   IReadyColumn,

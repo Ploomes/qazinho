@@ -1,4 +1,4 @@
-import type { ITargetCardProps } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
+import type { ITargetCardProps } from '@/modules/Project/components/TargetCard/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMachineCheck } from '@/modules/Setup/hooks';
