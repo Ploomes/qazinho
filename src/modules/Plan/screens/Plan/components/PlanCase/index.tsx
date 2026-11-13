@@ -9,6 +9,8 @@ import './styles.css';
 export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
   const {
     reason,
+    reasonClassName,
+    sources,
     priority,
     expectedPrefix,
     gotPrefix,
@@ -107,7 +109,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
         />
 
         <span className="plan-case__aside">
-          {reason !== '' && <span className="plan-case__reason">{reason}</span>}
+          {reason !== '' && <span className={reasonClassName}>{reason}</span>}
           {priority !== null && <span className="plan-case__priority">{priority}</span>}
 
           {!props.isLocked && (
@@ -141,6 +143,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <div className="plan-case__body">
+              {sources !== null && <p className="plan-case__sources">{sources}</p>}
               {(isGoalShown || isBeforeShown) && (
                 <dl className="plan-case__facts">
                   {isGoalShown && (

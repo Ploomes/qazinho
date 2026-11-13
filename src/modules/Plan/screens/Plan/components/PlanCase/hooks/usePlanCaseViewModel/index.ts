@@ -9,7 +9,7 @@ import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const { testCase, isLocked, onToggle } = props;
   const design = props.design ?? null;
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const caseId = testCase.id;
   const [isPickedUp, setIsPickedUp] = useState(false);
   const [freshStep, setFreshStep] = useState<number | null>(null);
@@ -26,18 +26,32 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const hasGoal = testCase.goal !== '';
   const hasBefore = testCase.preconditions !== '';
   const verdict = props.liveStatus ?? testCase.lastVerdict ?? 'pending';
+  const listOf = (items: string[]) =>
+    new Intl.ListFormat(i18n.language, { style: 'long', type: 'conjunction' }).format(
+      items,
+    );
+  const waitsOn = testCase.blockedBy ?? [];
+  const sources = testCase.sources ?? [];
   const reason = isNow
     ? ''
-    : stopped !== undefined
-      ? t('PLAN.REASON_STEP', { number: stopped.number })
-      : isManual
-        ? t('PLAN.REASON_MANUAL')
-        : props.isDeveloped === true
-          ? ''
-          : t('PLAN.REASON_TO_DEVELOP');
+    : waitsOn.length > 0
+      ? t('PLAN.REASON_WAITS', { ids: listOf(waitsOn) })
+      : stopped !== undefined
+        ? t('PLAN.REASON_STEP', { number: stopped.number })
+        : isManual
+          ? t('PLAN.REASON_MANUAL')
+          : props.isDeveloped === true
+            ? ''
+            : t('PLAN.REASON_TO_DEVELOP');
 
   return {
     reason,
+    reasonClassName:
+      !isNow && waitsOn.length > 0
+        ? 'plan-case__reason plan-case__reason--waits'
+        : 'plan-case__reason',
+    sources:
+      sources.length === 0 ? null : t('PLAN.CASE_SOURCES', { sources: listOf(sources) }),
     priority: reason === '' && testCase.priority === 'P1' ? testCase.priority : null,
     expectedPrefix: t('PLAN.EXPECTED_PREFIX'),
     gotPrefix: t('PLAN.GOT_PREFIX'),

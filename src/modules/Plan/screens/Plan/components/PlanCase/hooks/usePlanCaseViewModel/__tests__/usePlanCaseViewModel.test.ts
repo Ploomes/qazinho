@@ -376,6 +376,45 @@ describe('usePlanCaseViewModel', () => {
 
       expect(result.current.reason).toBe('');
     });
+
+    /**
+     * Um caso cuja resposta esperada depende de uma dúvida que ninguém aqui sabe responder
+     * espera o time: dizer "passo 2" ou "por desenvolver" esconderia por que ele está assim.
+     */
+    it('says what doubts a case waits on, before anything else, in the color of a question', () => {
+      const lastRun = lastRunOf([ranStep({ number: 1, verdict: 'failed' })]);
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({
+          ...PROPS,
+          lastRun,
+          testCase: { ...TEST_CASE, blockedBy: ['D1', 'D3'] },
+        }),
+      );
+
+      expect(result.current).toMatchObject({
+        reason: 'waits on D1 and D3',
+        reasonClassName: 'plan-case__reason plan-case__reason--waits',
+      });
+    });
+  });
+
+  describe('where a case came from', () => {
+    it('names the criteria and sources the agent wrote it from', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({
+          ...PROPS,
+          testCase: { ...TEST_CASE, sources: ['C1', 'C3', 'SHOP-878'] },
+        }),
+      );
+
+      expect(result.current.sources).toBe('From C1, C3, and SHOP-878');
+    });
+
+    it('says nothing for a case written with no source', () => {
+      expect(
+        renderHook(() => usePlanCaseViewModel(PROPS)).result.current.sources,
+      ).toBeNull();
+    });
   });
 
   describe('the goal and the precondition', () => {
