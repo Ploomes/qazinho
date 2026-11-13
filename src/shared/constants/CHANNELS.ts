@@ -103,6 +103,8 @@ export const CHANNELS = {
   listBranches: 'github:branches',
   searchJira: 'jira:search',
   listJiraProjects: 'jira:projects',
+  listJiraStatuses: 'jira:statuses',
+  readStoryStatus: 'jira:story-status',
   readStoryPeople: 'jira:story-people',
   askStory: 'jira:ask-story',
   readStoryAnswers: 'jira:story-answers',

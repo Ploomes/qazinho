@@ -548,4 +548,42 @@ describe('JiraApi', () => {
       });
     });
   });
+
+  describe('statuses and a story status', () => {
+    it('lists the statuses of the site, for the QA to say which mean ready', async () => {
+      const { jira } = api({
+        '/rest/api/3/status': {
+          status: 200,
+          body: [{ name: 'Ready for QA', statusCategory: { key: 'indeterminate' } }],
+        },
+      });
+
+      expect(await jira.statuses()).toEqual({
+        isListed: true,
+        statuses: [{ name: 'Ready for QA', category: 'indeterminate' }],
+      });
+      expect(await api({}, false).jira.statuses()).toEqual({
+        isListed: false,
+        failure: 'not-connected',
+      });
+    });
+
+    it('reads the status a story is in now', async () => {
+      const { jira } = api({
+        '/rest/api/3/issue/SHOP-878?fields=status': {
+          status: 200,
+          body: { fields: { status: { name: 'Ready for QA' } } },
+        },
+      });
+
+      expect(await jira.status('SHOP-878')).toEqual({
+        isRead: true,
+        status: 'Ready for QA',
+      });
+      expect(await jira.status('SHOP-1')).toEqual({
+        isRead: false,
+        failure: 'not-found',
+      });
+    });
+  });
 });

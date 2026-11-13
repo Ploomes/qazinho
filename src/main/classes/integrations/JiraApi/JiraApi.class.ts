@@ -11,9 +11,11 @@ import type {
   JiraFailure,
   JiraIssueList,
   JiraProjectList,
+  JiraStatusList,
   StoryAnswers,
   StoryDoubtsPosted,
   StoryPeople,
+  StoryStatus,
 } from '@/shared/types';
 import { writeFile } from 'node:fs/promises';
 import { JIRA_READ, JIRA_WRITE } from './constants';
@@ -24,6 +26,7 @@ import {
   bugTypeOf,
   jiraIssueOf,
   jiraProjectsOf,
+  jiraStatusesOf,
   jiraStoryOf,
   pickedIssuesOf,
   storyAnswersOf,
@@ -272,6 +275,40 @@ export class JiraApi {
       url: `${signed.site}/browse/${props.key}${typeof id === 'string' ? `?focusedCommentId=${id}` : ''}`,
       missed: [],
     };
+  }
+
+  /** Os status do site do Jira, para o QA dizer quais contam como pronta para teste. */
+  public async statuses(): Promise<JiraStatusList> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isListed: false, failure: 'not-connected' };
+
+    const answer = await this.request({ signed, path: '/rest/api/3/status' });
+
+    return answer.isOk
+      ? { isListed: true, statuses: jiraStatusesOf(answer.body) }
+      : { isListed: false, failure: answer.failure };
+  }
+
+  /** Em que status uma história está agora. */
+  public async status(key: string): Promise<StoryStatus> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isRead: false, failure: 'not-connected' };
+
+    const answer = await this.request({
+      signed,
+      path: `/rest/api/3/issue/${encodeURIComponent(key)}?fields=status`,
+    });
+
+    if (!answer.isOk) return { isRead: false, failure: answer.failure };
+
+    const status = (this.fieldsOf(answer.body).status as { name?: unknown } | undefined)
+      ?.name;
+
+    return typeof status === 'string'
+      ? { isRead: true, status }
+      : { isRead: false, failure: 'unexpected' };
   }
 
   /** Quem escreveu uma história e se o QA já a acompanha. */

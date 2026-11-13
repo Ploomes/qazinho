@@ -7,6 +7,7 @@ export * from './jiraFailureOf';
 export * from './jiraIssueOf';
 export * from './jiraProjectsOf';
 export * from './jiraSaidOf';
+export * from './jiraStatusesOf';
 export * from './jiraStoryOf';
 export * from './pickedIssuesOf';
 export * from './storyAnswersOf';

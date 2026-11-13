@@ -90,6 +90,7 @@ import type {
   IWriteSkill,
   JiraIssueList,
   JiraProjectList,
+  JiraStatusList,
   McpActionResult,
   McpSignInProgress,
   MemoryKeeping,
@@ -109,6 +110,7 @@ import type {
   StoryAnswers,
   StoryDoubtsPosted,
   StoryPeople,
+  StoryStatus,
   UnreadPlanRead,
   VariablesOutcome,
   WindowFit,
@@ -433,6 +435,10 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.searchJira, query) as Promise<JiraIssueList>,
   listJiraProjects: () =>
     ipcRenderer.invoke(CHANNELS.listJiraProjects) as Promise<JiraProjectList>,
+  listJiraStatuses: () =>
+    ipcRenderer.invoke(CHANNELS.listJiraStatuses) as Promise<JiraStatusList>,
+  readStoryStatus: (key: string) =>
+    ipcRenderer.invoke(CHANNELS.readStoryStatus, key) as Promise<StoryStatus>,
   readStoryPeople: (key: string) =>
     ipcRenderer.invoke(CHANNELS.readStoryPeople, key) as Promise<StoryPeople>,
   askStory: (post: IStoryDoubtsPost) =>

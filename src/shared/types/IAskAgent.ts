@@ -39,4 +39,5 @@ export interface IAskAgent {
   memories?: IMemoryBrief[];
   skill?: string | null;
   doubts?: IPlanDoubt[];
+  readyStatuses?: string[];
 }

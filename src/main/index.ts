@@ -873,6 +873,7 @@ const assistant = new AssistantAgent({
 });
 
 const toldChats = new Map<string, Record<string, string>>();
+const readyStatuses = new Map<string, string[]>();
 const confluencePages = new Map<string, IConfluencePage>();
 const importSources = new Map<string, IImportSource>();
 const askingChats = new Set<string>();
@@ -888,6 +889,7 @@ async function fetchSource(props: {
     const read = await jiraStories.prepare({
       workspaceId,
       key: call.key,
+      readyStatuses: readyStatuses.get(workspaceId) ?? [],
       onStep: ({ at, bytes }) => {
         broadcast({
           channel: CHANNELS.agentEvent,
@@ -1076,6 +1078,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     };
 
   askingChats.add(ask.workspaceId);
+  readyStatuses.set(ask.workspaceId, ask.readyStatuses ?? []);
 
   const phone =
     ask.target !== null && ask.target.kind !== 'web' && ask.steps.length === 0
@@ -1115,6 +1118,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         : jiraStories.prepare({
             workspaceId: ask.workspaceId,
             key: ask.jira.key,
+            readyStatuses: ask.readyStatuses ?? [],
             onStep: ({ at, bytes }) => {
               broadcast({
                 channel: CHANNELS.agentEvent,
@@ -1242,6 +1246,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
               summary: storyRead.story.summary,
               url: storyRead.story.url,
             },
+      ...(storyRead?.readiness === undefined ? {} : { readiness: storyRead.readiness }),
       page: pageRead?.page ?? null,
       followed: turn.isError ? [] : followed,
     };
@@ -1968,6 +1973,8 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());
+  ipcMain.handle(CHANNELS.listJiraStatuses, () => jira.statuses());
+  ipcMain.handle(CHANNELS.readStoryStatus, (_event, key: string) => jira.status(key));
   ipcMain.handle(CHANNELS.readStoryPeople, (_event, key: string) => jira.people(key));
   ipcMain.handle(CHANNELS.askStory, (_event, post: IStoryDoubtsPost) =>
     jira.askStory(post),

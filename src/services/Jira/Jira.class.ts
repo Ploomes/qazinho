@@ -3,9 +3,11 @@ import type {
   IStoryDoubtsPost,
   JiraIssueList,
   JiraProjectList,
+  JiraStatusList,
   StoryAnswers,
   StoryDoubtsPosted,
   StoryPeople,
+  StoryStatus,
 } from '@/shared/types';
 
 /** O único que chama o lado do Jira da bridge. */
@@ -23,6 +25,24 @@ export class Jira {
     return (
       (await window.qazinho?.listJiraProjects()) ?? {
         isListed: false,
+        failure: 'unreachable',
+      }
+    );
+  }
+
+  public static async statuses(): Promise<JiraStatusList> {
+    return (
+      (await window.qazinho?.listJiraStatuses()) ?? {
+        isListed: false,
+        failure: 'unreachable',
+      }
+    );
+  }
+
+  public static async status(key: string): Promise<StoryStatus> {
+    return (
+      (await window.qazinho?.readStoryStatus(key)) ?? {
+        isRead: false,
         failure: 'unreachable',
       }
     );
