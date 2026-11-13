@@ -508,6 +508,7 @@ export const en = {
     CHANGED_STORY_COMMENTS_OTHER: '{{key}} got {{count}} new comments after this plan.',
     CHANGED_PAGE: 'The page “{{title}}” changed after this plan.',
     CHANGED_CODE: 'The branch {{branch}} moved after this plan.',
+    CHANGED_MEETING: 'The meeting “{{name}}” brought decisions to read.',
     PROPOSE: 'Propose the swaps',
     PROPOSING: 'Reading the change…',
     KEEP_PLAN: 'Keep the plan',

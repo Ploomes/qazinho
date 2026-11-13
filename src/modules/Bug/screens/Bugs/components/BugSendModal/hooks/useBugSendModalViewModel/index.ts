@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { filingPlanOf, issueTargetOf } from '@/modules/Bug/library';
 import { BUG_SEND } from '@/modules/Bug/screens/Bugs/components/BugSendModal/constants';
+import { changeNameOf } from '@/modules/Plan';
 import {
   GITHUB_FAILURE_KEYS,
   INTEGRATIONS,
@@ -53,13 +54,7 @@ export const useBugSendModalViewModel = (props: IBugSendModalProps) => {
       : [],
   );
   const story = workspace?.issue?.source === 'jira' ? workspace.issue.key : null;
-  const changedNames = (workspace?.changed?.found ?? []).map((change) =>
-    change.kind === 'story'
-      ? change.key
-      : change.kind === 'page'
-        ? change.title
-        : change.branch,
-  );
+  const changedNames = (workspace?.changed?.found ?? []).map(changeNameOf);
   const linked = project?.repositories ?? [];
   const suggest = (only: IssueTracker[]) =>
     issueTargetOf({

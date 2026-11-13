@@ -51,6 +51,9 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
 
     if (change.kind === 'code') return t('PLAN.CHANGED_CODE', { branch: change.branch });
 
+    if (change.kind === 'meeting')
+      return t('PLAN.CHANGED_MEETING', { name: change.name });
+
     return change.before.replace(/\s+/g, ' ').trim() !==
       change.after.replace(/\s+/g, ' ').trim() || change.comments.length === 0
       ? t('PLAN.CHANGED_STORY', { key: change.key })

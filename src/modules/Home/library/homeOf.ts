@@ -14,7 +14,7 @@ import type {
 } from '@/modules/Home/types';
 import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
-import { heldDoubtsOf } from '@/modules/Plan/library';
+import { changeNameOf, heldDoubtsOf } from '@/modules/Plan/library';
 import {
   currentStepOf,
   manualWaitingOf,
@@ -94,13 +94,7 @@ export function homeOf(props: {
     if (isArrived && workspace.issue !== null)
       arrived.push({ ...base, kind: 'arrived', key: workspace.issue.key });
 
-    const sources = (workspace.changed?.found ?? []).map((change) =>
-      change.kind === 'story'
-        ? change.key
-        : change.kind === 'page'
-          ? change.title
-          : change.branch,
-    );
+    const sources = (workspace.changed?.found ?? []).map(changeNameOf);
     const toReview = (workspace.review?.items ?? []).filter(
       ({ state }) => state === 'open',
     ).length;

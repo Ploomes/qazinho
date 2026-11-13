@@ -512,6 +512,7 @@ export const pt: typeof en = {
       'A {{key}} ganhou {{count}} comentários novos depois deste plano.',
     CHANGED_PAGE: 'A página “{{title}}” mudou depois deste plano.',
     CHANGED_CODE: 'A branch {{branch}} andou depois deste plano.',
+    CHANGED_MEETING: 'A reunião “{{name}}” trouxe decisões para ler.',
     PROPOSE: 'Propor as trocas',
     PROPOSING: 'Lendo a mudança…',
     KEEP_PLAN: 'Manter o plano',
