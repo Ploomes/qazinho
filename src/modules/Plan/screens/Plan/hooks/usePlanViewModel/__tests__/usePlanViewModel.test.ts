@@ -1072,7 +1072,7 @@ describe('usePlanViewModel', () => {
           base: [],
           version: 4,
           cases: [],
-          editedBy: 'Bruno',
+          editedBy: 'Caio',
           editedAt: '2026-10-24T11:30:00.000Z',
         },
       ],
@@ -1087,7 +1087,7 @@ describe('usePlanViewModel', () => {
 
       const { result } = renderHook(() => usePlanViewModel());
 
-      expect(result.current.orgNotice).toBe('Bruno changed this plan in the org.');
+      expect(result.current.orgNotice).toBe('Caio changed this plan in the org.');
       expect(result.current.orgUpdateLabel).toBe('Update');
     });
 

@@ -48,7 +48,7 @@ const MOVED = {
   base: [],
   version: 4,
   cases: [],
-  editedBy: 'Bruno',
+  editedBy: 'Caio',
   editedAt: '2026-10-24T11:30:00.000Z',
 };
 

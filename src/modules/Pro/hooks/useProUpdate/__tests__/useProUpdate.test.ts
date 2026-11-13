@@ -12,7 +12,7 @@ const WORKSPACE = makeWorkspace();
 const BASE = WORKSPACE.plan.map(syncedCaseOf);
 const FIRST = BASE[0]!;
 
-/** O plano da org na versão 4: o Bruno renomeou o primeiro caso. */
+/** O plano da org na versão 4: o Caio renomeou o primeiro caso. */
 const theirsOf = (title: string) => [{ ...FIRST, title }, ...BASE.slice(1)];
 
 const shareWith = (cases = theirsOf('Retitled in the org')): IProShare => ({
@@ -27,7 +27,7 @@ const shareWith = (cases = theirsOf('Retitled in the org')): IProShare => ({
       base: BASE,
       version: 4,
       cases,
-      editedBy: 'Bruno',
+      editedBy: 'Caio',
       editedAt: '2026-10-24T11:30:00.000Z',
     },
   ],

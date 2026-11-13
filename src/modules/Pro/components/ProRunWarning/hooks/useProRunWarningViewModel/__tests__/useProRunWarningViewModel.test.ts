@@ -47,13 +47,13 @@ beforeEach(() => {
     resolveProConflict: (props) => {
       resolved.push(props.version);
 
-      return Promise.resolve({ ...shareBy('Bruno'), conflicts: [] });
+      return Promise.resolve({ ...shareBy('Caio'), conflicts: [] });
     },
   };
   useAppStore.setState({ projects: [PROJECT], selectedWorkspaceId: 'w1' });
   useWorkspaceStore.setState({ workspaces: [WORKSPACE] });
   useProStore.setState({
-    shares: [shareBy('Bruno')],
+    shares: [shareBy('Caio')],
     heldRun: { workspaceId: 'w1', mode: 'agent' },
   });
 });
@@ -67,7 +67,7 @@ describe('useProRunWarningViewModel', () => {
     it('names who changed the plan in the org', () => {
       const { result } = renderHook(() => useProRunWarningViewModel());
 
-      expect(result.current.text).toContain('Bruno');
+      expect(result.current.text).toContain('Caio');
       expect(result.current.text).toContain('Checkout regression');
     });
 
@@ -75,7 +75,7 @@ describe('useProRunWarningViewModel', () => {
       useProStore.setState({ shares: [shareBy(null)] });
       const { result } = renderHook(() => useProRunWarningViewModel());
 
-      expect(result.current.text).not.toContain('Bruno');
+      expect(result.current.text).not.toContain('Caio');
     });
   });
 

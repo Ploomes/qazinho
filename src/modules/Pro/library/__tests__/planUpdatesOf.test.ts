@@ -25,7 +25,7 @@ const share: IProShare = {
       base: BASE,
       version: 4,
       cases: [{ ...FIRST, title: 'Theirs' }, ...BASE.slice(1)],
-      editedBy: 'Bruno',
+      editedBy: 'Caio',
       editedAt: '2026-10-24T11:30:00.000Z',
     },
   ],
