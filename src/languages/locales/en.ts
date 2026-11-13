@@ -1378,6 +1378,8 @@ export const en = {
   },
   FILING: {
     SEND: 'Send as an issue',
+    SOURCE_CHANGED:
+      '{{sources}} changed after this plan. Check that it is really a bug before sending it.',
     TITLE: 'Send {{id}} as an issue',
     SUBTITLE:
       'With the steps to reproduce, what was expected and what happened, and where it was caught.',

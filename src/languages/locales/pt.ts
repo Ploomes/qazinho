@@ -1388,6 +1388,8 @@ export const pt: typeof en = {
   },
   FILING: {
     SEND: 'Enviar como issue',
+    SOURCE_CHANGED:
+      '{{sources}} mudou depois deste plano. Confira se é mesmo um bug antes de mandar.',
     TITLE: 'Enviar {{id}} como issue',
     SUBTITLE:
       'Com os passos para reproduzir, o esperado e o que aconteceu, e onde foi pego.',

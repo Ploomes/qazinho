@@ -27,7 +27,7 @@ import {
 
 export const useBugSendModalViewModel = (props: IBugSendModalProps) => {
   const { bug, onCancel, onSend } = props;
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const integrations = useSetupStore((state) => state.integrations);
   const workspace = useWorkspaceStore(
     (state) => state.workspaces.find(({ id }) => id === props.workspaceId) ?? null,
@@ -53,6 +53,13 @@ export const useBugSendModalViewModel = (props: IBugSendModalProps) => {
       : [],
   );
   const story = workspace?.issue?.source === 'jira' ? workspace.issue.key : null;
+  const changedNames = (workspace?.changed?.found ?? []).map((change) =>
+    change.kind === 'story'
+      ? change.key
+      : change.kind === 'page'
+        ? change.title
+        : change.branch,
+  );
   const linked = project?.repositories ?? [];
   const suggest = (only: IssueTracker[]) =>
     issueTargetOf({
@@ -149,6 +156,15 @@ export const useBugSendModalViewModel = (props: IBugSendModalProps) => {
   return {
     title: t('FILING.TITLE', { id: bug.id }),
     subtitle: t('FILING.SUBTITLE'),
+    changeWarning:
+      changedNames.length === 0
+        ? null
+        : t('FILING.SOURCE_CHANGED', {
+            sources: new Intl.ListFormat(i18n.language, {
+              style: 'long',
+              type: 'conjunction',
+            }).format(changedNames),
+          }),
     width: BUG_SEND.width,
     style: { '--bug-send-logo': `${String(BUG_SEND.logoPx)}px` } as CSSProperties,
     isConnected: trackers.length > 0,

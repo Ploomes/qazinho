@@ -15,6 +15,7 @@ export const BugSendModal: React.FC<IBugSendModalProps> = (props) => {
   const {
     title,
     subtitle,
+    changeWarning,
     width,
     style,
     isConnected,
@@ -52,6 +53,11 @@ export const BugSendModal: React.FC<IBugSendModalProps> = (props) => {
     >
       {isConnected ? (
         <div className="bug-send" style={style}>
+          {changeWarning !== null && (
+            <p className="bug-send__warning" role="alert">
+              {changeWarning}
+            </p>
+          )}
           <section className="bug-send__part">
             <span className="bug-send__label">{whereLabel}</span>
             {hasTrackerChoice && (
