@@ -160,7 +160,7 @@ export const useProjectModalViewModel = () => {
       ? t('PROJECT.NEEDS_NAME_EDIT')
       : url.trim().length > 0 && address === null
         ? t('PROJECT.WEB_INVALID')
-        : !hasTarget
+        : !hasTarget && (editing === null || editing.targets.length > 0)
           ? isEditing
             ? t('PROJECT.NEEDS_TARGET_EDIT')
             : t('PROJECT.NEEDS_TARGET')

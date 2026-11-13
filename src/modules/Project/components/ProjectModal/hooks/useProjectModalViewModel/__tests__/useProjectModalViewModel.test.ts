@@ -588,6 +588,39 @@ describe('useProjectModalViewModel', () => {
       ).toEqual(['Web', 'Android']);
     });
 
+    it('renames a project born with no app, which stops waiting for its name', () => {
+      useAppStore.setState({
+        projects: [{ ...SAVED, name: 'New project', targets: [], isNamePending: true }],
+      });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onNameChange('Cupons');
+      });
+
+      expect(result.current.canConfirm).toBe(true);
+
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      expect(useAppStore.getState().projects).toEqual([
+        { ...SAVED, name: 'Cupons', targets: [] },
+      ]);
+    });
+
+    it('does NOT let a project that had an app lose every one', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onUrlChange('');
+      });
+
+      expect(result.current.footerHint).toBe('Keep one: a URL, an .apk or a .app');
+      expect(result.current.canConfirm).toBe(false);
+    });
+
     it('does NOT let a target a workspace runs against go empty', () => {
       useWorkspaceStore.setState({
         workspaces: [{ ...makeWorkspace(), projectId: 'p1', targetId: 't-web' }],
