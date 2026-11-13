@@ -8,5 +8,6 @@ export type * from './PanelTab';
 export type * from './IssueSource';
 export type * from './SavedBug';
 export type * from './SavedMessage';
+export type * from './StoryStage';
 export type * from './WorkspaceStatus';
 export type * from './WorkspaceTab';

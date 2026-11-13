@@ -3,7 +3,13 @@ import type { IAgentActivity, IQuestionAnswer, UserCommand } from '@/modules/Cha
 import type { IBugFlash, ViewportId } from '@/modules/Device';
 import type { IMemoryChange } from '@/modules/Memory/types';
 import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
-import type { IWalkedBy, IWorkspace, PanelTab, WorkspaceTab } from '@/modules/Workspace';
+import type {
+  IWalkedBy,
+  IWorkspace,
+  PanelTab,
+  StoryStage,
+  WorkspaceTab,
+} from '@/modules/Workspace';
 import type {
   RunMode,
   CodeStep,
@@ -174,6 +180,7 @@ export interface IWorkspaceStore {
   markManual: (props: { workspaceId: string; turn: IManualTurn }) => void;
   setDoubts: (props: { workspaceId: string; doubts: IPlanDoubt[] }) => void;
   markStoryRead: (props: { workspaceId: string; at: number }) => void;
+  setStoryStage: (props: { workspaceId: string; stage: StoryStage | null }) => void;
   markScreens: (props: { workspaceId: string; screens: IRunScreen[] }) => void;
   markAddress: (props: { workspaceId: string; url: string }) => void;
   landNote: (props: { workspaceId: string; text: string; who: string }) => void;

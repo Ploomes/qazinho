@@ -42,6 +42,9 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     sessionAgentId: read.sessionAgentId ?? null,
     status: read.status ?? 'idle',
     issue: read.issue ?? null,
+    ...(read.storyStage === 'ahead' || read.storyStage === 'arrived'
+      ? { storyStage: read.storyStage }
+      : {}),
     design: read.design ?? null,
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
     plan: planOfYaml(saved.planYaml),

@@ -711,6 +711,16 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  setStoryStage: ({ workspaceId, stage }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: ({ storyStage: _stage, ...workspace }) =>
+          stage === null ? workspace : { ...workspace, storyStage: stage },
+      }),
+    })),
+
   markStoryRead: ({ workspaceId, at }) =>
     set((state) => ({ storyReadAt: { ...state.storyReadAt, [workspaceId]: at } })),
 

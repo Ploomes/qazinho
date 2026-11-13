@@ -867,6 +867,54 @@ describe('useChatViewModel', () => {
       });
     });
 
+    /**
+     * O projeto diz em quais status uma história chegou para teste. Um plano escrito de uma
+     * história ainda fora deles espera o app, e o botão de rodar diz isso.
+     */
+    it('tells the agent the statuses that mean ready, and keeps a plan ahead of the app', async () => {
+      useAppStore.setState({
+        projects: [{ ...PROJECT, readyStatuses: ['Ready for QA'] }],
+      });
+
+      const ask = answering({ answer: DRAFTED, readiness: 'ahead' });
+      const view = renderHook(() => useChatViewModel());
+
+      act(() => {
+        view.result.current.onDraftChange('Plan SHOP-878');
+      });
+      act(() => {
+        view.result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.storyStage).toBe('ahead');
+      });
+      expect(ask.mock.calls[0]?.[0].readyStatuses).toEqual(['Ready for QA']);
+    });
+
+    it('lets go of the wait once a turn reads the story arrived for testing', async () => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace([]), storyStage: 'ahead' }],
+      });
+      answering({ answer: DRAFTED, readiness: 'ready' });
+
+      const view = renderHook(() => useChatViewModel());
+
+      act(() => {
+        view.result.current.onDraftChange('Plan SHOP-878 again');
+      });
+      act(() => {
+        view.result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.plan.length).toBeGreaterThan(
+          0,
+        );
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]).not.toHaveProperty('storyStage');
+    });
+
     it('does NOT offer the story to a workspace with no Jira story', async () => {
       const { view } = await asked('Two things first.');
 

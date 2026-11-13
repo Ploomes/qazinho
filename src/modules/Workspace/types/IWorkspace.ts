@@ -1,6 +1,7 @@
 import type { IAgentContext } from './IAgentContext';
 import type { IIssue } from './IIssue';
 import type { ILiveRun } from './ILiveRun';
+import type { StoryStage } from './StoryStage';
 import type { WorkspaceStatus } from './WorkspaceStatus';
 import type { IBug } from '@/modules/Bug';
 import type { ChatMessage } from '@/modules/Chat';
@@ -37,6 +38,7 @@ export interface IWorkspace {
   plan: ITestCase[];
   strategy?: IPlanStrategy | null;
   doubts?: IPlanDoubt[];
+  storyStage?: StoryStage;
   unreadPlan: IUnreadPlan | null;
   plainValues: string[];
   planSource: ICodeSource | null;

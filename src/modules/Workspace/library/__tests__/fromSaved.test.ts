@@ -34,6 +34,19 @@ describe('fromSaved', () => {
     expect(fromSaved({ id: 'w1', json, planYaml: '' })?.viewportId).toBe('desktop');
   });
 
+  /** O plano escrito antes do app continua esperando a história depois de um reinício. */
+  it('keeps where the story of a plan written ahead of the app stands', () => {
+    expect(
+      fromSaved(
+        toSaved({ workspace: { ...makeWorkspace(), storyStage: 'ahead' }, at: '09:44' }),
+      )?.storyStage,
+    ).toBe('ahead');
+
+    const json = JSON.stringify({ id: 'w1', projectId: 'p1', storyStage: 'late' });
+
+    expect(fromSaved({ id: 'w1', json, planYaml: '' })).not.toHaveProperty('storyStage');
+  });
+
   it('keeps the code a plan was made from across a restart, and none for an older file', () => {
     const source = {
       repository: 'acme/loja-web',

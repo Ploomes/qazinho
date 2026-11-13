@@ -68,6 +68,7 @@ export const useChatAgent = () => {
       landAgentError,
       landAgentStopped,
       landFollowedSkills,
+      setStoryStage,
     } = useWorkspaceStore.getState();
     const project =
       useAppStore.getState().projects.find(({ id }) => id === workspace.projectId) ??
@@ -101,6 +102,9 @@ export const useChatAgent = () => {
         workspaceId,
         ...(target === null ? {} : { targetKind: target.kind }),
       }),
+      ...(project?.readyStatuses === undefined || project.readyStatuses.length === 0
+        ? {}
+        : { readyStatuses: project.readyStatuses }),
       ...(workspace.doubts === undefined || workspace.doubts.length === 0
         ? {}
         : { doubts: workspace.doubts }),
@@ -172,6 +176,12 @@ export const useChatAgent = () => {
       const isWalking = live !== null && live !== undefined && !live.isDone;
 
       landFollowedSkills({ workspaceId, names: turn.followed });
+
+      if (turn.readiness !== undefined)
+        setStoryStage({
+          workspaceId,
+          stage: turn.readiness === 'ahead' ? 'ahead' : null,
+        });
 
       if (plan === null || isWalking)
         landAgentText({
