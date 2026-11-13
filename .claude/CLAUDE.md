@@ -404,6 +404,18 @@ da história diz o que a reunião decidiu. Um Claude Code real (Haiku) leu uma r
 uma discussão e uma ideia: trocou só o caso da decisão, citando quem a disse. Antes, ele tomava a
 decisão por uma contradição com a história e perguntava; o corpus agora diz que a reunião vale.
 
+**O time escreve do jeito dele, sem IA.** Em Configurações › Modelos o QA monta como o time quer o
+relatório de um bug, a página de um plano, o comentário das dúvidas e o das decisões numa história:
+as seções do QAzinho na ordem do time e com os títulos dele, textos fixos com campos como `{{app}}`,
+o título de um bug, e os casos de um plano em passos ou em Gherkin, com a prévia ao lado. Nada disso
+chama o agente: o modelo só arruma o que o QAzinho já monta. A aba Plano também mostra o plano em
+Gherkin e o exporta como um `.feature`. Cada projeto escolhe o seu em cada tipo, na janela dele. Com
+a conta logada, um editor para cima publica um modelo numa org, e um dono ou admin o faz padrão nos
+projetos dela: um projeto da org usa o padrão até o QA escolher outro ou o jeito do QAzinho, e um
+leitor guarda uma cópia sua. Sem rede, vale o que a org tinha da última vez. Testes unitários provam a
+montagem, a escolha e o editor, e o qazinho-server prova as rotas com o Postgres; nenhum QA usou
+ainda, e a web ainda não mostra nem edita um modelo.
+
 **Uma página do Confluence vira o plano, e o plano uma página do Confluence.** Com o Jira
 conectado, o QA liga o Confluence no cartão do Jira: a mesma conta no mesmo site, conferida antes
 com o Confluence. O `/confluence` no chat escolhe uma página, as que o QA trabalhou por último ou

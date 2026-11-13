@@ -530,6 +530,21 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     formato da Atlassian. A primeira publicação pergunta o espaço, uma página pai se houver e um
     título (`PublishModal`); o workspace guarda a página (`published`), e a publicação seguinte
     escreve a próxima versão dela, ou a faz de novo quando ela sumiu.
+- **O time escreve do jeito dele, sem IA** (`src/modules/Template/`). Um modelo (`ITemplate`) é uma
+  lista de partes: uma seção que o QAzinho monta, com o título do time, ou um texto com campos como
+  `{{app}}` (`TemplatePart`). O `renderParts` troca cada seção pelos blocos dela e o `fillValues`
+  preenche os campos; sem modelo, o QAzinho monta do jeito dele:
+  - O `bugReportOf`, o `planDocOf`, o `doubtsTextsOf` e o `storyNoteOf` recebem o modelo que vale, e
+    o `gherkinOf` escreve os casos em Gherkin, que a aba Plano mostra e exporta como `.feature`.
+  - A `TemplateLibrary` da main guarda os do QA em `templates.json`. O `ProTemplates` lê os de cada
+    org da conta pela API, guarda o último de cada uma em `org-templates.json` para quando não há
+    rede, e publica, reescreve, tira e escolhe o padrão de um tipo. Um modelo de org leva o id
+    `org:<org>:<id>` (`orgTemplateIdOf`), que nunca se confunde com um local.
+  - O projeto guarda a escolha de cada tipo (`IProject.templates`). O `templateFor` dá o escolhido,
+    senão o padrão da org do projeto, senão nenhum, e `qazinho` escolhe o jeito do QAzinho sobre o
+    da org; o `useTemplateOf` o resolve pelo projeto.
+  - Publicar é de um editor para cima, o padrão é do dono ou do admin, e a API recusa o resto. O
+    editor oferece onde o modelo fica (`places`), e a um leitor, guardar uma cópia.
 - **Um design do Figma é conferido contra a tela pelo Figma do próprio QA** (`role/chat/design.md`,
   `role/runner/design.md`). O `/figma` no chat recebe o link de um frame ou página
   (`designLinkOf`), e o workspace o guarda (`design`), que o cabeçalho dele abre no Figma:
@@ -960,11 +975,13 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `ImportScanner`                       | lê uma pasta de testes que o QA escolheu e reconhece o framework de cada um                                 |
 | `SkillLibrary`                        | guarda as skills do time em disco, importa as de um repositório, deste computador ou de um arquivo          |
 | `SkillWriter`                         | escreve uma skill com o QA pelo agente dele, a partir do que ele conta e dos casos que anexa                |
+| `TemplateLibrary`                     | guarda os modelos do QA neste computador: o bug, a página do plano e os comentários                         |
 | `ChatAttachments`                     | guarda as imagens e arquivos que o QA anexa ao chat, numa pasta do workspace que o agente lê                |
 | `ProAccount`                          | faz este computador entrar no QAzinho Pro, guarda o token lacrado dele, e conhece as orgs                   |
 | `ProApi`                              | fala com a API do QAzinho Pro: o login, a conta, a sincronização, as evidências, projetos de org            |
 | `ProSync`                             | publica um projeto numa org, manda os fatos dele quando acontecem e os planos quando mandado                |
 | `ProDownloads`                        | lista os projetos da org e baixa um, as gravações incluídas                                                 |
+| `ProTemplates`                        | lê, publica e escolhe o padrão dos modelos das orgs, e guarda o último de cada uma                          |
 
 ## Dependências
 
