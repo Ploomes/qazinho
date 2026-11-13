@@ -128,6 +128,28 @@ describe('Jira as a requirement', () => {
     expect(chat.readDirs).toEqual([copy?.root]);
   });
 
+  it('lists the stories of the open sprint of a board, without its subtasks', async () => {
+    expect(await api.sprintStories(7)).toEqual({
+      isListed: true,
+      sprint: 'Sprint 42',
+      stories: [
+        {
+          key: 'SHOP-12',
+          title: 'Aplicar cupom no checkout',
+          status: 'Pronto para dev',
+          url: `${SITE}/browse/SHOP-12`,
+        },
+        {
+          key: 'SHOP-14',
+          title: 'Frete grátis acima de R$ 200',
+          status: 'Pronto para dev',
+          url: `${SITE}/browse/SHOP-14`,
+        },
+      ],
+    });
+    expect(jira.asked).toContain('GET /rest/agile/1.0/board/7/sprint?state=active');
+  });
+
   it('says the story is not there when Jira has no such key', async () => {
     const stories = new JiraStories({
       jira: api,
