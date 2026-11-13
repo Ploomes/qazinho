@@ -230,6 +230,23 @@ describe('a page with no bridge', () => {
       false,
     );
     expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(await Jira.people('SHOP-878')).toEqual({
+      isRead: false,
+      failure: 'unreachable',
+    });
+    expect(
+      await Jira.askStory({
+        key: 'SHOP-878',
+        intro: '',
+        doubts: [{ id: 'D1', question: 'Does a coupon stack?' }],
+        closing: '',
+        isWatching: true,
+      }),
+    ).toEqual({ isPosted: false, failure: 'unreachable', said: '' });
+    expect(await Jira.answers({ key: 'SHOP-878', doubts: [] })).toEqual({
+      isRead: false,
+      failure: 'unreachable',
+    });
     expect(await Confluence.turn(true)).toEqual({
       isSwitched: false,
       failure: 'unreachable',

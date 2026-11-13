@@ -1,3 +1,4 @@
+export * from './adfOfDoubts';
 export * from './adfOfReport';
 export * from './adfToMarkdown';
 export * from './askAtlassian';
@@ -8,3 +9,4 @@ export * from './jiraProjectsOf';
 export * from './jiraSaidOf';
 export * from './jiraStoryOf';
 export * from './pickedIssuesOf';
+export * from './storyAnswersOf';

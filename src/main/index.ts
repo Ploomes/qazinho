@@ -47,6 +47,8 @@ import type {
   ISkillImport,
   IStartBuild,
   IStartRun,
+  IStoryAnswersAsk,
+  IStoryDoubtsPost,
   ITrayWords,
   IViewport,
   IWindowControls,
@@ -1966,6 +1968,13 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());
+  ipcMain.handle(CHANNELS.readStoryPeople, (_event, key: string) => jira.people(key));
+  ipcMain.handle(CHANNELS.askStory, (_event, post: IStoryDoubtsPost) =>
+    jira.askStory(post),
+  );
+  ipcMain.handle(CHANNELS.readStoryAnswers, (_event, ask: IStoryAnswersAsk) =>
+    jira.answers(ask),
+  );
   ipcMain.handle(CHANNELS.switchConfluence, (_event, isOn: boolean) =>
     switchConfluence(isOn),
   );

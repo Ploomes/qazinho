@@ -5,14 +5,20 @@ import type {
   IBugReport,
   IJiraIssueRef,
   IJiraStory,
+  IStoryAnswersAsk,
+  IStoryDoubtsPost,
   ITrackerIssue,
   JiraFailure,
   JiraIssueList,
   JiraProjectList,
+  StoryAnswers,
+  StoryDoubtsPosted,
+  StoryPeople,
 } from '@/shared/types';
 import { writeFile } from 'node:fs/promises';
 import { JIRA_READ, JIRA_WRITE } from './constants';
 import {
+  adfOfDoubts,
   adfOfReport,
   askAtlassian,
   bugTypeOf,
@@ -20,6 +26,7 @@ import {
   jiraProjectsOf,
   jiraStoryOf,
   pickedIssuesOf,
+  storyAnswersOf,
 } from './library';
 
 /**
@@ -267,6 +274,107 @@ export class JiraApi {
     };
   }
 
+  /** Quem escreveu uma história e se o QA já a acompanha. */
+  public async people(key: string): Promise<StoryPeople> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isRead: false, failure: 'not-connected' };
+
+    const answer = await this.request({
+      signed,
+      path: `/rest/api/3/issue/${encodeURIComponent(key)}?fields=reporter,watches`,
+    });
+
+    if (!answer.isOk) return { isRead: false, failure: answer.failure };
+
+    const fields = this.fieldsOf(answer.body);
+    const reporter = this.personOf(fields.reporter);
+
+    return {
+      isRead: true,
+      reporter: reporter?.name ?? null,
+      isWatching:
+        (fields.watches as { isWatching?: unknown } | undefined)?.isWatching === true,
+    };
+  }
+
+  /**
+   * Posta as dúvidas do QA sob uma história, mencionando quem a escreveu, e o põe para
+   * acompanhá-la quando ele pediu: onde o comentário fica, ou por que não.
+   */
+  public async askStory(post: IStoryDoubtsPost): Promise<StoryDoubtsPosted> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isPosted: false, failure: 'not-connected', said: '' };
+
+    const path = `/rest/api/3/issue/${encodeURIComponent(post.key)}`;
+    const [story, me] = await Promise.all([
+      this.request({ signed, path: `${path}?fields=reporter` }),
+      this.request({ signed, path: '/rest/api/3/myself' }),
+    ]);
+    const reporter = story.isOk
+      ? this.personOf(this.fieldsOf(story.body).reporter)
+      : null;
+    const myself = me.isOk ? this.personOf(me.body) : null;
+    const mention = reporter !== null && reporter.id !== myself?.id ? reporter : null;
+    const posted = await this.request({
+      signed,
+      path: `${path}/comment`,
+      method: 'POST',
+      json: { body: adfOfDoubts({ ...post, mention }) },
+    });
+
+    if (!posted.isOk)
+      return { isPosted: false, failure: posted.failure, said: posted.said };
+
+    if (post.isWatching && myself !== null)
+      await this.request({
+        signed,
+        path: `${path}/watchers`,
+        method: 'POST',
+        json: myself.id,
+        isEmpty: true,
+      });
+
+    const { id, created } = (posted.body ?? {}) as { id?: unknown; created?: unknown };
+
+    return {
+      isPosted: true,
+      url: `${signed.site}/browse/${post.key}${typeof id === 'string' ? `?focusedCommentId=${id}` : ''}`,
+      at:
+        typeof created === 'string'
+          ? new Date(created).toISOString()
+          : new Date().toISOString(),
+      mentioned: mention?.name ?? null,
+    };
+  }
+
+  /** O que o time respondeu às dúvidas mandadas a uma história, nos comentários. */
+  public async answers(ask: IStoryAnswersAsk): Promise<StoryAnswers> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isRead: false, failure: 'not-connected' };
+
+    const [comments, me] = await Promise.all([
+      this.request({
+        signed,
+        path: `/rest/api/3/issue/${encodeURIComponent(ask.key)}/comment?orderBy=-created&maxResults=${String(JIRA_READ.answerComments)}`,
+      }),
+      this.request({ signed, path: '/rest/api/3/myself' }),
+    ]);
+
+    if (!comments.isOk) return { isRead: false, failure: comments.failure };
+
+    return {
+      isRead: true,
+      answers: storyAnswersOf({
+        comments: comments.body,
+        doubts: ask.doubts,
+        me: (me.isOk ? this.personOf(me.body)?.id : null) ?? '',
+      }),
+    };
+  }
+
   /** Anexa um arquivo a uma issue; false quando o Jira não o aceitou. */
   public async attach(props: {
     key: string;
@@ -336,6 +444,25 @@ export class JiraApi {
           },
         ]
       : [];
+  }
+
+  private fieldsOf(body: unknown): Record<string, unknown> {
+    const { fields } = (body ?? {}) as { fields?: unknown };
+
+    return typeof fields === 'object' && fields !== null
+      ? (fields as Record<string, unknown>)
+      : {};
+  }
+
+  private personOf(value: unknown): { id: string; name: string } | null {
+    const { accountId, displayName } = (value ?? {}) as {
+      accountId?: unknown;
+      displayName?: unknown;
+    };
+
+    return typeof accountId === 'string' && accountId !== ''
+      ? { id: accountId, name: typeof displayName === 'string' ? displayName : '' }
+      : null;
   }
 
   private request(

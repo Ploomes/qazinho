@@ -394,4 +394,158 @@ describe('JiraApi', () => {
       });
     });
   });
+
+  /**
+   * As dúvidas que ninguém aqui sabe vão à história num comentário do QA, que menciona quem
+   * a escreveu e o põe para acompanhá-la; as respostas voltam pelos comentários seguintes.
+   */
+  describe('the doubts on a story', () => {
+    const STORY = '/rest/api/3/issue/SHOP-878';
+    const ME = { accountId: 'qa-1', displayName: 'Ana QA' };
+    const REPORTER = { accountId: 'po-7', displayName: 'Rui PO' };
+    const POST = {
+      key: 'SHOP-878',
+      intro: 'two doubts before we test this:',
+      doubts: [
+        { id: 'D1', question: 'Does a coupon stack with free shipping?' },
+        { id: 'D2', question: 'Which error shows for an expired coupon?' },
+      ],
+      closing: 'Answer naming the doubt, like D1.',
+      isWatching: true,
+    };
+
+    it('says who wrote the story and whether the QA already follows it', async () => {
+      const { jira } = api({
+        [`${STORY}?fields=reporter,watches`]: {
+          status: 200,
+          body: { fields: { reporter: REPORTER, watches: { isWatching: true } } },
+        },
+      });
+
+      expect(await jira.people('SHOP-878')).toEqual({
+        isRead: true,
+        reporter: 'Rui PO',
+        isWatching: true,
+      });
+      expect(await api({}, false).jira.people('SHOP-878')).toEqual({
+        isRead: false,
+        failure: 'not-connected',
+      });
+    });
+
+    it('posts the doubts mentioning who wrote the story, and follows it', async () => {
+      const { jira, asked } = api({
+        [`${STORY}?fields=reporter`]: {
+          status: 200,
+          body: { fields: { reporter: REPORTER } },
+        },
+        '/rest/api/3/myself': { status: 200, body: ME },
+        [`${STORY}/comment`]: {
+          status: 201,
+          body: { id: '10200', created: '2026-11-13T10:00:00.000-0300' },
+        },
+        [`${STORY}/watchers`]: { status: 204 },
+      });
+
+      expect(await jira.askStory(POST)).toEqual({
+        isPosted: true,
+        url: `${SITE}/browse/SHOP-878?focusedCommentId=10200`,
+        at: '2026-11-13T13:00:00.000Z',
+        mentioned: 'Rui PO',
+      });
+
+      const comment = asked.find(({ url }) => url.endsWith('/comment'));
+      const watch = asked.find(({ url }) => url.endsWith('/watchers'));
+
+      expect(JSON.stringify(comment?.body)).toContain('po-7');
+      expect(comment?.method).toBe('POST');
+      expect(watch).toMatchObject({ method: 'POST', body: '"qa-1"' });
+    });
+
+    it('does NOT mention the QA who wrote the story, nor follow it when not asked', async () => {
+      const { jira, asked } = api({
+        [`${STORY}?fields=reporter`]: { status: 200, body: { fields: { reporter: ME } } },
+        '/rest/api/3/myself': { status: 200, body: ME },
+        [`${STORY}/comment`]: { status: 201, body: { id: '10201' } },
+      });
+
+      expect(await jira.askStory({ ...POST, isWatching: false })).toMatchObject({
+        isPosted: true,
+        mentioned: null,
+      });
+      expect(
+        JSON.stringify(asked.find(({ url }) => url.endsWith('/comment'))?.body),
+      ).not.toContain('mention');
+      expect(asked.some(({ url }) => url.endsWith('/watchers'))).toBe(false);
+    });
+
+    it('says why the comment was refused, in the words of Jira', async () => {
+      const { jira } = api({
+        [`${STORY}/comment`]: {
+          status: 400,
+          body: { errorMessages: ['Comments are closed on this issue.'] },
+        },
+      });
+
+      expect(await jira.askStory(POST)).toEqual({
+        isPosted: false,
+        failure: 'rejected',
+        said: 'Comments are closed on this issue.',
+      });
+    });
+
+    it('reads the answers the team left after the QA asked', async () => {
+      const doc = (text: string) => ({
+        type: 'doc',
+        version: 1,
+        content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+      });
+      const { jira } = api({
+        [`${STORY}/comment?orderBy=-created&maxResults=100`]: {
+          status: 200,
+          body: {
+            comments: [
+              {
+                id: '10210',
+                author: REPORTER,
+                created: '2026-11-13T15:00:00.000Z',
+                body: doc('D2: "This coupon expired".'),
+              },
+              {
+                id: '10200',
+                author: ME,
+                created: '2026-11-13T13:00:00.000Z',
+                body: doc('D1 Does a coupon stack? D2 Which error?'),
+              },
+            ],
+          },
+        },
+        '/rest/api/3/myself': { status: 200, body: ME },
+      });
+      const sent = {
+        url: `${SITE}/browse/SHOP-878?focusedCommentId=10200`,
+        at: '2026-11-13T13:00:00.000Z',
+      };
+
+      expect(
+        await jira.answers({
+          key: 'SHOP-878',
+          doubts: [
+            { id: 'D1', sent },
+            { id: 'D2', sent },
+          ],
+        }),
+      ).toEqual({
+        isRead: true,
+        answers: [
+          {
+            doubtId: 'D2',
+            text: '"This coupon expired".',
+            by: 'Rui PO',
+            at: '2026-11-13T15:00:00.000Z',
+          },
+        ],
+      });
+    });
+  });
 });

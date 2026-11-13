@@ -1,4 +1,12 @@
-import type { JiraIssueList, JiraProjectList } from '@/shared/types';
+import type {
+  IStoryAnswersAsk,
+  IStoryDoubtsPost,
+  JiraIssueList,
+  JiraProjectList,
+  StoryAnswers,
+  StoryDoubtsPosted,
+  StoryPeople,
+} from '@/shared/types';
 
 /** O único que chama o lado do Jira da bridge. */
 export class Jira {
@@ -15,6 +23,34 @@ export class Jira {
     return (
       (await window.qazinho?.listJiraProjects()) ?? {
         isListed: false,
+        failure: 'unreachable',
+      }
+    );
+  }
+
+  public static async people(key: string): Promise<StoryPeople> {
+    return (
+      (await window.qazinho?.readStoryPeople(key)) ?? {
+        isRead: false,
+        failure: 'unreachable',
+      }
+    );
+  }
+
+  public static async askStory(post: IStoryDoubtsPost): Promise<StoryDoubtsPosted> {
+    return (
+      (await window.qazinho?.askStory(post)) ?? {
+        isPosted: false,
+        failure: 'unreachable',
+        said: '',
+      }
+    );
+  }
+
+  public static async answers(ask: IStoryAnswersAsk): Promise<StoryAnswers> {
+    return (
+      (await window.qazinho?.readStoryAnswers(ask)) ?? {
+        isRead: false,
         failure: 'unreachable',
       }
     );

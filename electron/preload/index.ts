@@ -81,6 +81,8 @@ import type {
   IStartBuild,
   IStartRun,
   IStorageUsage,
+  IStoryAnswersAsk,
+  IStoryDoubtsPost,
   ITrayWords,
   IVideoSweep,
   IViewport,
@@ -104,6 +106,9 @@ import type {
   SkillSaved,
   SkillsFound,
   SkillWritten,
+  StoryAnswers,
+  StoryDoubtsPosted,
+  StoryPeople,
   UnreadPlanRead,
   VariablesOutcome,
   WindowFit,
@@ -428,6 +433,12 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.searchJira, query) as Promise<JiraIssueList>,
   listJiraProjects: () =>
     ipcRenderer.invoke(CHANNELS.listJiraProjects) as Promise<JiraProjectList>,
+  readStoryPeople: (key: string) =>
+    ipcRenderer.invoke(CHANNELS.readStoryPeople, key) as Promise<StoryPeople>,
+  askStory: (post: IStoryDoubtsPost) =>
+    ipcRenderer.invoke(CHANNELS.askStory, post) as Promise<StoryDoubtsPosted>,
+  readStoryAnswers: (ask: IStoryAnswersAsk) =>
+    ipcRenderer.invoke(CHANNELS.readStoryAnswers, ask) as Promise<StoryAnswers>,
   switchConfluence: (isOn: boolean) =>
     ipcRenderer.invoke(CHANNELS.switchConfluence, isOn) as Promise<ConfluenceSwitch>,
   searchConfluence: (query: string) =>
