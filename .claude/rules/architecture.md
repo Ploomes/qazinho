@@ -510,6 +510,9 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     (`readChange`, `CHANGE_READ`), e confere a resposta contra os casos e as dúvidas
     (`readChangeRead`). A revisão (`review`, `reviewOf`) guarda cada troca e como o QA a decidiu,
     com o motivo de uma recusa; aplicar escreve o caso pelo `planWithItem`.
+  - Uma reunião é uma mudança também (`kind: 'meeting'`): o `MeetingModal` lê o arquivo na página
+    (`transcriptOf` tira os tempos de um VTT ou SRT), e o leitor só toma as decisões
+    (`role/watcher/reading-a-meeting.md`).
   - "Contar na história" monta o comentário (`storyNoteOf`) que o QA edita e posta
     (`JiraApi.tell`, `adfOfNote`). O envio de um bug avisa quando as fontes mudaram, e o Início
     mostra os planos com mudanças (`homeOf`).

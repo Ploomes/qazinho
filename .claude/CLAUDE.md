@@ -396,6 +396,14 @@ rodada, trocou só o caso que citava o critério que mudou, reescreveu pelo come
 uma dúvida, e propôs um caso novo. O design do Figma ainda não é conferido, e nada disso rodou
 contra um Jira, um Confluence ou um GitHub reais nem no app construído.
 
+**Uma reunião também muda o plano.** "Ler uma reunião", na aba Plano, recebe a transcrição solta ou
+colada (.txt, .md, .vtt ou .srt, sem os tempos). Ela entra no lugar do "depois" da leitura de uma
+mudança: só as decisões confirmadas, cada uma com a frase de onde veio, valendo sobre o que a
+história dizia; discussão e hipótese ficam de fora. O resultado é a mesma revisão, e o comentário
+da história diz o que a reunião decidiu. Um Claude Code real (Haiku) leu uma reunião com uma decisão,
+uma discussão e uma ideia: trocou só o caso da decisão, citando quem a disse. Antes, ele tomava a
+decisão por uma contradição com a história e perguntava; o corpus agora diz que a reunião vale.
+
 **Uma página do Confluence vira o plano, e o plano uma página do Confluence.** Com o Jira
 conectado, o QA liga o Confluence no cartão do Jira: a mesma conta no mesmo site, conferida antes
 com o Confluence. O `/confluence` no chat escolhe uma página, as que o QA trabalhou por último ou
