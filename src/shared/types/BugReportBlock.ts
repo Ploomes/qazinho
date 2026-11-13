@@ -1,6 +1,6 @@
 /**
  * Um pedaço do relatório de um bug ou de um plano publicado: um título, texto, lista,
- * passos, fatos ou uma tabela.
+ * passos, fatos, uma tabela ou um bloco de código, como um cenário em Gherkin.
  */
 export type BugReportBlock =
   | { kind: 'heading'; text: string }
@@ -9,4 +9,5 @@ export type BugReportBlock =
   | { kind: 'steps'; items: { text: string; isBad: boolean }[] }
   | { kind: 'facts'; items: { label: string; value: string; url: string | null }[] }
   | { kind: 'requests'; items: { call: string; outcome: string; answer?: string }[] }
-  | { kind: 'table'; head: string[]; rows: string[][] };
+  | { kind: 'table'; head: string[]; rows: string[][] }
+  | { kind: 'code'; text: string };

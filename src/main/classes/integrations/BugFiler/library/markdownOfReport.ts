@@ -20,6 +20,10 @@ function markdownOf(block: BugReportBlock): string[] {
   switch (block.kind) {
     case 'heading':
       return block.text.trim() === '' ? [] : [`### ${block.text.trim()}`];
+    case 'code':
+      return block.text.trim() === ''
+        ? []
+        : [['```', block.text.trimEnd(), '```'].join('\n')];
     case 'paragraph':
       return block.text.trim() === '' ? [] : [block.text.trim().replace(/\n/g, '  \n')];
     case 'list':

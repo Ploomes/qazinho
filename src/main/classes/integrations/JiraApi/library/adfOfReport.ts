@@ -107,6 +107,16 @@ function nodesOf(block: BugReportBlock): IAdfNode[] {
               ],
             },
           ];
+    case 'code':
+      return block.text.trim() === ''
+        ? []
+        : [
+            {
+              type: 'codeBlock',
+              attrs: {},
+              content: text({ text: block.text.trimEnd() }),
+            },
+          ];
     case 'requests':
       return list({
         type: 'bulletList',

@@ -98,4 +98,13 @@ describe('markdownOfReport', () => {
       }),
     ).toBe('| # | Action |\n| --- | --- |\n| 1 | a \\| b c |');
   });
+
+  it('writes a code block between fences', () => {
+    expect(
+      markdownOfReport({
+        title: '',
+        blocks: [{ kind: 'code', text: 'Cenário: Cupom vencido\n  Dado um carrinho' }],
+      }),
+    ).toBe('```\nCenário: Cupom vencido\n  Dado um carrinho\n```');
+  });
 });
