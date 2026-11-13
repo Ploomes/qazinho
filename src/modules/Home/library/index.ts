@@ -1,4 +1,3 @@
-export * from './autoProjectNameOf';
 export * from './dayKeyOf';
 export * from './homeCountOf';
 export * from './homeOf';

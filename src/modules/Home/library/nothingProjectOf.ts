@@ -4,15 +4,14 @@ import { blankWorkspaceOf } from '@/modules/Workspace/library';
 
 /**
  * O projeto de quem não tem nada do app: a loja de exemplo com uma exploração, ou um app
- * que ainda não existe com o plano começando pelo que o QA escreveu.
+ * que ainda não existe e ainda sem nome, com o plano começando pelo que o QA escreveu.
  */
 export function nothingProjectOf(props: {
   way: NothingWay;
-  name: string;
   address: string | null;
   text: string;
   now: number;
-  words: { web: string; explore: string };
+  words: { web: string; explore: string; example: string; unnamed: string };
 }): INewProject {
   const { way, address, now, words } = props;
   const id = newProjectId(now);
@@ -29,11 +28,12 @@ export function nothingProjectOf(props: {
   return {
     project: {
       id,
-      name: props.name.trim(),
+      name: isExample ? words.example : words.unnamed,
       targets: isExample
         ? [{ id: 't-web', kind: 'web', label: words.web, value: address }]
         : [],
       repositories: [],
+      ...(isExample ? {} : { isNamePending: true }),
     },
     workspaces: [workspace],
     openId: workspace.id,

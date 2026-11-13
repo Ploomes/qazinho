@@ -6,14 +6,12 @@ import type {
   NothingWay,
   ProjectPick,
 } from '@/modules/Home/types';
-import type { ITarget } from '@/modules/Project/types';
 import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat';
 import { PROJECT_PICKS } from '@/modules/Home/constants';
 import {
-  autoProjectNameOf,
   missingPicksOf,
   newProjectOf,
   nothingProjectOf,
@@ -24,12 +22,6 @@ import {
   FIELD_LABEL_KEYS,
   NEW_PROJECT_SCREEN,
 } from '@/modules/Home/screens/NewProject/constants';
-import {
-  projectAppOf,
-  projectMarkOf,
-  useSiteIcons,
-  webAddressOf,
-} from '@/modules/Project';
 import { TARGET_NAME_KEYS } from '@/modules/Project/components/ProjectModal/constants';
 import { useRunActions } from '@/modules/Run';
 import { Sites } from '@/services';
@@ -51,37 +43,20 @@ export const useNewProjectViewModel = () => {
   const [direction, setDirection] = useState(1);
   const [picks, setPicks] = useState<ProjectPick[]>([]);
   const [values, setValues] = useState<INewProjectValues>(EMPTY_PROJECT_VALUES);
-  const [typedName, setTypedName] = useState<string | null>(null);
   const [way, setWay] = useState<NothingWay>('example');
   const [idea, setIdea] = useState('');
-  const [ideaName, setIdeaName] = useState('');
   const [isCreating, setCreating] = useState(false);
   const [failure, setFailure] = useState('');
 
   const isNothing = picks.includes('none');
-  const address = picks.includes('web') ? webAddressOf(values.web) : null;
-  const icons = useSiteIcons(address === null ? [] : [address]);
-  const name = typedName ?? autoProjectNameOf({ picks, values });
   const missing = missingPicksOf({ picks, values });
   const labels = {
     web: t(TARGET_NAME_KEYS.web),
     android: t(TARGET_NAME_KEYS.android),
     ios: t(TARGET_NAME_KEYS.ios),
   };
-  const preview: ITarget[] = [
-    ...(address === null
-      ? []
-      : [{ id: 't-web', kind: 'web' as const, label: labels.web, value: address }]),
-    ...(picks.includes('build')
-      ? values.builds.map((build) => ({
-          id: `t-${build.kind}`,
-          kind: build.kind,
-          label: labels[build.kind],
-          value: build.path,
-        }))
-      : []),
-  ];
-  const canCreate = missing.length === 0 && name.trim() !== '' && !isCreating;
+  const unnamed = t('NEW_PROJECT.UNNAMED');
+  const canCreate = missing.length === 0 && !isCreating;
   const canStart = !isCreating && (way === 'example' || idea.trim() !== '');
 
   const go = (props: { to: NewProjectStep; direction: number }) => {
@@ -208,7 +183,7 @@ export const useNewProjectViewModel = () => {
     if (!canCreate) return;
 
     setCreating(true);
-    launch(newProjectOf({ picks, values, name, now, labels }));
+    launch(newProjectOf({ picks, values, unnamed, now, labels }));
   };
   const startFromNothing = async (now: number) => {
     if (!canStart) return;
@@ -228,14 +203,15 @@ export const useNewProjectViewModel = () => {
     launch(
       nothingProjectOf({
         way,
-        name:
-          way === 'example'
-            ? t('NEW_PROJECT.EXAMPLE_NAME')
-            : ideaName.trim() || t('NEW_PROJECT.IDEA_PROJECT'),
         address: shop,
         text: idea,
         now,
-        words: { web: labels.web, explore: t('NEW_PROJECT.EXPLORE_PLAN') },
+        words: {
+          web: labels.web,
+          explore: t('NEW_PROJECT.EXPLORE_PLAN'),
+          example: t('NEW_PROJECT.EXAMPLE_NAME'),
+          unnamed,
+        },
       }),
     );
   };
@@ -354,16 +330,6 @@ export const useNewProjectViewModel = () => {
       onDesign: (design: INewProjectValues['design']) => {
         change({ key: 'design', value: design });
       },
-      nameLabel: t('NEW_PROJECT.NAME_LABEL'),
-      namePlaceholder: t('NEW_PROJECT.NAME_PLACEHOLDER'),
-      name,
-      onName: setTypedName,
-      mark: projectMarkOf({
-        name: name.trim() || '?',
-        app: projectAppOf(preview),
-        icons,
-      }),
-      markSize: NEW_PROJECT_SCREEN.markSize,
       hasMissing: missing.length > 0,
       missingText: t('NEW_PROJECT.MISSING', {
         fields: list.format(
@@ -398,10 +364,6 @@ export const useNewProjectViewModel = () => {
       ideaLabel: t('NEW_PROJECT.IDEA'),
       ideaPlaceholder: t('NEW_PROJECT.IDEA_PLACEHOLDER'),
       onIdea: setIdea,
-      ideaName,
-      ideaNameLabel: t('NEW_PROJECT.NAME_LABEL'),
-      ideaNamePlaceholder: t('NEW_PROJECT.IDEA_NAME_PLACEHOLDER'),
-      onIdeaName: setIdeaName,
       hasFailure: failure !== '',
       failure,
       backLabel: t('NEW_PROJECT.BACK'),

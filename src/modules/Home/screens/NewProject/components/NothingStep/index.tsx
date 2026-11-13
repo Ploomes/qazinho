@@ -1,6 +1,6 @@
 import type { INothingStepProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { Button, Icon, Input } from '@/shared/components/atoms';
+import { Button, Icon } from '@/shared/components/atoms';
 import { MOTION, STICKER } from '@/shared/constants';
 import './styles.css';
 
@@ -74,12 +74,6 @@ export const NothingStep: React.FC<INothingStepProps> = (props) => (
               onChange={(event) => {
                 props.onIdea(event.target.value);
               }}
-            />
-            <Input
-              value={props.ideaName}
-              label={props.ideaNameLabel}
-              placeholder={props.ideaNamePlaceholder}
-              onChange={props.onIdeaName}
             />
           </div>
         </motion.div>

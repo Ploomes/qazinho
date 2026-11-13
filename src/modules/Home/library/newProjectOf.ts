@@ -12,13 +12,13 @@ import { blankWorkspaceOf } from '@/modules/Workspace/library';
 import { planNameOf } from './planNameOf';
 
 /**
- * O projeto que os cartões marcados criam: os alvos e o repositório, um plano por fonte
- * (a história, o design, os testes) ou um vazio, e como cada um começa.
+ * O projeto que os cartões marcados criam, ainda sem nome: os alvos e o repositório, um
+ * plano por fonte (a história, o design, os testes) ou um vazio, e como cada um começa.
  */
 export function newProjectOf(props: {
   picks: ProjectPick[];
   values: INewProjectValues;
-  name: string;
+  unnamed: string;
   now: number;
   labels: Record<TargetKind, string>;
 }): INewProject {
@@ -40,9 +40,10 @@ export function newProjectOf(props: {
   ];
   const project: IProject = {
     id: newProjectId(now),
-    name: props.name.trim(),
+    name: props.unnamed,
     targets,
     repositories: has('code') ? values.repositories : [],
+    isNamePending: true,
   };
   const sources = sourcesOf({ picks, values });
   const workspaces = (sources.length === 0 ? [{ name: '', start: null }] : sources).map(

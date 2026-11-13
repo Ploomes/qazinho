@@ -9,13 +9,14 @@ describe('newProjectOf', () => {
     const made = newProjectOf({
       picks: ['web', 'story'],
       values: { ...EMPTY_VALUES, web: 'staging.loja.dev', story: STORY },
-      name: ' Loja ',
+      unnamed: 'Novo projeto',
       now: NOW,
       labels: LABELS,
     });
 
     expect(made.project).toMatchObject({
-      name: 'Loja',
+      name: 'Novo projeto',
+      isNamePending: true,
       targets: [
         { id: 't-web', kind: 'web', label: 'Web', value: 'https://staging.loja.dev' },
       ],
@@ -43,7 +44,7 @@ describe('newProjectOf', () => {
     const made = newProjectOf({
       picks: ['story', 'tests', 'design'],
       values: { ...EMPTY_VALUES, story: STORY, design: DESIGN, tests: TESTS },
-      name: 'Loja',
+      unnamed: 'Novo projeto',
       now: NOW,
       labels: LABELS,
     });
@@ -63,7 +64,7 @@ describe('newProjectOf', () => {
     const made = newProjectOf({
       picks: ['design'],
       values: { ...EMPTY_VALUES, design: DESIGN },
-      name: 'Loja',
+      unnamed: 'Novo projeto',
       now: NOW,
       labels: LABELS,
     });
@@ -86,7 +87,7 @@ describe('newProjectOf', () => {
         builds: [{ kind: 'android', path: '/b/loja.apk' }],
         repositories: [{ id: '1', owner: 'acme', name: 'loja-app', baseBranch: 'main' }],
       },
-      name: 'Loja',
+      unnamed: 'Novo projeto',
       now: NOW,
       labels: LABELS,
     });
@@ -105,7 +106,7 @@ describe('newProjectOf', () => {
     const made = newProjectOf({
       picks: ['story'],
       values: { ...EMPTY_VALUES, web: 'https://loja.dev', story: STORY, tests: TESTS },
-      name: 'Loja',
+      unnamed: 'Novo projeto',
       now: NOW,
       labels: LABELS,
     });

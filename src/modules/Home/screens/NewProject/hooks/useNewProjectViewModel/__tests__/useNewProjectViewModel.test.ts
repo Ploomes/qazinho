@@ -120,7 +120,7 @@ describe('useNewProjectViewModel', () => {
   });
 
   describe('the fields', () => {
-    it('names the project by the site, says what is missing, and holds Create until it is all there', () => {
+    it('says what is missing, and holds Create until it is all there', () => {
       bridge();
       const { result } = renderHook(() => useNewProjectViewModel());
 
@@ -134,7 +134,6 @@ describe('useNewProjectViewModel', () => {
       });
 
       expect(result.current.fill).toMatchObject({
-        name: 'Loja',
         hasMissing: true,
         missingText: 'Still missing: the story',
         canCreate: false,
@@ -147,7 +146,7 @@ describe('useNewProjectViewModel', () => {
       expect(result.current.fill).toMatchObject({ hasMissing: false, canCreate: true });
     });
 
-    it('creates the project, opens the story plan in its chat and asks the agent', () => {
+    it('creates the project unnamed, opens the story plan in its chat and asks the agent', () => {
       const { asked } = bridge();
       const { result } = renderHook(() => useNewProjectViewModel());
 
@@ -159,7 +158,6 @@ describe('useNewProjectViewModel', () => {
       act(() => {
         result.current.fill.onWeb('staging.loja.dev');
         result.current.fill.onStory({ kind: 'jira', issue: STORY });
-        result.current.fill.onName('Loja Online');
       });
       act(() => {
         result.current.fill.onCreate();
@@ -169,7 +167,8 @@ describe('useNewProjectViewModel', () => {
       const [workspace] = useWorkspaceStore.getState().workspaces;
 
       expect(project).toMatchObject({
-        name: 'Loja Online',
+        name: 'New project',
+        isNamePending: true,
         targets: [{ kind: 'web', value: 'https://staging.loja.dev' }],
       });
       expect(workspace).toMatchObject({
@@ -184,20 +183,21 @@ describe('useNewProjectViewModel', () => {
       expect(asked.mock.calls[0]?.[0]).toMatchObject({
         workspaceId: workspace?.id,
         jira: { key: 'SHOP-892' },
+        isProjectUnnamed: true,
       });
     });
 
-    it('does NOT create without a name', () => {
+    it('does NOT create while a field is missing', () => {
       bridge();
       const { result } = renderHook(() => useNewProjectViewModel());
 
       toggle(result, 'build');
+      toggle(result, 'story');
       act(() => {
         result.current.pick.onContinue();
       });
       act(() => {
         result.current.fill.onBuilds([{ kind: 'android', path: '/b/loja.apk' }]);
-        result.current.fill.onName('  ');
       });
 
       expect(result.current.fill.canCreate).toBe(false);
@@ -239,6 +239,7 @@ describe('useNewProjectViewModel', () => {
           targets: [{ value: 'http://127.0.0.1:47821/?lang=en' }],
         });
       });
+      expect(useAppStore.getState().projects.at(-1)?.isNamePending).toBeUndefined();
       await waitFor(() => {
         expect(startRun).toHaveBeenCalled();
       });
@@ -294,7 +295,8 @@ describe('useNewProjectViewModel', () => {
           text: 'O cupom de primeira compra',
         });
         expect(useAppStore.getState().projects.at(-1)).toMatchObject({
-          name: 'New app',
+          name: 'New project',
+          isNamePending: true,
           targets: [],
         });
       });

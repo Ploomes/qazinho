@@ -5,12 +5,12 @@ import { DesignField } from '@/modules/Home/screens/NewProject/components/Design
 import { StoryField } from '@/modules/Home/screens/NewProject/components/StoryField';
 import { TestsField } from '@/modules/Home/screens/NewProject/components/TestsField';
 import { WebField } from '@/modules/Home/screens/NewProject/components/WebField';
-import { ProjectMark, RepoField } from '@/modules/Project';
-import { Button, Input } from '@/shared/components/atoms';
+import { RepoField } from '@/modules/Project';
+import { Button } from '@/shared/components/atoms';
 import { MOTION, STICKER } from '@/shared/constants';
 import './styles.css';
 
-/** Um campo por cartão marcado, o projeto como ele vai nascer, e o botão de criar. */
+/** Um campo por cartão marcado, e o botão de criar. */
 export const FillStep: React.FC<IFillStepProps> = (props) => (
   <div className="fill-step">
     <div className="fill-step__fields">
@@ -42,26 +42,6 @@ export const FillStep: React.FC<IFillStepProps> = (props) => (
           )}
         </motion.div>
       ))}
-    </div>
-
-    <div className="fill-step__project">
-      <motion.span
-        key={props.mark.kind}
-        className="fill-step__mark"
-        initial={STICKER.slap.initial}
-        animate={STICKER.slap.animate}
-      >
-        <ProjectMark mark={props.mark} size={props.markSize} />
-      </motion.span>
-      <div className="fill-step__name">
-        <span className="fill-step__name-label">{props.nameLabel}</span>
-        <Input
-          value={props.name}
-          label={props.nameLabel}
-          placeholder={props.namePlaceholder}
-          onChange={props.onName}
-        />
-      </div>
     </div>
 
     <div className="new-project__foot">
