@@ -96,6 +96,7 @@ import {
   MemoryKeeper,
   CodeCopies,
   CodeExport,
+  DockIcon,
   ConfluenceApi,
   DeviceToolDetector,
   GitCli,
@@ -177,6 +178,12 @@ import {
 } from '@/main/library';
 import { ASSISTANT_WAIT, CHANNELS, CHAT_ATTACHMENTS } from '@/shared/constants';
 import trayIcon from '@brand/app-icon/app-icon-sinal-32.png?asset';
+import dockIcon from '@brand/app-icon/app-icon-sinal-512.png?asset';
+import dockBroken from '@brand/dock/broken.png?asset';
+import dockBug from '@brand/dock/bug.png?asset';
+import dockPassed from '@brand/dock/passed.png?asset';
+import dockRunning from '@brand/dock/running.png?asset';
+import dockThinking from '@brand/dock/thinking.png?asset';
 import {
   Harness,
   MCP_HOST,
@@ -316,8 +323,35 @@ const tray = new AppTray({
   },
 });
 
-const alerts = new RunAlerts((run) => {
-  bringForward()?.webContents.send(CHANNELS.openRun, run);
+const dockFrames = import.meta.glob<string>('@brand/dock/frames/running-*.png', {
+  eager: true,
+  query: '?asset',
+  import: 'default',
+});
+
+const dock = new DockIcon({
+  icon: dockIcon,
+  frames: Object.keys(dockFrames)
+    .sort()
+    .flatMap((file) => dockFrames[file] ?? []),
+  states: {
+    running: dockRunning,
+    thinking: dockThinking,
+    passed: dockPassed,
+    bug: dockBug,
+    broken: dockBroken,
+  },
+  window: () => appWindows()[0] ?? null,
+  isAway: () => !(appWindows()[0]?.isFocused() ?? false),
+});
+
+const alerts = new RunAlerts({
+  onOpen: (run) => {
+    bringForward()?.webContents.send(CHANNELS.openRun, run);
+  },
+  onUnseen: (unseen) => {
+    dock.alerts(unseen);
+  },
 });
 
 let waitingProLink: IProLink | null = null;
@@ -780,6 +814,7 @@ const runs = new RunCoordinator({
         message: `run failed: ${event.failure.reason}`,
       });
 
+    dock.handle(event);
     broadcast({ channel: CHANNELS.runEvent, event });
   },
   recorder,
@@ -1433,6 +1468,7 @@ function createWindow(): void {
 
   window.on('focus', () => {
     alerts.seen();
+    dock.seen();
   });
 
   window.webContents.on('did-finish-load', () => {
@@ -1554,6 +1590,7 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.askAgent, (_event, ask: IAskAgent) => askAgent(ask));
   ipcMain.handle(CHANNELS.startRun, async (_event, run: IStartRun) => {
     await chatDevices.close(run.workspaceId);
+    dock.begin({ workspaceId: run.workspaceId, total: run.steps.length });
 
     return runs.start(run);
   });
@@ -1926,6 +1963,7 @@ void app.whenReady().then(async () => {
 
 app.on('before-quit', () => {
   isQuitting = true;
+  dock.dispose();
 });
 
 app.on('will-quit', (event) => {
