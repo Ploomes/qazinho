@@ -118,6 +118,16 @@ describe('useSkillsSettingsViewModel', () => {
     });
 
     act(() => {
+      result.current.onWithAgent();
+    });
+
+    expect(result.current).toMatchObject({ isCreating: true, editing: null });
+
+    act(() => {
+      result.current.onWrite();
+    });
+
+    act(() => {
       result.current.onCloseEditor();
       result.current.onDrafted({
         name: 'x',

@@ -82,6 +82,10 @@ export const useSkillsSettingsViewModel = () => {
       setIsCreating(false);
       setEditing({ skill: null, draft: null });
     },
+    onWithAgent: () => {
+      setEditing(null);
+      setIsCreating(true);
+    },
     onDrafted: (draft: NonNullable<ISkillEditing['draft']>) => {
       setIsCreating(false);
       setEditing({ skill: null, draft });

@@ -191,4 +191,41 @@ describe('useSkillEditorViewModel', () => {
 
     expect(window.qazinho.dropSkillDraft).toHaveBeenCalledWith('d2');
   });
+
+  describe('the tabs of a new skill', () => {
+    const blank = (onWithAgent?: () => void) =>
+      renderHook(() =>
+        useSkillEditorViewModel({
+          editing: { skill: null, draft: null },
+          projects: PROJECTS,
+          onClose: vi.fn(),
+          ...(onWithAgent === undefined ? {} : { onWithAgent }),
+        }),
+      );
+
+    it('keeps the tabs on a blank new skill, so the QA goes back to the agent', () => {
+      const onWithAgent = vi.fn();
+      const { result } = blank(onWithAgent);
+
+      expect(result.current.hasModes).toBe(true);
+
+      act(() => {
+        result.current.onMode('hand');
+      });
+
+      expect(onWithAgent).not.toHaveBeenCalled();
+
+      act(() => {
+        result.current.onMode('agent');
+      });
+
+      expect(onWithAgent).toHaveBeenCalledOnce();
+    });
+
+    it('does NOT show the tabs on a saved skill or a draft the agent wrote', () => {
+      expect(editor({ skill: SKILL }).result.current.hasModes).toBe(false);
+      expect(editor({ skill: null, draftId: 'd1' }).result.current.hasModes).toBe(false);
+      expect(blank().result.current.hasModes).toBe(false);
+    });
+  });
 });

@@ -9,7 +9,7 @@ import { useSkillActions } from '@/modules/Skills/hooks';
 import { Skills } from '@/services';
 
 export const useSkillEditorViewModel = (props: ISkillEditorProps) => {
-  const { editing, projects, onClose } = props;
+  const { editing, projects, onClose, onWithAgent } = props;
   const { skill, draft } = editing;
   const { t } = useTranslation();
   const { save, remove } = useSkillActions();
@@ -30,6 +30,14 @@ export const useSkillEditorViewModel = (props: ISkillEditorProps) => {
 
   return {
     title: skill?.name ?? t('SKILLS.NEW_TITLE'),
+    hasModes: skill === null && draft === null && onWithAgent !== undefined,
+    modes: [
+      { id: 'agent', label: t('SKILLS.WITH_AGENT') },
+      { id: 'hand', label: t('SKILLS.BY_HAND') },
+    ],
+    onMode: (id: string) => {
+      if (id === 'agent') onWithAgent?.();
+    },
     width: SKILL_EDITOR.widthPx,
     isOwn,
     note:

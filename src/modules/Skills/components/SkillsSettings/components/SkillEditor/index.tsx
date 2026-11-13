@@ -61,6 +61,14 @@ export const SkillEditor: React.FC<ISkillEditorProps> = (props) => {
       }
     >
       <div className="skill-editor">
+        {view.hasModes && (
+          <SegmentedControl
+            label={view.title}
+            options={view.modes}
+            value="hand"
+            onChange={view.onMode}
+          />
+        )}
         {view.note !== '' && <p className="skill-editor__note">{view.note}</p>}
 
         {view.isOwn && (

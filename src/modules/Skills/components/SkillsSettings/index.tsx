@@ -66,6 +66,7 @@ export const SkillsSettings: React.FC = () => {
             editing={view.editing}
             projects={view.projects}
             onClose={view.onCloseEditor}
+            onWithAgent={view.onWithAgent}
           />
         )}
         {view.isCreating && (

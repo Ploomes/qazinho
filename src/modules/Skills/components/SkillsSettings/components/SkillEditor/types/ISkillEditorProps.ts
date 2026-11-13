@@ -5,4 +5,5 @@ export interface ISkillEditorProps {
   editing: ISkillEditing;
   projects: IProject[];
   onClose: () => void;
+  onWithAgent?: () => void;
 }
