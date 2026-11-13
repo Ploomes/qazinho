@@ -792,6 +792,10 @@ export const en = {
     IMPORT_UNREADABLE: 'QAzinho could not read that folder.',
     IMPORT_PLAN_SAY:
       'Plan the tests from the tests I already have in the folder {{name}}.',
+    SKILL: 'Skill',
+    SKILL_TAG: 'skill',
+    SKILL_NOTE: 'What should it be used on? Enter sends',
+    SKILL_SAY: 'Follow the {{name}} skill.',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Needs the Android SDK on this machine',

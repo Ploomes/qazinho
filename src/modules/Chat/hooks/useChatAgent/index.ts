@@ -40,6 +40,7 @@ export const useChatAgent = () => {
     jira: IJiraAsk | null;
     confluence: IConfluenceAsk | null;
     source?: IImportAsk | null;
+    skill?: string | null;
     isFromAgent?: boolean;
     attachments?: IChatAttachment[];
   }) => {
@@ -101,6 +102,7 @@ export const useChatAgent = () => {
         ...(target === null ? {} : { targetKind: target.kind }),
       }),
       ...(props.isFromAgent === true ? { isFromAgent: true } : {}),
+      ...(props.skill == null ? {} : { skill: props.skill }),
       ...(props.attachments === undefined || props.attachments.length === 0
         ? {}
         : { attachments: props.attachments }),

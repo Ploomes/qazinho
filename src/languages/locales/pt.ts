@@ -797,6 +797,10 @@ export const pt: typeof en = {
     IMPORT_UNREADABLE: 'O QAzinho não conseguiu ler essa pasta.',
     IMPORT_PLAN_SAY:
       'Planeje os testes a partir dos testes que eu já tenho na pasta {{name}}.',
+    SKILL: 'Skill',
+    SKILL_TAG: 'skill',
+    SKILL_NOTE: 'Em que o agente usa a skill? Enter envia',
+    SKILL_SAY: 'Siga a skill {{name}}.',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Precisa do Android SDK nesta máquina',

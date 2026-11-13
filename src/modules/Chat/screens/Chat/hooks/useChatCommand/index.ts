@@ -19,6 +19,7 @@ import type {
   IImportAsk,
   IImportSource,
   IJiraAsk,
+  ISkill,
   JiraIssueList,
 } from '@/shared/types';
 import { useEffect, useRef, useState } from 'react';
@@ -28,6 +29,7 @@ import {
   CHAT_COMMANDS,
   COMMAND_SEARCH,
   IMPORT_FAILURE_KEYS,
+  SKILL_ROW_PREFIX,
 } from '@/modules/Chat/screens/Chat/constants';
 import { commandBlockerOf } from '@/modules/Chat/screens/Chat/library';
 import {
@@ -44,6 +46,7 @@ export const useChatCommand = (props: {
   isGithubConnected: boolean;
   isJiraConnected: boolean;
   isConfluenceOn: boolean;
+  skills: ISkill[];
   onDraft: (draft: string) => void;
   onBlocked: (blocker: ICommandBlocker) => void;
 }) => {
@@ -53,6 +56,7 @@ export const useChatCommand = (props: {
     isGithubConnected,
     isJiraConnected,
     isConfluenceOn,
+    skills,
     onDraft,
     onBlocked,
   } = props;
@@ -95,11 +99,13 @@ export const useChatCommand = (props: {
               ? command.folder === null
                 ? 'folder'
                 : 'ready'
-              : command.repository === null
-                ? 'repository'
-                : command.branch === null
-                  ? 'branch'
-                  : 'ready';
+              : command.id === 'skill'
+                ? 'ready'
+                : command.repository === null
+                  ? 'repository'
+                  : command.branch === null
+                    ? 'branch'
+                    : 'ready';
   const blockerOf = (id: ChatCommandId) =>
     commandBlockerOf({
       id,
@@ -189,6 +195,7 @@ export const useChatCommand = (props: {
       page: null,
       design: null,
       folder: null,
+      skill: null,
     });
     if (only !== null) load(only);
     if (id === 'jira-plan') setFound(null);
@@ -210,6 +217,7 @@ export const useChatCommand = (props: {
       page: null,
       design: null,
       folder: source,
+      skill: null,
     });
     setFolderFailure(null);
     onDraft('');
@@ -229,6 +237,18 @@ export const useChatCommand = (props: {
       isBlocked: blockerOf(one.id) !== null,
     }))
     .sort((one, other) => Number(one.isBlocked) - Number(other.isBlocked));
+
+  const skillRows: ICommandRow[] = skills
+    .filter((one) =>
+      matchesQuery({ text: `${one.name} ${one.description}`, query: slash ?? '' }),
+    )
+    .map((one) => ({
+      id: `${SKILL_ROW_PREFIX}${one.id}`,
+      label: one.name,
+      tag: t('COMMANDS.SKILL_TAG'),
+      detail: one.description,
+      isBlocked: false,
+    }));
 
   const repositoryRows: ICommandRow[] = repositories
     .filter((one) => matchesQuery({ text: keyOf(one), query: draft }))
@@ -317,7 +337,7 @@ export const useChatCommand = (props: {
 
   const rows =
     step === 'command'
-      ? commandRows
+      ? [...commandRows, ...skillRows]
       : step === 'repository'
         ? repositoryRows
         : step === 'story'
@@ -360,50 +380,54 @@ export const useChatCommand = (props: {
   const branch = command?.branch ?? null;
   const design = command?.design ?? null;
   const folder = command?.folder ?? null;
+  const skill = command?.skill ?? null;
   const parts: ICommandPart[] =
-    folder !== null
-      ? [
-          { key: `name-${folder.dir}`, text: folder.name, isStrong: true },
-          { key: `kinds-${folder.dir}`, text: frameworksText(folder), isStrong: false },
-        ]
-      : design !== null
+    skill !== null
+      ? [{ key: `skill-${skill.id}`, text: skill.name, isStrong: true }]
+      : folder !== null
         ? [
-            { key: `name-${design.url}`, text: design.name, isStrong: true },
-            { key: `node-${design.url}`, text: nodeOf(design), isStrong: false },
+            { key: `name-${folder.dir}`, text: folder.name, isStrong: true },
+            { key: `kinds-${folder.dir}`, text: frameworksText(folder), isStrong: false },
           ]
-        : issue !== null
+        : design !== null
           ? [
-              { key: `key-${issue.key}`, text: issue.key, isStrong: true },
-              { key: `summary-${issue.key}`, text: issue.summary, isStrong: false },
+              { key: `name-${design.url}`, text: design.name, isStrong: true },
+              { key: `node-${design.url}`, text: nodeOf(design), isStrong: false },
             ]
-          : page !== null
+          : issue !== null
             ? [
-                { key: `title-${page.id}`, text: page.title, isStrong: true },
-                ...(page.space === ''
-                  ? []
-                  : [{ key: `space-${page.id}`, text: page.space, isStrong: false }]),
+                { key: `key-${issue.key}`, text: issue.key, isStrong: true },
+                { key: `summary-${issue.key}`, text: issue.summary, isStrong: false },
               ]
-            : [
-                ...(repository === null
-                  ? []
-                  : [
-                      {
-                        key: keyOf(repository),
-                        text: keyOf(repository),
-                        isStrong: false,
-                      },
-                    ]),
-                ...(branch === null
-                  ? []
-                  : [{ key: `branch-${branch}`, text: branch, isStrong: true }]),
-              ];
+            : page !== null
+              ? [
+                  { key: `title-${page.id}`, text: page.title, isStrong: true },
+                  ...(page.space === ''
+                    ? []
+                    : [{ key: `space-${page.id}`, text: page.space, isStrong: false }]),
+                ]
+              : [
+                  ...(repository === null
+                    ? []
+                    : [
+                        {
+                          key: keyOf(repository),
+                          text: keyOf(repository),
+                          isStrong: false,
+                        },
+                      ]),
+                  ...(branch === null
+                    ? []
+                    : [{ key: `branch-${branch}`, text: branch, isStrong: true }]),
+                ];
 
   return {
     command:
       command === null
         ? null
         : ({
-            name: label === undefined ? '' : t(label),
+            name:
+              skill !== null ? t('COMMANDS.SKILL') : label === undefined ? '' : t(label),
             parts,
             isReady: step === 'ready',
             placeholder:
@@ -419,7 +443,9 @@ export const useChatCommand = (props: {
                         ? t('COMMANDS.PICK_DESIGN')
                         : step === 'folder'
                           ? t('COMMANDS.PICK_FOLDER')
-                          : t('COMMANDS.NOTE'),
+                          : skill !== null
+                            ? t('COMMANDS.SKILL_NOTE')
+                            : t('COMMANDS.NOTE'),
           } satisfies IComposerCommand),
     picker:
       step === null || step === 'ready'
@@ -453,6 +479,24 @@ export const useChatCommand = (props: {
     startWith,
     onPick: (id: string) => {
       if (step === 'command') {
+        const called = skills.find((one) => `${SKILL_ROW_PREFIX}${one.id}` === id);
+
+        if (called !== undefined) {
+          setCommand({
+            id: 'skill',
+            repository: null,
+            branch: null,
+            issue: null,
+            page: null,
+            design: null,
+            folder: null,
+            skill: called,
+          });
+          onDraft('');
+
+          return;
+        }
+
         const picked = CHAT_COMMANDS.find((one) => one.id === id);
 
         if (picked === undefined) return;
@@ -525,6 +569,27 @@ export const useChatCommand = (props: {
     ask: (words: string) => {
       const note = words.trim();
 
+      if (command?.id === 'skill') {
+        if (skill === null) return null;
+
+        const say = t('COMMANDS.SKILL_SAY', { name: skill.name });
+
+        return {
+          text: note === '' ? say : `${say}\n\n${note}`,
+          code: null,
+          jira: null,
+          confluence: null,
+          design: null,
+          source: null,
+          skill: skill.id,
+          command: {
+            id: 'skill',
+            skillId: skill.id,
+            name: skill.name,
+          } satisfies UserCommand,
+        };
+      }
+
       if (command?.id === 'import-plan') {
         const { folder: picked } = command;
 
@@ -539,6 +604,7 @@ export const useChatCommand = (props: {
           confluence: null,
           design: null,
           source: { dir: picked.dir } satisfies IImportAsk,
+          skill: null,
           command: {
             id: 'import-plan',
             name: picked.name,
@@ -560,6 +626,7 @@ export const useChatCommand = (props: {
           confluence: null,
           design: command.design,
           source: null,
+          skill: null,
           command: {
             id: 'figma-plan',
             name: command.design.name,
@@ -583,6 +650,7 @@ export const useChatCommand = (props: {
           confluence: { pageId: picked.id } satisfies IConfluenceAsk,
           design: null,
           source: null,
+          skill: null,
           command: {
             id: 'confluence-plan',
             pageId: picked.id,
@@ -610,6 +678,7 @@ export const useChatCommand = (props: {
           confluence: null,
           design: null,
           source: null,
+          skill: null,
           command: {
             id: 'jira-plan',
             key: issue.key,
@@ -646,6 +715,7 @@ export const useChatCommand = (props: {
         confluence: null,
         design: null,
         source: null,
+        skill: null,
         command: {
           id: 'code-plan',
           repository: name,

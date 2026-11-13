@@ -6,7 +6,10 @@ import { CHAT_COMMANDS } from '@/modules/Chat/screens/Chat/constants';
 export const useUserMessageViewModel = (props: IUserMessageProps) => {
   const { text, mentions = [], command, from, attachments = [] } = props.message;
   const { t } = useTranslation();
-  const labelKey = CHAT_COMMANDS.find(({ id }) => id === command?.id)?.labelKey;
+  const labelKey =
+    command?.id === 'skill'
+      ? 'COMMANDS.SKILL'
+      : CHAT_COMMANDS.find(({ id }) => id === command?.id)?.labelKey;
 
   return {
     className: from === 'agent' ? 'user-message user-message--outside' : 'user-message',
@@ -23,44 +26,46 @@ export const useUserMessageViewModel = (props: IUserMessageProps) => {
         ? null
         : {
             name: t(labelKey),
-            parts: (command.id === 'jira-plan'
-              ? [
-                  { text: command.key, isStrong: true },
-                  { text: command.summary, isStrong: false },
-                ]
-              : command.id === 'confluence-plan'
+            parts: (command.id === 'skill'
+              ? [{ text: command.name, isStrong: true }]
+              : command.id === 'jira-plan'
                 ? [
-                    { text: command.title, isStrong: true },
-                    ...(command.space === ''
-                      ? []
-                      : [{ text: command.space, isStrong: false }]),
+                    { text: command.key, isStrong: true },
+                    { text: command.summary, isStrong: false },
                   ]
-                : command.id === 'import-plan'
+                : command.id === 'confluence-plan'
                   ? [
-                      { text: command.name, isStrong: true },
-                      {
-                        text:
-                          command.frameworks.length === 0
-                            ? t('COMMANDS.IMPORT_UNKNOWN')
-                            : command.frameworks.join(', '),
-                        isStrong: false,
-                      },
+                      { text: command.title, isStrong: true },
+                      ...(command.space === ''
+                        ? []
+                        : [{ text: command.space, isStrong: false }]),
                     ]
-                  : command.id === 'figma-plan'
+                  : command.id === 'import-plan'
                     ? [
                         { text: command.name, isStrong: true },
                         {
                           text:
-                            command.nodeId === null
-                              ? t('COMMANDS.DESIGN_WHOLE_FILE')
-                              : t('COMMANDS.DESIGN_NODE', { node: command.nodeId }),
+                            command.frameworks.length === 0
+                              ? t('COMMANDS.IMPORT_UNKNOWN')
+                              : command.frameworks.join(', '),
                           isStrong: false,
                         },
                       ]
-                    : [
-                        { text: command.repository, isStrong: false },
-                        { text: command.branch, isStrong: true },
-                      ]
+                    : command.id === 'figma-plan'
+                      ? [
+                          { text: command.name, isStrong: true },
+                          {
+                            text:
+                              command.nodeId === null
+                                ? t('COMMANDS.DESIGN_WHOLE_FILE')
+                                : t('COMMANDS.DESIGN_NODE', { node: command.nodeId }),
+                            isStrong: false,
+                          },
+                        ]
+                      : [
+                          { text: command.repository, isStrong: false },
+                          { text: command.branch, isStrong: true },
+                        ]
             ).map((part, index) => ({
               key: `${String(index)}-${part.text}`,
               text: part.text,

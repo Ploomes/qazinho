@@ -53,6 +53,7 @@ import {
   tallyPartsOf,
   useRunActions,
 } from '@/modules/Run';
+import { calledSkillsOf } from '@/modules/Skills';
 import { Agent, Attachments, Run } from '@/services';
 import { CHAT_ATTACHMENTS, EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -61,6 +62,7 @@ import {
   useAssistantStore,
   useSettingsStore,
   useSetupStore,
+  useSkillStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -145,12 +147,14 @@ export const useChatViewModel = () => {
   const selectSettingsTab = useSettingsStore((state) => state.selectTab);
   const openSettings = useAppStore((state) => state.openSettings);
   const openProjectSection = useAppStore((state) => state.openProjectSection);
+  const skills = useSkillStore((state) => state.skills);
   const chatCommand = useChatCommand({
     draft,
     repositories: project?.repositories ?? [],
     isGithubConnected,
     isJiraConnected,
     isConfluenceOn,
+    skills: calledSkillsOf({ skills, projectId: project?.id ?? null }),
     onDraft: setDraft,
     onBlocked: (blocker) => {
       say(t(blocker.tipKey));
@@ -228,6 +232,7 @@ export const useChatViewModel = () => {
     jira: IJiraAsk | null;
     confluence: IConfluenceAsk | null;
     source: IImportAsk | null;
+    skill?: string | null;
     attachments?: IChatAttachment[];
   }) => {
     if (workspace !== null) chatAgent.askAgent({ workspaceId: workspace.id, ...props });
@@ -324,6 +329,7 @@ export const useChatViewModel = () => {
       jira: asked?.jira ?? null,
       confluence: asked?.confluence ?? null,
       source: asked?.source ?? null,
+      skill: asked?.skill ?? null,
       attachments: pending,
     });
   };
@@ -409,12 +415,7 @@ export const useChatViewModel = () => {
           ? t('COMMANDS.STEP_FILES', { key: sentCommand.key })
           : t('COMMANDS.STEP_FILES_SIZE', { key: sentCommand.key, size });
 
-    if (
-      sentCommand.id === 'figma-plan' ||
-      sentCommand.id === 'confluence-plan' ||
-      sentCommand.id === 'import-plan'
-    )
-      return '';
+    if (sentCommand.id !== 'code-plan') return '';
 
     return readStep.step === 'commit'
       ? t('COMMANDS.STEP_COMMIT', { branch: sentCommand.branch })
