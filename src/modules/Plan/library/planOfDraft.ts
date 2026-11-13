@@ -51,6 +51,8 @@ export function planOfDraft(props: {
       ...(props.plan.some((kept) => kept.id === id && kept.isManual === true)
         ? { isManual: true }
         : {}),
+      ...namesOf({ names: one.sources, key: 'sources' }),
+      ...namesOf({ names: one.blockedBy, key: 'blockedBy' }),
     };
   });
 
@@ -67,4 +69,13 @@ function keptIdOf(props: {
   const byTitle = plan.find(({ id, title }) => title === drafted.title && !taken.has(id));
 
   return byId?.id ?? byTitle?.id ?? null;
+}
+
+function namesOf(props: {
+  names: string[] | undefined;
+  key: 'sources' | 'blockedBy';
+}): Partial<Record<'sources' | 'blockedBy', string[]>> {
+  const names = (props.names ?? []).map((name) => name.trim()).filter(Boolean);
+
+  return names.length === 0 ? {} : { [props.key]: [...new Set(names)] };
 }

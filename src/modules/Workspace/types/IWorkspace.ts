@@ -11,12 +11,14 @@ import type {
   ICodeSource,
   IConfluencePageRef,
   IDesignLink,
+  IPlanDoubt,
+  IPlanStrategy,
   IUnreadPlan,
 } from '@/shared/types';
 
 /**
- * Uma frente de teste num projeto: o chat, o dispositivo, o plano, as runs e de onde veio
- * o plano dela.
+ * Uma frente de teste num projeto: o chat, o dispositivo, o plano com a estratégia e as
+ * dúvidas dele, as runs e de onde veio o plano.
  */
 export interface IWorkspace {
   id: string;
@@ -33,6 +35,8 @@ export interface IWorkspace {
   design: IDesignLink | null;
   chat: ChatMessage[];
   plan: ITestCase[];
+  strategy?: IPlanStrategy | null;
+  doubts?: IPlanDoubt[];
   unreadPlan: IUnreadPlan | null;
   plainValues: string[];
   planSource: ICodeSource | null;

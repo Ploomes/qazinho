@@ -46,9 +46,22 @@ export function planOfYaml(yaml: string): ITestCase[] {
         ...(testCase.isManual === true || testCase.manual === true
           ? { isManual: true }
           : {}),
+        ...textsOf({ value: testCase.sources, key: 'sources' }),
+        ...textsOf({ value: testCase.blockedBy, key: 'blockedBy' }),
       },
     ];
   }, []);
+}
+
+function textsOf(props: {
+  value: unknown;
+  key: 'sources' | 'blockedBy';
+}): Partial<Record<'sources' | 'blockedBy', string[]>> {
+  const texts = Array.isArray(props.value)
+    ? props.value.map(textOf).filter((text) => text.trim().length > 0)
+    : [];
+
+  return texts.length === 0 ? {} : { [props.key]: texts };
 }
 
 function textOf(value: unknown): string {

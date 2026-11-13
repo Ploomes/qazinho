@@ -187,6 +187,7 @@ export const useChatAgent = () => {
           workspaceId,
           summary: answer.reply,
           plan,
+          strategy: answer.plan?.strategy ?? null,
           source: turn.code,
           story: turn.story,
           page: turn.page,

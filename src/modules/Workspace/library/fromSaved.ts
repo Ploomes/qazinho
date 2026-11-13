@@ -2,7 +2,7 @@ import type { IRun } from '@/modules/Run';
 import type { IWorkspace, SavedBug, SavedMessage } from '@/modules/Workspace/types';
 import type { ISavedWorkspace } from '@/shared/types';
 import { viewportOf } from '@/modules/Device/library';
-import { planOfYaml } from '@/modules/Plan/library';
+import { planExtrasOfYaml, planOfYaml } from '@/modules/Plan/library';
 import { bugOfSaved } from './bugOfSaved';
 import { codeSourceOf } from './codeSourceOf';
 import { messageOfSaved } from './messageOfSaved';
@@ -45,6 +45,7 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     design: read.design ?? null,
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
     plan: planOfYaml(saved.planYaml),
+    ...planExtrasOfYaml(saved.planYaml),
     unreadPlan: saved.unreadPlan ?? read.unreadPlan ?? null,
     plainValues: read.plainValues ?? [],
     planSource: codeSourceOf(read.planSource),

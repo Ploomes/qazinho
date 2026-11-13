@@ -16,6 +16,7 @@ import type {
   IFiledIssue,
   IJiraIssueRef,
   IManualTurn,
+  IPlanStrategy,
   IRunAsked,
   IRunFinding,
   IRunInFlight,
@@ -100,6 +101,7 @@ export interface IWorkspaceStore {
     plan: ITestCase[];
     source: ICodeSource | null;
     story: IJiraIssueRef | null;
+    strategy?: IPlanStrategy | null;
     page: IConfluencePageRef | null;
     who: string;
     agentId: string;

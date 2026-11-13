@@ -46,6 +46,16 @@ describe('planOfDraft', () => {
     ]);
   });
 
+  it('keeps where each case comes from and the doubts it waits on, trimmed and once', () => {
+    const [plan] =
+      fresh([
+        { ...CARD, sources: [' C2 ', 'C2', 'frame 1:2', ' '], blockedBy: ['D1'] },
+      ]) ?? [];
+
+    expect(plan).toMatchObject({ sources: ['C2', 'frame 1:2'], blockedBy: ['D1'] });
+    expect(fresh([CARD])?.[0]).not.toHaveProperty('sources');
+  });
+
   it('refuses a plan with no case worth running', () => {
     expect(fresh([])).toBeNull();
   });

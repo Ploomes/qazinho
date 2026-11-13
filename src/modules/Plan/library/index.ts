@@ -12,6 +12,7 @@ export * from './missingVariablesOf';
 export * from './moveCase';
 export * from './nextCaseId';
 export * from './planDocOf';
+export * from './planExtrasOfYaml';
 export * from './planOfDraft';
 export * from './planWithCases';
 export * from './planOfYaml';
