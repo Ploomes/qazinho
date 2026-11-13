@@ -165,6 +165,69 @@ describe('usePlanViewModel', () => {
     });
   });
 
+  describe('the cases done by hand', () => {
+    /** Um plano de dois casos, o TC-02 à mão, que uma run do plano já rodou sem ele. */
+    const waiting = () => {
+      const walked = walkRun({
+        workspace: {
+          ...makeWorkspace(),
+          plan: CASES.map((one) =>
+            one.id === 'TC-02' ? { ...one, isManual: true } : one,
+          ),
+        },
+        verdicts: ['passed', 'passed', 'passed'],
+        isFinished: true,
+      });
+
+      useAppStore.setState({ projects: [PROJECT] });
+      useWorkspaceStore.setState({ workspaces: [walked] });
+    };
+
+    it('says which case waits for the QA once the plan ran, and starts it by hand', () => {
+      useSettingsStore.setState({ language: 'en' });
+      waiting();
+
+      const startRunCall: { mode?: string; caseIds?: string[] }[] = [];
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        startRun: (run) => {
+          startRunCall.push(run);
+
+          return Promise.resolve();
+        },
+      };
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.manualNotice).toEqual({
+        text: 'TC-02 waits for you, by hand.',
+        actionLabel: 'Walk it now',
+      });
+
+      act(() => {
+        result.current.onWalkWaiting();
+      });
+
+      expect(startRunCall).toEqual([
+        expect.objectContaining({ mode: 'manual', caseIds: ['TC-02'] }),
+      ]);
+    });
+
+    it('says nothing before the plan ever ran', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace(),
+            plan: CASES.map((one) => ({ ...one, isManual: true })),
+          },
+        ],
+      });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.manualNotice).toBeNull();
+    });
+  });
+
   describe('publishing in Confluence', () => {
     beforeEach(() => {
       useSettingsStore.setState({ language: 'en' });

@@ -30,7 +30,7 @@ import {
 } from '@/modules/Plan/screens/Plan/constants';
 import { bytesLabelOf, useProUpdate } from '@/modules/Pro';
 import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
-import { flattenPlanSteps, useRunActions } from '@/modules/Run';
+import { flattenPlanSteps, manualWaitingOf, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { Archive, Confluence, Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -88,7 +88,7 @@ export const usePlanViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const openBugId = useWorkspaceStore((state) => state.openBugId);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
-  const { onRunCase } = useRunActions();
+  const { onRunCase, onWalkByHand } = useRunActions();
   const { update: updateFromOrg } = useProUpdate();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
   const [freshCaseId, setFreshCaseId] = useState<string | null>(null);
@@ -300,6 +300,8 @@ export const usePlanViewModel = () => {
     run === null ? [] : [[id, run] as const],
   );
 
+  const waiting = manualWaitingOf({ plan, runs: workspace?.runs ?? [] });
+
   return {
     topRef,
     onToTop,
@@ -434,6 +436,21 @@ export const usePlanViewModel = () => {
     onToggleCase: toggleCase,
     onReorder: write,
     onRunCase,
+    manualNotice:
+      waiting.length === 0 || isLocked
+        ? null
+        : {
+            text:
+              waiting.length === 1
+                ? t('PLAN.MANUAL_WAITING_ONE', { id: waiting[0] })
+                : t('PLAN.MANUAL_WAITING_OTHER', { count: waiting.length }),
+            actionLabel: t('PLAN.MANUAL_NOW'),
+          },
+    onWalkWaiting: () => {
+      const [first] = waiting;
+
+      if (first !== undefined) onWalkByHand(first);
+    },
     missingNotice:
       missing.length === 0 || isLocked
         ? null

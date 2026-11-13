@@ -22,6 +22,7 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     props.liveStatus === 'running' ||
     props.liveStatus === 'paused' ||
     props.liveStatus === 'attention';
+  const isManual = testCase.isManual === true;
   const hasGoal = testCase.goal !== '';
   const hasBefore = testCase.preconditions !== '';
   const verdict = props.liveStatus ?? testCase.lastVerdict ?? 'pending';
@@ -29,9 +30,11 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     ? ''
     : stopped !== undefined
       ? t('PLAN.REASON_STEP', { number: stopped.number })
-      : props.isDeveloped === true
-        ? ''
-        : t('PLAN.REASON_TO_DEVELOP');
+      : isManual
+        ? t('PLAN.REASON_MANUAL')
+        : props.isDeveloped === true
+          ? ''
+          : t('PLAN.REASON_TO_DEVELOP');
 
   return {
     reason,
@@ -86,7 +89,8 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     }),
     verdict,
     hasStatus:
-      verdict !== 'passed' && !(verdict === 'pending' && props.isDeveloped === true),
+      verdict !== 'passed' &&
+      !(verdict === 'pending' && (props.isDeveloped === true || isManual)),
     isTitleFocused: props.isFresh === true,
     canRemoveStep: testCase.steps.length > 1 && !isLocked,
     onHeadClick: () => {
@@ -96,7 +100,19 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     onFactAdd: (fact: 'goal' | 'before') => {
       setOpenFacts((current) => ({ ...current, [fact]: true }));
     },
-    runCaseLabel: t(props.isDeveloped === true ? 'PLAN.RUN_CASE' : 'PLAN.DEVELOP_CASE'),
+    runCaseLabel: t(
+      isManual
+        ? 'PLAN.WALK_BY_HAND'
+        : props.isDeveloped === true
+          ? 'PLAN.RUN_CASE'
+          : 'PLAN.DEVELOP_CASE',
+    ),
+    runIcon: isManual ? ('manual' as const) : ('play' as const),
+    manualLabel: t(isManual ? 'PLAN.AUTOMATE' : 'PLAN.MAKE_MANUAL'),
+    manualIcon: isManual ? ('play' as const) : ('manual' as const),
+    onManualToggle: () => {
+      props.onEditCase({ caseId, fields: { isManual: !isManual } });
+    },
     moveLabel: t('PLAN.MOVE_CASE'),
     onHeadKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => {
       if (isLocked || !event.altKey) return;

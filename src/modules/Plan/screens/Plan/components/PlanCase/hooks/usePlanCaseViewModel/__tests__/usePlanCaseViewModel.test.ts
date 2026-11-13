@@ -356,6 +356,19 @@ describe('usePlanCaseViewModel', () => {
       expect(result.current.reason).toBe('');
     });
 
+    it('says a case the QA walks by hand is done by hand, with no status beside it', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, testCase: { ...TEST_CASE, isManual: true } }),
+      );
+
+      expect(result.current).toMatchObject({
+        reason: 'by hand',
+        hasStatus: false,
+        runCaseLabel: 'Walk this case by hand',
+        runIcon: 'manual',
+      });
+    });
+
     it('does NOT give a reason while the run walks the case', () => {
       const { result } = renderHook(() =>
         usePlanCaseViewModel({ ...PROPS, liveStatus: 'running' }),
@@ -566,6 +579,43 @@ describe('usePlanCaseViewModel', () => {
         renderHook(() => usePlanCaseViewModel({ ...PROPS, testCase: p1 })).result.current
           .priority,
       ).toBeNull();
+    });
+  });
+
+  describe('walking a case by hand', () => {
+    it('marks an automated case as one the QA walks by hand, and back', () => {
+      const onEditCase = vi.fn();
+      const automated = renderHook(() => usePlanCaseViewModel({ ...PROPS, onEditCase }));
+
+      expect(automated.result.current.manualLabel).toBe('Walk it by hand');
+
+      act(() => {
+        automated.result.current.onManualToggle();
+      });
+
+      expect(onEditCase).toHaveBeenLastCalledWith({
+        caseId: TEST_CASE.id,
+        fields: { isManual: true },
+      });
+
+      const manual = renderHook(() =>
+        usePlanCaseViewModel({
+          ...PROPS,
+          testCase: { ...TEST_CASE, isManual: true },
+          onEditCase,
+        }),
+      );
+
+      expect(manual.result.current.manualLabel).toBe('Automate it');
+
+      act(() => {
+        manual.result.current.onManualToggle();
+      });
+
+      expect(onEditCase).toHaveBeenLastCalledWith({
+        caseId: TEST_CASE.id,
+        fields: { isManual: false },
+      });
     });
   });
 });

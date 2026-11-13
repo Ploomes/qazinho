@@ -13,6 +13,8 @@ export const Plan: React.FC = () => {
     isToTopShown,
     onToTop,
     secretNotice,
+    manualNotice,
+    onWalkWaiting,
     onKeepSecret,
     onPlainSecret,
     unread,
@@ -169,6 +171,25 @@ export const Plan: React.FC = () => {
           </div>
 
           <AnimatePresence initial={false}>
+            {manualNotice !== null && (
+              <motion.div
+                key="manual"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div className="plan__export-body">
+                  <span className="plan__export-text">{manualNotice.text}</span>
+                  <Button size="sm" onClick={onWalkWaiting}>
+                    <Icon name="manual" />
+                    {manualNotice.actionLabel}
+                  </Button>
+                </div>
+              </motion.div>
+            )}
             {secretNotice !== null && (
               <motion.div
                 key="secret"

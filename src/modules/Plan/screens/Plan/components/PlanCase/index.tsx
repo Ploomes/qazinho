@@ -28,6 +28,10 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
     canRemoveStep,
     onHeadClick,
     runCaseLabel,
+    runIcon,
+    manualLabel,
+    manualIcon,
+    onManualToggle,
     moveLabel,
     onHeadKeyDown,
     onFieldCommit,
@@ -118,7 +122,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                     props.onRunCase?.(props.testCase.id);
                   }}
                 >
-                  <Icon name="play" />
+                  <Icon name={runIcon} />
                 </button>
               )}
             </span>
@@ -300,6 +304,14 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                     >
                       <Icon name="plus" />
                       {t('PLAN.ADD_STEP')}
+                    </button>
+                    <button
+                      type="button"
+                      className="plan-case__ghost plan-case__manual"
+                      onClick={onManualToggle}
+                    >
+                      <Icon name={manualIcon} />
+                      {manualLabel}
                     </button>
                     <button
                       type="button"
