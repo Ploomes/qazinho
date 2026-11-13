@@ -492,6 +492,11 @@ export const pt: typeof en = {
     DOUBTS_POSTING: 'Postando…',
     TIP_JIRA_DOUBTS: 'Conecte o Jira aqui e depois mande as dúvidas pela aba Plano.',
     CHECK_CHANGES: 'Conferir mudanças',
+    RUN_CHANGED_TITLE: 'Rodar com mudanças por revisar?',
+    RUN_CHANGED_TEXT:
+      'As fontes de {{plan}} mudaram depois dele, e as trocas não foram revistas. Rodando agora, os casos conferem o que as fontes diziam antes.',
+    RUN_CHANGED_REVIEW: 'Revisar antes',
+    RUN_CHANGED_RUN: 'Rodar assim',
     CHECKING_CHANGES: 'Conferindo…',
     CHANGES_NONE: 'Nada mudou nas fontes desde este plano.',
     CHANGES_MISSED: 'Não consegui ler {{names}}.',

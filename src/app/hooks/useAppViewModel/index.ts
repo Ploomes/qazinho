@@ -57,6 +57,7 @@ export const useAppViewModel = () => {
   const hasHeldRun = useProStore(
     (state) => state.heldRun !== null && state.merging === null,
   );
+  const hasChangeHold = useWorkspaceStore((state) => state.changeHold !== null);
 
   useArchive();
   useVariables();
@@ -118,6 +119,7 @@ export const useAppViewModel = () => {
     hasProLink,
     hasProMerge,
     hasHeldRun,
+    hasChangeHold,
     replayKey:
       replay === null
         ? 'replay'

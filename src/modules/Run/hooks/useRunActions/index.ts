@@ -13,6 +13,7 @@ import {
 } from '@/modules/Run/library';
 import { Run } from '@/services';
 import { EXPLORATION } from '@/shared/constants';
+import { useSourceCheck } from '@/shared/hooks/useSourceCheck';
 import {
   useAppStore,
   useMachineStore,
@@ -27,6 +28,7 @@ export const useRunActions = () => {
   const pause = useWorkspaceStore((state) => state.pauseRun);
   const stop = useWorkspaceStore((state) => state.stopRun);
   const landRunFailed = useWorkspaceStore((state) => state.landRunFailed);
+  const { check } = useSourceCheck();
 
   const opened = (workspaceId: string | null) => {
     const { projects } = useAppStore.getState();
@@ -146,7 +148,33 @@ export const useRunActions = () => {
       return;
     }
 
-    begin({ workspaceId, mode, ...(caseIds === undefined ? {} : { caseIds }) });
+    const scoped = caseIds === undefined ? {} : { caseIds };
+    const { workspace } = opened(workspaceId);
+    const { holdForChanges } = useWorkspaceStore.getState();
+
+    if (workspace === null || mode === 'explore') {
+      begin({ workspaceId, mode, ...scoped });
+
+      return;
+    }
+
+    if (workspace.changed !== undefined || workspace.review !== undefined) {
+      holdForChanges({ workspaceId: workspace.id, mode, ...scoped });
+
+      return;
+    }
+
+    if ((workspace.snapshots ?? []).length === 0 && workspace.planSource === null) {
+      begin({ workspaceId, mode, ...scoped });
+
+      return;
+    }
+
+    void check(workspace.id).then((checked) => {
+      if (checked !== null && checked.changes.length > 0)
+        holdForChanges({ workspaceId: workspace.id, mode, ...scoped });
+      else begin({ workspaceId, mode, ...scoped });
+    });
   };
 
   const stageOfSelected = () => {

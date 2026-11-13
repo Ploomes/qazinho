@@ -489,6 +489,11 @@ export const en = {
     DOUBTS_POSTING: 'Posting…',
     TIP_JIRA_DOUBTS: 'Connect Jira here, then send the doubts from the Plan tab.',
     CHECK_CHANGES: 'Check for changes',
+    RUN_CHANGED_TITLE: 'Run with changes to review?',
+    RUN_CHANGED_TEXT:
+      'The sources of {{plan}} changed after it, and its swaps were not reviewed. Run now, and the cases check what the sources said before.',
+    RUN_CHANGED_REVIEW: 'Review first',
+    RUN_CHANGED_RUN: 'Run as it is',
     CHECKING_CHANGES: 'Checking…',
     CHANGES_NONE: 'Nothing changed in the sources since this plan.',
     CHANGES_MISSED: 'Could not read {{names}}.',
