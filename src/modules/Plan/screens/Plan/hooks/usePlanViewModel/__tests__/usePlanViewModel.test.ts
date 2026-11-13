@@ -9,7 +9,7 @@ import type {
   VariablesOutcome,
 } from '@/shared/types';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { usePlanViewModel } from '@/modules/Plan/screens/Plan/hooks/usePlanViewModel';
 import { startRun } from '@/modules/Workspace';
 import {
@@ -431,16 +431,41 @@ describe('usePlanViewModel', () => {
     });
 
     /** Exportar ficava no fim da lista, e o QA rolava o plano inteiro para achá-lo. */
-    it('puts the export at the top of the plan, and nothing there when it has nothing', () => {
+    it('puts the plan’s actions at the top, and none while a run walks it', () => {
       expect(renderHook(() => usePlanViewModel()).result.current.hasTopActions).toBe(
         true,
       );
 
-      useAppStore.setState({ projects: [] });
-      useSetupStore.setState({ integrations: [] });
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
 
       expect(renderHook(() => usePlanViewModel()).result.current.hasTopActions).toBe(
         false,
+      );
+    });
+
+    it('shows the plan as Gherkin, and saves it as a .feature file', async () => {
+      const saveText = vi.fn(() => Promise.resolve('saved' as const));
+
+      window.qazinho = { ...window.qazinho, saveText };
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onToggleGherkin();
+      });
+
+      expect(result.current.isGherkin).toBe(true);
+      expect(result.current.gherkin).toContain('Feature: Checkout regression');
+
+      act(() => {
+        result.current.onExportFeature();
+      });
+
+      await waitFor(() => {
+        expect(result.current.featureNotice).toBe('The .feature file is saved.');
+      });
+      expect(saveText).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'Checkout regression', extension: 'feature' }),
       );
     });
   });

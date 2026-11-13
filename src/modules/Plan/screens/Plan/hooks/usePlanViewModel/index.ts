@@ -13,6 +13,7 @@ import {
   editCase,
   editStep,
   freeVariableName,
+  gherkinOf,
   liveCasesOf,
   missingVariablesOf,
   moveCase,
@@ -33,7 +34,7 @@ import { bytesLabelOf, useProUpdate } from '@/modules/Pro';
 import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
 import { flattenPlanSteps, manualWaitingOf, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
-import { Archive, Confluence, Run } from '@/services';
+import { Archive, Confluence, Files, Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useToTop } from '@/shared/hooks/useToTop';
 import {
@@ -103,6 +104,11 @@ export const usePlanViewModel = () => {
     outcome: ExportOutcome;
   } | null>(null);
   const [isPublishOpen, setIsPublishOpen] = useState(false);
+  const [isGherkin, setGherkin] = useState(false);
+  const [featureSaved, setFeatureSaved] = useState<{
+    workspaceId: string;
+    text: string;
+  } | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishing, setPublishing] = useState<{
     workspaceId: string;
@@ -137,6 +143,19 @@ export const usePlanViewModel = () => {
   } | null>(null);
 
   const workspaceId = workspace?.id ?? null;
+  const gherkinOfPlan = () =>
+    gherkinOf({
+      name: workspace?.name ?? '',
+      plan: workspace?.plan ?? [],
+      words: {
+        language: t('PLAN_DOC.GHERKIN_LANGUAGE'),
+        feature: t('PLAN_DOC.GHERKIN_FEATURE'),
+        scenario: t('PLAN_DOC.GHERKIN_SCENARIO'),
+        given: t('PLAN_DOC.GHERKIN_GIVEN'),
+        when: t('PLAN_DOC.GHERKIN_WHEN'),
+        then: t('PLAN_DOC.GHERKIN_THEN'),
+      },
+    });
   const exported = exportedIn?.workspaceId === workspaceId ? exportedIn.outcome : null;
   const plan = workspace?.plan ?? [];
   const isLocked = workspace?.isLocked === true;
@@ -497,7 +516,34 @@ export const usePlanViewModel = () => {
         by: 'plan',
       });
     },
-    hasTopActions: plan.length > 0 && !isLocked && (isConfluenceOn || target !== null),
+    hasTopActions: plan.length > 0 && !isLocked,
+    isGherkin,
+    gherkin: isGherkin ? gherkinOfPlan() : '',
+    gherkinLabel: isGherkin ? t('PLAN.SHOW_CASES') : t('PLAN.SHOW_GHERKIN'),
+    featureLabel: t('PLAN.EXPORT_FEATURE'),
+    featureNotice: featureSaved?.workspaceId === workspaceId ? featureSaved.text : null,
+    onToggleGherkin: () => {
+      setGherkin(!isGherkin);
+    },
+    onExportFeature: () => {
+      if (workspaceId === null) return;
+
+      void Files.saveText({
+        name: workspace?.name ?? '',
+        extension: 'feature',
+        text: gherkinOfPlan(),
+      }).then((outcome) => {
+        if (outcome !== 'cancelled')
+          setFeatureSaved({
+            workspaceId,
+            text:
+              outcome === 'saved' ? t('PLAN.FEATURE_SAVED') : t('PLAN.FEATURE_FAILED'),
+          });
+      });
+    },
+    onDismissFeature: () => {
+      setFeatureSaved(null);
+    },
     canPublish: isConfluenceOn && plan.length > 0 && !isLocked,
     isPublishing,
     publishLabel: isPublishing

@@ -494,6 +494,11 @@ export const en = {
     DOUBTS_POST: 'Post the comment',
     DOUBTS_POSTING: 'Posting…',
     TIP_JIRA_DOUBTS: 'Connect Jira here, then send the doubts from the Plan tab.',
+    SHOW_GHERKIN: 'See as Gherkin',
+    SHOW_CASES: 'See the cases',
+    EXPORT_FEATURE: 'Export .feature',
+    FEATURE_SAVED: 'The .feature file is saved.',
+    FEATURE_FAILED: 'The .feature file could not be saved.',
     CHECK_CHANGES: 'Check for changes',
     RUN_CHANGED_TITLE: 'Run with changes to review?',
     RUN_CHANGED_TEXT:

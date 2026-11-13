@@ -58,6 +58,14 @@ export const Plan: React.FC = () => {
     addMissingLabel,
     onAddMissing,
     hasTopActions,
+    isGherkin,
+    gherkin,
+    gherkinLabel,
+    featureLabel,
+    featureNotice,
+    onToggleGherkin,
+    onExportFeature,
+    onDismissFeature,
     canPublish,
     isPublishing,
     publishLabel,
@@ -157,6 +165,19 @@ export const Plan: React.FC = () => {
 
           {hasTopActions && (
             <div className="plan__toolbar">
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-pressed={isGherkin}
+                onClick={onToggleGherkin}
+              >
+                {gherkinLabel}
+              </Button>
+              {isGherkin && (
+                <Button variant="ghost" size="sm" onClick={onExportFeature}>
+                  {featureLabel}
+                </Button>
+              )}
               {canPublish && (
                 <Tooltip content={publishTip}>
                   <Button
@@ -178,6 +199,32 @@ export const Plan: React.FC = () => {
               )}
             </div>
           )}
+
+          <AnimatePresence initial={false}>
+            {featureNotice !== null && (
+              <motion.div
+                key="feature"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div className="plan__export-body">
+                  <span className="plan__export-text">{featureNotice}</span>
+                  <Tooltip content={dismissExportLabel}>
+                    <IconButton
+                      icon="close"
+                      label={dismissExportLabel}
+                      size="sm"
+                      onClick={onDismissFeature}
+                    />
+                  </Tooltip>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <AnimatePresence initial={false}>
             {exportNotice !== null && (
@@ -387,38 +434,42 @@ export const Plan: React.FC = () => {
             </div>
           )}
 
-          <Reorder.Group
-            axis="y"
-            values={plan}
-            onReorder={onReorder}
-            className="plan__cases"
-          >
-            <AnimatePresence initial={false}>
-              {plan.map((testCase) => (
-                <PlanCase
-                  key={testCase.id}
-                  testCase={testCase}
-                  lastRun={lastRuns[testCase.id]}
-                  liveStatus={liveStatuses[testCase.id]}
-                  isDeveloped={developedIds.includes(testCase.id)}
-                  design={design}
-                  isOpen={openCaseId === testCase.id}
-                  isFresh={freshCaseId === testCase.id}
-                  changeWhy={changeWhys[testCase.id]}
-                  isLocked={isLocked}
-                  onToggle={onToggleCase}
-                  onRunCase={onRunCase}
-                  onEditCase={onEditCase}
-                  onRemoveCase={onRemoveCase}
-                  onOpenBug={onOpenBug}
-                  onMoveCase={onMoveCase}
-                  onAddStep={onAddStep}
-                  onRemoveStep={onRemoveStep}
-                  onEditStep={onEditStep}
-                />
-              ))}
-            </AnimatePresence>
-          </Reorder.Group>
+          {isGherkin && <pre className="plan__gherkin">{gherkin}</pre>}
+
+          {!isGherkin && (
+            <Reorder.Group
+              axis="y"
+              values={plan}
+              onReorder={onReorder}
+              className="plan__cases"
+            >
+              <AnimatePresence initial={false}>
+                {plan.map((testCase) => (
+                  <PlanCase
+                    key={testCase.id}
+                    testCase={testCase}
+                    lastRun={lastRuns[testCase.id]}
+                    liveStatus={liveStatuses[testCase.id]}
+                    isDeveloped={developedIds.includes(testCase.id)}
+                    design={design}
+                    isOpen={openCaseId === testCase.id}
+                    isFresh={freshCaseId === testCase.id}
+                    changeWhy={changeWhys[testCase.id]}
+                    isLocked={isLocked}
+                    onToggle={onToggleCase}
+                    onRunCase={onRunCase}
+                    onEditCase={onEditCase}
+                    onRemoveCase={onRemoveCase}
+                    onOpenBug={onOpenBug}
+                    onMoveCase={onMoveCase}
+                    onAddStep={onAddStep}
+                    onRemoveStep={onRemoveStep}
+                    onEditStep={onEditStep}
+                  />
+                ))}
+              </AnimatePresence>
+            </Reorder.Group>
+          )}
 
           {!isLocked && (
             <div className="plan__foot">

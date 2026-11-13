@@ -203,3 +203,15 @@
   height: 0;
   margin-top: auto;
 }
+
+.plan__gherkin {
+  margin: 0;
+  padding: var(--space-5);
+  overflow-x: auto;
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-code-md);
+  white-space: pre;
+}

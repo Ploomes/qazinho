@@ -497,6 +497,11 @@ export const pt: typeof en = {
     DOUBTS_POST: 'Postar o comentário',
     DOUBTS_POSTING: 'Postando…',
     TIP_JIRA_DOUBTS: 'Conecte o Jira aqui e depois mande as dúvidas pela aba Plano.',
+    SHOW_GHERKIN: 'Ver em Gherkin',
+    SHOW_CASES: 'Ver os casos',
+    EXPORT_FEATURE: 'Exportar .feature',
+    FEATURE_SAVED: 'O arquivo .feature foi salvo.',
+    FEATURE_FAILED: 'Não deu para salvar o arquivo .feature.',
     CHECK_CHANGES: 'Conferir mudanças',
     RUN_CHANGED_TITLE: 'Rodar com mudanças por revisar?',
     RUN_CHANGED_TEXT:
