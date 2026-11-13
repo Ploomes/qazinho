@@ -1001,6 +1001,10 @@ export const pt: typeof en = {
     SECTION_GENERAL: 'Geral',
     SECTION_CODE: 'Código',
     SECTION_VARIABLES: 'Variáveis',
+    SECTION_TEMPLATES: 'Modelos',
+    TEMPLATES_NOTE:
+      'Como este projeto escreve um bug, a página do plano e os comentários numa história.',
+    TEMPLATE_QAZINHO: 'Jeito do QAzinho',
     SECTION_MEMORIES: 'Memórias',
     MEMORIES_LEAD: 'O que o agente aprendeu sobre este app.',
     MEMORIES_EMPTY: 'Nada aprendido ainda.',

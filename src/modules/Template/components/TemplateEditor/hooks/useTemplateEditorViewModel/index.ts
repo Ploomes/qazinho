@@ -2,11 +2,12 @@ import type { ITemplateEditorProps } from '@/modules/Template/components/Templat
 import type { TemplateKind, TemplatePart } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TEMPLATE_EDITOR } from '@/modules/Template/components/TemplateEditor/constants';
 import {
-  TEMPLATE_EDITOR,
+  TEMPLATE_FIELDS,
   TEMPLATE_KIND_KEYS,
-} from '@/modules/Template/components/TemplateEditor/constants';
-import { TEMPLATE_FIELDS, TEMPLATE_VALUES } from '@/modules/Template/constants';
+  TEMPLATE_VALUES,
+} from '@/modules/Template/constants';
 import { fillValues, renderParts } from '@/modules/Template/library';
 import { Templates } from '@/services';
 import { useTemplateStore } from '@/store';

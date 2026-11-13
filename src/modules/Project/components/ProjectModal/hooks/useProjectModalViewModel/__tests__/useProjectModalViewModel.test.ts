@@ -157,6 +157,7 @@ describe('useProjectModalViewModel', () => {
         general: true,
         code: false,
         variables: false,
+        templates: false,
         memories: false,
         pro: false,
         delete: false,
@@ -174,6 +175,7 @@ describe('useProjectModalViewModel', () => {
         general: false,
         code: false,
         variables: true,
+        templates: false,
         memories: false,
         pro: false,
         delete: false,
@@ -187,6 +189,7 @@ describe('useProjectModalViewModel', () => {
         'general',
         'code',
         'variables',
+        'templates',
       ]);
     });
 
@@ -194,6 +197,7 @@ describe('useProjectModalViewModel', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
 
       expect(result.current.navItems.map(({ count }) => count)).toEqual([
+        null,
         null,
         null,
         null,
@@ -216,7 +220,12 @@ describe('useProjectModalViewModel', () => {
         ]);
       });
 
-      expect(result.current.navItems.map(({ count }) => count)).toEqual([null, 2, 1]);
+      expect(result.current.navItems.map(({ count }) => count)).toEqual([
+        null,
+        2,
+        1,
+        null,
+      ]);
     });
 
     /** Trocar de aba num projeto novo não pode marcar nada: o QA só não terminou ainda. */
@@ -242,6 +251,7 @@ describe('useProjectModalViewModel', () => {
 
       expect(result.current.navItems.map(({ isFlagged }) => isFlagged)).toEqual([
         true,
+        false,
         false,
         false,
       ]);

@@ -993,6 +993,10 @@ export const en = {
     SECTION_GENERAL: 'General',
     SECTION_CODE: 'Code',
     SECTION_VARIABLES: 'Variables',
+    SECTION_TEMPLATES: 'Templates',
+    TEMPLATES_NOTE:
+      'How this project writes a bug, its plan page and its comments on a story.',
+    TEMPLATE_QAZINHO: 'QAzinho’s way',
     SECTION_MEMORIES: 'Memories',
     MEMORIES_LEAD: 'What the agent learned about this app.',
     MEMORIES_EMPTY: 'Nothing learned yet.',

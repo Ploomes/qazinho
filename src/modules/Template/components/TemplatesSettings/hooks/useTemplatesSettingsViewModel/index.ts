@@ -1,7 +1,7 @@
 import type { ITemplate, TemplateKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TEMPLATE_KIND_KEYS } from '@/modules/Template/components/TemplateEditor/constants';
+import { TEMPLATE_KIND_KEYS } from '@/modules/Template/constants';
 import { useTemplateStore } from '@/store';
 
 export const useTemplatesSettingsViewModel = () => {

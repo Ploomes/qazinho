@@ -7,7 +7,7 @@ import type {
   ITarget,
   IVariableDraft,
 } from '@/modules/Project/types';
-import type { BuildPlatform, ProRemoval, TargetKind } from '@/shared/types';
+import type { BuildPlatform, ProRemoval, TargetKind, TemplateKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -86,6 +86,9 @@ export const useProjectModalViewModel = () => {
   const [app, setApp] = useState(saved('ios')?.value ?? '');
   const [repositories, setRepositories] = useState<IProjectRepository[]>(
     editing?.repositories ?? [],
+  );
+  const [templates, setTemplates] = useState<Partial<Record<TemplateKind, string>>>(
+    editing?.templates ?? {},
   );
   const [ready, setReady] = useState<{
     column: IReadyColumn;
@@ -189,11 +192,24 @@ export const useProjectModalViewModel = () => {
         ready === null
           ? {}
           : { readyColumn: ready.column, readyStatuses: ready.statuses };
+      const templatesOf = Object.keys(templates).length === 0 ? {} : { templates };
 
       if (editing) {
-        const { readyColumn: _column, readyStatuses: _statuses, ...kept } = editing;
+        const {
+          readyColumn: _column,
+          readyStatuses: _statuses,
+          templates: _templates,
+          ...kept
+        } = editing;
 
-        updateProject({ ...kept, name: name.trim(), targets, repositories, ...readyOf });
+        updateProject({
+          ...kept,
+          name: name.trim(),
+          targets,
+          repositories,
+          ...readyOf,
+          ...templatesOf,
+        });
       } else
         addProject({
           id: projectId,
@@ -201,6 +217,7 @@ export const useProjectModalViewModel = () => {
           targets,
           repositories,
           ...readyOf,
+          ...templatesOf,
         });
     };
 
@@ -382,6 +399,7 @@ export const useProjectModalViewModel = () => {
       general: section === 'general',
       code: section === 'code',
       variables: section === 'variables',
+      templates: section === 'templates',
       memories: section === 'memories',
       pro: section === 'pro',
       delete: section === 'delete',
@@ -424,6 +442,8 @@ export const useProjectModalViewModel = () => {
     onNameChange: setName,
     onRepositoriesChange: setRepositories,
     onReadyChange: setReady,
+    templates,
+    onTemplatesChange: setTemplates,
     variables,
     savedVariables,
     onVariablesChange: (changed: IVariableDraft[]) => {

@@ -11,6 +11,7 @@ import {
   ReadyField,
   RepoField,
   TargetCard,
+  TemplateChoice,
   VariableField,
 } from './components';
 import { PROJECT_MODAL } from './constants';
@@ -54,6 +55,8 @@ export const ProjectModal: React.FC = () => {
     onNameChange,
     onRepositoriesChange,
     onReadyChange,
+    templates,
+    onTemplatesChange,
     onVariablesChange,
     onUrlChange,
     onPickApk,
@@ -187,6 +190,10 @@ export const ProjectModal: React.FC = () => {
             saved={savedVariables}
             onChange={onVariablesChange}
           />
+        </ProjectPane>
+
+        <ProjectPane label={t('PROJECT.SECTION_TEMPLATES')} isOpen={isOpen.templates}>
+          <TemplateChoice chosen={templates} onChange={onTemplatesChange} />
         </ProjectPane>
 
         {isEditing && projectId !== null && (
