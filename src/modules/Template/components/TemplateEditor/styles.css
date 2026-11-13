@@ -1,0 +1,109 @@
+.template-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: var(--space-7);
+}
+
+.template-editor__form,
+.template-editor__parts,
+.template-editor__preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.template-editor__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.template-editor__label {
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.template-editor__note {
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+  text-wrap: pretty;
+}
+
+.template-editor__part {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.template-editor__part-label {
+  color: var(--ink2);
+  font: var(--font-ui-xs);
+}
+
+.template-editor__part-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.template-editor__part-row > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.template-editor__text {
+  min-height: calc(var(--space-8) * 2);
+  padding: var(--space-3);
+  border: var(--edge-width) solid var(--line-field);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  resize: vertical;
+}
+
+.template-editor__text:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+.template-editor__adds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.template-editor__add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.template-editor__add:hover {
+  background: var(--raise);
+  color: var(--ink);
+}
+
+.template-editor__preview {
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+  align-self: start;
+}
+
+.template-editor__preview-title {
+  color: var(--ink);
+  font: var(--font-ui-strong);
+}
