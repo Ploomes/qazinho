@@ -1,5 +1,6 @@
 import type {
   AgentSignInProgress,
+  AppNameSource,
   AppUpdate,
   AttachOutcome,
   BoardColumnList,
@@ -293,6 +294,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.siteIcon, address) as Promise<string | null>,
   exampleShop: (language: string) =>
     ipcRenderer.invoke(CHANNELS.exampleShop, language) as Promise<string | null>,
+  appName: (source: AppNameSource) =>
+    ipcRenderer.invoke(CHANNELS.appName, source) as Promise<string | null>,
   saveWorkspace: (saved: ISavedWorkspace) =>
     ipcRenderer.invoke(CHANNELS.saveWorkspace, saved) as Promise<void>,
   removeWorkspace: (workspaceId: string) =>

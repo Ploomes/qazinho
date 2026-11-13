@@ -101,6 +101,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     saveProjects: () => Promise.resolve(),
     siteIcon: () => Promise.resolve(null),
     exampleShop: () => Promise.resolve(null),
+    appName: () => Promise.resolve(null),
     saveWorkspace: () => Promise.resolve(),
     removeWorkspace: () => Promise.resolve(),
     readUnreadPlan: () => Promise.resolve({ status: 'gone' as const }),

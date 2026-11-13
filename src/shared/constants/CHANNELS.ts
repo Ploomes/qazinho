@@ -64,6 +64,7 @@ export const CHANNELS = {
   saveProjects: 'state:projects',
   siteIcon: 'projects:site-icon',
   exampleShop: 'projects:example-shop',
+  appName: 'projects:app-name',
   saveWorkspace: 'state:workspace',
   removeWorkspace: 'state:remove',
   readUnreadPlan: 'state:unread-plan',

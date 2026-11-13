@@ -236,6 +236,7 @@ describe('a page with no bridge', () => {
     expect(await Jira.boards('')).toEqual({ isListed: false, failure: 'unreachable' });
     expect(await Jira.sprint(7)).toEqual({ isListed: false, failure: 'unreachable' });
     expect(await Sites.exampleShop('pt')).toBeNull();
+    expect(await Sites.appName({ kind: 'web', address: 'https://loja.test' })).toBeNull();
     expect(await Templates.list()).toEqual([]);
     expect(await Files.saveText({ name: 'Cupom', extension: 'feature', text: '' })).toBe(
       'failed',

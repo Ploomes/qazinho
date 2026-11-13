@@ -1,6 +1,7 @@
 import type { IUpdaterPort } from '@/main/classes';
 import type {
   AgentSignInProgress,
+  AppNameSource,
   AppUpdate,
   ConfluenceSwitch,
   DeviceInput,
@@ -103,6 +104,7 @@ import {
   AppBridge,
   AppBuilder,
   AppLog,
+  AppNames,
   AppPeek,
   AppTray,
   AppUpdater,
@@ -464,6 +466,26 @@ const github = new GithubCli({
   directories: commandDirectories,
   onProgress: (progress) =>
     broadcast({ channel: CHANNELS.githubSignInEvent, event: progress }),
+});
+const appNames = new AppNames({
+  fetcher: (url, init) => fetch(url, init),
+  run: async ({ command, args }) =>
+    execCommand({ command, args })
+      .then(({ stdout }) => stdout)
+      .catch(() => null),
+  aapt: async () => {
+    const sdkRoot = deviceTools.detect().androidSdk.path;
+    const tools =
+      sdkRoot === null
+        ? null
+        : newestBuildTools(await readdir(join(sdkRoot, 'build-tools')).catch(() => []));
+
+    return sdkRoot === null || tools === null
+      ? null
+      : join(sdkRoot, 'build-tools', tools, 'aapt2');
+  },
+  isMac: process.platform === 'darwin',
+  github,
 });
 const repos = new GithubRepos({ github });
 const codeCopies = new CodeCopies({ github, root: PATHS.code });
@@ -1808,6 +1830,9 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.siteIcon, (_event, address: unknown) =>
     typeof address === 'string' ? siteIcons.of(address) : null,
+  );
+  ipcMain.handle(CHANNELS.appName, (_event, source: AppNameSource) =>
+    appNames.of(source),
   );
   ipcMain.handle(CHANNELS.exampleShop, (_event, language: unknown) =>
     exampleShop.address(typeof language === 'string' ? language : 'pt').catch(() => null),

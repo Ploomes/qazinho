@@ -2,6 +2,7 @@ export type * from './AgentSignInFailure';
 export type * from './AgentSignInPhase';
 export type * from './AgentSignInProgress';
 export type * from './AgentSignInStep';
+export type * from './AppNameSource';
 export type * from './AppToolCall';
 export type * from './AppUpdate';
 export type * from './AttachFailure';

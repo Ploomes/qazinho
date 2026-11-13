@@ -1,4 +1,5 @@
 import type { AgentSignInProgress } from './AgentSignInProgress';
+import type { AppNameSource } from './AppNameSource';
 import type { AppUpdate } from './AppUpdate';
 import type { AttachOutcome } from './AttachOutcome';
 import type { BoardColumnList } from './BoardColumnList';
@@ -198,6 +199,7 @@ export interface IQazinhoApi {
   saveProjects: (json: string) => Promise<void>;
   siteIcon: (address: string) => Promise<string | null>;
   exampleShop: (language: string) => Promise<string | null>;
+  appName: (source: AppNameSource) => Promise<string | null>;
   saveWorkspace: (saved: ISavedWorkspace) => Promise<void>;
   removeWorkspace: (workspaceId: string) => Promise<void>;
   readUnreadPlan: (unread: {
