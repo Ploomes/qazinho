@@ -7,6 +7,7 @@ export * from './ErrorBlock';
 export * from './FindingNote';
 export * from './HandoffCard';
 export * from './MemoryNote';
+export * from './NamedNote';
 export * from './QuestionRound';
 export * from './RunActivity';
 export * from './RunProgress';

@@ -8,6 +8,7 @@ import type {
   IPublishedPlan,
   ITestCase,
 } from '@/modules/Plan';
+import type { NameOrigin } from '@/modules/Project/types';
 import type {
   IWalkedBy,
   IWorkspace,
@@ -76,6 +77,10 @@ export interface IWorkspaceStore {
   removeWorkspace: (workspaceId: string) => void;
   landMemoryChanges: (props: { workspaceId: string; changes: IMemoryChange[] }) => void;
   landFollowedSkills: (props: { workspaceId: string; names: string[] }) => void;
+  landProjectName: (props: {
+    workspaceId: string;
+    named: { projectId: string; name: string; from: NameOrigin };
+  }) => void;
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
   setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
   setUnreadPlan: (props: { workspaceId: string; unreadPlan: IUnreadPlan | null }) => void;

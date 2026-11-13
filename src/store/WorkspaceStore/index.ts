@@ -4,6 +4,7 @@ import {
   answerRound,
   appendAgentError,
   appendMemoryNote,
+  appendNamedNote,
   appendAgentMessage,
   appendPlanCard,
   appendQuestions,
@@ -414,6 +415,16 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaceId,
         change: (workspace) =>
           appendSkillsNote({ workspace, names, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  landProjectName: ({ workspaceId, named }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          appendNamedNote({ workspace, named, at: formatClock(new Date()) }),
       }),
     })),
 
