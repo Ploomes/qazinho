@@ -108,9 +108,10 @@ próprio comando, e o CI nunca as roda.
 | `skills.test.ts`       | o agente do próprio QA segue uma skill ligada e uma chamada, e escreve uma de exemplos     |
 | `manual.test.ts`       | um caso à mão no Chrome real: o preparo, os gestos e as marcas do QA, uma variável         |
 | `ahead.test.ts`        | o agente do próprio QA planeja de uma história antes do app: critérios, dúvida, estratégia |
+| `watcher.test.ts`      | o agente do próprio QA lê uma história que mudou e propõe as trocas do plano               |
 
-O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts`, o `visual.test.ts`, o `skills.test.ts` e o
-`ahead.test.ts` gastam os tokens do QA e precisam de um agente instalado. Rode-os à mão, uma vez,
+O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts`, o `visual.test.ts`, o `skills.test.ts`, o
+`ahead.test.ts` e o `watcher.test.ts` gastam os tokens do QA e precisam de um agente instalado. Rode-os à mão, uma vez,
 depois de mexer no pipeline da run ou no schema de uma resposta; quando um falha, leia o que o
 agente escreveu em vez de rodá-lo de novo.
 
