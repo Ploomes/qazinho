@@ -363,8 +363,9 @@ história pela chave, contra um Jira e um Confluence fakes, e planejou a partir 
 partir de uma com uma tela anexada: leu a tela, perguntou sobre o que a história deixava em aberto,
 e nomeou o critério que cada caso cobre. Um site real do Jira não foi tentado.
 
-**Um plano sai da história antes do app.** O projeto diz quais status do Jira contam como pronta
-para teste; uma história fora deles é planejada antes do app, e o botão de rodar diz "Esperando o
+**Um plano sai da história antes do app.** O projeto escolhe a coluna do board do Jira que conta
+como pronta para teste, e o QAzinho guarda os status que caem nela; uma história fora deles é
+planejada antes do app, e o botão de rodar diz "Esperando o
 app", com "Desenvolver agora" no menu. Abrir o plano ou o Início confere no Jira do QA, sem agente,
 se a história chegou, e o Início a mostra em "Chegou para teste". Cada caso diz de onde vem o
 esperado (C2 para o critério 2, o frame, a página, o código, o app ou o QA), e todo plano traz a

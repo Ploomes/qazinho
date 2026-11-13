@@ -476,8 +476,8 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     inicialização. O workspace guarda a história (`issue`), que o cabeçalho abre
     no Jira.
 - **Um plano sai da história antes do app** (`role/chat/ahead.md`):
-  - O projeto guarda os status do Jira que contam como pronta para teste (`readyStatuses`,
-    `ReadyField`, `JiraApi.statuses`). A mensagem do chat os leva (`IAskAgent.readyStatuses`), e a
+  - O projeto guarda a coluna do board que conta como pronta para teste e os status que caem
+    nela (`readyColumn`, `readyStatuses`, `ReadyField`, `JiraApi.boards`, `boardColumnsOf`). A mensagem do chat os leva (`IAskAgent.readyStatuses`), e a
     cópia da história diz se ela chegou (`readinessOf`, `IJiraStoryCopy.readiness`). O turno a
     devolve (`IChatTurn.readiness`), e um plano de uma história à frente espera (`storyStage`):
     o `RunButton` diz "Esperando o app", e uma run do plano encerra a espera (`startRun`).
