@@ -1,6 +1,6 @@
 import type { ISourceChange } from '@/shared/types';
 
-/** Como o QA chama a fonte que mudou: a chave da história, a página, a branch ou a reunião. */
+/** Como o QA chama a fonte que mudou: a história, a página, a branch ou a reunião. */
 export function changeNameOf(change: ISourceChange): string {
   switch (change.kind) {
     case 'story':
