@@ -337,7 +337,11 @@ export const useChatCommand = (props: {
 
   const rows =
     step === 'command'
-      ? [...commandRows, ...skillRows]
+      ? [
+          ...commandRows.filter(({ isBlocked }) => !isBlocked),
+          ...skillRows,
+          ...commandRows.filter(({ isBlocked }) => isBlocked),
+        ]
       : step === 'repository'
         ? repositoryRows
         : step === 'story'

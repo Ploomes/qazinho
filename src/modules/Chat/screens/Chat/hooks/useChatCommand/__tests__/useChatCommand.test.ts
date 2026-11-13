@@ -919,6 +919,14 @@ describe('useChatCommand', () => {
       ).toEqual([expect.objectContaining({ id: 'skill:s1' })]);
     });
 
+    it('lists the skills before the commands that still miss something', () => {
+      expect(
+        command({ draft: '/', isJiraConnected: false, skills: [EDGES] })
+          .result.current.picker?.rows.map(({ id }) => id)
+          .slice(-2),
+      ).toEqual(['skill:s1', 'jira-plan']);
+    });
+
     it('sends the skill picked with the QA words after, for the agent to follow', () => {
       const { result, rerender, onDraft } = command({ draft: '/', skills: [EDGES] });
 
