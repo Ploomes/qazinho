@@ -148,14 +148,29 @@ espera as respostas do QA (`toAnswer`, `openRoundOf`).
 Um projeto novo nasce de cartões (`NewProject`, a tela `newProject`), não de uma janela. O QA marca
 o que tem (`PROJECT_PICKS`, `withPick`, com o "nada" sozinho), e a tela seguinte pede um campo por
 cartão marcado (`WebField`, `BuildField`, `RepoField`, `TestsField`, `StoryField`, `DesignField`),
-cada um conferido na hora; o que falta diz o pé dela (`missingPicksOf`), e o nome vem do que ele deu
-(`autoProjectNameOf`). O `newProjectOf` monta o projeto e um plano por fonte (a história com o
+cada um conferido na hora; o que falta diz o pé dela (`missingPicksOf`). O `newProjectOf` monta o
+projeto, sem nome ainda (`isNamePending`), e um plano por fonte (a história com o
 design dela, o design sozinho, os testes), ou um vazio que a primeira mensagem nomeia, e o que cada
 um começa: a mensagem do `/jira`, do `/confluence` ou do `/figma` ao agente, ou o `/import` quando o
 chat dos testes abre. Sem nada (`nothingProjectOf`), a `ExampleShop` da main serve uma loja pequena em
 loopback, numa porta que ela guarda e retoma ao abrir o app, com dois bugs de propósito (a busca vazia
 responde 500, o total ignora a quantidade), e o projeto dela começa explorando; ou o plano começa
 antes do app pelo que o QA escreveu. A janela do projeto fica para editar.
+
+O nome de um projeto que espera (`isNamePending`) vem do app, uma vez:
+
+- O `useProjectNaming` lê, na ordem de `nameSourcesOf`, o site, os builds e o primeiro repositório,
+  pelo `AppNames` da main: o `og:site_name` ou o título da página (`siteNameOf`), o rótulo do .apk
+  pelo `aapt2` (`labelOfBadging`), o nome de exibição do .app pelo `plutil` (`bundleNameOf`), e o
+  `app.json` da branch base pelo gh (`appNameOfManifest`). Nenhum chama o agente. Um alvo novo num
+  projeto que ainda espera é lido de novo.
+- Sem nome em nenhum, o chat leva `isProjectUnnamed`, o harness pede um nome curto na seção
+  `The project's name`, e a resposta o devolve em `projectName`, no mesmo turno.
+- O `nameProject` da store só nomeia um projeto que ainda espera, e o `withNameSettled` tira a espera
+  quando alguém o renomeia: o nome é decidido uma vez, e o do QA vale sobre o do app.
+- O `useNameProject` conta no chat (`INamedMessage`, `NamedNote`) o nome e de onde veio, no chat
+  aberto do projeto ou no primeiro dele (`namingWorkspaceOf`), com "Trocar". A sidebar escreve o nome
+  novo da esquerda para a direita (`SIDEBAR_NAME_MOTION`).
 
 Sem projeto, o app é a primeira execução (`FirstRun`), duas perguntas sem barra lateral: qual app
 o QA vai testar (um endereço, ou um .apk ou .app escolhido no disco) e o que ele quer testar
@@ -1004,6 +1019,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `ProDownloads`                        | lista os projetos da org e baixa um, as gravações incluídas                                                 |
 | `ProTemplates`                        | lê, publica e escolhe o padrão dos modelos das orgs, e guarda o último de cada uma                          |
 | `ExampleShop`                         | serve em loopback a loja de exemplo de quem não tem app ainda, com dois bugs de propósito                   |
+| `AppNames`                            | lê o nome de um app sem IA: o do site, o do .apk ou .app, ou o do `app.json` no repositório                 |
 
 ## Dependências
 

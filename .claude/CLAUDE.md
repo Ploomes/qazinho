@@ -250,12 +250,17 @@ provam os grupos; nenhum QA usou ainda.
 endereço, um build, o código, os testes do time, uma história, um design, ou "não tenho nada". A
 tela seguinte pede só o que ele marcou, um campo por cartão, cada um conferido na hora (o endereço,
 o build escolhido, a pasta de testes reconhecida, a história lida no Jira ou no Confluence, o link
-do Figma), e sem o Jira o cartão de conectá-lo aparece ali mesmo. O nome vem do site, do build ou
-do repositório, e criar leva ao projeto com o primeiro plano começando: pela história, pelo design
-ou pelos testes. Sem nada, ele conhece o QAzinho numa loja de exemplo que o app serve neste
-computador, com dois bugs de propósito e uma exploração começando, ou planeja antes do app. O
-`tests/smoke/new-project.test.ts` anda os dois caminhos no app construído com um agente fake; nenhum
-QA usou ainda.
+do Figma), e sem o Jira o cartão de conectá-lo aparece ali mesmo. Criar leva ao projeto com o
+primeiro plano começando: pela história, pelo design ou pelos testes. Sem nada, ele conhece o
+QAzinho numa loja de exemplo que o app serve neste computador, com dois bugs de propósito e uma
+exploração começando, ou planeja antes do app. O `tests/smoke/new-project.test.ts` anda os três
+caminhos no app construído com um agente fake; nenhum QA usou ainda.
+
+**O projeto se nomeia sozinho.** Ele nasce "Novo projeto", sem campo de nome, e o nome vem do app:
+o nome do site, o do app no build (o rótulo do .apk, o nome de exibição do .app), ou o do
+`app.json` no repositório, lidos sem IA. Sem nenhum deles, a primeira resposta do chat sugere um a
+partir do que o QA deu, sem chamada a mais. A sidebar o escreve com uma animação, e o chat diz de
+onde veio, com "Trocar". O nome é decidido uma vez, e um QA que já o renomeou não perde o dele.
 
 **A sprint chega ao Início.** Num projeto que escolheu a coluna de pronto num board do Jira, o
 Início lista as histórias da sprint aberta desse board que ainda não têm plano. "Planejar" cria o
