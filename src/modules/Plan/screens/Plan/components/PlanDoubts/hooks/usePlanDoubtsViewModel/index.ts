@@ -16,6 +16,7 @@ import { templateFor } from '@/modules/Template/library';
 import {
   useAppStore,
   useAssistantStore,
+  useProStore,
   useSettingsStore,
   useSetupStore,
   useTemplateStore,
@@ -34,6 +35,12 @@ export const usePlanDoubtsViewModel = (props: IPlanDoubtsProps) => {
     (state) => state.projects.find(({ id }) => id === projectId)?.templates,
   );
   const templates = useTemplateStore((state) => state.templates);
+  const orgSlug = useProStore(
+    (state) => state.shares.find((share) => share.projectId === projectId)?.orgSlug,
+  );
+  const org = useTemplateStore((state) =>
+    state.orgTemplates.find((one) => one.orgSlug === orgSlug),
+  );
   const planName = useWorkspaceStore(
     (state) => state.workspaces.find(({ id }) => id === workspaceId)?.name ?? '',
   );
@@ -92,7 +99,7 @@ export const usePlanDoubtsViewModel = (props: IPlanDoubtsProps) => {
     kind: 'doubts',
     chosen,
     templates,
-    orgDefault: null,
+    org,
   });
   const doubtsTexts =
     doubtsTemplate === null

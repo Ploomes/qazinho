@@ -443,6 +443,7 @@ export const useProjectModalViewModel = () => {
     onRepositoriesChange: setRepositories,
     onReadyChange: setReady,
     templates,
+    templatesOrg: linkedOrg,
     onTemplatesChange: setTemplates,
     variables,
     savedVariables,

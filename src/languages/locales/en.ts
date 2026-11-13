@@ -997,6 +997,8 @@ export const en = {
     TEMPLATES_NOTE:
       'How this project writes a bug, its plan page and its comments on a story.',
     TEMPLATE_QAZINHO: 'QAzinho’s way',
+    TEMPLATE_ORG_DEFAULT: 'The org’s: {{name}}',
+    TEMPLATE_OF_ORG: '{{name}} · org',
     SECTION_MEMORIES: 'Memories',
     MEMORIES_LEAD: 'What the agent learned about this app.',
     MEMORIES_EMPTY: 'Nothing learned yet.',

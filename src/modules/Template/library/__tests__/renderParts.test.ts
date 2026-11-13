@@ -92,46 +92,58 @@ describe('the templates', () => {
       cases: 'steps' as const,
       updatedAt: '',
     };
-    const ORG = { ...MINE, id: 'org:t-9', name: 'Bug da org' };
+    const DEFAULT = {
+      ...MINE,
+      id: 'org:loja:t-9',
+      name: 'Bug da org',
+      orgSlug: 'loja',
+      isDefault: true,
+      author: 'Ana',
+    };
+    const ORG = {
+      orgSlug: 'loja',
+      templates: [DEFAULT, { ...DEFAULT, id: 'org:loja:t-8', isDefault: false }],
+      canPublish: true,
+      canSetDefault: false,
+    };
 
-    it('takes the template the QA chose in the project', () => {
+    it('takes the template the QA chose in the project, the org’s too', () => {
+      expect(
+        templateFor({ kind: 'bug', chosen: { bug: 't-1' }, templates: [MINE], org: ORG }),
+      ).toBe(MINE);
       expect(
         templateFor({
           kind: 'bug',
-          chosen: { bug: 't-1' },
-          templates: [MINE, ORG],
-          orgDefault: 'org:t-9',
-        }),
-      ).toBe(MINE);
+          chosen: { bug: 'org:loja:t-8' },
+          templates: [MINE],
+          org: ORG,
+        })?.id,
+      ).toBe('org:loja:t-8');
     });
 
     it('falls back to the default of the org, then to QAzinho’s own way', () => {
-      expect(
-        templateFor({
-          kind: 'bug',
-          chosen: {},
-          templates: [MINE, ORG],
-          orgDefault: 'org:t-9',
-        }),
-      ).toBe(ORG);
+      expect(templateFor({ kind: 'bug', chosen: {}, templates: [MINE], org: ORG })).toBe(
+        DEFAULT,
+      );
       expect(
         templateFor({
           kind: 'bug',
           chosen: undefined,
           templates: [MINE],
-          orgDefault: null,
+          org: undefined,
         }),
+      ).toBeNull();
+    });
+
+    it('never takes the org’s default of another kind', () => {
+      expect(
+        templateFor({ kind: 'plan', chosen: {}, templates: [MINE], org: ORG }),
       ).toBeNull();
     });
 
     it('keeps QAzinho’s own way when the QA chose it over the org’s', () => {
       expect(
-        templateFor({
-          kind: 'bug',
-          chosen: { bug: 'qazinho' },
-          templates: [ORG],
-          orgDefault: 'org:t-9',
-        }),
+        templateFor({ kind: 'bug', chosen: { bug: 'qazinho' }, templates: [], org: ORG }),
       ).toBeNull();
     });
   });

@@ -3,12 +3,13 @@ import type { BugReportBlock } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { planDocOf } from '@/modules/Plan/library';
 import { DOC_VERDICT_KEYS } from '@/modules/Plan/screens/Plan/constants';
-import { templateFor } from '@/modules/Template/library';
-import { useAppStore, useSettingsStore, useTemplateStore } from '@/store';
+import { useTemplateOf } from '@/modules/Template/hooks';
+import { useSettingsStore } from '@/store';
 
 export const usePlanDocument = () => {
   const { t } = useTranslation();
   const language = useSettingsStore((state) => state.language);
+  const templateOf = useTemplateOf();
 
   return {
     titleOf: (workspaceName: string) =>
@@ -32,14 +33,7 @@ export const usePlanDocument = () => {
 
       return planDocOf({
         name: workspace.name,
-        template: templateFor({
-          kind: 'plan',
-          chosen: useAppStore
-            .getState()
-            .projects.find(({ id }) => id === workspace.projectId)?.templates,
-          templates: useTemplateStore.getState().templates,
-          orgDefault: null,
-        }),
+        template: templateOf({ kind: 'plan', projectId: workspace.projectId }),
         plan: workspace.plan,
         strategy: workspace.strategy ?? null,
         doubts: workspace.doubts ?? [],

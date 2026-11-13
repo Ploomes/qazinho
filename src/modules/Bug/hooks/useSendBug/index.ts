@@ -5,14 +5,15 @@ import { BUG_REPORT } from '@/modules/Bug/constants';
 import { bugReportOf, filingPlanOf } from '@/modules/Bug/library';
 import { frameUrlOf } from '@/modules/Plan/library';
 import { bugVideoOf, failedRequestsNear, formatClock } from '@/modules/Run';
-import { templateFor } from '@/modules/Template/library';
+import { useTemplateOf } from '@/modules/Template/hooks';
 import { Bugs, Run } from '@/services';
-import { useAppStore, useTemplateStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useSendBug = () => {
   const { t } = useTranslation();
   const landFiled = useWorkspaceStore((state) => state.landFiled);
   const updateProject = useAppStore((state) => state.updateProject);
+  const templateOf = useTemplateOf();
 
   const words: IBugReportWords = {
     steps: t('FILING.REPORT_STEPS'),
@@ -132,14 +133,7 @@ export const useSendBug = () => {
               ]),
         ],
         words,
-        template: templateFor({
-          kind: 'bug',
-          chosen: useAppStore
-            .getState()
-            .projects.find(({ id }) => id === workspace.projectId)?.templates,
-          templates: useTemplateStore.getState().templates,
-          orgDefault: null,
-        }),
+        template: templateOf({ kind: 'bug', projectId: workspace.projectId }),
       });
 
       props.onReady();

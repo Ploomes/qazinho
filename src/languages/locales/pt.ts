@@ -1005,6 +1005,8 @@ export const pt: typeof en = {
     TEMPLATES_NOTE:
       'Como este projeto escreve um bug, a página do plano e os comentários numa história.',
     TEMPLATE_QAZINHO: 'Jeito do QAzinho',
+    TEMPLATE_ORG_DEFAULT: 'O da org: {{name}}',
+    TEMPLATE_OF_ORG: '{{name}} · org',
     SECTION_MEMORIES: 'Memórias',
     MEMORIES_LEAD: 'O que o agente aprendeu sobre este app.',
     MEMORIES_EMPTY: 'Nada aprendido ainda.',

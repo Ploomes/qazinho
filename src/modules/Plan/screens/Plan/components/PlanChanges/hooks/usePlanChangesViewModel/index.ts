@@ -25,6 +25,7 @@ import { useSourceCheck } from '@/shared/hooks/useSourceCheck';
 import {
   useAppStore,
   useMachineStore,
+  useProStore,
   useSettingsStore,
   useTemplateStore,
   useWorkspaceStore,
@@ -47,6 +48,14 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
   const projects = useAppStore((state) => state.projects);
   const workspaceNow = useWorkspaceStore(
     (state) => state.workspaces.find(({ id }) => id === workspaceId) ?? null,
+  );
+  const orgSlug = useProStore(
+    (state) =>
+      state.shares.find(({ projectId }) => projectId === workspaceNow?.projectId)
+        ?.orgSlug,
+  );
+  const org = useTemplateStore((state) =>
+    state.orgTemplates.find((one) => one.orgSlug === orgSlug),
   );
   const [isChecking, setChecking] = useState(false);
   const [isProposing, setProposing] = useState(false);
@@ -283,7 +292,7 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
               chosen: projects.find(({ id }) => id === workspaceNow?.projectId)
                 ?.templates,
               templates,
-              orgDefault: null,
+              org,
             }),
             values: {
               story: issue?.key ?? '',

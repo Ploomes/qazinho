@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 export const useTemplateStore = create<ITemplateStore>((set, get) => ({
   templates: [],
+  orgTemplates: [],
   setTemplates: (templates) => {
     set({ templates });
   },
@@ -17,5 +18,18 @@ export const useTemplateStore = create<ITemplateStore>((set, get) => ({
   },
   dropTemplate: (id) => {
     set({ templates: get().templates.filter((one) => one.id !== id) });
+  },
+  setOrgTemplates: (list) => {
+    set({
+      orgTemplates: [
+        ...get().orgTemplates.filter(({ orgSlug }) => orgSlug !== list.orgSlug),
+        list,
+      ],
+    });
+  },
+  keepOrgs: (slugs) => {
+    set({
+      orgTemplates: get().orgTemplates.filter(({ orgSlug }) => slugs.includes(orgSlug)),
+    });
   },
 }));

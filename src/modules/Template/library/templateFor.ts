@@ -1,4 +1,4 @@
-import type { ITemplate, TemplateKind } from '@/shared/types';
+import type { IOrgTemplates, ITemplate, TemplateKind } from '@/shared/types';
 
 /**
  * O modelo que vale para um projeto: o que o QA escolheu nele, senão o padrão da org do
@@ -8,13 +8,18 @@ export function templateFor(props: {
   kind: TemplateKind;
   chosen: Partial<Record<TemplateKind, string>> | undefined;
   templates: ITemplate[];
-  orgDefault: string | null;
+  org: IOrgTemplates | undefined;
 }): ITemplate | null {
-  const picked = props.chosen?.[props.kind];
-  const find = (id: string | null | undefined) =>
-    props.templates.find((one) => one.id === id && one.kind === props.kind) ?? null;
+  const { kind, org } = props;
+  const picked = props.chosen?.[kind];
+  const all = [...props.templates, ...(org?.templates ?? [])];
+  const find = (id: string | undefined) =>
+    all.find((one) => one.id === id && one.kind === kind) ?? null;
 
   if (picked === 'qazinho') return null;
 
-  return find(picked) ?? find(props.orgDefault);
+  return (
+    find(picked) ??
+    find(org?.templates.find((one) => one.kind === kind && one.isDefault)?.id)
+  );
 }

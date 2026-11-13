@@ -56,6 +56,7 @@ export const ProjectModal: React.FC = () => {
     onRepositoriesChange,
     onReadyChange,
     templates,
+    templatesOrg,
     onTemplatesChange,
     onVariablesChange,
     onUrlChange,
@@ -193,7 +194,11 @@ export const ProjectModal: React.FC = () => {
         </ProjectPane>
 
         <ProjectPane label={t('PROJECT.SECTION_TEMPLATES')} isOpen={isOpen.templates}>
-          <TemplateChoice chosen={templates} onChange={onTemplatesChange} />
+          <TemplateChoice
+            chosen={templates}
+            orgSlug={templatesOrg}
+            onChange={onTemplatesChange}
+          />
         </ProjectPane>
 
         {isEditing && projectId !== null && (
