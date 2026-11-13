@@ -398,6 +398,28 @@ describe('usePlanCaseViewModel', () => {
     });
   });
 
+  describe('a case a proposed swap touches', () => {
+    it('says it is to review, with why on hover', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, changeWhy: 'C3 diz 5 tentativas' }),
+      );
+
+      expect(result.current).toMatchObject({
+        reason: 'to review',
+        reasonTip: 'C3 diz 5 tentativas',
+        reasonClassName: 'plan-case__reason plan-case__reason--waits',
+      });
+    });
+
+    it('says nothing of it while the run walks the case', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, changeWhy: 'C3', liveStatus: 'running' }),
+      );
+
+      expect(result.current).toMatchObject({ reason: '', reasonTip: undefined });
+    });
+  });
+
   describe('where a case came from', () => {
     it('names the criteria and sources the agent wrote it from', () => {
       const { result } = renderHook(() =>

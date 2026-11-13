@@ -10,6 +10,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
   const {
     reason,
     reasonClassName,
+    reasonTip,
     sources,
     priority,
     expectedPrefix,
@@ -109,7 +110,11 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
         />
 
         <span className="plan-case__aside">
-          {reason !== '' && <span className={reasonClassName}>{reason}</span>}
+          {reason !== '' && (
+            <span className={reasonClassName} title={reasonTip}>
+              {reason}
+            </span>
+          )}
           {priority !== null && <span className="plan-case__priority">{priority}</span>}
 
           {!props.isLocked && (

@@ -13,6 +13,7 @@ export interface IPlanCaseProps {
   design?: IDesignLink | null;
   isOpen: boolean;
   isFresh?: boolean;
+  changeWhy?: string;
   isLocked: boolean;
   onToggle: (caseId: string) => void;
   onRunCase?: (caseId: string) => void;

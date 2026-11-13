@@ -32,24 +32,29 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     );
   const waitsOn = testCase.blockedBy ?? [];
   const sources = testCase.sources ?? [];
+  const changeWhy = props.changeWhy ?? null;
   const reason = isNow
     ? ''
     : waitsOn.length > 0
       ? t('PLAN.REASON_WAITS', { ids: listOf(waitsOn) })
-      : stopped !== undefined
-        ? t('PLAN.REASON_STEP', { number: stopped.number })
-        : isManual
-          ? t('PLAN.REASON_MANUAL')
-          : props.isDeveloped === true
-            ? ''
-            : t('PLAN.REASON_TO_DEVELOP');
+      : changeWhy !== null
+        ? t('PLAN.REASON_TO_REVIEW')
+        : stopped !== undefined
+          ? t('PLAN.REASON_STEP', { number: stopped.number })
+          : isManual
+            ? t('PLAN.REASON_MANUAL')
+            : props.isDeveloped === true
+              ? ''
+              : t('PLAN.REASON_TO_DEVELOP');
 
   return {
     reason,
     reasonClassName:
-      !isNow && waitsOn.length > 0
+      !isNow && (waitsOn.length > 0 || changeWhy !== null)
         ? 'plan-case__reason plan-case__reason--waits'
         : 'plan-case__reason',
+    reasonTip:
+      !isNow && waitsOn.length === 0 && changeWhy !== null ? changeWhy : undefined,
     sources:
       sources.length === 0 ? null : t('PLAN.CASE_SOURCES', { sources: listOf(sources) }),
     priority: reason === '' && testCase.priority === 'P1' ? testCase.priority : null,

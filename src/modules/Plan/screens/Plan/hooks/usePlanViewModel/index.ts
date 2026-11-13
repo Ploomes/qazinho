@@ -400,6 +400,11 @@ export const usePlanViewModel = () => {
     changed: workspace?.changed ?? null,
     review: workspace?.review ?? null,
     canCheck: workspace?.hasSnapshots === true || source !== null,
+    changeWhys: Object.fromEntries(
+      (workspace?.review?.items ?? []).flatMap((item) =>
+        item.kind === 'change' && item.state === 'open' ? [[item.caseId, item.why]] : [],
+      ),
+    ) as Record<string, string>,
     issue,
     sources: [
       ...(sourcePage === null

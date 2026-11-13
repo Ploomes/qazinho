@@ -458,6 +458,7 @@ export const en = {
     MANUAL_WAITING_OTHER: '{{count}} cases wait for you, by hand.',
     MANUAL_NOW: 'Walk it now',
     REASON_WAITS: 'waits on {{ids}}',
+    REASON_TO_REVIEW: 'to review',
     CASE_SOURCES: 'From {{sources}}',
     STRATEGY: 'Strategy',
     STRATEGY_COVERS: 'Covers',

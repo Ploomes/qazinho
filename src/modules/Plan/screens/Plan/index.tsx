@@ -45,6 +45,7 @@ export const Plan: React.FC = () => {
     changed,
     review,
     canCheck,
+    changeWhys,
     issue,
     sources,
     onToggleCase,
@@ -320,6 +321,7 @@ export const Plan: React.FC = () => {
                   design={design}
                   isOpen={openCaseId === testCase.id}
                   isFresh={freshCaseId === testCase.id}
+                  changeWhy={changeWhys[testCase.id]}
                   isLocked={isLocked}
                   onToggle={onToggleCase}
                   onRunCase={onRunCase}

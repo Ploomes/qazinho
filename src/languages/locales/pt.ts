@@ -461,6 +461,7 @@ export const pt: typeof en = {
     MANUAL_WAITING_OTHER: '{{count}} casos esperam você, à mão.',
     MANUAL_NOW: 'Fazer agora',
     REASON_WAITS: 'espera {{ids}}',
+    REASON_TO_REVIEW: 'a revisar',
     CASE_SOURCES: 'Vem de {{sources}}',
     STRATEGY: 'Estratégia',
     STRATEGY_COVERS: 'Cobre',
