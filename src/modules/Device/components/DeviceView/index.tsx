@@ -8,6 +8,7 @@ import {
   LastRun,
   DeviceScreen,
   LiveClock,
+  ManualPanel,
   ScreenRail,
   ViewportPicker,
 } from './components';
@@ -48,6 +49,9 @@ export const DeviceView: React.FC = () => {
     viewports,
     hasViewportPicker,
     screenRatio,
+    hasManualPanel,
+    fitsWhole,
+    onTouch,
     onSelectViewport,
     shot,
     stream,
@@ -181,7 +185,13 @@ export const DeviceView: React.FC = () => {
               transition={frameTransition}
               className="device-view__phone"
             >
-              <DeviceScreen shot={shot} stream={stream} ratio={screenRatio} />
+              <DeviceScreen
+                shot={shot}
+                stream={stream}
+                ratio={screenRatio}
+                fitsWhole={fitsWhole}
+                onTouch={onTouch}
+              />
             </motion.div>
           )}
 
@@ -198,12 +208,20 @@ export const DeviceView: React.FC = () => {
                 <span className="device-view__url">{urlText}</span>
               </div>
               <motion.div className="device-view__swap" animate={swap}>
-                <DeviceScreen shot={shot} stream={stream} ratio={screenRatio} />
+                <DeviceScreen
+                  shot={shot}
+                  stream={stream}
+                  ratio={screenRatio}
+                  fitsWhole={fitsWhole}
+                  onTouch={onTouch}
+                />
               </motion.div>
             </motion.div>
           )}
         </div>
       </div>
+
+      {hasManualPanel && <ManualPanel />}
 
       {lastRun !== null && <LastRun {...lastRun} />}
 

@@ -1,5 +1,5 @@
 import type { IDeviceStep, IViewportChoice, ViewportId } from '@/modules/Device/types';
-import type { QaReply } from '@/shared/types';
+import type { DeviceInput, QaReply } from '@/shared/types';
 import type { CSSProperties } from 'react';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -182,6 +182,7 @@ export const useDeviceViewModel = () => {
         isActive: option.id === viewport.id,
       }));
   const workspaceId = workspace?.id ?? null;
+  const isQaTurn = isRunLive && live?.manual !== undefined && live.how === 'manual';
   const hasSteps = !isRunLive && isFlashing && reached.length > 0;
   const { listRef: stepsRef, onFollowScroll: onStepsScroll } =
     useFollowEnd<HTMLDivElement>({
@@ -288,11 +289,13 @@ export const useDeviceViewModel = () => {
     hasControls: isRunLive,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     hasState: isRunLive || isLearning,
-    stateText: isRunLive
-      ? t(RUN_HOW_KEYS[live?.talk === 'checking' ? 'check' : (live?.how ?? 'replay')])
-      : isLearning
-        ? t('DEVICE.LEARNING')
-        : '',
+    stateText: isQaTurn
+      ? t('DEVICE.YOUR_TURN')
+      : isRunLive
+        ? t(RUN_HOW_KEYS[live?.talk === 'checking' ? 'check' : (live?.how ?? 'replay')])
+        : isLearning
+          ? t('DEVICE.LEARNING')
+          : '',
     offTitle:
       lastRun === null
         ? t('DEVICE.NO_DEVICE')
@@ -411,6 +414,14 @@ export const useDeviceViewModel = () => {
     viewports,
     hasViewportPicker: viewports.length > 0 && hasScreen && !isFocused && !isLearning,
     screenRatio,
+    hasManualPanel: isQaTurn,
+    fitsWhole: isPhone,
+    onTouch:
+      isQaTurn && workspaceId !== null && pickedScreen === null
+        ? (input: DeviceInput) => {
+            Run.touch({ workspaceId, input });
+          }
+        : undefined,
     onSelectViewport: (viewportId: ViewportId) => {
       if (!workspace || viewportId === viewport.id) return;
 
