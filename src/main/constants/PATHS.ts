@@ -22,5 +22,6 @@ export const PATHS = {
   attachments: join(app.getPath('userData'), 'attachments'),
   builds: join(app.getPath('userData'), 'builds'),
   skills: join(app.getPath('userData'), 'skills'),
+  templates: join(app.getPath('userData'), 'templates.json'),
   logs: join(app.getPath('userData'), 'logs'),
 } as const;

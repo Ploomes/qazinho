@@ -75,6 +75,7 @@ import type {
   ISavedState,
   ISavedWorkspace,
   ISaveSkill,
+  ISaveTemplate,
   ISetupEvent,
   ISkill,
   ISkillDraftFile,
@@ -89,6 +90,7 @@ import type {
   IStoryAnswersAsk,
   IStoryDoubtsPost,
   ITellStory,
+  ITemplate,
   ITrayWords,
   IVideoSweep,
   IViewport,
@@ -117,6 +119,7 @@ import type {
   StoryDoubtsPosted,
   StoryPeople,
   StoryStatus,
+  TemplateSaved,
   UnreadPlanRead,
   VariablesOutcome,
   WindowFit,
@@ -441,6 +444,11 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.searchJira, query) as Promise<JiraIssueList>,
   listJiraProjects: () =>
     ipcRenderer.invoke(CHANNELS.listJiraProjects) as Promise<JiraProjectList>,
+  listTemplates: () => ipcRenderer.invoke(CHANNELS.listTemplates) as Promise<ITemplate[]>,
+  saveTemplate: (template: ISaveTemplate) =>
+    ipcRenderer.invoke(CHANNELS.saveTemplate, template) as Promise<TemplateSaved>,
+  removeTemplate: (id: string) =>
+    ipcRenderer.invoke(CHANNELS.removeTemplate, id) as Promise<boolean>,
   checkSources: (ask: ISourcesCheckAsk) =>
     ipcRenderer.invoke(CHANNELS.checkSources, ask) as Promise<ISourcesChecked>,
   readChange: (request: IReadChange) =>

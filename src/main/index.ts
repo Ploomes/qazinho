@@ -42,6 +42,7 @@ import type {
   IRunRef,
   ISavedWorkspace,
   ISaveSkill,
+  ISaveTemplate,
   ISetupEvent,
   ISkill,
   ISkillDraftFile,
@@ -70,6 +71,7 @@ import type {
   IAttachSources,
   SourceCall,
 } from '@salve-software/qazinho-harness';
+import { randomUUID } from 'node:crypto';
 import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { homedir, hostname, release, tmpdir } from 'node:os';
 import { delimiter, extname, join } from 'node:path';
@@ -142,6 +144,7 @@ import {
   SourceCheck,
   StorageKeeper,
   storyTextOf,
+  TemplateLibrary,
   updateFeedOf,
   UsageReader,
   VariableVault,
@@ -673,6 +676,11 @@ const memoryKeeper = new MemoryKeeper({
   findCommand,
 });
 const changeReader = new ChangeReader({ runner: agentRunner, harness, findCommand });
+const templates = new TemplateLibrary({
+  file: PATHS.templates,
+  now: () => new Date().toISOString(),
+  newId: () => `tpl-${randomUUID()}`,
+});
 
 const builder = new AppBuilder({
   github,
@@ -2017,6 +2025,11 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());
+  ipcMain.handle(CHANNELS.listTemplates, () => templates.list());
+  ipcMain.handle(CHANNELS.saveTemplate, (_event, template: ISaveTemplate) =>
+    templates.save(template),
+  );
+  ipcMain.handle(CHANNELS.removeTemplate, (_event, id: string) => templates.remove(id));
   ipcMain.handle(CHANNELS.checkSources, (_event, ask: ISourcesCheckAsk) =>
     sourceCheck.check(ask),
   );

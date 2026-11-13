@@ -25,5 +25,6 @@ export * from './Sites';
 export * from './Skills';
 export * from './Sources';
 export * from './Storage';
+export * from './Templates';
 export * from './Updates';
 export * from './Variables';

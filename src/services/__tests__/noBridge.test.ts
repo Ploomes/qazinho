@@ -16,6 +16,7 @@ import {
   Setup,
   Sites,
   Sources,
+  Templates,
   Updates,
   Memories,
   Variables,
@@ -232,6 +233,18 @@ describe('a page with no bridge', () => {
     );
     expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
     expect(await Jira.boards('')).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(await Templates.list()).toEqual([]);
+    expect(
+      await Templates.save({
+        id: null,
+        kind: 'bug',
+        name: 'Bug',
+        title: '',
+        parts: [],
+        cases: 'steps',
+      }),
+    ).toEqual({ isSaved: false, reason: 'unwritable' });
+    expect(await Templates.remove('t-1')).toBe(false);
     expect(await Jira.tell({ key: 'SHOP-878', text: 'Oi.' })).toEqual({
       isPosted: false,
       failure: 'unreachable',
