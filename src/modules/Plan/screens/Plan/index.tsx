@@ -5,6 +5,7 @@ import { ToTop, Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import {
   PlanCase,
+  PlanChanges,
   PlanDoubts,
   PlanStrategy,
   PublishModal,
@@ -41,6 +42,9 @@ export const Plan: React.FC = () => {
     workspaceId,
     strategy,
     doubts,
+    changed,
+    review,
+    canCheck,
     issue,
     sources,
     onToggleCase,
@@ -272,6 +276,17 @@ export const Plan: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <PlanChanges
+            workspaceId={workspaceId}
+            plan={plan}
+            doubts={doubts}
+            issue={issue}
+            changed={changed}
+            review={review}
+            canCheck={canCheck}
+            isLocked={isLocked}
+          />
 
           <PlanDoubts
             workspaceId={workspaceId}

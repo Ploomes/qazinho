@@ -63,6 +63,9 @@ export const usePlanViewModel = () => {
     design: opened.design,
     strategy: opened.strategy ?? null,
     doubts: opened.doubts,
+    changed: opened.changed ?? null,
+    review: opened.review ?? null,
+    hasSnapshots: (opened.snapshots ?? []).length > 0,
     isLocked: opened.live !== null && !opened.live.isDone,
     liveOutcomes: opened.live?.outcomes ?? null,
     liveDoingIndex: opened.live?.doingIndex ?? -1,
@@ -394,6 +397,9 @@ export const usePlanViewModel = () => {
     workspaceId: workspaceId ?? '',
     strategy: workspace?.strategy ?? null,
     doubts: workspace?.doubts ?? PLAN_NO_DOUBTS,
+    changed: workspace?.changed ?? null,
+    review: workspace?.review ?? null,
+    canCheck: workspace?.hasSnapshots === true || source !== null,
     issue,
     sources: [
       ...(sourcePage === null
