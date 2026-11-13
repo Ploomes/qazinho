@@ -21,7 +21,7 @@ export const useHomeViewModel = () => {
   const developed = useWorkspaceStore((state) => state.developedCases);
   const setDeveloped = useWorkspaceStore((state) => state.setDevelopedCases);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
-  const { onRunPlan } = useRunActions();
+  const { onRunPlan, onWalkByHand } = useRunActions();
   const icons = useSiteIcons(
     projects.flatMap(({ targets }) => projectAppOf(targets).address ?? []),
   );
@@ -182,6 +182,24 @@ export const useHomeViewModel = () => {
         action: t('HOME.OPEN'),
         onAction: () => {
           open({ workspaceId: item.workspaceId, tab: 'plan' });
+        },
+      })),
+    },
+    {
+      id: 'byHand',
+      title: t('HOME.GROUP_BY_HAND'),
+      items: home.byHand.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.byHand,
+        text:
+          item.cases === 1
+            ? t('HOME.BY_HAND_ONE', { id: item.caseId, plan: item.plan })
+            : t('HOME.BY_HAND_OTHER', { count: item.cases, plan: item.plan }),
+        project: item.project,
+        action: t('HOME.WALK_BY_HAND'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: 'device' });
+          onWalkByHand(item.caseId);
         },
       })),
     },

@@ -1,6 +1,7 @@
 import type {
   IHome,
   IHomeAsking,
+  IHomeByHand,
   IHomeFailed,
   IHomePaused,
   IHomeRecent,
@@ -10,7 +11,12 @@ import type {
 } from '@/modules/Home/types';
 import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
-import { currentStepOf, planStageOf, runToContinueOf } from '@/modules/Run/library';
+import {
+  currentStepOf,
+  manualWaitingOf,
+  planStageOf,
+  runToContinueOf,
+} from '@/modules/Run/library';
 import { workspaceMeta } from '@/modules/Workspace/library';
 
 /**
@@ -29,6 +35,7 @@ export function homeOf(props: {
   const going: (IHomeRunning | IHomePaused)[] = [];
   const toContinue: IHomeToContinue[] = [];
   const failed: IHomeFailed[] = [];
+  const byHand: IHomeByHand[] = [];
   const toDevelop: IHomeToDevelop[] = [];
 
   for (const workspace of props.workspaces) {
@@ -65,6 +72,14 @@ export function homeOf(props: {
         });
     }
 
+    const [waiting, ...more] =
+      live === null
+        ? manualWaitingOf({ plan: workspace.plan, runs: workspace.runs })
+        : [];
+
+    if (waiting !== undefined)
+      byHand.push({ ...base, kind: 'byHand', cases: more.length + 1, caseId: waiting });
+
     if (live === null && developed !== undefined) {
       const cases = planStageOf({ plan: workspace.plan, developed }).toDevelop.length;
 
@@ -77,6 +92,7 @@ export function homeOf(props: {
     going,
     toContinue,
     failed,
+    byHand,
     toDevelop,
     recent: recentOf(props).slice(0, props.shown),
   };

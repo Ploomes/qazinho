@@ -111,6 +111,25 @@ describe('homeOf', () => {
     ]);
   });
 
+  it('lists the cases by hand that wait for the QA once the plan ran, the first named', () => {
+    const workspace = makeWorkspace();
+    const ran = walkRun({
+      workspace: {
+        ...workspace,
+        plan: workspace.plan.map((one) =>
+          one.id === 'TC-02' ? { ...one, isManual: true } : one,
+        ),
+      },
+      verdicts: ['passed', 'passed', 'passed'],
+      isFinished: true,
+    });
+
+    expect(home([workspace]).byHand).toEqual([]);
+    expect(home([ran]).byHand).toEqual([
+      expect.objectContaining({ kind: 'byHand', cases: 1, caseId: 'TC-02' }),
+    ]);
+  });
+
   it('shows nothing for a plan that passed and has everything recorded', () => {
     const passed = walkRun({ verdicts: ['passed'], isFinished: true });
     const all = [...new Set(passed.plan.map(({ id }) => id))];

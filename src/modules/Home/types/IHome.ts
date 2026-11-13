@@ -1,4 +1,5 @@
 import type { IHomeAsking } from './IHomeAsking';
+import type { IHomeByHand } from './IHomeByHand';
 import type { IHomeFailed } from './IHomeFailed';
 import type { IHomePaused } from './IHomePaused';
 import type { IHomeRecent } from './IHomeRecent';
@@ -12,6 +13,7 @@ export interface IHome {
   going: (IHomeRunning | IHomePaused)[];
   toContinue: IHomeToContinue[];
   failed: IHomeFailed[];
+  byHand: IHomeByHand[];
   toDevelop: IHomeToDevelop[];
   recent: IHomeRecent[];
 }
