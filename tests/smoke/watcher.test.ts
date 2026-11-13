@@ -132,4 +132,55 @@ describe('reading a change, with a real agent', () => {
     expect(third?.case.steps.some(({ action }) => action.includes('5'))).toBe(true);
     expect(reading.read.answered.map(({ doubtId }) => doubtId)).toEqual(['D1']);
   }, 300_000);
+
+  it('takes only the decisions of a meeting, and leaves the discussion out', async () => {
+    const command = (await new AgentDetector().detect()).find(
+      (one) => one.id === 'claude-code',
+    )?.path;
+    const reader = new ChangeReader({
+      runner: new AgentRunner({
+        owners: new ProcessOwners(),
+        folder: tmpdir(),
+        onEvent: () => undefined,
+      }),
+      harness: new Harness(),
+      findCommand: () => Promise.resolve(command ?? null),
+    });
+    const reading = await reader.read({
+      workspaceId: 'w-meeting',
+      agentId: 'claude-code',
+      model: 'haiku',
+      brief: {
+        ...BRIEF,
+        doubts: [],
+        changes: [
+          {
+            kind: 'meeting',
+            name: 'alinhamento-cupons.vtt',
+            at: '2026-11-12',
+            text: [
+              'Rui PO: Sobre o bloqueio do campo de cupom, fechamos em 5 tentativas erradas.',
+              'Lia Dev: Combinado, 5.',
+              'Ana QA: E se um dia for 10 tentativas? Talvez faça sentido para cliente antigo.',
+              'Rui PO: Pode ser, mas isso não é para agora, vamos pensar depois.',
+              'Lia Dev: Também pensei em mostrar um contador de tentativas, mas não decidimos nada.',
+            ].join('\n'),
+          },
+        ],
+      },
+    });
+
+    writeFileSync('/tmp/qz-meeting.json', JSON.stringify(reading, null, 2));
+
+    if (!reading.isRead)
+      throw new Error(`the agent did not read the meeting: ${reading.reason}`);
+
+    const third = reading.read.changes.find(({ caseId }) => caseId === 'TC-03');
+
+    expect(third?.case.steps.some(({ action }) => action.includes('5'))).toBe(true);
+    expect(JSON.stringify(reading.read.changes)).not.toContain('10 tentativas');
+    expect(reading.read.added.map(({ case: one }) => one.title).join(' ')).not.toMatch(
+      /contador/i,
+    );
+  }, 300_000);
 });
