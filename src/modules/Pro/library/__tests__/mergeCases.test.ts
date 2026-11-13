@@ -16,6 +16,12 @@ describe('mergeCases', () => {
     ).toEqual(['Mine', 'Theirs']);
   });
 
+  it('takes the org’s word that a case is now walked by hand', () => {
+    const theirs = [{ ...A, isManual: true }, B];
+
+    expect(mergeCases({ base: [A, B], mine: [A, B], theirs }).cases).toEqual(theirs);
+  });
+
   it('keeps a case each side added, this computer’s first', () => {
     expect(
       mergeCases({ base: [A], mine: [A, B], theirs: [A, C] }).cases.map(({ id }) => id),

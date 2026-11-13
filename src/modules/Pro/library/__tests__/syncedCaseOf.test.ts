@@ -16,6 +16,11 @@ describe('syncedCaseOf', () => {
     });
   });
 
+  it('says a case is walked by hand only when it is', () => {
+    expect(syncedCaseOf({ ...CASES[0]!, isManual: true }).isManual).toBe(true);
+    expect(syncedCaseOf(CASES[0]!)).not.toHaveProperty('isManual');
+  });
+
   it('keeps a step’s frame only where it names one', () => {
     const synced = syncedCaseOf({
       ...CASES[0]!,

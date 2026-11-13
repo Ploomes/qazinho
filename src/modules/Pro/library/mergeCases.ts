@@ -81,6 +81,7 @@ function sameCase(
             expected,
             frame ?? null,
           ]),
+          testCase.isManual === true,
         ]);
 
   return said(one) === said(other);

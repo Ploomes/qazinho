@@ -19,5 +19,6 @@ export function testCasesOf(props: {
       frame === undefined ? { action, expected } : { action, expected, frame },
     ),
     lastVerdict: props.local.find(({ id }) => id === one.id)?.lastVerdict ?? null,
+    ...(one.isManual === true ? { isManual: true } : {}),
   }));
 }
