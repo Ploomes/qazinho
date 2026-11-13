@@ -538,6 +538,7 @@ export const en = {
     UNWALKED_NO_VALUE: 'A variable has no value in this run.',
     UNWALKED_NO_DATA: 'The test data this recording expects is not there.',
     UNWALKED_MANUAL: 'The QA walks this case by hand.',
+    UNWALKED_ENDED: 'Not marked: you ended the case before this step.',
     REPLAY_RUN: 'Run {{id}}, the whole plan',
     REPLAY_CASE: 'Take of {{id}}',
     REPLAY_BUG: 'The moment of {{id}}',
