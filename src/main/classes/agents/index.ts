@@ -2,6 +2,7 @@ export * from './AgentDetector';
 export * from './AgentLogin';
 export * from './AgentRunner';
 export * from './AgentTerminal';
+export * from './ChangeReader';
 export * from './LinkCatcher';
 export * from './MemoryKeeper';
 export * from './UsageReader';

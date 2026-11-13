@@ -233,6 +233,14 @@ describe('a page with no bridge', () => {
     expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
     expect(await Jira.boards('')).toEqual({ isListed: false, failure: 'unreachable' });
     expect(
+      await Sources.read({
+        workspaceId: 'w1',
+        agentId: 'claude-code',
+        model: 'haiku',
+        brief: { changes: [], cases: [], doubts: [], language: 'en' },
+      }),
+    ).toEqual({ isRead: false, reason: 'agent-missing' });
+    expect(
       await Sources.check({
         snapshots: [{ kind: 'story', key: 'SHOP-878', url: '', text: '', at: '' }],
         code: null,

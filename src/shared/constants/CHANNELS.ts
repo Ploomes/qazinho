@@ -104,6 +104,7 @@ export const CHANNELS = {
   searchJira: 'jira:search',
   listJiraProjects: 'jira:projects',
   checkSources: 'sources:check',
+  readChange: 'sources:read-change',
   listJiraBoards: 'jira:boards',
   listBoardColumns: 'jira:board-columns',
   readStoryStatus: 'jira:story-status',

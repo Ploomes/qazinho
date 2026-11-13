@@ -6,6 +6,7 @@ import type {
   BugComment,
   BugFiling,
   BugReview,
+  ChangeReading,
   CodeRead,
   ConfluencePageList,
   ConfluenceSpaceList,
@@ -61,6 +62,7 @@ import type {
   IProSyncBatch,
   IPublishPlan,
   IQazinhoApi,
+  IReadChange,
   IRemovedVideo,
   IRepositoryList,
   IRepositoryRef,
@@ -440,6 +442,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.listJiraProjects) as Promise<JiraProjectList>,
   checkSources: (ask: ISourcesCheckAsk) =>
     ipcRenderer.invoke(CHANNELS.checkSources, ask) as Promise<ISourcesChecked>,
+  readChange: (request: IReadChange) =>
+    ipcRenderer.invoke(CHANNELS.readChange, request) as Promise<ChangeReading>,
   listJiraBoards: (query: string) =>
     ipcRenderer.invoke(CHANNELS.listJiraBoards, query) as Promise<JiraBoardList>,
   listBoardColumns: (boardId: number) =>

@@ -34,6 +34,7 @@ import type {
   IProShare,
   IProSyncBatch,
   IPublishPlan,
+  IReadChange,
   IRepositoryRef,
   IReviewBug,
   IRunAlert,
@@ -102,6 +103,7 @@ import {
   AssistantAgent,
   BugFiler,
   BugReviewer,
+  ChangeReader,
   canUpdateOf,
   ChatAttachments,
   ChatDevices,
@@ -669,6 +671,7 @@ const memoryKeeper = new MemoryKeeper({
   harness,
   findCommand,
 });
+const changeReader = new ChangeReader({ runner: agentRunner, harness, findCommand });
 
 const builder = new AppBuilder({
   github,
@@ -2015,6 +2018,9 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());
   ipcMain.handle(CHANNELS.checkSources, (_event, ask: ISourcesCheckAsk) =>
     sourceCheck.check(ask),
+  );
+  ipcMain.handle(CHANNELS.readChange, (_event, request: IReadChange) =>
+    changeReader.read(request),
   );
   ipcMain.handle(CHANNELS.listJiraBoards, (_event, query: string) => jira.boards(query));
   ipcMain.handle(CHANNELS.listBoardColumns, (_event, boardId: number) =>

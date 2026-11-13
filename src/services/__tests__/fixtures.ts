@@ -237,6 +237,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         code: ask.code,
         missed: [],
       }),
+    readChange: () => Promise.resolve({ isRead: false, reason: 'agent-missing' }),
     listJiraBoards: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
     listBoardColumns: () =>
       Promise.resolve({ isListed: false, failure: 'not-connected' }),

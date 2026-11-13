@@ -1,4 +1,9 @@
-import type { ISourcesCheckAsk, ISourcesChecked } from '@/shared/types';
+import type {
+  ChangeReading,
+  IReadChange,
+  ISourcesCheckAsk,
+  ISourcesChecked,
+} from '@/shared/types';
 
 /** O único que chama o lado das fontes de um plano da bridge. */
 export class Sources {
@@ -12,6 +17,15 @@ export class Sources {
           ...ask.snapshots.map((one) => (one.kind === 'story' ? one.key : one.title)),
           ...(ask.code === null ? [] : [ask.code.branch]),
         ],
+      }
+    );
+  }
+
+  public static async read(request: IReadChange): Promise<ChangeReading> {
+    return (
+      (await window.qazinho?.readChange(request)) ?? {
+        isRead: false,
+        reason: 'agent-missing',
       }
     );
   }
