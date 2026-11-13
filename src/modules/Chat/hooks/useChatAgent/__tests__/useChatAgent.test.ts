@@ -111,6 +111,74 @@ describe('useChatAgent', () => {
       expect(useWorkspaceStore.getState().askingIds).toEqual([]);
     });
 
+    it('tells the agent the project has no name yet, and takes the name it gives', async () => {
+      useAppStore.setState({
+        projects: [{ ...PROJECT, name: 'New project', isNamePending: true }],
+      });
+      const ask = answering({
+        answer: {
+          reply: 'Which coupon?',
+          questions: [],
+          plan: null,
+          projectName: 'Loja de cupons',
+        },
+      });
+      const { result } = renderHook(() => useChatAgent());
+
+      act(() => {
+        result.current.askAgent({
+          workspaceId: 'w1',
+          text: 'Plan the coupon',
+          references: [],
+          code: null,
+          jira: null,
+          confluence: null,
+        });
+      });
+
+      await waitFor(() => {
+        expect(useAppStore.getState().projects[0]?.name).toBe('Loja de cupons');
+      });
+      expect(ask.mock.calls[0]?.[0]).toMatchObject({ isProjectUnnamed: true });
+      expect(useAppStore.getState().projects[0]?.isNamePending).toBeUndefined();
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+        kind: 'named',
+        name: 'Loja de cupons',
+        from: 'agent',
+      });
+    });
+
+    it('does NOT rename a project that has its name, whatever the agent says', async () => {
+      const ask = answering({
+        answer: {
+          reply: 'Which coupon?',
+          questions: [],
+          plan: null,
+          projectName: 'Outro nome',
+        },
+      });
+      const { result } = renderHook(() => useChatAgent());
+
+      act(() => {
+        result.current.askAgent({
+          workspaceId: 'w1',
+          text: 'Plan the coupon',
+          references: [],
+          code: null,
+          jira: null,
+          confluence: null,
+        });
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+          kind: 'agent',
+        });
+      });
+      expect(ask.mock.calls[0]?.[0].isProjectUnnamed).toBeUndefined();
+      expect(useAppStore.getState().projects[0]?.name).toBe('Shop · staging');
+    });
+
     it('does NOT ask for a workspace that is gone', () => {
       const ask = answering({ answer: DRAFTED });
       const { result } = renderHook(() => useChatAgent());

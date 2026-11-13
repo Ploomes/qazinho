@@ -13,6 +13,7 @@ import { viewportOf } from '@/modules/Device';
 import { MEMORY } from '@/modules/Memory/constants';
 import { memoriesFor } from '@/modules/Memory/library';
 import { caseIdsUsed, planOfDraft } from '@/modules/Plan';
+import { useNameProject } from '@/modules/Project';
 import { flattenPlanSteps } from '@/modules/Run';
 import {
   CONFLUENCE_FAILURE_KEYS,
@@ -31,6 +32,7 @@ import {
 
 export const useChatAgent = () => {
   const { t } = useTranslation();
+  const nameAs = useNameProject();
 
   const askAgent = (props: {
     workspaceId: string;
@@ -109,6 +111,7 @@ export const useChatAgent = () => {
         ? {}
         : { doubts: workspace.doubts }),
       ...(props.isFromAgent === true ? { isFromAgent: true } : {}),
+      ...(project?.isNamePending === true ? { isProjectUnnamed: true } : {}),
       ...(props.skill == null ? {} : { skill: props.skill }),
       ...(props.attachments === undefined || props.attachments.length === 0
         ? {}
@@ -208,6 +211,14 @@ export const useChatAgent = () => {
           who: agentName,
           agentId,
           sessionId: turn.sessionId,
+        });
+
+      if (answer.projectName !== undefined)
+        nameAs({
+          projectId: workspace.projectId,
+          name: answer.projectName,
+          from: 'agent',
+          workspaceId,
         });
 
       landQuestions({ workspaceId, questions: answer.questions });
