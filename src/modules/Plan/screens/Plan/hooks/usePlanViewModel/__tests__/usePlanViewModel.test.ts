@@ -437,6 +437,7 @@ describe('usePlanViewModel', () => {
       );
 
       useAppStore.setState({ projects: [] });
+      useSetupStore.setState({ integrations: [] });
 
       expect(renderHook(() => usePlanViewModel()).result.current.hasTopActions).toBe(
         false,
