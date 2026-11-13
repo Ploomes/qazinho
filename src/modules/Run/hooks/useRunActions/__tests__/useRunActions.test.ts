@@ -97,6 +97,69 @@ describe('useRunActions', () => {
       ]);
     });
 
+    it('walks a case the QA does by hand as theirs, with only its steps', () => {
+      const { startRunCall } = bridge();
+      const workspace = makeWorkspace();
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...workspace,
+            plan: workspace.plan.map((one) =>
+              one.id === 'TC-02' ? { ...one, isManual: true } : one,
+            ),
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRunCase('TC-02');
+      });
+
+      expect(startRunCall).toHaveBeenCalledWith(
+        expect.objectContaining({ caseIds: ['TC-02'], mode: 'manual' }),
+      );
+      expect(
+        (
+          startRunCall.mock.calls[0] as unknown as [{ steps: { caseId: string }[] }]
+        )[0].steps.every(({ caseId }) => caseId === 'TC-02'),
+      ).toBe(true);
+    });
+
+    it('leaves the cases done by hand out of a run of the plan', () => {
+      const { startRunCall } = bridge();
+      const workspace = makeWorkspace();
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...workspace,
+            plan: workspace.plan.map((one) =>
+              one.id === 'TC-02' ? { ...one, isManual: true } : one,
+            ),
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRun();
+      });
+
+      const [sent] = startRunCall.mock.calls[0] as unknown as [
+        { steps: { caseId: string }[]; caseIds?: string[] },
+      ];
+
+      expect(sent.steps.some(({ caseId }) => caseId === 'TC-02')).toBe(false);
+      expect(sent.caseIds).toEqual(['TC-01']);
+      expect(useWorkspaceStore.getState().workspaces[0]?.live?.caseIds).toEqual([
+        'TC-01',
+      ]);
+    });
+
     it('holds a single case for an org update, and keeps which case it was', () => {
       bridge();
       useProStore.setState({ shares: [MOVED] });

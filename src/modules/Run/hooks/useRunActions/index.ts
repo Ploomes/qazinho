@@ -51,10 +51,16 @@ export const useRunActions = () => {
     const { workspaceId, mode, caseIds } = props;
     const { workspace, target } = opened(workspaceId);
     const isExploring = mode === 'explore';
-    const scoped = caseIds === undefined || caseIds.length === 0 ? undefined : caseIds;
-    const steps = isExploring
-      ? []
-      : walkedStepsOf({ plan: workspace?.plan ?? [], caseIds: scoped });
+    const plan = workspace?.plan ?? [];
+    const pool =
+      mode === 'manual' ? plan : plan.filter(({ isManual }) => isManual !== true);
+    const scoped =
+      caseIds !== undefined && caseIds.length > 0
+        ? caseIds
+        : pool.length < plan.length
+          ? pool.map(({ id }) => id)
+          : undefined;
+    const steps = isExploring ? [] : walkedStepsOf({ plan: pool, caseIds: scoped });
     const live = workspace?.live ?? null;
 
     if (
@@ -199,7 +205,15 @@ export const useRunActions = () => {
       runOwn('explore');
     },
     onRunCase: (caseId: string) => {
-      runOwn('replay', [caseId]);
+      const { workspace } = opened(selectedId());
+      const isManual = workspace?.plan.some(
+        ({ id, isManual: byHand }) => id === caseId && byHand === true,
+      );
+
+      runOwn(isManual === true ? 'manual' : 'replay', [caseId]);
+    },
+    onWalkByHand: (caseId: string) => {
+      runOwn('manual', [caseId]);
     },
     onPause: () => {
       const { workspace } = opened(selectedId());

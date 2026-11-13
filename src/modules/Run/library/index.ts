@@ -14,6 +14,7 @@ export * from './formatClock';
 export * from './formatCost';
 export * from './formatRequestSize';
 export * from './formatRequestTime';
+export * from './manualWaitingOf';
 export * from './momentAt';
 export * from './networkAt';
 export * from './nextRunId';
