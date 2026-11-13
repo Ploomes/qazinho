@@ -249,6 +249,14 @@ describe('a page with no bridge', () => {
       }),
     ).toEqual({ isSaved: false, reason: 'unwritable' });
     expect(await Templates.remove('t-1')).toBe(false);
+    expect(await Templates.listOrg('loja')).toEqual({
+      isListed: false,
+      failure: 'unreachable',
+    });
+    expect(await Templates.removeOrg({ orgSlug: 'loja', id: 'org:loja:t1' })).toEqual({
+      isDone: false,
+      failure: 'unreachable',
+    });
     expect(await Jira.tell({ key: 'SHOP-878', text: 'Oi.' })).toEqual({
       isPosted: false,
       failure: 'unreachable',

@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { SYNC_CASE_SCHEMA } from './SYNC_CASE_SCHEMA';
 import { SYNC_DOUBT_SCHEMA } from './SYNC_DOUBT_SCHEMA';
-import { SYNC_STRATEGY_SCHEMA } from './SYNC_STRATEGY_SCHEMA';
 import { SYNC_MEMORY_SCHEMA } from './SYNC_MEMORY_SCHEMA';
+import { SYNC_STRATEGY_SCHEMA } from './SYNC_STRATEGY_SCHEMA';
 
 export const SYNCED_PROJECTS_SCHEMA = z.object({
   projects: z.array(

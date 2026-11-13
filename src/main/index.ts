@@ -42,6 +42,9 @@ import type {
   IRunRef,
   ISavedWorkspace,
   ISaveSkill,
+  IOrgTemplateDefault,
+  IOrgTemplateRef,
+  ISaveOrgTemplate,
   ISaveTemplate,
   ISaveText,
   ISetupEvent,
@@ -132,6 +135,7 @@ import {
   ProApi,
   ProcessOwners,
   ProDownloads,
+  ProTemplates,
   ProSync,
   ReplayServer,
   ResourceCollector,
@@ -617,6 +621,11 @@ const proDownloads = new ProDownloads({
   token: () => proAccount.token(),
   archiveRoot: PATHS.data,
   sync: proSync,
+});
+const proTemplates = new ProTemplates({
+  api: proApi,
+  token: () => proAccount.token(),
+  file: PATHS.orgTemplates,
 });
 const git = new GitCli({ directories: commandDirectories });
 const importScanner = new ImportScanner({ git });
@@ -2051,6 +2060,18 @@ void app.whenReady().then(async () => {
     templates.save(template),
   );
   ipcMain.handle(CHANNELS.removeTemplate, (_event, id: string) => templates.remove(id));
+  ipcMain.handle(CHANNELS.listOrgTemplates, (_event, orgSlug: string) =>
+    proTemplates.list(orgSlug),
+  );
+  ipcMain.handle(CHANNELS.saveOrgTemplate, (_event, save: ISaveOrgTemplate) =>
+    proTemplates.save(save),
+  );
+  ipcMain.handle(CHANNELS.removeOrgTemplate, (_event, template: IOrgTemplateRef) =>
+    proTemplates.remove(template),
+  );
+  ipcMain.handle(CHANNELS.setOrgTemplateDefault, (_event, choice: IOrgTemplateDefault) =>
+    proTemplates.setDefault(choice),
+  );
   ipcMain.handle(CHANNELS.checkSources, (_event, ask: ISourcesCheckAsk) =>
     sourceCheck.check(ask),
   );

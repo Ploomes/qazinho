@@ -234,6 +234,11 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     listTemplates: () => Promise.resolve([]),
     saveTemplate: () => Promise.resolve({ isSaved: false, reason: 'unwritable' }),
     removeTemplate: () => Promise.resolve(false),
+    listOrgTemplates: () => Promise.resolve({ isListed: false, failure: 'signed-out' }),
+    saveOrgTemplate: () => Promise.resolve({ isSaved: false, failure: 'signed-out' }),
+    removeOrgTemplate: () => Promise.resolve({ isDone: false, failure: 'signed-out' }),
+    setOrgTemplateDefault: () =>
+      Promise.resolve({ isDone: false, failure: 'signed-out' }),
     checkSources: (ask) =>
       Promise.resolve({
         changes: [],

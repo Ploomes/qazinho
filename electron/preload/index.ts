@@ -75,6 +75,7 @@ import type {
   ISavedState,
   ISavedWorkspace,
   ISaveSkill,
+  ISaveOrgTemplate,
   ISaveTemplate,
   ISaveText,
   ISetupEvent,
@@ -91,6 +92,8 @@ import type {
   IStoryAnswersAsk,
   IStoryDoubtsPost,
   ITellStory,
+  IOrgTemplateDefault,
+  IOrgTemplateRef,
   ITemplate,
   ITrayWords,
   IVideoSweep,
@@ -120,6 +123,9 @@ import type {
   StoryDoubtsPosted,
   StoryPeople,
   StoryStatus,
+  OrgTemplateDone,
+  OrgTemplateSaved,
+  OrgTemplatesRead,
   TemplateSaved,
   UnreadPlanRead,
   VariablesOutcome,
@@ -452,6 +458,17 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.saveTemplate, template) as Promise<TemplateSaved>,
   removeTemplate: (id: string) =>
     ipcRenderer.invoke(CHANNELS.removeTemplate, id) as Promise<boolean>,
+  listOrgTemplates: (orgSlug: string) =>
+    ipcRenderer.invoke(CHANNELS.listOrgTemplates, orgSlug) as Promise<OrgTemplatesRead>,
+  saveOrgTemplate: (save: ISaveOrgTemplate) =>
+    ipcRenderer.invoke(CHANNELS.saveOrgTemplate, save) as Promise<OrgTemplateSaved>,
+  removeOrgTemplate: (template: IOrgTemplateRef) =>
+    ipcRenderer.invoke(CHANNELS.removeOrgTemplate, template) as Promise<OrgTemplateDone>,
+  setOrgTemplateDefault: (choice: IOrgTemplateDefault) =>
+    ipcRenderer.invoke(
+      CHANNELS.setOrgTemplateDefault,
+      choice,
+    ) as Promise<OrgTemplateDone>,
   checkSources: (ask: ISourcesCheckAsk) =>
     ipcRenderer.invoke(CHANNELS.checkSources, ask) as Promise<ISourcesChecked>,
   readChange: (request: IReadChange) =>

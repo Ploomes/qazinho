@@ -356,6 +356,48 @@ describe('ProApi', () => {
     );
   });
 
+  it('publishes a template with a POST and rewrites one with a PUT on its id', async () => {
+    const { calls, fetcher } = fakePlatform({ status: 500, body: null });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
+
+    await api.saveTemplate({ token: 'qzm_token', org: 'loja', id: null, body: {} });
+    await api.saveTemplate({ token: 'qzm_token', org: 'loja', id: 'a1', body: {} });
+
+    expect(calls.map(({ method, url }) => `${method} ${url}`)).toEqual([
+      'POST https://qazinho-api.salvesoftware.com/api/orgs/loja/templates',
+      'PUT https://qazinho-api.salvesoftware.com/api/orgs/loja/templates/a1',
+    ]);
+  });
+
+  it('chooses the default of a kind, or none, and reads the empty answer', async () => {
+    const { calls, fetcher } = fakePlatform({ status: 204, body: null });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
+
+    const answer = await api.setDefaultTemplate({
+      token: 'qzm_token',
+      org: 'loja',
+      kind: 'bug',
+      id: null,
+    });
+
+    expect(answer).toEqual({ isOk: true, value: null });
+    expect(calls[0]).toMatchObject({
+      method: 'PUT',
+      url: 'https://qazinho-api.salvesoftware.com/api/orgs/loja/templates/defaults/bug',
+      body: '{"templateId":null}',
+    });
+  });
+
   it('says the platform is unreachable when the call never answers', async () => {
     const api = new ProApi({
       baseUrl: 'https://qazinho-api.salvesoftware.com',
