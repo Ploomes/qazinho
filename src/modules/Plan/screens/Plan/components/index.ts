@@ -1,4 +1,5 @@
 export * from './DoubtsModal';
+export * from './MeetingModal';
 export * from './PlanCase';
 export * from './PlanChanges';
 export * from './PlanDoubts';

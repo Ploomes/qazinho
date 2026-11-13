@@ -1,6 +1,8 @@
 .plan-changes__check {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
+  gap: var(--space-3);
 }
 
 .plan-changes__fold {

@@ -32,5 +32,6 @@ export * from './removeStep';
 export * from './reviewOf';
 export * from './storyNoteOf';
 export * from './toPlanKind';
+export * from './transcriptOf';
 export * from './waitingDoubtsOf';
 export * from './writtenSecretsOf';

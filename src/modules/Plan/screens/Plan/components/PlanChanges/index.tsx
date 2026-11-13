@@ -1,5 +1,6 @@
 import type { IPlanChangesProps } from './types';
 import { AnimatePresence } from 'motion/react';
+import { MeetingModal } from '@/modules/Plan/screens/Plan/components/MeetingModal';
 import { TellStoryModal } from '@/modules/Plan/screens/Plan/components/TellStoryModal';
 import { Button, Icon, IconButton } from '@/shared/components/atoms';
 import { Fold } from '@/shared/components/molecules';
@@ -37,6 +38,12 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
     isTelling,
     storyKey,
     note,
+    canMeet,
+    meetLabel,
+    isMeeting,
+    onMeet,
+    onCancelMeeting,
+    onMeeting,
     onCheck,
     onPropose,
     onKeep,
@@ -53,12 +60,20 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
 
   return (
     <>
-      {canCheck && (
+      {(canCheck || canMeet) && (
         <div className="plan-changes__check">
-          <Button variant="ghost" size="sm" disabled={isChecking} onClick={onCheck}>
-            <Icon name="reload" />
-            {checkLabel}
-          </Button>
+          {canCheck && (
+            <Button variant="ghost" size="sm" disabled={isChecking} onClick={onCheck}>
+              <Icon name="reload" />
+              {checkLabel}
+            </Button>
+          )}
+          {canMeet && (
+            <Button variant="ghost" size="sm" disabled={isProposing} onClick={onMeet}>
+              <Icon name="file" />
+              {meetLabel}
+            </Button>
+          )}
         </div>
       )}
 
@@ -223,6 +238,9 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
       )}
 
       <AnimatePresence>
+        {isMeeting && (
+          <MeetingModal key="meeting" onCancel={onCancelMeeting} onRead={onMeeting} />
+        )}
         {isTelling && (
           <TellStoryModal
             key="tell"

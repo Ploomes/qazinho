@@ -312,6 +312,50 @@ describe('usePlanChangesViewModel', () => {
     });
   });
 
+  /** A reunião entra no lugar do "depois", e o resultado é a mesma revisão. */
+  describe('reading a meeting', () => {
+    it('reads the transcript as a change, on the click, and opens the review', async () => {
+      const read = bridge({});
+      const { result, rerender } = render();
+
+      expect(result.current.canMeet).toBe(true);
+
+      act(() => {
+        result.current.onMeet();
+      });
+      rerender();
+
+      expect(result.current.isMeeting).toBe(true);
+
+      act(() => {
+        result.current.onMeeting({
+          name: 'alinhamento.vtt',
+          text: 'Rui: fica 5 tentativas.',
+        });
+      });
+
+      await waitFor(() => {
+        expect(now()?.review?.items).toHaveLength(2);
+      });
+      rerender();
+
+      expect(read.mock.calls[0]?.[0].brief.changes).toEqual([
+        expect.objectContaining({
+          kind: 'meeting',
+          name: 'alinhamento.vtt',
+          text: 'Rui: fica 5 tentativas.',
+        }),
+      ]);
+      expect(result.current.note).toMatch(/^Decided in the meeting “alinhamento\.vtt”: /);
+
+      act(() => {
+        result.current.onDone();
+      });
+
+      expect(now()?.snapshots).toEqual([SNAP]);
+    });
+  });
+
   describe('the review', () => {
     beforeEach(() => {
       bridge({});

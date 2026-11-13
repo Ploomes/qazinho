@@ -1,5 +1,10 @@
 import type { IPlanChangesProps } from '@/modules/Plan/screens/Plan/components/PlanChanges/types';
-import type { ITestCase, RefusalReason, ReviewItem } from '@/modules/Plan/types';
+import type {
+  IPendingChange,
+  ITestCase,
+  RefusalReason,
+  ReviewItem,
+} from '@/modules/Plan/types';
 import type { IDraftedCase, ISourceChange } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +12,7 @@ import { nextDoubtIdsOf } from '@/modules/Chat';
 import {
   caseIdsUsed,
   changeBriefOf,
+  changeNameOf,
   doubtsWithAnswers,
   planWithItem,
   reviewOf,
@@ -24,6 +30,7 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
   const setPlan = useWorkspaceStore((state) => state.setPlan);
   const setDoubts = useWorkspaceStore((state) => state.setDoubts);
   const setReview = useWorkspaceStore((state) => state.setReview);
+  const setChanged = useWorkspaceStore((state) => state.setChanged);
   const resolveChanges = useWorkspaceStore((state) => state.resolveChanges);
   const language = useSettingsStore((state) => state.language);
   const agentName = useSettingsStore((state) => state.agent);
@@ -33,6 +40,7 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
   const [isProposing, setProposing] = useState(false);
   const [refusingId, setRefusingId] = useState<string | null>(null);
   const [isTelling, setTelling] = useState(false);
+  const [isMeeting, setMeeting] = useState(false);
   const [notice, setNotice] = useState<{
     workspaceId: string;
     text: string;
@@ -120,6 +128,58 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
 
     if (nextDoubts !== doubts) setDoubts({ workspaceId, doubts: nextDoubts });
   };
+  const propose = (asked: IPendingChange) => {
+    if (isProposing || isLocked) return;
+
+    setProposing(true);
+    setNotice(null);
+    void Sources.read({
+      workspaceId,
+      agentId: agents.find(({ name }) => name === agentName)?.id ?? 'claude-code',
+      model,
+      brief: changeBriefOf({ changed: asked, plan, doubts, language }),
+    }).then((reading) => {
+      setProposing(false);
+
+      if (!reading.isRead) {
+        say(
+          reading.reason === 'agent-missing'
+            ? t('PLAN.PROPOSE_NO_AGENT')
+            : t('PLAN.PROPOSE_UNANSWERED'),
+        );
+
+        return;
+      }
+
+      if (reading.read.answered.length > 0)
+        setDoubts({
+          workspaceId,
+          doubts: doubtsWithAnswers({
+            doubts,
+            answers: reading.read.answered.map(({ doubtId, text }) => ({
+              doubtId,
+              text,
+              by: '',
+              at: new Date().toISOString(),
+            })),
+          }),
+        });
+
+      const proposed = reviewOf({ read: reading.read, at: new Date().toISOString() });
+
+      if (proposed.items.length === 0) {
+        resolveChanges(workspaceId);
+        say(
+          reading.read.summary === '' ? t('PLAN.REVIEW_NOTHING') : reading.read.summary,
+        );
+
+        return;
+      }
+
+      setReview({ workspaceId, review: proposed });
+    });
+  };
+  const meeting = changed?.found.find((one) => one.kind === 'meeting');
   const open = review?.items.filter(({ state }) => state === 'open') ?? [];
   const isDone = review !== null && open.length === 0;
   const shownNotice = notice?.workspaceId === workspaceId ? notice : null;
@@ -198,7 +258,10 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
             review,
             plan,
             words: {
-              intro: (summary) => t('PLAN.NOTE_INTRO', { summary }),
+              intro: (summary) =>
+                meeting === undefined
+                  ? t('PLAN.NOTE_INTRO', { summary })
+                  : t('PLAN.NOTE_MEETING', { name: changeNameOf(meeting), summary }),
               changed: (one) => t('PLAN.NOTE_CHANGED', one),
               added: (title) => t('PLAN.NOTE_ADDED', { title }),
               doubt: (question) => t('PLAN.NOTE_DOUBT', { question }),
@@ -225,55 +288,39 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
       });
     },
     onPropose: () => {
-      if (changed === null || isProposing || isLocked) return;
+      if (changed !== null && review === null) propose(changed);
+    },
+    canMeet: plan.length > 0 && changed === null && review === null && !isLocked,
+    meetLabel: t('PLAN.READ_MEETING'),
+    isMeeting,
+    onMeet: () => {
+      setMeeting(true);
+    },
+    onCancelMeeting: () => {
+      setMeeting(false);
+    },
+    onMeeting: (meeting: { name: string; text: string }) => {
+      const workspace = useWorkspaceStore
+        .getState()
+        .workspaces.find(({ id }) => id === workspaceId);
+      const at = new Date().toISOString();
+      const heard: IPendingChange = {
+        found: [
+          {
+            kind: 'meeting',
+            name: meeting.name,
+            at: at.slice(0, 10),
+            text: meeting.text,
+          },
+        ],
+        snapshots: workspace?.snapshots ?? [],
+        code: workspace?.planSource ?? null,
+        at,
+      };
 
-      setProposing(true);
-      setNotice(null);
-      void Sources.read({
-        workspaceId,
-        agentId: agents.find(({ name }) => name === agentName)?.id ?? 'claude-code',
-        model,
-        brief: changeBriefOf({ changed, plan, doubts, language }),
-      }).then((reading) => {
-        setProposing(false);
-
-        if (!reading.isRead) {
-          say(
-            reading.reason === 'agent-missing'
-              ? t('PLAN.PROPOSE_NO_AGENT')
-              : t('PLAN.PROPOSE_UNANSWERED'),
-          );
-
-          return;
-        }
-
-        if (reading.read.answered.length > 0)
-          setDoubts({
-            workspaceId,
-            doubts: doubtsWithAnswers({
-              doubts,
-              answers: reading.read.answered.map(({ doubtId, text }) => ({
-                doubtId,
-                text,
-                by: '',
-                at: new Date().toISOString(),
-              })),
-            }),
-          });
-
-        const proposed = reviewOf({ read: reading.read, at: new Date().toISOString() });
-
-        if (proposed.items.length === 0) {
-          resolveChanges(workspaceId);
-          say(
-            reading.read.summary === '' ? t('PLAN.REVIEW_NOTHING') : reading.read.summary,
-          );
-
-          return;
-        }
-
-        setReview({ workspaceId, review: proposed });
-      });
+      setMeeting(false);
+      setChanged({ workspaceId, changed: heard });
+      propose(heard);
     },
     onKeep: () => {
       if (!isLocked) resolveChanges(workspaceId);
