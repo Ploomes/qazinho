@@ -363,6 +363,24 @@ história pela chave, contra um Jira e um Confluence fakes, e planejou a partir 
 partir de uma com uma tela anexada: leu a tela, perguntou sobre o que a história deixava em aberto,
 e nomeou o critério que cada caso cobre. Um site real do Jira não foi tentado.
 
+**Um plano sai da história antes do app.** O projeto diz quais status do Jira contam como pronta
+para teste; uma história fora deles é planejada antes do app, e o botão de rodar diz "Esperando o
+app", com "Desenvolver agora" no menu. Abrir o plano ou o Início confere no Jira do QA, sem agente,
+se a história chegou, e o Início a mostra em "Chegou para teste". Cada caso diz de onde vem o
+esperado (C2 para o critério 2, o frame, a página, o código, o app ou o QA), e todo plano traz a
+estratégia: o que cobre, o que deixa de fora, onde roda, com que dados e os riscos, dobrada no topo
+da aba Plano. Uma pergunta que ninguém aqui sabe vai para a história ("Perguntar na história") como
+uma dúvida numerada; a aba Plano a manda num comentário postado pelo QA, que menciona quem escreveu
+a história e, se ele quiser, o põe para acompanhá-la. As respostas são lidas ao abrir o plano ou o
+Início, o caso que esperava por uma diz "espera D1" até o chat o reescrever, e "Atualizar o plano"
+pede isso ao chat. A primeira execução aceita uma história no lugar do app: o projeto nasce sem
+app, e desenvolver começa por "Escolher o app". Um Claude Code real (Haiku) planejou uma história
+fora dos status de pronto com uma dúvida aberta: cada caso nomeou o critério, o do cupom vencido
+esperou a D1, e a estratégia veio escrita, em 4 de 5 vezes; as faltas (um caso sem fonte, um plano
+sem estratégia) viraram campos obrigatórios no schema, e essa última versão não rodou com um agente
+real. O comentário, as respostas e o status só rodaram contra um Jira fake; um site real não foi
+tentado. A plataforma guarda a estratégia, as dúvidas e as fontes, mas a web ainda não as mostra.
+
 **Uma página do Confluence vira o plano, e o plano uma página do Confluence.** Com o Jira
 conectado, o QA liga o Confluence no cartão do Jira: a mesma conta no mesmo site, conferida antes
 com o Confluence. O `/confluence` no chat escolhe uma página, as que o QA trabalhou por último ou

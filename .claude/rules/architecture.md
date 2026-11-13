@@ -475,6 +475,26 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   - Os arquivos são apagados assim que um plano volta, quando o workspace vai embora, e na próxima
     inicialização. O workspace guarda a história (`issue`), que o cabeçalho abre
     no Jira.
+- **Um plano sai da história antes do app** (`role/chat/ahead.md`):
+  - O projeto guarda os status do Jira que contam como pronta para teste (`readyStatuses`,
+    `ReadyField`, `JiraApi.statuses`). A mensagem do chat os leva (`IAskAgent.readyStatuses`), e a
+    cópia da história diz se ela chegou (`readinessOf`, `IJiraStoryCopy.readiness`). O turno a
+    devolve (`IChatTurn.readiness`), e um plano de uma história à frente espera (`storyStage`):
+    o `RunButton` diz "Esperando o app", e uma run do plano encerra a espera (`startRun`).
+  - Todo plano traz a estratégia, e todo caso as fontes do esperado (`CHAT_ANSWER`,
+    `PLANNED_CASE`); a leitura aceita um plano ou caso sem elas (`readChatAnswer`). O plano as
+    guarda no YAML (`planExtrasOfYaml`) e na org, e a página publicada as escreve (`planDocOf`).
+  - Uma pergunta mandada à história vira uma dúvida (`nextDoubtIdsOf`, `IPlanDoubt`), que o agente
+    ouve em toda mensagem (`describeDoubts`) e que segura casos (`blockedBy`). A aba Plano a manda
+    num comentário do QA (`DoubtsModal`, `JiraApi.askStory`, `adfOfDoubts`): o autor da história
+    mencionado e, se o QA quiser, ele como observador.
+  - O `useStoryCheck` lê no Jira, sem agente, as respostas (`storyAnswersOf`: um comentário que
+    nomeia a dúvida, ou o seguinte quando só uma espera) e o status da história, quando o QA abre o
+    plano ou o Início, no máximo a cada `STORY_READ.everyMs`, ou num clique. O Início mostra o que
+    chegou e o que foi respondido (`homeOf`), e "Atualizar o plano" pede ao chat que reescreva os
+    casos que esperavam (`heldDoubtsOf`).
+  - A primeira execução aceita uma história no lugar do app (`storyKeyOf`): o projeto nasce sem
+    alvo (`blankWorkspaceOf`), e o `RunButton` leva a escolher o app antes de desenvolver.
 - **Uma página do Confluence também é um requisito, e o lugar onde um plano é publicado**
   (`role/chat/confluence.md`). O Confluence é ligado ao lado do Jira (`setConfluence`), assim que o
   `ConfluenceApi.check` o alcança com a conta do Jira:
