@@ -1,14 +1,21 @@
 import type { IPlanDocWords, ITestCase } from '@/modules/Plan/types';
 import type { IRun } from '@/modules/Run/types';
-import type { BugReportBlock, IDesignLink } from '@/shared/types';
+import type {
+  BugReportBlock,
+  IDesignLink,
+  IPlanDoubt,
+  IPlanStrategy,
+} from '@/shared/types';
 import { frameUrlOf } from './frameUrlOf';
 
 /**
- * Um plano como uma página do Confluence: de onde veio, depois cada caso com os passos e
- * os vereditos.
+ * Um plano como uma página do Confluence: de onde veio, a estratégia e as dúvidas, depois
+ * cada caso com os passos e os vereditos.
  */
 export function planDocOf(props: {
   plan: ITestCase[];
+  strategy?: IPlanStrategy | null;
+  doubts?: IPlanDoubt[];
   run: IRun | null;
   when: string;
   story: { key: string; url: string } | null;
@@ -42,9 +49,50 @@ export function planDocOf(props: {
         ]),
   ];
 
+  const strategy = props.strategy ?? null;
+  const parts =
+    strategy === null
+      ? []
+      : (Object.keys(words.strategyParts) as (keyof IPlanStrategy)[]).flatMap((part) =>
+          strategy[part].trim() === ''
+            ? []
+            : [
+                {
+                  label: words.strategyParts[part],
+                  value: strategy[part].trim(),
+                  url: null,
+                },
+              ],
+        );
+  const doubts = props.doubts ?? [];
+
   return [
     { kind: 'paragraph', text: words.intro({ cases: plan.length, steps }) },
     ...(sources.length === 0 ? [] : [{ kind: 'facts' as const, items: sources }]),
+    ...(parts.length === 0
+      ? []
+      : [
+          { kind: 'heading' as const, text: words.strategy },
+          { kind: 'facts' as const, items: parts },
+        ]),
+    ...(doubts.length === 0
+      ? []
+      : [
+          { kind: 'heading' as const, text: words.doubts },
+          {
+            kind: 'table' as const,
+            head: ['#', words.doubt, words.answer],
+            rows: doubts.map(({ id, question, sent, answer }) => [
+              id,
+              question,
+              answer !== null
+                ? `${answer.text} (${answer.by})`
+                : sent === null
+                  ? words.doubtNotSent
+                  : words.doubtWaiting,
+            ]),
+          },
+        ]),
     ...plan.flatMap((testCase): BugReportBlock[] => {
       const walked = run?.cases.find(({ id }) => id === testCase.id) ?? null;
       const facts = [
@@ -58,6 +106,24 @@ export function planDocOf(props: {
               {
                 label: words.preconditions,
                 value: testCase.preconditions.trim(),
+                url: null,
+              },
+            ]),
+        ...((testCase.sources ?? []).length === 0
+          ? []
+          : [
+              {
+                label: words.sources,
+                value: (testCase.sources ?? []).join(', '),
+                url: null,
+              },
+            ]),
+        ...((testCase.blockedBy ?? []).length === 0
+          ? []
+          : [
+              {
+                label: words.waitsOn,
+                value: (testCase.blockedBy ?? []).join(', '),
                 url: null,
               },
             ]),

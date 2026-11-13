@@ -1,4 +1,4 @@
-import type { StepVerdict } from '@/shared/types';
+import type { IPlanStrategy, StepVerdict } from '@/shared/types';
 
 /** As palavras em que um plano publicado é escrito, no idioma que o QA lê. */
 export interface IPlanDocWords {
@@ -15,6 +15,15 @@ export interface IPlanDocWords {
   expected: string;
   frame: string;
   result: string;
+  strategy: string;
+  strategyParts: Record<keyof IPlanStrategy, string>;
+  doubts: string;
+  doubt: string;
+  answer: string;
+  doubtWaiting: string;
+  doubtNotSent: string;
+  sources: string;
+  waitsOn: string;
   verdicts: Record<StepVerdict, string>;
   keptBy: string;
 }

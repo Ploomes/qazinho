@@ -17,6 +17,21 @@ const WORDS: IPlanDocWords = {
   expected: 'Expected',
   frame: 'Figma',
   result: 'Result',
+  strategy: 'Strategy',
+  strategyParts: {
+    covers: 'Covers',
+    leavesOut: 'Leaves out',
+    where: 'Where',
+    data: 'Data',
+    risks: 'Risks',
+  },
+  doubts: 'Doubts',
+  doubt: 'Doubt',
+  answer: 'Answer',
+  doubtWaiting: 'Waiting on the team',
+  doubtNotSent: 'Not sent yet',
+  sources: 'From',
+  waitsOn: 'Waits on',
   verdicts: {
     pending: 'pending',
     running: 'running',
@@ -175,5 +190,68 @@ describe('planDocOf', () => {
       'facts',
       'paragraph',
     ]);
+  });
+
+  /** Quem lê o plano no Confluence vê o que ele cobre e o que ainda depende do time. */
+  it('writes the strategy and the doubts after where the plan came from', () => {
+    const sent = {
+      url: 'https://shop.atlassian.net/browse/SHOP-878',
+      at: '2026-11-13T13:00:00.000Z',
+    };
+    const blocks = planDocOf({
+      plan: [{ ...COUPON, sources: ['C1', 'C2'], blockedBy: ['D2'] }],
+      strategy: {
+        covers: 'Coupons at checkout',
+        leavesOut: '',
+        where: 'Staging',
+        data: '',
+        risks: 'A coupon that stacks',
+      },
+      doubts: [
+        {
+          id: 'D1',
+          question: 'Does a coupon stack?',
+          sent,
+          answer: { text: 'No.', by: 'Rui PO', at: '2026-11-13T15:00:00.000Z' },
+        },
+        { id: 'D2', question: 'Which error shows?', sent, answer: null },
+        { id: 'D3', question: 'A limit per buyer?', sent: null, answer: null },
+      ],
+      run: null,
+      when: '',
+      story: null,
+      page: null,
+      design: null,
+      words: WORDS,
+    });
+
+    expect(blocks.slice(1, 5)).toEqual([
+      { kind: 'heading', text: 'Strategy' },
+      {
+        kind: 'facts',
+        items: [
+          { label: 'Covers', value: 'Coupons at checkout', url: null },
+          { label: 'Where', value: 'Staging', url: null },
+          { label: 'Risks', value: 'A coupon that stacks', url: null },
+        ],
+      },
+      { kind: 'heading', text: 'Doubts' },
+      {
+        kind: 'table',
+        head: ['#', 'Doubt', 'Answer'],
+        rows: [
+          ['D1', 'Does a coupon stack?', 'No. (Rui PO)'],
+          ['D2', 'Which error shows?', 'Waiting on the team'],
+          ['D3', 'A limit per buyer?', 'Not sent yet'],
+        ],
+      },
+    ]);
+    expect(blocks[6]).toMatchObject({
+      kind: 'facts',
+      items: expect.arrayContaining([
+        { label: 'From', value: 'C1, C2', url: null },
+        { label: 'Waits on', value: 'D2', url: null },
+      ]) as unknown,
+    });
   });
 });

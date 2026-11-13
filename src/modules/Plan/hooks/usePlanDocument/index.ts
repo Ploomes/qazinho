@@ -13,13 +13,18 @@ export const usePlanDocument = () => {
     titleOf: (workspaceName: string) =>
       t('PLAN.PUBLISH_TITLE', { workspace: workspaceName }),
     documentOf: (
-      workspace: Pick<IWorkspace, 'plan' | 'runs' | 'issue' | 'sourcePage' | 'design'>,
+      workspace: Pick<
+        IWorkspace,
+        'plan' | 'runs' | 'issue' | 'sourcePage' | 'design' | 'strategy' | 'doubts'
+      >,
     ): BugReportBlock[] => {
       const run = workspace.runs.find(({ kind }) => kind !== 'explore') ?? null;
       const { issue, sourcePage } = workspace;
 
       return planDocOf({
         plan: workspace.plan,
+        strategy: workspace.strategy ?? null,
+        doubts: workspace.doubts ?? [],
         run,
         when:
           run === null
@@ -59,6 +64,21 @@ export const usePlanDocument = () => {
           expected: t('PLAN_DOC.EXPECTED'),
           frame: t('PLAN_DOC.FRAME'),
           result: t('PLAN_DOC.RESULT'),
+          strategy: t('PLAN_DOC.STRATEGY'),
+          strategyParts: {
+            covers: t('PLAN_DOC.COVERS'),
+            leavesOut: t('PLAN_DOC.LEAVES_OUT'),
+            where: t('PLAN_DOC.WHERE'),
+            data: t('PLAN_DOC.DATA'),
+            risks: t('PLAN_DOC.RISKS'),
+          },
+          doubts: t('PLAN_DOC.DOUBTS'),
+          doubt: t('PLAN_DOC.DOUBT'),
+          answer: t('PLAN_DOC.ANSWER'),
+          doubtWaiting: t('PLAN_DOC.DOUBT_WAITING'),
+          doubtNotSent: t('PLAN_DOC.DOUBT_NOT_SENT'),
+          sources: t('PLAN_DOC.SOURCES'),
+          waitsOn: t('PLAN_DOC.WAITS_ON'),
           verdicts: {
             pending: t(DOC_VERDICT_KEYS.pending),
             running: t(DOC_VERDICT_KEYS.running),
