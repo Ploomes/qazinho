@@ -58,7 +58,12 @@ export const ManualPanel: React.FC = () => {
       />
 
       <div className="manual-panel__marks">
-        <Button size="sm" disabled={!view.canMark} onClick={view.onPassed}>
+        <Button
+          size="sm"
+          variant="primary"
+          disabled={!view.canMark}
+          onClick={view.onPassed}
+        >
           <Icon name="check" />
           {view.passedLabel}
         </Button>

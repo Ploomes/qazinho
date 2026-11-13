@@ -18,6 +18,7 @@ export const usePlanActionsViewModel = () => {
     stepCount: flattenPlanSteps(opened.plan).length,
     isLive: opened.live !== null && !opened.live.isDone,
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
+    isByHand: opened.live?.mode === 'manual',
     toContinue:
       runToContinueOf({ plan: opened.plan, runs: opened.runs })?.caseIds.length ?? 0,
   }));
@@ -36,6 +37,7 @@ export const usePlanActionsViewModel = () => {
   return {
     hasWorkspace: workspace !== null,
     isLive,
+    canPause: isLive && workspace?.isByHand !== true,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     stopLabel: t('COMMON.STOP'),
     canRun: hasSteps && !isLive,

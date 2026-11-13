@@ -149,6 +149,25 @@ describe('usePlanActionsViewModel', () => {
         'Resume',
       );
     });
+
+    it('does NOT offer a pause while the QA walks a case by hand, only a stop', () => {
+      const walked = walkRun({ verdicts: ['passed'] });
+
+      useWorkspaceStore.setState({ workspaces: [walked] });
+
+      expect(renderHook(() => usePlanActionsViewModel()).result.current.canPause).toBe(
+        true,
+      );
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walked, live: { ...walked.live!, mode: 'manual' } }],
+      });
+
+      expect(renderHook(() => usePlanActionsViewModel()).result.current).toMatchObject({
+        isLive: true,
+        canPause: false,
+      });
+    });
   });
 
   it('offers an exploration even with no plan, and never while something walks', () => {

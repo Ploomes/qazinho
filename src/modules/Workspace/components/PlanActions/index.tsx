@@ -9,6 +9,7 @@ export const PlanActions: React.FC = () => {
   const {
     hasWorkspace,
     isLive,
+    canPause,
     pauseLabel,
     stopLabel,
     canRun,
@@ -34,9 +35,11 @@ export const PlanActions: React.FC = () => {
     <div className="plan-actions">
       {isLive ? (
         <>
-          <Button size="sm" variant="ghost" onClick={onPause}>
-            {pauseLabel}
-          </Button>
+          {canPause && (
+            <Button size="sm" variant="ghost" onClick={onPause}>
+              {pauseLabel}
+            </Button>
+          )}
           <Button size="sm" variant="danger" onClick={onStop}>
             {stopLabel}
           </Button>
