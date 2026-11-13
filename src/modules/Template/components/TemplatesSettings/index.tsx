@@ -47,6 +47,7 @@ export const TemplatesSettings: React.FC = () => {
           <TemplateEditor
             key={view.editorKey}
             editing={view.editing}
+            orgSlug={view.editingOrg}
             onClose={view.onClose}
           />
         )}

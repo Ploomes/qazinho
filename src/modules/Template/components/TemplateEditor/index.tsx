@@ -1,6 +1,6 @@
 import type { ITemplateEditorProps } from './types';
 import { ReportPreview } from '@/modules/Template/components/ReportPreview';
-import { Button, Icon, IconButton, Input } from '@/shared/components/atoms';
+import { Button, Icon, IconButton, Input, Switch } from '@/shared/components/atoms';
 import { SegmentedControl, Tooltip } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
 import { useTemplateEditorViewModel } from './hooks';
@@ -32,6 +32,14 @@ export const TemplateEditor: React.FC<ITemplateEditorProps> = (props) => {
     >
       <div className="template-editor">
         <div className="template-editor__form">
+          {view.hasPlaces && (
+            <SegmentedControl
+              label={view.placeLabel}
+              options={view.places}
+              value={view.place}
+              onChange={view.onPlace}
+            />
+          )}
           {view.isNew && (
             <SegmentedControl
               label={view.kindLabel}
@@ -68,6 +76,14 @@ export const TemplateEditor: React.FC<ITemplateEditorProps> = (props) => {
               options={view.casesOptions}
               value={view.cases}
               onChange={view.onCases}
+            />
+          )}
+
+          {view.hasDefault && (
+            <Switch
+              label={view.defaultLabel}
+              isOn={view.isDefault}
+              onChange={view.onDefault}
             />
           )}
 

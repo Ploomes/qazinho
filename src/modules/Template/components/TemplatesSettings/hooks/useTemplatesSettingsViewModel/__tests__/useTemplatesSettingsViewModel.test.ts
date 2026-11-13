@@ -2,7 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useTemplatesSettingsViewModel } from '@/modules/Template/components/TemplatesSettings/hooks';
-import { useTemplateStore } from '@/store';
+import { useProStore, useTemplateStore } from '@/store';
 
 const PLAN = {
   id: 't-plan',
@@ -15,7 +15,8 @@ const PLAN = {
 };
 
 beforeEach(() => {
-  useTemplateStore.setState({ templates: [PLAN] });
+  useTemplateStore.setState({ templates: [PLAN], orgTemplates: [] });
+  useProStore.setState({ status: null });
 });
 
 describe('useTemplatesSettingsViewModel', () => {
@@ -61,5 +62,51 @@ describe('useTemplatesSettingsViewModel', () => {
     });
 
     expect(result.current.isEditing).toBe(false);
+  });
+
+  it('lists the org’s templates beside the QA’s, named by the org, the default said', () => {
+    useTemplateStore.setState({
+      orgTemplates: [
+        {
+          orgSlug: 'loja',
+          templates: [
+            {
+              ...PLAN,
+              id: 'org:loja:a1',
+              name: 'Plano da org',
+              orgSlug: 'loja',
+              isDefault: true,
+              author: 'Ana',
+            },
+          ],
+          canPublish: false,
+          canSetDefault: false,
+        },
+      ],
+    });
+    useProStore.setState({
+      status: {
+        isSignedIn: true,
+        account: { email: 'ana@loja.dev', name: 'Ana' },
+        machine: { id: 'm1', name: 'Mac' },
+        orgs: [
+          { slug: 'loja', name: 'Loja Online', role: 'reader', billingStatus: 'active' },
+        ],
+        isReachable: true,
+      },
+    });
+    const { result } = renderHook(() => useTemplatesSettingsViewModel());
+    const plans = result.current.sections[1]?.rows ?? [];
+
+    expect(plans.map(({ name, facts }) => [name, facts])).toEqual([
+      ['Plano do time', '1 part · cases in Gherkin'],
+      ['Plano da org', 'Loja Online · org default · 1 part · cases in Gherkin'],
+    ]);
+
+    act(() => {
+      plans[1]?.onOpen();
+    });
+
+    expect(result.current.editingOrg).toBe('loja');
   });
 });

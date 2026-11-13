@@ -1,10 +1,16 @@
 // @vitest-environment jsdom
-import type { ISaveTemplate, ITemplate } from '@/shared/types';
+import type {
+  IOrgTemplate,
+  IOrgTemplateDefault,
+  ISaveOrgTemplate,
+  ISaveTemplate,
+  ITemplate,
+} from '@/shared/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useTemplateEditorViewModel } from '@/modules/Template/components/TemplateEditor/hooks';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useTemplateStore } from '@/store';
+import { useProStore, useTemplateStore } from '@/store';
 
 const SAVED: ITemplate = {
   id: 't-1',
@@ -37,8 +43,60 @@ function bridge() {
   return { save, remove };
 }
 
+const ORG_BUG: IOrgTemplate = {
+  ...SAVED,
+  id: 'org:loja:a1',
+  name: 'Bug da org',
+  orgSlug: 'loja',
+  isDefault: false,
+  author: 'Ana',
+};
+
+/** Uma org em que o QA publica e escolhe o padrão, ou só lê. */
+function orgOf(role: { canPublish: boolean; canSetDefault: boolean }) {
+  return { orgSlug: 'loja', templates: [ORG_BUG], ...role };
+}
+
+/** A bridge de uma org que guarda o que recebe, e devolve a lista de novo. */
+function orgBridge() {
+  const saveOrg = vi.fn((save: ISaveOrgTemplate) =>
+    Promise.resolve({
+      isSaved: true as const,
+      template: {
+        ...save.template,
+        id: save.template.id ?? 'org:loja:a2',
+        updatedAt: '2026-11-13',
+        orgSlug: save.orgSlug,
+        isDefault: false,
+        author: 'Ana',
+      },
+    }),
+  );
+  const setDefault = vi.fn((_choice: IOrgTemplateDefault) =>
+    Promise.resolve({ isDone: true as const }),
+  );
+  const listOrg = vi.fn(() =>
+    Promise.resolve({
+      isListed: true as const,
+      list: orgOf({ canPublish: true, canSetDefault: true }),
+    }),
+  );
+  const save = vi.fn(() => Promise.resolve({ isSaved: true as const, template: SAVED }));
+
+  window.qazinho = {
+    ...fakeQazinhoApi('darwin'),
+    saveTemplate: save,
+    saveOrgTemplate: saveOrg,
+    setOrgTemplateDefault: setDefault,
+    listOrgTemplates: listOrg,
+  };
+
+  return { save, saveOrg, setDefault, listOrg };
+}
+
 beforeEach(() => {
-  useTemplateStore.setState({ templates: [SAVED] });
+  useTemplateStore.setState({ templates: [SAVED], orgTemplates: [] });
+  useProStore.setState({ status: null });
 });
 
 afterEach(() => {
@@ -50,7 +108,7 @@ describe('useTemplateEditorViewModel', () => {
     bridge();
 
     const { result } = renderHook(() =>
-      useTemplateEditorViewModel({ editing: null, onClose: vi.fn() }),
+      useTemplateEditorViewModel({ editing: null, orgSlug: null, onClose: vi.fn() }),
     );
 
     expect(result.current.isNew).toBe(true);
@@ -71,7 +129,7 @@ describe('useTemplateEditorViewModel', () => {
     bridge();
 
     const { result } = renderHook(() =>
-      useTemplateEditorViewModel({ editing: SAVED, onClose: vi.fn() }),
+      useTemplateEditorViewModel({ editing: SAVED, orgSlug: null, onClose: vi.fn() }),
     );
 
     expect(result.current.previewTitle).toBe('[‹case›] ‹title›');
@@ -86,7 +144,7 @@ describe('useTemplateEditorViewModel', () => {
     bridge();
 
     const { result } = renderHook(() =>
-      useTemplateEditorViewModel({ editing: SAVED, onClose: vi.fn() }),
+      useTemplateEditorViewModel({ editing: SAVED, orgSlug: null, onClose: vi.fn() }),
     );
 
     act(() => {
@@ -111,7 +169,7 @@ describe('useTemplateEditorViewModel', () => {
     bridge();
 
     const { result } = renderHook(() =>
-      useTemplateEditorViewModel({ editing: null, onClose: vi.fn() }),
+      useTemplateEditorViewModel({ editing: null, orgSlug: null, onClose: vi.fn() }),
     );
 
     act(() => {
@@ -132,7 +190,7 @@ describe('useTemplateEditorViewModel', () => {
     const { save } = bridge();
     const onClose = vi.fn();
     const { result } = renderHook(() =>
-      useTemplateEditorViewModel({ editing: null, onClose }),
+      useTemplateEditorViewModel({ editing: null, orgSlug: null, onClose }),
     );
 
     act(() => {
@@ -160,7 +218,7 @@ describe('useTemplateEditorViewModel', () => {
     const { save, remove } = bridge();
     const onClose = vi.fn();
     const { result } = renderHook(() =>
-      useTemplateEditorViewModel({ editing: SAVED, onClose }),
+      useTemplateEditorViewModel({ editing: SAVED, orgSlug: null, onClose }),
     );
 
     act(() => {
@@ -182,5 +240,154 @@ describe('useTemplateEditorViewModel', () => {
     });
     expect(remove).toHaveBeenCalledWith('t-1');
     expect(useTemplateStore.getState().templates).toEqual([]);
+  });
+
+  it('offers the orgs the QA publishes in, by name, only for a new template', () => {
+    bridge();
+    useTemplateStore.setState({
+      orgTemplates: [
+        orgOf({ canPublish: true, canSetDefault: false }),
+        { ...orgOf({ canPublish: false, canSetDefault: false }), orgSlug: 'outra' },
+      ],
+    });
+    useProStore.setState({
+      status: {
+        isSignedIn: true,
+        account: { email: 'ana@loja.dev', name: 'Ana' },
+        machine: { id: 'm1', name: 'Mac' },
+        orgs: [
+          { slug: 'loja', name: 'Loja Online', role: 'editor', billingStatus: 'active' },
+        ],
+        isReachable: true,
+      },
+    });
+
+    const fresh = renderHook(() =>
+      useTemplateEditorViewModel({ editing: null, orgSlug: null, onClose: vi.fn() }),
+    );
+    const open = renderHook(() =>
+      useTemplateEditorViewModel({ editing: SAVED, orgSlug: null, onClose: vi.fn() }),
+    );
+
+    expect(fresh.result.current.places).toEqual([
+      { id: 'mine', label: 'This computer' },
+      { id: 'loja', label: 'Loja Online' },
+    ]);
+    expect(fresh.result.current.hasPlaces).toBe(true);
+    expect(open.result.current.hasPlaces).toBe(false);
+  });
+
+  it('publishes a new template in the org and makes it the default there', async () => {
+    const { save, saveOrg, setDefault, listOrg } = orgBridge();
+    const onClose = vi.fn();
+    useTemplateStore.setState({
+      orgTemplates: [orgOf({ canPublish: true, canSetDefault: true })],
+    });
+    const { result } = renderHook(() =>
+      useTemplateEditorViewModel({ editing: null, orgSlug: null, onClose }),
+    );
+
+    act(() => {
+      result.current.onPlace('loja');
+    });
+    act(() => {
+      result.current.onName('Nosso bug');
+      result.current.onDefault(true);
+    });
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    await waitFor(() => {
+      expect(onClose).toHaveBeenCalled();
+    });
+    expect(save).not.toHaveBeenCalled();
+    expect(saveOrg).toHaveBeenCalledWith(
+      expect.objectContaining({
+        orgSlug: 'loja',
+        template: expect.objectContaining({ id: null, name: 'Nosso bug' }),
+      }),
+    );
+    expect(setDefault).toHaveBeenCalledWith({
+      orgSlug: 'loja',
+      kind: 'bug',
+      id: 'org:loja:a2',
+    });
+    expect(listOrg).toHaveBeenCalledWith('loja');
+  });
+
+  it('does NOT offer the default to an editor, nor change it', async () => {
+    const { setDefault } = orgBridge();
+    const onClose = vi.fn();
+    useTemplateStore.setState({
+      orgTemplates: [orgOf({ canPublish: true, canSetDefault: false })],
+    });
+    const { result } = renderHook(() =>
+      useTemplateEditorViewModel({ editing: ORG_BUG, orgSlug: 'loja', onClose }),
+    );
+
+    expect(result.current.hasDefault).toBe(false);
+
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    await waitFor(() => {
+      expect(onClose).toHaveBeenCalled();
+    });
+    expect(setDefault).not.toHaveBeenCalled();
+  });
+
+  it('lets a reader keep a copy of an org template, never change the org’s', async () => {
+    const { save, saveOrg } = orgBridge();
+    const onClose = vi.fn();
+    useTemplateStore.setState({
+      orgTemplates: [orgOf({ canPublish: false, canSetDefault: false })],
+    });
+    const { result } = renderHook(() =>
+      useTemplateEditorViewModel({ editing: ORG_BUG, orgSlug: 'loja', onClose }),
+    );
+
+    expect(result.current).toMatchObject({
+      confirmLabel: 'Save a copy',
+      hint: 'Only editors change the org’s templates.',
+      canDelete: false,
+    });
+
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    await waitFor(() => {
+      expect(onClose).toHaveBeenCalled();
+    });
+    expect(saveOrg).not.toHaveBeenCalled();
+    expect(save).toHaveBeenCalledWith(
+      expect.objectContaining({ id: null, name: 'Bug da org' }),
+    );
+  });
+
+  it('says why the org refused, and stays open', async () => {
+    orgBridge();
+    window.qazinho = {
+      ...window.qazinho,
+      saveOrgTemplate: () => Promise.resolve({ isSaved: false, failure: 'forbidden' }),
+    };
+    const onClose = vi.fn();
+    useTemplateStore.setState({
+      orgTemplates: [orgOf({ canPublish: true, canSetDefault: false })],
+    });
+    const { result } = renderHook(() =>
+      useTemplateEditorViewModel({ editing: ORG_BUG, orgSlug: 'loja', onClose }),
+    );
+
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    await waitFor(() => {
+      expect(result.current.hint).toBe('Your role in the org does not allow this.');
+    });
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
