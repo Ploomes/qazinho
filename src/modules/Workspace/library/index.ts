@@ -1,6 +1,7 @@
 export * from './blankWorkspaceOf';
 export * from './bugOfSaved';
 export * from './buildRun';
+export * from './changeReviewOf';
 export * from './codeSourceOf';
 export * from './designLinkOf';
 export * from './endRun';
@@ -17,6 +18,7 @@ export * from './landVideo';
 export * from './outcomeOfFinding';
 export * from './messageOfSaved';
 export * from './panelWidthOf';
+export * from './pendingChangeOf';
 export * from './resumeRun';
 export * from './snapshotsOf';
 export * from './startRun';

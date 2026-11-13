@@ -2,7 +2,12 @@ import type { BugFilter, IBugReview } from '@/modules/Bug';
 import type { IAgentActivity, IQuestionAnswer, UserCommand } from '@/modules/Chat';
 import type { IBugFlash, ViewportId } from '@/modules/Device';
 import type { IMemoryChange } from '@/modules/Memory/types';
-import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
+import type {
+  IChangeReview,
+  IPendingChange,
+  IPublishedPlan,
+  ITestCase,
+} from '@/modules/Plan';
 import type {
   IWalkedBy,
   IWorkspace,
@@ -61,6 +66,7 @@ export interface IWorkspaceStore {
   lookingAt: Record<string, 'android' | 'ios'>;
   chatDevices: Record<string, { streamUrl: string; address: string | null }>;
   storyReadAt: Record<string, number>;
+  changeHold: { workspaceId: string; mode: RunMode; caseIds?: string[] } | null;
   removingWorkspaceId: string | null;
   addWorkspace: (workspace: IWorkspace) => void;
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
@@ -183,6 +189,12 @@ export interface IWorkspaceStore {
   setDoubts: (props: { workspaceId: string; doubts: IPlanDoubt[] }) => void;
   markStoryRead: (props: { workspaceId: string; at: number }) => void;
   setStoryStage: (props: { workspaceId: string; stage: StoryStage | null }) => void;
+  setChanged: (props: { workspaceId: string; changed: IPendingChange | null }) => void;
+  setReview: (props: { workspaceId: string; review: IChangeReview | null }) => void;
+  resolveChanges: (workspaceId: string) => void;
+  holdForChanges: (
+    hold: { workspaceId: string; mode: RunMode; caseIds?: string[] } | null,
+  ) => void;
   markScreens: (props: { workspaceId: string; screens: IRunScreen[] }) => void;
   markAddress: (props: { workspaceId: string; url: string }) => void;
   landNote: (props: { workspaceId: string; text: string; who: string }) => void;

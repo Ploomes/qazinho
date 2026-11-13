@@ -62,6 +62,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   lookingAt: {},
   chatDevices: {},
   storyReadAt: {},
+  changeHold: null,
   removingWorkspaceId: null,
 
   addWorkspace: (workspace) =>
@@ -722,6 +723,44 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
           stage === null ? workspace : { ...workspace, storyStage: stage },
       }),
     })),
+
+  setChanged: ({ workspaceId, changed }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: ({ changed: _changed, ...workspace }) =>
+          changed === null ? workspace : { ...workspace, changed },
+      }),
+    })),
+
+  setReview: ({ workspaceId, review }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: ({ review: _review, ...workspace }) =>
+          review === null ? workspace : { ...workspace, review },
+      }),
+    })),
+
+  resolveChanges: (workspaceId) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: ({ changed, review: _review, ...workspace }) =>
+          changed === undefined
+            ? workspace
+            : {
+                ...workspace,
+                snapshots: changed.snapshots,
+                planSource: changed.code ?? workspace.planSource,
+              },
+      }),
+    })),
+
+  holdForChanges: (changeHold) => set({ changeHold }),
 
   markStoryRead: ({ workspaceId, at }) =>
     set((state) => ({ storyReadAt: { ...state.storyReadAt, [workspaceId]: at } })),

@@ -4,8 +4,10 @@ import type { ISavedWorkspace } from '@/shared/types';
 import { viewportOf } from '@/modules/Device/library';
 import { planExtrasOfYaml, planOfYaml } from '@/modules/Plan/library';
 import { bugOfSaved } from './bugOfSaved';
+import { changeReviewOf } from './changeReviewOf';
 import { codeSourceOf } from './codeSourceOf';
 import { messageOfSaved } from './messageOfSaved';
+import { pendingChangeOf } from './pendingChangeOf';
 import { snapshotsOf } from './snapshotsOf';
 
 type SavedRun = Omit<IRun, 'endedBy' | 'costUsd' | 'video'> &
@@ -49,6 +51,12 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     ...(snapshotsOf(read.snapshots).length === 0
       ? {}
       : { snapshots: snapshotsOf(read.snapshots) }),
+    ...(pendingChangeOf(read.changed) === null
+      ? {}
+      : { changed: pendingChangeOf(read.changed) ?? undefined }),
+    ...(changeReviewOf(read.review) === null
+      ? {}
+      : { review: changeReviewOf(read.review) ?? undefined }),
     design: read.design ?? null,
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
     plan: planOfYaml(saved.planYaml),

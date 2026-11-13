@@ -6,7 +6,12 @@ import type { WorkspaceStatus } from './WorkspaceStatus';
 import type { IBug } from '@/modules/Bug';
 import type { ChatMessage } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
-import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
+import type {
+  IChangeReview,
+  IPendingChange,
+  IPublishedPlan,
+  ITestCase,
+} from '@/modules/Plan';
 import type { IRun } from '@/modules/Run';
 import type {
   ICodeSource,
@@ -41,6 +46,8 @@ export interface IWorkspace {
   doubts?: IPlanDoubt[];
   storyStage?: StoryStage;
   snapshots?: ISourceSnapshot[];
+  changed?: IPendingChange;
+  review?: IChangeReview;
   unreadPlan: IUnreadPlan | null;
   plainValues: string[];
   planSource: ICodeSource | null;
