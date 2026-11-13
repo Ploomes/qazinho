@@ -7,5 +7,6 @@ export type HomeItemKind =
   | 'failed'
   | 'arrived'
   | 'answered'
+  | 'changed'
   | 'byHand'
   | 'toDevelop';

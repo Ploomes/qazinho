@@ -2,7 +2,7 @@ import type { IHome } from '@/modules/Home/types';
 
 /**
  * Quantas coisas do Início esperam o QA: perguntas, paradas, falhas, histórias que
- * chegaram ou foram respondidas, e casos à mão.
+ * chegaram, foram respondidas ou mudaram, e casos à mão.
  */
 export function homeCountOf(home: IHome): number {
   return (
@@ -11,6 +11,7 @@ export function homeCountOf(home: IHome): number {
     home.failed.length +
     home.arrived.length +
     home.answered.length +
+    home.changed.length +
     home.byHand.length
   );
 }

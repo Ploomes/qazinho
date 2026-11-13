@@ -3,6 +3,7 @@ import type {
   IHomeAnswered,
   IHomeArrived,
   IHomeAsking,
+  IHomeChanged,
   IHomeByHand,
   IHomeFailed,
   IHomePaused,
@@ -40,6 +41,7 @@ export function homeOf(props: {
   const failed: IHomeFailed[] = [];
   const arrived: IHomeArrived[] = [];
   const answered: IHomeAnswered[] = [];
+  const changed: IHomeChanged[] = [];
   const byHand: IHomeByHand[] = [];
   const toDevelop: IHomeToDevelop[] = [];
 
@@ -92,6 +94,20 @@ export function homeOf(props: {
     if (isArrived && workspace.issue !== null)
       arrived.push({ ...base, kind: 'arrived', key: workspace.issue.key });
 
+    const sources = (workspace.changed?.found ?? []).map((change) =>
+      change.kind === 'story'
+        ? change.key
+        : change.kind === 'page'
+          ? change.title
+          : change.branch,
+    );
+    const toReview = (workspace.review?.items ?? []).filter(
+      ({ state }) => state === 'open',
+    ).length;
+
+    if (live === null && (sources.length > 0 || toReview > 0))
+      changed.push({ ...base, kind: 'changed', sources, toReview });
+
     if (live === null && held.length > 0)
       answered.push({ ...base, kind: 'answered', ids: held.map(({ id }) => id) });
 
@@ -109,6 +125,7 @@ export function homeOf(props: {
     failed,
     arrived,
     answered,
+    changed,
     byHand,
     toDevelop,
     recent: recentOf(props).slice(0, props.shown),

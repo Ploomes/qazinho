@@ -237,6 +237,26 @@ export const useHomeViewModel = () => {
       })),
     },
     {
+      id: 'changed',
+      title: t('HOME.GROUP_CHANGED'),
+      items: home.changed.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.changed,
+        text:
+          item.toReview > 0
+            ? t(item.toReview === 1 ? 'HOME.TO_REVIEW_ONE' : 'HOME.TO_REVIEW_OTHER', {
+                plan: item.plan,
+                count: item.toReview,
+              })
+            : t('HOME.CHANGED', { sources: listOf(item.sources), plan: item.plan }),
+        project: item.project,
+        action: t('HOME.REVIEW'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: 'plan' });
+        },
+      })),
+    },
+    {
       id: 'byHand',
       title: t('HOME.GROUP_BY_HAND'),
       items: home.byHand.map((item) => ({

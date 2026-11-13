@@ -181,6 +181,49 @@ describe('homeOf', () => {
     ).toEqual([]);
   });
 
+  it('lists a plan whose sources changed, and one with swaps still to review', () => {
+    const found = {
+      kind: 'story' as const,
+      key: 'SHOP-878',
+      url: 'https://shop.atlassian.net/browse/SHOP-878',
+      at: '2026-11-13',
+      before: '3',
+      after: '5',
+      comments: [],
+    };
+    const changed = {
+      ...makeWorkspace(),
+      changed: { found: [found], snapshots: [], code: null, at: '2026-11-13' },
+    };
+    const reviewing = {
+      ...changed,
+      id: 'w2',
+      review: {
+        summary: 'Mudou.',
+        at: '2026-11-13',
+        items: [
+          {
+            id: 'R1',
+            kind: 'doubt' as const,
+            question: 'Quanto?',
+            state: 'open' as const,
+          },
+          {
+            id: 'R2',
+            kind: 'doubt' as const,
+            question: 'Onde?',
+            state: 'refused' as const,
+          },
+        ],
+      },
+    };
+
+    expect(home([changed, reviewing]).changed).toEqual([
+      expect.objectContaining({ kind: 'changed', sources: ['SHOP-878'], toReview: 0 }),
+      expect.objectContaining({ workspaceId: 'w2', toReview: 1 }),
+    ]);
+  });
+
   it('shows nothing for a plan that passed and has everything recorded', () => {
     const passed = walkRun({ verdicts: ['passed'], isFinished: true });
     const all = [...new Set(passed.plan.map(({ id }) => id))];

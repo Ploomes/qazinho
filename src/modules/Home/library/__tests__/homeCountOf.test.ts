@@ -13,11 +13,12 @@ describe('homeCountOf', () => {
         failed: [{ ...PLAN, kind: 'failed', failed: 1, bugs: 1 }],
         arrived: [{ ...PLAN, kind: 'arrived', key: 'SHOP-878' }],
         answered: [{ ...PLAN, kind: 'answered', ids: ['D1'] }],
+        changed: [{ ...PLAN, kind: 'changed', sources: ['SHOP-878'], toReview: 0 }],
         byHand: [{ ...PLAN, kind: 'byHand', cases: 2, caseId: 'TC-07' }],
         toDevelop: [{ ...PLAN, kind: 'toDevelop', cases: 3 }],
         recent: [],
       }),
-    ).toBe(6);
+    ).toBe(7);
   });
 
   it('counts nothing while every plan is at rest', () => {
@@ -29,6 +30,7 @@ describe('homeCountOf', () => {
         failed: [],
         arrived: [],
         answered: [],
+        changed: [],
         byHand: [],
         toDevelop: [],
         recent: [],

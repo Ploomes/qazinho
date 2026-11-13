@@ -4,6 +4,7 @@ export type * from './IHomeAnswered';
 export type * from './IHomeArrived';
 export type * from './IHomeAsking';
 export type * from './IHomeByHand';
+export type * from './IHomeChanged';
 export type * from './IHomeFailed';
 export type * from './IHomePaused';
 export type * from './IHomePlan';
