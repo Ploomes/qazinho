@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { formatClock } from '@/modules/Chat';
 import { HOME_ITEMS, HOME_SCREEN } from '@/modules/Home/constants';
 import { dayKeyOf, homeOf } from '@/modules/Home/library';
+import { useStoryCheck, waitingDoubtsOf } from '@/modules/Plan';
 import { projectAppOf, projectMarkOf, useSiteIcons } from '@/modules/Project';
 import { dayLabelOf, flattenPlanSteps, RUN_HOW_KEYS, useRunActions } from '@/modules/Run';
 import { Run } from '@/services';
@@ -22,6 +23,7 @@ export const useHomeViewModel = () => {
   const setDeveloped = useWorkspaceStore((state) => state.setDevelopedCases);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const { onRunPlan, onWalkByHand } = useRunActions();
+  const { check } = useStoryCheck();
   const icons = useSiteIcons(
     projects.flatMap(({ targets }) => projectAppOf(targets).address ?? []),
   );
@@ -65,6 +67,26 @@ export const useHomeViewModel = () => {
       });
     }
   }, [unknownKey, setDeveloped]);
+
+  const storyKey = workspaces
+    .filter(
+      (workspace) =>
+        workspace.issue?.source === 'jira' &&
+        (workspace.storyStage === 'ahead' ||
+          waitingDoubtsOf(workspace.doubts ?? []).length > 0),
+    )
+    .map(({ id }) => id)
+    .join('\n');
+
+  useEffect(() => {
+    for (const workspaceId of storyKey.split('\n'))
+      if (workspaceId !== '') void check({ workspaceId });
+  }, [storyKey, check]);
+
+  const listOf = (ids: string[]) =>
+    new Intl.ListFormat(i18n.language, { style: 'long', type: 'conjunction' }).format(
+      ids,
+    );
 
   const whenOf = (at: number) => {
     const day = dayKeyOf(at);
@@ -180,6 +202,35 @@ export const useHomeViewModel = () => {
         }),
         project: item.project,
         action: t('HOME.OPEN'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: 'plan' });
+        },
+      })),
+    },
+    {
+      id: 'arrived',
+      title: t('HOME.GROUP_ARRIVED'),
+      items: home.arrived.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.arrived,
+        text: t('HOME.ARRIVED', { key: item.key, plan: item.plan }),
+        project: item.project,
+        action: t('HOME.DEVELOP'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: 'plan' });
+          onRunPlan();
+        },
+      })),
+    },
+    {
+      id: 'answered',
+      title: t('HOME.GROUP_ANSWERED'),
+      items: home.answered.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.answered,
+        text: t('HOME.ANSWERED', { ids: listOf(item.ids), plan: item.plan }),
+        project: item.project,
+        action: t('HOME.SEE_ANSWERS'),
         onAction: () => {
           open({ workspaceId: item.workspaceId, tab: 'plan' });
         },

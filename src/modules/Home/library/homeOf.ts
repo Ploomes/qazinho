@@ -1,5 +1,7 @@
 import type {
   IHome,
+  IHomeAnswered,
+  IHomeArrived,
   IHomeAsking,
   IHomeByHand,
   IHomeFailed,
@@ -11,6 +13,7 @@ import type {
 } from '@/modules/Home/types';
 import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
+import { heldDoubtsOf } from '@/modules/Plan/library';
 import {
   currentStepOf,
   manualWaitingOf,
@@ -35,6 +38,8 @@ export function homeOf(props: {
   const going: (IHomeRunning | IHomePaused)[] = [];
   const toContinue: IHomeToContinue[] = [];
   const failed: IHomeFailed[] = [];
+  const arrived: IHomeArrived[] = [];
+  const answered: IHomeAnswered[] = [];
   const byHand: IHomeByHand[] = [];
   const toDevelop: IHomeToDevelop[] = [];
 
@@ -80,7 +85,17 @@ export function homeOf(props: {
     if (waiting !== undefined)
       byHand.push({ ...base, kind: 'byHand', cases: more.length + 1, caseId: waiting });
 
-    if (live === null && developed !== undefined) {
+    const held = heldDoubtsOf({ plan: workspace.plan, doubts: workspace.doubts ?? [] });
+    const isArrived =
+      live === null && workspace.storyStage === 'arrived' && workspace.issue !== null;
+
+    if (isArrived && workspace.issue !== null)
+      arrived.push({ ...base, kind: 'arrived', key: workspace.issue.key });
+
+    if (live === null && held.length > 0)
+      answered.push({ ...base, kind: 'answered', ids: held.map(({ id }) => id) });
+
+    if (live === null && developed !== undefined && !isArrived) {
       const cases = planStageOf({ plan: workspace.plan, developed }).toDevelop.length;
 
       if (cases > 0) toDevelop.push({ ...base, kind: 'toDevelop', cases });
@@ -92,6 +107,8 @@ export function homeOf(props: {
     going,
     toContinue,
     failed,
+    arrived,
+    answered,
     byHand,
     toDevelop,
     recent: recentOf(props).slice(0, props.shown),

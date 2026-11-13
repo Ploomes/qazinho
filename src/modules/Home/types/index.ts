@@ -1,5 +1,7 @@
 export type * from './HomeItemKind';
 export type * from './IHome';
+export type * from './IHomeAnswered';
+export type * from './IHomeArrived';
 export type * from './IHomeAsking';
 export type * from './IHomeByHand';
 export type * from './IHomeFailed';

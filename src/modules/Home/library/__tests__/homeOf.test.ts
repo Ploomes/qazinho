@@ -130,6 +130,57 @@ describe('homeOf', () => {
     ]);
   });
 
+  /**
+   * Um plano escrito antes do app volta ao Início quando a história dele chega para teste,
+   * e uma dúvida respondida na história, enquanto ainda segura casos.
+   */
+  it('lists a story that arrived for testing in its own group, not among the plans to develop', () => {
+    const arrived = {
+      ...makeWorkspace(),
+      storyStage: 'arrived' as const,
+      issue: {
+        key: 'SHOP-878',
+        title: 'Coupons',
+        source: 'jira' as const,
+        url: 'https://shop.atlassian.net/browse/SHOP-878',
+      },
+    };
+    const shown = home([arrived], { developed: { w1: [] } });
+
+    expect(shown.arrived).toEqual([
+      expect.objectContaining({
+        kind: 'arrived',
+        key: 'SHOP-878',
+        plan: 'Checkout regression',
+      }),
+    ]);
+    expect(shown.toDevelop).toEqual([]);
+  });
+
+  it('lists the doubts the team answered while cases still wait for them', () => {
+    const workspace = makeWorkspace();
+    const answer = { text: 'They stack.', by: 'Rui PO', at: '2026-11-13T15:00:00.000Z' };
+    const sent = {
+      url: 'https://shop.atlassian.net/browse/SHOP-878',
+      at: '2026-11-13T13:00:00.000Z',
+    };
+    const held = {
+      ...workspace,
+      plan: workspace.plan.map((one, index) =>
+        index === 0 ? { ...one, blockedBy: ['D1'] } : one,
+      ),
+      doubts: [{ id: 'D1', question: 'Stack?', sent, answer }],
+    };
+
+    expect(home([held]).answered).toEqual([
+      expect.objectContaining({ kind: 'answered', ids: ['D1'] }),
+    ]);
+    expect(
+      home([{ ...workspace, doubts: [{ id: 'D1', question: 'Stack?', sent, answer }] }])
+        .answered,
+    ).toEqual([]);
+  });
+
   it('shows nothing for a plan that passed and has everything recorded', () => {
     const passed = walkRun({ verdicts: ['passed'], isFinished: true });
     const all = [...new Set(passed.plan.map(({ id }) => id))];

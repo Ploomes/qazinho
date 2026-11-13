@@ -9,7 +9,7 @@ import {
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSetupStore, useWorkspaceStore } from '@/store';
 
 const WEB = { id: 't1', kind: 'web' as const, label: 'Web', value: 'https://loja.test/' };
 const LOJA = { id: 'p1', name: 'Loja Web', targets: [WEB], repositories: [] };
@@ -129,6 +129,52 @@ describe('useHomeViewModel', () => {
     expect(result.current.groups[0]?.items[0]?.text).toBe(
       'Checkout regression has 1 case not recorded yet',
     );
+  });
+
+  /**
+   * Abrir o Início confere no Jira do QA as histórias que um plano espera, sem agente: a
+   * que chegou para teste aparece com Desenvolver.
+   */
+  it('reads the story a plan waits for when it opens, and offers to develop once it arrived', async () => {
+    const readStatus = vi.fn(() =>
+      Promise.resolve({ isRead: true as const, status: 'Ready for QA' }),
+    );
+
+    window.qazinho = { ...fakeQazinhoApi('darwin'), readStoryStatus: readStatus };
+    useAppStore.setState({ projects: [{ ...LOJA, readyStatuses: ['Ready for QA'] }] });
+    useSetupStore.setState({
+      integrations: [
+        { id: 'jira', account: 'ana@loja.test', site: 'loja.atlassian.net' },
+      ],
+    } as never);
+    useWorkspaceStore.setState({
+      storyReadAt: {},
+      workspaces: [
+        inLoja({
+          ...makeWorkspace(),
+          storyStage: 'ahead' as const,
+          issue: {
+            key: 'SHOP-878',
+            title: 'Coupons',
+            source: 'jira' as const,
+            url: 'https://loja.atlassian.net/browse/SHOP-878',
+          },
+        }),
+      ],
+    });
+
+    const { result } = renderHook(() => useHomeViewModel());
+
+    await waitFor(() => {
+      expect(result.current.groups.map(({ id }) => id)).toContain('arrived');
+    });
+    expect(readStatus).toHaveBeenCalledWith('SHOP-878');
+    expect(
+      result.current.groups.find(({ id }) => id === 'arrived')?.items[0],
+    ).toMatchObject({
+      text: 'SHOP-878 arrived for testing, so Checkout regression can be developed',
+      action: 'Develop',
+    });
   });
 
   it('lists the plans opened lately with the day and the hour, and opens one', () => {
