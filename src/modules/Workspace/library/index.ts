@@ -1,3 +1,4 @@
+export * from './blankWorkspaceOf';
 export * from './bugOfSaved';
 export * from './buildRun';
 export * from './codeSourceOf';
