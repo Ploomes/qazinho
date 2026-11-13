@@ -495,6 +495,24 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     casos que esperavam (`heldDoubtsOf`).
   - A primeira execução aceita uma história no lugar do app (`storyKeyOf`): o projeto nasce sem
     alvo (`blankWorkspaceOf`), e o `RunButton` leva a escolher o app antes de desenvolver.
+- **Uma mudança nas fontes chega ao plano** (`role/watcher/`). Vigiar sozinho é da plataforma; o
+  desktop confere quando o QA pede ou vai rodar:
+  - O turno que escreve um plano devolve como a história e a página estavam (`snapshots`,
+    `storyTextOf`), e o plano guarda o commit da branch (`planSource`).
+  - O `SourceCheck` da main lê tudo de novo sem IA (`ISourcesChecked`): o texto da história contra
+    o retrato (`isSameText`), os comentários de outra pessoa depois dele (`commentsSince`), a página,
+    e o commit da branch pelo gh, com os patches (`filesOfCompare`). O workspace guarda o que achou
+    (`changed`) até o QA resolver; resolver faz de como as fontes estão agora o novo retrato
+    (`resolveChanges`).
+  - O `useSourceCheck` roda no "Conferir mudanças" e antes de uma run do QA (`runOwn`): uma
+    mudança por revisar segura a run (`changeHold`, `ChangeRunWarning`).
+  - O `ChangeReader` pergunta ao agente do QA só no clique, selado e no modelo mais barato
+    (`readChange`, `CHANGE_READ`), e confere a resposta contra os casos e as dúvidas
+    (`readChangeRead`). A revisão (`review`, `reviewOf`) guarda cada troca e como o QA a decidiu,
+    com o motivo de uma recusa; aplicar escreve o caso pelo `planWithItem`.
+  - "Contar na história" monta o comentário (`storyNoteOf`) que o QA edita e posta
+    (`JiraApi.tell`, `adfOfNote`). O envio de um bug avisa quando as fontes mudaram, e o Início
+    mostra os planos com mudanças (`homeOf`).
 - **Uma página do Confluence também é um requisito, e o lugar onde um plano é publicado**
   (`role/chat/confluence.md`). O Confluence é ligado ao lado do Jira (`setConfluence`), assim que o
   `ConfluenceApi.check` o alcança com a conta do Jira:

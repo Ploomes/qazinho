@@ -382,6 +382,20 @@ sem estratégia) viraram campos obrigatórios no schema, e essa última versão 
 real. O comentário, as respostas e o status só rodaram contra um Jira fake; um site real não foi
 tentado. A plataforma guarda a estratégia, as dúvidas e as fontes, mas a web ainda não as mostra.
 
+**Quando uma fonte muda, o plano fica sabendo.** O plano guarda como a história e a página estavam
+quando foi escrito, e o commit da branch. "Conferir mudanças", na aba Plano, lê tudo de novo sem
+agente: o texto e os critérios da história, os comentários novos de outra pessoa, a página e a
+branch; a mesma conferência roda antes de desenvolver ou rodar, e uma mudança que ninguém revisou
+segura a run com uma pergunta. "Propor as trocas" chama o agente do QA só no clique, no modelo mais
+barato e sem ferramentas: cada caso tocado aparece com como está, como fica e o porquê, com Aplicar
+ou Recusar com o motivo, além dos casos novos, das dúvidas novas e das respondidas. Aplicar muda o
+caso, e a gravação dele deixa de valer. Depois, "Contar na história" abre um comentário pronto que
+o QA edita e posta. Mandar um bug de um plano cujas fontes mudaram avisa antes, e o Início mostra os
+planos com mudanças. Vigiar sozinho fica para a plataforma. Um Claude Code real (Haiku), numa
+rodada, trocou só o caso que citava o critério que mudou, reescreveu pelo comentário o que esperava
+uma dúvida, e propôs um caso novo. O design do Figma ainda não é conferido, e nada disso rodou
+contra um Jira, um Confluence ou um GitHub reais nem no app construído.
+
 **Uma página do Confluence vira o plano, e o plano uma página do Confluence.** Com o Jira
 conectado, o QA liga o Confluence no cartão do Jira: a mesma conta no mesmo site, conferida antes
 com o Confluence. O `/confluence` no chat escolhe uma página, as que o QA trabalhou por último ou
