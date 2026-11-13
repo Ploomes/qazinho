@@ -460,7 +460,7 @@ export class RunCoordinator {
     return true;
   }
 
-  /** O QA termina o caso à mão: os passos que ele não marcou ficam sem marca, e por quê. */
+  /** Termina o caso à mão: o que o QA não marcou fica sem marca, com o porquê. */
   public endManual(workspaceId: string): void {
     const turn = this.manualTurns.get(workspaceId);
 

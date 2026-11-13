@@ -34,7 +34,7 @@ const walked = (id: string, by?: 'qa'): IRunCase => ({
   ],
 });
 
-const run = (id: string, cases: IRunCase[], mode?: 'manual'): IRun => ({
+const run = (id: string, cases: IRunCase[]): IRun => ({
   id,
   meta: '',
   startedAt: '09:41',
@@ -44,7 +44,11 @@ const run = (id: string, cases: IRunCase[], mode?: 'manual'): IRun => ({
   cases,
   endedBy: 'finished',
   video: null,
-  ...(mode === undefined ? {} : { mode }),
+});
+
+const manualRun = (id: string, cases: IRunCase[]): IRun => ({
+  ...run(id, cases),
+  mode: 'manual',
 });
 
 const plan = [testCase('TC-01'), testCase('TC-07', true), testCase('TC-08', true)];
@@ -66,7 +70,7 @@ describe('manualWaitingOf', () => {
       manualWaitingOf({
         plan,
         runs: [
-          run('r-02', [walked('TC-07', 'qa')], 'manual'),
+          manualRun('r-02', [walked('TC-07', 'qa')]),
           run('r-01', [walked('TC-01')]),
         ],
       }),
@@ -79,7 +83,7 @@ describe('manualWaitingOf', () => {
         plan,
         runs: [
           run('r-03', [walked('TC-01')]),
-          run('r-02', [walked('TC-07', 'qa')], 'manual'),
+          manualRun('r-02', [walked('TC-07', 'qa')]),
           run('r-01', [walked('TC-01')]),
         ],
       }),
