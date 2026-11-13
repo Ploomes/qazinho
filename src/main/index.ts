@@ -45,6 +45,7 @@ import type {
   ISkill,
   ISkillDraftFile,
   ISkillImport,
+  ISourcesCheckAsk,
   ISourceSnapshot,
   IStartBuild,
   IStartRun,
@@ -135,6 +136,7 @@ import {
   SiteIcons,
   SkillLibrary,
   SkillWriter,
+  SourceCheck,
   StorageKeeper,
   storyTextOf,
   updateFeedOf,
@@ -546,6 +548,13 @@ const confluence = new ConfluenceApi({
   credentials: () => vault.confluence(),
   jira: () => vault.jira(),
   fetcher: (url, init) => fetch(url, init),
+});
+const sourceCheck = new SourceCheck({
+  readStory: (key) => jira.story(key),
+  readComments: (props) => jira.commentsSince(props),
+  readPage: (pageId) => confluence.page(pageId),
+  githubApi: (path) => github.api({ path }),
+  storyTextOf,
 });
 const bugFiler = new BugFiler({
   jira,
@@ -2004,6 +2013,9 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());
+  ipcMain.handle(CHANNELS.checkSources, (_event, ask: ISourcesCheckAsk) =>
+    sourceCheck.check(ask),
+  );
   ipcMain.handle(CHANNELS.listJiraBoards, (_event, query: string) => jira.boards(query));
   ipcMain.handle(CHANNELS.listBoardColumns, (_event, boardId: number) =>
     jira.columns(boardId),

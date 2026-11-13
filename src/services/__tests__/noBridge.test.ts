@@ -15,6 +15,7 @@ import {
   Run,
   Setup,
   Sites,
+  Sources,
   Updates,
   Memories,
   Variables,
@@ -231,6 +232,17 @@ describe('a page with no bridge', () => {
     );
     expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
     expect(await Jira.boards('')).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(
+      await Sources.check({
+        snapshots: [{ kind: 'story', key: 'SHOP-878', url: '', text: '', at: '' }],
+        code: null,
+      }),
+    ).toEqual({
+      changes: [],
+      snapshots: [{ kind: 'story', key: 'SHOP-878', url: '', text: '', at: '' }],
+      code: null,
+      missed: ['SHOP-878'],
+    });
     expect(await Jira.columns(1)).toEqual({ isListed: false, failure: 'unreachable' });
     expect(await Jira.status('SHOP-878')).toEqual({
       isRead: false,

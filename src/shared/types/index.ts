@@ -168,6 +168,8 @@ export type * from './ISetupEvent';
 export type * from './IslandAction';
 export type * from './IslandState';
 export type * from './ISourceChange';
+export type * from './ISourcesCheckAsk';
+export type * from './ISourcesChecked';
 export type * from './ISourceSnapshot';
 export type * from './IssueTarget';
 export type * from './IssueTracker';

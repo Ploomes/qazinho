@@ -26,6 +26,7 @@ import {
   askAtlassian,
   boardColumnsOf,
   bugTypeOf,
+  commentsSinceOf,
   jiraBoardsOf,
   jiraIssueOf,
   jiraProjectsOf,
@@ -342,6 +343,32 @@ export class JiraApi {
     return typeof status === 'string'
       ? { isRead: true, status }
       : { isRead: false, failure: 'unexpected' };
+  }
+
+  /** O que outros escreveram numa história depois de um momento, do mais velho. */
+  public async commentsSince(props: {
+    key: string;
+    since: string;
+  }): Promise<{ author: string; at: string; text: string }[] | null> {
+    const signed = await this.credentials();
+
+    if (signed === null) return null;
+
+    const [comments, me] = await Promise.all([
+      this.request({
+        signed,
+        path: `/rest/api/3/issue/${encodeURIComponent(props.key)}/comment?orderBy=-created&maxResults=${String(JIRA_READ.answerComments)}`,
+      }),
+      this.request({ signed, path: '/rest/api/3/myself' }),
+    ]);
+
+    return comments.isOk
+      ? commentsSinceOf({
+          body: comments.body,
+          since: props.since,
+          me: (me.isOk ? this.personOf(me.body)?.id : null) ?? '',
+        })
+      : null;
   }
 
   /** Quem escreveu uma história e se o QA já a acompanha. */

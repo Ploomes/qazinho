@@ -75,6 +75,8 @@ import type { ISkillDraftFile } from './ISkillDraftFile';
 import type { ISkillFound } from './ISkillFound';
 import type { ISkillImport } from './ISkillImport';
 import type { IslandAction } from './IslandAction';
+import type { ISourcesCheckAsk } from './ISourcesCheckAsk';
+import type { ISourcesChecked } from './ISourcesChecked';
 import type { IStartBuild } from './IStartBuild';
 import type { IStartRun } from './IStartRun';
 import type { IStorageUsage } from './IStorageUsage';
@@ -258,6 +260,7 @@ export interface IQazinhoApi {
   listBranches: (repository: IRepositoryRef) => Promise<IBranchList>;
   searchJira: (query: string) => Promise<JiraIssueList>;
   listJiraProjects: () => Promise<JiraProjectList>;
+  checkSources: (ask: ISourcesCheckAsk) => Promise<ISourcesChecked>;
   listJiraBoards: (query: string) => Promise<JiraBoardList>;
   listBoardColumns: (boardId: number) => Promise<BoardColumnList>;
   readStoryStatus: (key: string) => Promise<StoryStatus>;

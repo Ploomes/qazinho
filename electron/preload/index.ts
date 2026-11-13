@@ -79,6 +79,8 @@ import type {
   ISkillFound,
   ISkillImport,
   IslandAction,
+  ISourcesCheckAsk,
+  ISourcesChecked,
   IStartBuild,
   IStartRun,
   IStorageUsage,
@@ -436,6 +438,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.searchJira, query) as Promise<JiraIssueList>,
   listJiraProjects: () =>
     ipcRenderer.invoke(CHANNELS.listJiraProjects) as Promise<JiraProjectList>,
+  checkSources: (ask: ISourcesCheckAsk) =>
+    ipcRenderer.invoke(CHANNELS.checkSources, ask) as Promise<ISourcesChecked>,
   listJiraBoards: (query: string) =>
     ipcRenderer.invoke(CHANNELS.listJiraBoards, query) as Promise<JiraBoardList>,
   listBoardColumns: (boardId: number) =>

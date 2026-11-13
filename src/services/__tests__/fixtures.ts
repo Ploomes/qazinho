@@ -230,6 +230,13 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     searchJira: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
     listJiraProjects: () =>
       Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    checkSources: (ask) =>
+      Promise.resolve({
+        changes: [],
+        snapshots: ask.snapshots,
+        code: ask.code,
+        missed: [],
+      }),
     listJiraBoards: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
     listBoardColumns: () =>
       Promise.resolve({ isListed: false, failure: 'not-connected' }),

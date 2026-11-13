@@ -4,6 +4,7 @@ export * from './adfToMarkdown';
 export * from './askAtlassian';
 export * from './boardColumnsOf';
 export * from './bugTypeOf';
+export * from './commentsSinceOf';
 export * from './jiraBoardsOf';
 export * from './jiraFailureOf';
 export * from './jiraIssueOf';
