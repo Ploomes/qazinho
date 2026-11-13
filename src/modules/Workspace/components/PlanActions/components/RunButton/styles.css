@@ -170,3 +170,17 @@
     display: grid;
   }
 }
+
+.run-button--waiting .run-button__face {
+  border-color: var(--line2);
+  background: transparent;
+}
+
+.run-button--waiting .run-button__run,
+.run-button--waiting .run-button__more {
+  color: var(--ink2);
+}
+
+.run-button--waiting .run-button__more {
+  border-left-color: var(--line2);
+}

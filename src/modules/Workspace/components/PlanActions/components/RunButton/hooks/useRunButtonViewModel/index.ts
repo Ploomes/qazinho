@@ -20,6 +20,7 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
     onRunWithAgent,
   } = props;
   const canExplore = props.canExplore === true;
+  const waitsFor = props.waitsFor ?? null;
   const { t } = useTranslation();
   const [isOpen, setOpen] = useState(false);
   const runCombo = useSettingsStore(
@@ -28,19 +29,22 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
   const ref = useDismiss<HTMLDivElement>(() => {
     setOpen(false);
   });
-  const isMenuOpen = isOpen && canRun && (canChoose || canExplore);
   const isDeveloping = toDevelop > 0;
-  const planTitle = !isDeveloping
-    ? t('WORKSPACE.RUN_PLAN')
-    : developed === 0
-      ? t('WORKSPACE.DEVELOP_PLAN')
-      : t(toDevelop === 1 ? 'WORKSPACE.DEVELOP_ONE' : 'WORKSPACE.DEVELOP_OTHER', {
-          count: toDevelop,
-        });
-  const planHint = t(
-    isDeveloping ? 'WORKSPACE.DEVELOP_PLAN_HINT' : 'WORKSPACE.RUN_PLAN_HINT',
-  );
   const isContinuing = toContinue > 0;
+  const isWaiting = waitsFor !== null && isDeveloping && !isContinuing;
+  const isMenuOpen = isOpen && canRun && (canChoose || canExplore || isWaiting);
+  const planTitle = isWaiting
+    ? t('WORKSPACE.DEVELOP_NOW')
+    : !isDeveloping
+      ? t('WORKSPACE.RUN_PLAN')
+      : developed === 0
+        ? t('WORKSPACE.DEVELOP_PLAN')
+        : t(toDevelop === 1 ? 'WORKSPACE.DEVELOP_ONE' : 'WORKSPACE.DEVELOP_OTHER', {
+            count: toDevelop,
+          });
+  const planHint = isWaiting
+    ? t('WORKSPACE.DEVELOP_NOW_HINT')
+    : t(isDeveloping ? 'WORKSPACE.DEVELOP_PLAN_HINT' : 'WORKSPACE.RUN_PLAN_HINT');
   const continueHint = t(
     toContinue === 1 ? 'WORKSPACE.CONTINUE_HINT_ONE' : 'WORKSPACE.CONTINUE_HINT_OTHER',
     { count: toContinue },
@@ -52,12 +56,23 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
       'run-button',
       ...(canRun ? [] : ['run-button--disabled']),
       ...(isMenuOpen ? ['run-button--open'] : []),
+      ...(isWaiting ? ['run-button--waiting'] : []),
     ].join(' '),
     style: { '--run-menu-width': `${String(RUN_BUTTON.menuWidthPx)}px` } as CSSProperties,
-    runLabel: isContinuing ? t('WORKSPACE.CONTINUE_RUN') : planTitle,
+    runLabel: isContinuing
+      ? t('WORKSPACE.CONTINUE_RUN')
+      : isWaiting
+        ? t('WORKSPACE.WAITING_APP')
+        : planTitle,
     isDisabled: !canRun,
-    tip: !canRun ? t('WORKSPACE.RUN_NO_STEPS') : isContinuing ? continueHint : planHint,
-    hasChoices: canChoose || canExplore,
+    tip: !canRun
+      ? t('WORKSPACE.RUN_NO_STEPS')
+      : isContinuing
+        ? continueHint
+        : isWaiting
+          ? t('WORKSPACE.WAITING_APP_HINT', { key: waitsFor })
+          : planHint,
+    hasChoices: canChoose || canExplore || isWaiting,
     foldClassName: canChoose
       ? 'run-button__fold'
       : 'run-button__fold run-button__fold--narrow',
@@ -90,7 +105,7 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
         icon: isDeveloping ? ('sparkle' as const) : ('play' as const),
         title: planTitle,
         hint: planHint,
-        combo: isContinuing ? null : runCombo,
+        combo: isContinuing || isWaiting ? null : runCombo,
         onPick: () => {
           setOpen(false);
           onRunPlan();
@@ -151,10 +166,13 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
         : []),
     ],
     onRun: () => {
-      if (canRun) onRun();
+      if (!canRun) return;
+
+      if (isWaiting) setOpen(!isOpen);
+      else onRun();
     },
     onToggle: () => {
-      if (canRun && (canChoose || canExplore)) setOpen(!isOpen);
+      if (canRun && (canChoose || canExplore || isWaiting)) setOpen(!isOpen);
     },
   };
 };

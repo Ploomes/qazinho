@@ -21,6 +21,7 @@ export const usePlanActionsViewModel = () => {
     isByHand: opened.live?.mode === 'manual',
     toContinue:
       runToContinueOf({ plan: opened.plan, runs: opened.runs })?.caseIds.length ?? 0,
+    waitsFor: opened.storyStage === 'ahead' ? (opened.issue?.key ?? null) : null,
   }));
   const developedIds = useWorkspaceStore(
     (state) => state.developedCases[workspace?.id ?? ''] ?? NO_CASES,
@@ -46,6 +47,7 @@ export const usePlanActionsViewModel = () => {
     developedCount: stage.developed.length,
     toDevelopCount: stage.toDevelop.length,
     toContinueCount: toContinue,
+    waitsFor: workspace?.waitsFor ?? null,
     canExplore: workspace !== null && !isLive,
     exploreLabel: t('WORKSPACE.EXPLORE'),
     exploreTip: t('WORKSPACE.EXPLORE_TIP', { minutes: EXPLORATION.minutes }),

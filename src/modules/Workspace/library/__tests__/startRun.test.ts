@@ -38,6 +38,23 @@ describe('startRun', () => {
     });
   });
 
+  /** Desenvolver o plano é o QA dizendo que a espera pela história acabou. */
+  it('ends the wait for the story once the plan runs, and keeps it for an exploration', () => {
+    const waiting = { ...makeWorkspace(), storyStage: 'arrived' as const };
+    const run = (props: { kind?: 'explore'; mode?: 'manual' }) =>
+      startRun({
+        workspace: waiting,
+        startedAt: '09:41',
+        runId: 'r-01',
+        by: WALKED_BY,
+        ...props,
+      });
+
+    expect(run({})).not.toHaveProperty('storyStage');
+    expect(run({ kind: 'explore' }).storyStage).toBe('arrived');
+    expect(run({ mode: 'manual' }).storyStage).toBe('arrived');
+  });
+
   it('does NOT start a workspace whose plan has no cases', () => {
     const empty = makeWorkspace([]);
 

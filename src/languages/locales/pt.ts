@@ -201,6 +201,10 @@ export const pt: typeof en = {
     RUN_DEVELOPED_OTHER: 'Rodar {{count}} casos desenvolvidos',
     RUN_DEVELOPED_HINT: 'Só o que já está gravado.',
     REDEVELOP: 'Desenvolver tudo de novo',
+    WAITING_APP: 'Esperando o app',
+    WAITING_APP_HINT: '{{key}} ainda não chegou para teste.',
+    DEVELOP_NOW: 'Desenvolver agora',
+    DEVELOP_NOW_HINT: 'O agente anda o app como ele está hoje.',
     EXPLORE: 'Explorar',
     EXPLORE_HINT: 'O agente percorre o app por {{minutes}} min',
     EXPLORE_TIP:

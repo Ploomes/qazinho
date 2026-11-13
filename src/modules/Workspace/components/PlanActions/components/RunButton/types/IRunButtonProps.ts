@@ -1,6 +1,6 @@
 /**
- * O botão que leva o plano à etapa seguinte, ou continua a run que o app fechou no meio,
- * abrindo para os outros jeitos quando há mais de um.
+ * O botão que leva o plano à etapa seguinte, continua a run que o app fechou no meio, ou
+ * espera a história chegar para teste, abrindo para os outros jeitos.
  */
 export interface IRunButtonProps {
   canRun: boolean;
@@ -13,5 +13,6 @@ export interface IRunButtonProps {
   onRunDeveloped: () => void;
   onRunWithAgent: () => void;
   canExplore?: boolean;
+  waitsFor?: string | null;
   onExplore?: () => void;
 }

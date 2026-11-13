@@ -197,6 +197,10 @@ export const en = {
     RUN_DEVELOPED_OTHER: 'Run {{count}} developed cases',
     RUN_DEVELOPED_HINT: 'Only what is already recorded.',
     REDEVELOP: 'Develop everything again',
+    WAITING_APP: 'Waiting for the app',
+    WAITING_APP_HINT: '{{key}} has not arrived for testing yet.',
+    DEVELOP_NOW: 'Develop now',
+    DEVELOP_NOW_HINT: 'The agent walks the app as it is today.',
     RUN_NO_STEPS:
       'The plan has no step to run yet: write one in the Plan tab, or draft it in the chat.',
     EXPLORE: 'Explore',
