@@ -51,6 +51,7 @@ export interface IAppStore {
   loadProjects: (projects: IProject[]) => void;
   putProject: (project: IProject) => void;
   updateProject: (project: IProject) => void;
+  nameProject: (props: { projectId: string; name: string }) => boolean;
   forgetPlanMemories: (workspaceId: string) => void;
   removeProject: (props: { projectId: string; isOpen: boolean }) => void;
   toggleResources: () => void;

@@ -59,6 +59,20 @@ describe('readProjects', () => {
     expect(readProjects(JSON.stringify([broken]))[0]).not.toHaveProperty('readyStatuses');
   });
 
+  it('keeps a project waiting for its name, and drops a flag that is not true', () => {
+    expect(
+      readProjects(
+        JSON.stringify([
+          { ...PROJECT, isNamePending: true },
+          { ...PROJECT, id: 'p2', isNamePending: 'yes' },
+        ]),
+      ).map(({ id, isNamePending }) => [id, isNamePending]),
+    ).toEqual([
+      ['p1', true],
+      ['p2', undefined],
+    ]);
+  });
+
   it('an entry with no id is skipped, and the rest still load', () => {
     const json = JSON.stringify([{ name: 'no id' }, PROJECT]);
 

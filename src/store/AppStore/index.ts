@@ -3,11 +3,11 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { withoutPlanMemories } from '@/modules/Memory/library';
 import { HOME, STORAGE } from '@/shared/constants';
-import { shownThemeOf } from './library';
+import { shownThemeOf, withNameSettled } from './library';
 
 export const useAppStore = create<IAppStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       theme: 'system',
       systemTheme: 'dark',
       screen: 'welcome',
@@ -91,10 +91,30 @@ export const useAppStore = create<IAppStore>()(
       putProject: (project) =>
         set((state) => ({
           projects: state.projects.some(({ id }) => id === project.id)
-            ? state.projects.map((one) => (one.id === project.id ? project : one))
+            ? state.projects.map((one) =>
+                one.id === project.id
+                  ? withNameSettled({ before: one, after: project })
+                  : one,
+              )
             : [...state.projects, project],
           selectedProjectId: state.selectedProjectId ?? project.id,
         })),
+
+      nameProject: ({ projectId, name }) => {
+        const project = get().projects.find(({ id }) => id === projectId);
+
+        if (project?.isNamePending !== true || name.trim() === '') return false;
+
+        const { isNamePending: _pending, ...named } = project;
+
+        set((state) => ({
+          projects: state.projects.map((one) =>
+            one.id === projectId ? { ...named, name: name.trim() } : one,
+          ),
+        }));
+
+        return true;
+      },
 
       forgetPlanMemories: (workspaceId) =>
         set((state) => ({
@@ -113,7 +133,11 @@ export const useAppStore = create<IAppStore>()(
 
       updateProject: (project) =>
         set((state) => ({
-          projects: state.projects.map((one) => (one.id === project.id ? project : one)),
+          projects: state.projects.map((one) =>
+            one.id === project.id
+              ? withNameSettled({ before: one, after: project })
+              : one,
+          ),
           modal: null,
           editingProjectId: null,
         })),

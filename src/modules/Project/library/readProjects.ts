@@ -27,29 +27,39 @@ export function readProjects(json: string): IProject[] {
         typeof (one as IProject).id === 'string' &&
         Array.isArray((one as IProject).targets),
     )
-    .map(({ issueTarget, readyColumn, readyStatuses, templates, ...project }) => ({
-      ...project,
-      ...(issueTargetIn(issueTarget) === undefined
-        ? {}
-        : { issueTarget: issueTargetIn(issueTarget) }),
-      ...(Array.isArray(readyStatuses) &&
-      readyStatuses.length > 0 &&
-      readyStatuses.every((status) => typeof status === 'string')
-        ? { readyStatuses }
-        : {}),
-      ...(templatesIn(templates) === null
-        ? {}
-        : { templates: templatesIn(templates) ?? {} }),
-      ...(typeof readyColumn?.boardId === 'number' &&
-      typeof readyColumn.board === 'string' &&
-      typeof readyColumn.column === 'string'
-        ? { readyColumn }
-        : {}),
-      repositories: repositoriesOf(project.repositories),
-      targets: project.targets.map((target) =>
-        target.kind === 'web'
-          ? { ...target, value: webAddressOf(target.value) ?? target.value }
-          : target,
-      ),
-    }));
+    .map(
+      ({
+        issueTarget,
+        readyColumn,
+        readyStatuses,
+        templates,
+        isNamePending,
+        ...project
+      }) => ({
+        ...project,
+        ...(isNamePending === true ? { isNamePending } : {}),
+        ...(issueTargetIn(issueTarget) === undefined
+          ? {}
+          : { issueTarget: issueTargetIn(issueTarget) }),
+        ...(Array.isArray(readyStatuses) &&
+        readyStatuses.length > 0 &&
+        readyStatuses.every((status) => typeof status === 'string')
+          ? { readyStatuses }
+          : {}),
+        ...(templatesIn(templates) === null
+          ? {}
+          : { templates: templatesIn(templates) ?? {} }),
+        ...(typeof readyColumn?.boardId === 'number' &&
+        typeof readyColumn.board === 'string' &&
+        typeof readyColumn.column === 'string'
+          ? { readyColumn }
+          : {}),
+        repositories: repositoriesOf(project.repositories),
+        targets: project.targets.map((target) =>
+          target.kind === 'web'
+            ? { ...target, value: webAddressOf(target.value) ?? target.value }
+            : target,
+        ),
+      }),
+    );
 }
