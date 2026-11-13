@@ -8,6 +8,7 @@ import type {
   IJiraStory,
   IStoryAnswersAsk,
   IStoryDoubtsPost,
+  ITellStory,
   ITrackerIssue,
   JiraBoardList,
   JiraFailure,
@@ -22,6 +23,7 @@ import { writeFile } from 'node:fs/promises';
 import { JIRA_READ, JIRA_WRITE } from './constants';
 import {
   adfOfDoubts,
+  adfOfNote,
   adfOfReport,
   askAtlassian,
   boardColumnsOf,
@@ -469,6 +471,31 @@ export class JiraApi {
         doubts: ask.doubts,
         me: (me.isOk ? this.personOf(me.body)?.id : null) ?? '',
       }),
+    };
+  }
+
+  /** Posta sob uma história o comentário que o QA escreveu, ou diz por que não. */
+  public async tell(told: ITellStory): Promise<BugComment> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isPosted: false, failure: 'not-connected', said: '' };
+
+    const answer = await this.request({
+      signed,
+      path: `/rest/api/3/issue/${encodeURIComponent(told.key)}/comment`,
+      method: 'POST',
+      json: { body: adfOfNote(told.text) },
+    });
+
+    if (!answer.isOk)
+      return { isPosted: false, failure: answer.failure, said: answer.said };
+
+    const id = (answer.body as { id?: unknown } | null)?.id;
+
+    return {
+      isPosted: true,
+      url: `${signed.site}/browse/${told.key}${typeof id === 'string' ? `?focusedCommentId=${id}` : ''}`,
+      missed: [],
     };
   }
 

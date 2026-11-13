@@ -88,6 +88,7 @@ import type {
   IStorageUsage,
   IStoryAnswersAsk,
   IStoryDoubtsPost,
+  ITellStory,
   ITrayWords,
   IVideoSweep,
   IViewport,
@@ -450,6 +451,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.listBoardColumns, boardId) as Promise<BoardColumnList>,
   readStoryStatus: (key: string) =>
     ipcRenderer.invoke(CHANNELS.readStoryStatus, key) as Promise<StoryStatus>,
+  tellStory: (told: ITellStory) =>
+    ipcRenderer.invoke(CHANNELS.tellStory, told) as Promise<BugComment>,
   readStoryPeople: (key: string) =>
     ipcRenderer.invoke(CHANNELS.readStoryPeople, key) as Promise<StoryPeople>,
   askStory: (post: IStoryDoubtsPost) =>

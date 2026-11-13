@@ -108,6 +108,7 @@ export const CHANNELS = {
   listJiraBoards: 'jira:boards',
   listBoardColumns: 'jira:board-columns',
   readStoryStatus: 'jira:story-status',
+  tellStory: 'jira:tell-story',
   readStoryPeople: 'jira:story-people',
   askStory: 'jira:ask-story',
   readStoryAnswers: 'jira:story-answers',

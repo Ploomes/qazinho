@@ -84,6 +84,7 @@ import type { IStartRun } from './IStartRun';
 import type { IStorageUsage } from './IStorageUsage';
 import type { IStoryAnswersAsk } from './IStoryAnswersAsk';
 import type { IStoryDoubtsPost } from './IStoryDoubtsPost';
+import type { ITellStory } from './ITellStory';
 import type { ITrayWords } from './ITrayWords';
 import type { IVideoSweep } from './IVideoSweep';
 import type { IViewport } from './IViewport';
@@ -267,6 +268,7 @@ export interface IQazinhoApi {
   listJiraBoards: (query: string) => Promise<JiraBoardList>;
   listBoardColumns: (boardId: number) => Promise<BoardColumnList>;
   readStoryStatus: (key: string) => Promise<StoryStatus>;
+  tellStory: (told: ITellStory) => Promise<BugComment>;
   readStoryPeople: (key: string) => Promise<StoryPeople>;
   askStory: (post: IStoryDoubtsPost) => Promise<StoryDoubtsPosted>;
   readStoryAnswers: (ask: IStoryAnswersAsk) => Promise<StoryAnswers>;

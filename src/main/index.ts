@@ -52,6 +52,7 @@ import type {
   IStartRun,
   IStoryAnswersAsk,
   IStoryDoubtsPost,
+  ITellStory,
   ITrayWords,
   IViewport,
   IWindowControls,
@@ -2027,6 +2028,7 @@ void app.whenReady().then(async () => {
     jira.columns(boardId),
   );
   ipcMain.handle(CHANNELS.readStoryStatus, (_event, key: string) => jira.status(key));
+  ipcMain.handle(CHANNELS.tellStory, (_event, told: ITellStory) => jira.tell(told));
   ipcMain.handle(CHANNELS.readStoryPeople, (_event, key: string) => jira.people(key));
   ipcMain.handle(CHANNELS.askStory, (_event, post: IStoryDoubtsPost) =>
     jira.askStory(post),

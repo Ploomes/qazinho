@@ -184,6 +184,7 @@ export type * from './IStoryAnswer';
 export type * from './IStoryAnswersAsk';
 export type * from './IStoryDoubtsPost';
 export type * from './ITargetUnderTest';
+export type * from './ITellStory';
 export type * from './IToolStatus';
 export type * from './ITrackerIssue';
 export type * from './ITrayWords';

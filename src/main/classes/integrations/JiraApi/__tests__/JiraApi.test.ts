@@ -619,4 +619,24 @@ describe('JiraApi', () => {
       });
     });
   });
+
+  describe('tell', () => {
+    it('posts what the QA wrote under the story, and points at the comment', async () => {
+      const { jira, asked } = api({
+        '/rest/api/3/issue/SHOP-878/comment': { status: 201, body: { id: '10300' } },
+      });
+
+      expect(await jira.tell({ key: 'SHOP-878', text: 'Atualizei o plano.' })).toEqual({
+        isPosted: true,
+        url: `${SITE}/browse/SHOP-878?focusedCommentId=10300`,
+        missed: [],
+      });
+      expect(JSON.stringify(asked[0]?.body)).toContain('Atualizei o plano.');
+      expect(await api({}, false).jira.tell({ key: 'SHOP-878', text: 'x' })).toEqual({
+        isPosted: false,
+        failure: 'not-connected',
+        said: '',
+      });
+    });
+  });
 });

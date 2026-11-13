@@ -242,6 +242,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     listBoardColumns: () =>
       Promise.resolve({ isListed: false, failure: 'not-connected' }),
     readStoryStatus: () => Promise.resolve({ isRead: false, failure: 'not-connected' }),
+    tellStory: () =>
+      Promise.resolve({ isPosted: false, failure: 'not-connected', said: '' }),
     readStoryPeople: () => Promise.resolve({ isRead: false, failure: 'not-connected' }),
     askStory: () =>
       Promise.resolve({ isPosted: false, failure: 'not-connected', said: '' }),

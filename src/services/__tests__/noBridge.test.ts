@@ -232,6 +232,11 @@ describe('a page with no bridge', () => {
     );
     expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
     expect(await Jira.boards('')).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(await Jira.tell({ key: 'SHOP-878', text: 'Oi.' })).toEqual({
+      isPosted: false,
+      failure: 'unreachable',
+      said: '',
+    });
     expect(
       await Sources.read({
         workspaceId: 'w1',

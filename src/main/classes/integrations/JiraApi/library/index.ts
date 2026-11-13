@@ -1,4 +1,5 @@
 export * from './adfOfDoubts';
+export * from './adfOfNote';
 export * from './adfOfReport';
 export * from './adfToMarkdown';
 export * from './askAtlassian';

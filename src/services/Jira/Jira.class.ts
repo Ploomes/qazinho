@@ -1,7 +1,9 @@
 import type {
   BoardColumnList,
+  BugComment,
   IStoryAnswersAsk,
   IStoryDoubtsPost,
+  ITellStory,
   JiraBoardList,
   JiraIssueList,
   JiraProjectList,
@@ -54,6 +56,16 @@ export class Jira {
       (await window.qazinho?.readStoryStatus(key)) ?? {
         isRead: false,
         failure: 'unreachable',
+      }
+    );
+  }
+
+  public static async tell(told: ITellStory): Promise<BugComment> {
+    return (
+      (await window.qazinho?.tellStory(told)) ?? {
+        isPosted: false,
+        failure: 'unreachable',
+        said: '',
       }
     );
   }
