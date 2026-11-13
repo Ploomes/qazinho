@@ -281,6 +281,24 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     o `CodeExport` transforma as receitas num arquivo de Playwright ou num fluxo de Maestro por
     caso. O agente do chat fica sabendo como as runs foram pelo histórico que a mensagem seguinte
     carrega (`runHistoryOf`): a última run passo a passo, as anteriores pelo que quebrou.
+- **O agente segue as skills do time** (`role/chat/team-skills.md`, `role/explorer/team-skills.md`,
+  `role/skill-writer/`). A `SkillLibrary` da main guarda cada skill num `SKILL.md` em
+  `PATHS.skills/<id>`, com o índice em `skills.json`: quando vale (`SkillUse`), os projetos, se está
+  ligada e de onde veio (`SkillSource`).
+  - A mensagem do chat leva as ligadas para escrever casos no projeto e a que o QA chamou pelo "/"
+    (`IAskAgent.skill`), descritas pelo harness (`describeSkills`, `describeCalledSkill`), com a pasta
+    de cada uma legível (`readDirs`). As ligadas vão quando chegam ou mudam (`changedSections`), a
+    chamada vai com a mensagem dela, e o turno devolve as que o agente recebeu (`followed`), que a
+    página conta numa linha (`SkillsNote`).
+  - A exploração recebe as ligadas para casos e para explorar. Uma run nunca recebe nenhuma.
+  - Importar lê a pasta de um repositório numa branch pelo gh (as árvores e os blobs do git), as
+    pastas de skills do agente neste computador, ou um arquivo; uma importada chega desligada. Uma de
+    repositório guarda o commit e é lida de novo quando a branch anda, no máximo a cada
+    `SKILL_LIBRARY.refreshMs` enquanto o QA conversa (`refreshIfDue`); o editor a mostra só para ler e
+    oferece uma cópia.
+  - O `SkillWriter` escreve uma skill com o QA: o agente dele lê os arquivos que o QA anexou ao
+    rascunho, pergunta o que os exemplos deixam em aberto e devolve a skill no schema `SKILL_DRAFT`,
+    que o QA revisa no editor antes de guardar. Nada guarda uma skill sem o QA confirmar.
 - **O agente guarda o que aprende sobre o app** (`role/keeper/`). As memórias ficam no projeto
   (`IProject.memories`), cada uma do projeto ou de um workspace, e numa lista só para sincronizar.
   - A página põe na fila o que pode mudar alguma coisa (`useMemoryStore`): a mensagem do QA, e no fim
@@ -882,6 +900,8 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `VariableVault`                       | guarda as variáveis de cada projeto lacradas pelo keychain; só uma run lê um valor                          |
 | `GitCli`                              | roda o git do próprio QA numa pasta, e nunca espera uma senha                                               |
 | `ImportScanner`                       | lê uma pasta de testes que o QA escolheu e reconhece o framework de cada um                                 |
+| `SkillLibrary`                        | guarda as skills do time em disco, importa as de um repositório, deste computador ou de um arquivo          |
+| `SkillWriter`                         | escreve uma skill com o QA pelo agente dele, a partir do que ele conta e dos casos que anexa                |
 | `ChatAttachments`                     | guarda as imagens e arquivos que o QA anexa ao chat, numa pasta do workspace que o agente lê                |
 | `ProAccount`                          | faz este computador entrar no QAzinho Pro, guarda o token lacrado dele, e conhece as orgs                   |
 | `ProApi`                              | fala com a API do QAzinho Pro: o login, a conta, a sincronização, as evidências, projetos de org            |

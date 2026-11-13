@@ -213,6 +213,20 @@ como pré-condição, e logins e chaves como variáveis do projeto. O que não d
 em vez de inventar. Testes unitários e o prompt fixado do harness provam isso; nenhum agente real
 importou uma pasta ainda.
 
+**O agente segue as skills do time.** Em Configurações › Skills o QA guarda como o time
+trabalha, no formato SKILL.md das skills de agente: escreve uma à mão, ou com o próprio agente, que
+lê os casos que ele anexa, pergunta o que os exemplos deixam em aberto e devolve a skill para ele
+revisar; ou traz as que o time já tem, da pasta de um repositório numa branch (pelo gh do QA), das
+pastas de skills deste computador ou de um arquivo. Uma importada chega desligada. Cada skill diz
+quando vale (ao escrever casos, ao explorar, ou quando o QA a chama pelo "/" no chat) e em quais
+projetos. O chat e a exploração as seguem; uma run nunca, porque o veredito não depende de uma
+skill. Uma de repositório só se edita lá, e é lida de novo quando a branch anda, no máximo a cada
+dez minutos enquanto o QA conversa. Uma linha no chat diz quais o agente recebeu ("Seguindo a skill
+casos-gherkin"). Um Claude Code real (Haiku) escreveu os títulos de um plano com a prioridade que
+uma skill pedia, respondeu do jeito que a skill chamada mandava, e escreveu uma skill a partir de
+três casos anexados (`tests/smoke/skills.test.ts`); o app construído mostrou o "/" e a linha com
+uma bridge fake. Pelo Codex isso não foi tentado.
+
 **O app abre no Início.** Uma tela junta, de todos os projetos, o que pede o QA agora: uma pergunta
 de uma run, uma run andando ou pausada, uma que o app fechou no meio, um plano cuja última run
 falhou, casos ainda sem gravação, cada um numa linha com a ação que o leva lá; e os planos abertos

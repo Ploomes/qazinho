@@ -105,10 +105,11 @@ próprio comando, e o CI nunca as roda.
 | `update.test.ts`       | o app construído num feed e numa API fakes: baixa sozinho, o botão, a tela de recusa    |
 | `attach.test.ts`       | o app construído: o navegador do chat, a pergunta na tela ampliada, arquivos do QA      |
 | `close.test.ts`        | o app construído: fechar esconde com a página viva, o Dock a traz, a tela cheia, sair   |
+| `skills.test.ts`       | o agente do próprio QA segue uma skill ligada e uma chamada, e escreve uma de exemplos  |
 
-O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts` e o `visual.test.ts` gastam os tokens do QA
-e precisam de um agente instalado. Rode-os à mão depois de mexer no pipeline da run ou no schema de
-uma resposta.
+O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts`, o `visual.test.ts` e o `skills.test.ts`
+gastam os tokens do QA e precisam de um agente instalado. Rode-os à mão depois de mexer no pipeline
+da run ou no schema de uma resposta.
 
 **Um clique sintético não é um clique.** O Playwright dirige a página pelo CDP, que pula o hit
 test que o gerenciador de janelas faz — então um `-webkit-app-region: drag` engolindo um clique
