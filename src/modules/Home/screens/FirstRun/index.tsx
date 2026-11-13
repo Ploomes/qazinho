@@ -36,6 +36,7 @@ export const FirstRun: React.FC = () => {
     hasProblem,
     problem,
     continueLabel,
+    isContinuing,
     onContinue,
     pickApkLabel,
     onPickApk,
@@ -56,6 +57,7 @@ export const FirstRun: React.FC = () => {
     canStart,
     startLabel,
     onStart,
+    canExplore,
     exploreLabel,
     onExplore,
     backLabel,
@@ -109,7 +111,7 @@ export const FirstRun: React.FC = () => {
             )}
 
             <div className="first-run__actions">
-              <Button variant="primary" onClick={onContinue}>
+              <Button variant="primary" disabled={isContinuing} onClick={onContinue}>
                 {continueLabel}
               </Button>
               <button type="button" className="first-run__link" onClick={onPickApk}>
@@ -162,9 +164,11 @@ export const FirstRun: React.FC = () => {
               <Button variant="primary" disabled={!canStart} onClick={onStart}>
                 {startLabel}
               </Button>
-              <button type="button" className="first-run__link" onClick={onExplore}>
-                {exploreLabel}
-              </button>
+              {canExplore && (
+                <button type="button" className="first-run__link" onClick={onExplore}>
+                  {exploreLabel}
+                </button>
+              )}
               <button
                 type="button"
                 className="first-run__link first-run__link--quiet"

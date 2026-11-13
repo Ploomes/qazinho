@@ -1,12 +1,13 @@
 import type { FirstRunStep, IFirstRunBuild } from '@/modules/Home/screens/FirstRun/types';
 import type { ITarget } from '@/modules/Project';
+import type { IJiraIssueRef } from '@/shared/types';
 import type { CSSProperties, KeyboardEvent } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { newWorkspaceIn } from '@/modules/Assistant/library';
 import { useChatAgent } from '@/modules/Chat';
 import { FIRST_RUN, FIRST_RUN_EXAMPLES } from '@/modules/Home/constants';
-import { planNameOf, projectNameOf } from '@/modules/Home/library';
+import { planNameOf, projectNameOf, storyKeyOf } from '@/modules/Home/library';
 import {
   newProjectId,
   projectAppOf,
@@ -16,11 +17,14 @@ import {
 } from '@/modules/Project';
 import { TARGET_NAME_KEYS } from '@/modules/Project/components/ProjectModal/constants';
 import { useRunActions } from '@/modules/Run';
-import { Files, Platform } from '@/services';
+import { JIRA_FAILURE_KEYS } from '@/modules/Setup/constants';
+import { blankWorkspaceOf } from '@/modules/Workspace/library';
+import { Files, Jira, Platform } from '@/services';
 import {
   useAppStore,
   useMachineStore,
   useSettingsStore,
+  useSetupStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -34,6 +38,9 @@ export const useFirstRunViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const agentName = useSettingsStore((state) => state.agent);
   const agents = useMachineStore((state) => state.agents);
+  const isJiraConnected = useSetupStore((state) =>
+    state.integrations.some(({ id }) => id === 'jira'),
+  );
   const { askAgent } = useChatAgent();
   const { runWorkspace } = useRunActions();
   const [step, setStep] = useState<FirstRunStep>('app');
@@ -41,8 +48,11 @@ export const useFirstRunViewModel = () => {
   const [build, setBuild] = useState<IFirstRunBuild | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
   const [ask, setAsk] = useState('');
+  const [story, setStory] = useState<IJiraIssueRef | null>(null);
+  const [isFinding, setFinding] = useState(false);
 
-  const address = webAddressOf(typed);
+  const storyKey = build === null && isJiraConnected ? storyKeyOf(typed) : null;
+  const address = storyKey === null ? webAddressOf(typed) : null;
   const target: ITarget | null =
     build !== null
       ? {
@@ -62,8 +72,43 @@ export const useFirstRunViewModel = () => {
   const buildName =
     build === null ? '' : (build.path.split(/[\\/]/).at(-1) ?? build.path);
 
+  const findStory = async (key: string) => {
+    setFinding(true);
+
+    const found = await Jira.search(key);
+
+    setFinding(false);
+
+    if (!found.isListed) {
+      setProblem(t(JIRA_FAILURE_KEYS[found.failure]));
+
+      return;
+    }
+
+    const exact = found.issues.find((issue) => issue.key === key) ?? null;
+
+    if (exact === null) {
+      setProblem(t('FIRST_RUN.STORY_NOT_FOUND', { key }));
+
+      return;
+    }
+
+    setStory(exact);
+    setProblem(null);
+    setStep('plan');
+  };
+
   const goOn = () => {
+    if (isFinding) return;
+
+    if (storyKey !== null) {
+      void findStory(storyKey);
+
+      return;
+    }
+
     if (target !== null) {
+      setStory(null);
       setProblem(null);
       setStep('plan');
 
@@ -81,6 +126,34 @@ export const useFirstRunViewModel = () => {
     setBuild({ kind, path });
     setTyped('');
     setProblem(null);
+  };
+
+  const createFromStory = (props: {
+    name: string;
+    now: number;
+    from: IJiraIssueRef;
+  }): string => {
+    const project = {
+      id: newProjectId(props.now),
+      name: props.from.key.split('-')[0] ?? props.from.key,
+      targets: [],
+      repositories: [],
+    };
+    const workspace = {
+      ...blankWorkspaceOf({ projectId: project.id, name: props.name, now: props.now }),
+      issue: {
+        key: props.from.key,
+        title: props.from.summary,
+        source: 'jira' as const,
+        url: props.from.url,
+      },
+    };
+
+    putProject(project);
+    addWorkspace(workspace);
+    selectWorkspace(workspace.id);
+
+    return workspace.id;
   };
 
   const create = (props: { name: string; now: number }): string | null => {
@@ -109,22 +182,57 @@ export const useFirstRunViewModel = () => {
   };
 
   const start = (now: number) => {
-    const text = ask.trim();
-    const workspaceId = text === '' ? null : create({ name: planNameOf(text), now });
+    const typedAsk = ask.trim();
+
+    if (story !== null && target === null) {
+      const workspaceId = createFromStory({
+        name: typedAsk === '' ? story.key : planNameOf(typedAsk),
+        now,
+        from: story,
+      });
+      const text = [
+        t('COMMANDS.JIRA_PLAN_SAY', { key: story.key, summary: story.summary }),
+        typedAsk,
+      ]
+        .filter((part) => part !== '')
+        .join('\n\n');
+
+      selectTab('chat');
+      sendMessage({
+        workspaceId,
+        text,
+        mentions: [],
+        command: { id: 'jira-plan', ...story },
+      });
+      askAgent({
+        workspaceId,
+        text,
+        references: [],
+        code: null,
+        jira: { key: story.key },
+        confluence: null,
+      });
+
+      return;
+    }
+
+    const workspaceId =
+      typedAsk === '' ? null : create({ name: planNameOf(typedAsk), now });
 
     if (workspaceId === null) return;
 
     selectTab('chat');
-    sendMessage({ workspaceId, text, mentions: [] });
+    sendMessage({ workspaceId, text: typedAsk, mentions: [] });
     askAgent({
       workspaceId,
-      text,
+      text: typedAsk,
       references: [],
       code: null,
       jira: null,
       confluence: null,
     });
   };
+  const isFromStory = story !== null && target === null;
 
   return {
     style: { '--first-run-column': `${String(FIRST_RUN.column)}px` } as CSSProperties,
@@ -133,7 +241,7 @@ export const useFirstRunViewModel = () => {
     isAppStep: step === 'app',
     internSize: FIRST_RUN.intern,
     appTitle: t('FIRST_RUN.APP_TITLE'),
-    appLead: t('FIRST_RUN.APP_LEAD'),
+    appLead: isJiraConnected ? t('FIRST_RUN.APP_LEAD_STORY') : t('FIRST_RUN.APP_LEAD'),
     appPlaceholder: t('FIRST_RUN.APP_PLACEHOLDER'),
     appLabel: t('FIRST_RUN.APP_LABEL'),
     typed,
@@ -166,16 +274,17 @@ export const useFirstRunViewModel = () => {
     },
     markSize: FIRST_RUN.mark,
     targetMark: projectMarkOf({
-      name: target === null ? '' : projectNameOf(target),
+      name: target !== null ? projectNameOf(target) : (story?.key.split('-')[0] ?? ''),
       app: projectAppOf(target === null ? [] : [target]),
       icons,
     }),
-    targetPlace:
-      build !== null
+    targetPlace: isFromStory
+      ? `${story.key} · ${story.summary}`
+      : build !== null
         ? buildName
         : (projectAppOf(target === null ? [] : [target]).places[0] ?? ''),
     planTitle: t('FIRST_RUN.PLAN_TITLE'),
-    planLead: t('FIRST_RUN.PLAN_LEAD'),
+    planLead: isFromStory ? t('FIRST_RUN.PLAN_LEAD_STORY') : t('FIRST_RUN.PLAN_LEAD'),
     planPlaceholder: t('FIRST_RUN.PLAN_PLACEHOLDER'),
     ask,
     onAskChange: setAsk,
@@ -190,7 +299,9 @@ export const useFirstRunViewModel = () => {
         setAsk(t(key));
       },
     })),
-    canStart: ask.trim() !== '',
+    canStart: isFromStory || ask.trim() !== '',
+    isContinuing: isFinding,
+    canExplore: !isFromStory,
     startLabel: t('FIRST_RUN.START'),
     onStart: () => {
       start(Date.now());
@@ -203,6 +314,7 @@ export const useFirstRunViewModel = () => {
     },
     backLabel: t('FIRST_RUN.BACK'),
     onBack: () => {
+      setStory(null);
       setStep('app');
     },
     isAgentReady,

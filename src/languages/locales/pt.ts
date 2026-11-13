@@ -168,6 +168,9 @@ export const pt: typeof en = {
   FIRST_RUN: {
     APP_TITLE: 'Qual app você vai testar?',
     APP_LEAD: 'O endereço de um site, ou o arquivo de um app de celular.',
+    APP_LEAD_STORY:
+      'O endereço de um site, o arquivo de um app de celular, ou uma história do Jira.',
+    STORY_NOT_FOUND: 'O seu Jira não tem a história {{key}}, ou esta conta não a vê.',
     APP_PLACEHOLDER: 'staging.seu-app.com',
     APP_LABEL: 'Endereço do app',
     NEEDS_APP: 'Digite o endereço do app, ou escolha um build.',
@@ -177,6 +180,8 @@ export const pt: typeof en = {
     PICK_APP: 'Escolher um .app',
     PLAN_TITLE: 'O que você quer testar primeiro?',
     PLAN_LEAD: 'Com as suas palavras. O agente anda pelo app e escreve o plano com você.',
+    PLAN_LEAD_STORY:
+      'O agente lê a história e escreve o plano com você. O app pode vir depois.',
     PLAN_PLACEHOLDER: 'Ex.: o cupom de desconto no checkout',
     EXAMPLES: 'Ou comece por um destes',
     EXAMPLE_SIGN_IN: 'O login e o cadastro',

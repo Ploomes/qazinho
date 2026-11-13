@@ -166,6 +166,8 @@ export const en = {
   FIRST_RUN: {
     APP_TITLE: 'Which app will you test?',
     APP_LEAD: 'The address of a site, or the file of a phone app.',
+    APP_LEAD_STORY: 'The address of a site, the file of a phone app, or a Jira story.',
+    STORY_NOT_FOUND: 'Your Jira has no story {{key}}, or this account cannot see it.',
     APP_PLACEHOLDER: 'staging.your-app.com',
     APP_LABEL: 'Address of the app',
     NEEDS_APP: 'Type the address of the app, or choose a build.',
@@ -175,6 +177,8 @@ export const en = {
     PICK_APP: 'Choose an .app',
     PLAN_TITLE: 'What do you want to test first?',
     PLAN_LEAD: 'In your own words. The agent walks the app and writes the plan with you.',
+    PLAN_LEAD_STORY:
+      'The agent reads the story and writes the plan with you. The app can come later.',
     PLAN_PLACEHOLDER: 'E.g. the discount coupon at checkout',
     EXAMPLES: 'Or start with one of these',
     EXAMPLE_SIGN_IN: 'The sign-in and the sign-up',

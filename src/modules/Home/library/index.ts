@@ -3,3 +3,4 @@ export * from './homeCountOf';
 export * from './homeOf';
 export * from './planNameOf';
 export * from './projectNameOf';
+export * from './storyKeyOf';
