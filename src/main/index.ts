@@ -111,6 +111,7 @@ import {
   BugFiler,
   BugReviewer,
   ChangeReader,
+  ExampleShop,
   canUpdateOf,
   ChatAttachments,
   ChatDevices,
@@ -265,6 +266,7 @@ const chatDevices = new ChatDevices({
   },
 });
 const replays = new ReplayServer({ dataRoot: PATHS.data });
+const exampleShop = new ExampleShop({ file: PATHS.exampleShop });
 const siteIcons = new SiteIcons({
   fetcher: (url, init) => fetch(url, init),
   file: PATHS.siteIcons,
@@ -1690,6 +1692,7 @@ void app.whenReady().then(async () => {
   await replays.start();
   await tools.start();
   await outside.start();
+  void exampleShop.resume();
   void codeCopies.sweep();
   void jiraStories.sweep();
   void builder.sweep();
@@ -1804,6 +1807,9 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.siteIcon, (_event, address: unknown) =>
     typeof address === 'string' ? siteIcons.of(address) : null,
+  );
+  ipcMain.handle(CHANNELS.exampleShop, (_event, language: unknown) =>
+    exampleShop.address(typeof language === 'string' ? language : 'pt').catch(() => null),
   );
   ipcMain.handle(CHANNELS.saveWorkspace, (_event, saved: ISavedWorkspace) =>
     archive.saveWorkspace(saved),
@@ -2186,6 +2192,7 @@ app.on('will-quit', (event) => {
   }
 
   appUpdater.stop();
+  exampleShop.stop();
   tray.close();
   void chatDevices.closeAll();
   live.close();

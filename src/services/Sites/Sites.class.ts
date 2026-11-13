@@ -4,4 +4,9 @@ export class Sites {
   public static async icon(address: string): Promise<string | null> {
     return (await window.qazinho?.siteIcon(address)) ?? null;
   }
+
+  /** O endereço da loja de exemplo no idioma do QA, ou null quando ela não subiu. */
+  public static async exampleShop(language: string): Promise<string | null> {
+    return (await window.qazinho?.exampleShop(language)) ?? null;
+  }
 }
