@@ -145,6 +145,18 @@ que nenhum plano do projeto tem (`toPlan`). "Planejar" cria o plano com a histó
 anterior terminar (`planning`). O Início mostra o que está sendo escrito (`drafting`) e um chat que
 espera as respostas do QA (`toAnswer`, `openRoundOf`).
 
+Um projeto novo nasce de cartões (`NewProject`, a tela `newProject`), não de uma janela. O QA marca
+o que tem (`PROJECT_PICKS`, `withPick`, com o "nada" sozinho), e a tela seguinte pede um campo por
+cartão marcado (`WebField`, `BuildField`, `RepoField`, `TestsField`, `StoryField`, `DesignField`),
+cada um conferido na hora; o que falta diz o pé dela (`missingPicksOf`), e o nome vem do que ele deu
+(`autoProjectNameOf`). O `newProjectOf` monta o projeto e um plano por fonte (a história com o
+design dela, o design sozinho, os testes), ou um vazio que a primeira mensagem nomeia, e o que cada
+um começa: a mensagem do `/jira`, do `/confluence` ou do `/figma` ao agente, ou o `/import` quando o
+chat dos testes abre. Sem nada (`nothingProjectOf`), a `ExampleShop` da main serve uma loja pequena em
+loopback, numa porta que ela guarda e retoma ao abrir o app, com dois bugs de propósito (a busca vazia
+responde 500, o total ignora a quantidade), e o projeto dela começa explorando; ou o plano começa
+antes do app pelo que o QA escreveu. A janela do projeto fica para editar.
+
 Sem projeto, o app é a primeira execução (`FirstRun`), duas perguntas sem barra lateral: qual app
 o QA vai testar (um endereço, ou um .apk ou .app escolhido no disco) e o que ele quer testar
 primeiro. Só a segunda cria alguma coisa: o projeto, com o nome do site ou do build
@@ -991,6 +1003,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `ProSync`                             | publica um projeto numa org, manda os fatos dele quando acontecem e os planos quando mandado                |
 | `ProDownloads`                        | lista os projetos da org e baixa um, as gravações incluídas                                                 |
 | `ProTemplates`                        | lê, publica e escolhe o padrão dos modelos das orgs, e guarda o último de cada uma                          |
+| `ExampleShop`                         | serve em loopback a loja de exemplo de quem não tem app ainda, com dois bugs de propósito                   |
 
 ## Dependências
 

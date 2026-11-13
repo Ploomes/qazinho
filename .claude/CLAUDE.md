@@ -246,6 +246,17 @@ falhou, casos ainda sem gravação, cada um numa linha com a ação que o leva l
 por último. A sidebar abre nele pela linha Início, que conta o que espera o QA. Testes unitários
 provam os grupos; nenhum QA usou ainda.
 
+**Um projeto nasce do que o QA já tem.** "Novo projeto" troca o centro por cartões de marcar: um
+endereço, um build, o código, os testes do time, uma história, um design, ou "não tenho nada". A
+tela seguinte pede só o que ele marcou, um campo por cartão, cada um conferido na hora (o endereço,
+o build escolhido, a pasta de testes reconhecida, a história lida no Jira ou no Confluence, o link
+do Figma), e sem o Jira o cartão de conectá-lo aparece ali mesmo. O nome vem do site, do build ou
+do repositório, e criar leva ao projeto com o primeiro plano começando: pela história, pelo design
+ou pelos testes. Sem nada, ele conhece o QAzinho numa loja de exemplo que o app serve neste
+computador, com dois bugs de propósito e uma exploração começando, ou planeja antes do app. O
+`tests/smoke/new-project.test.ts` anda os dois caminhos no app construído com um agente fake; nenhum
+QA usou ainda.
+
 **A sprint chega ao Início.** Num projeto que escolheu a coluna de pronto num board do Jira, o
 Início lista as histórias da sprint aberta desse board que ainda não têm plano. "Planejar" cria o
 plano com a história e o abre no chat, que começa como o QA começaria; "Planejar as 3" cria todos e

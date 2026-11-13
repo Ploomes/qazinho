@@ -109,6 +109,7 @@ próprio comando, e o CI nunca as roda.
 | `manual.test.ts`       | um caso à mão no Chrome real: o preparo, os gestos e as marcas do QA, uma variável         |
 | `ahead.test.ts`        | o agente do próprio QA planeja de uma história antes do app: critérios, dúvida, estratégia |
 | `watcher.test.ts`      | o agente do próprio QA lê uma história que mudou, e as decisões de uma reunião             |
+| `new-project.test.ts`  | o app construído: os cartões, só os campos marcados, e a loja de exemplo explorada         |
 
 O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts`, o `visual.test.ts`, o `skills.test.ts`, o
 `ahead.test.ts` e o `watcher.test.ts` gastam os tokens do QA e precisam de um agente instalado.
