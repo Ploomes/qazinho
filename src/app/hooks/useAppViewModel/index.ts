@@ -8,6 +8,7 @@ import { useMemoryKeeping } from '@/modules/Memory/hooks/useMemoryKeeping';
 import { useOutsideCalls } from '@/modules/Outside';
 import { useProLinks, useProSync } from '@/modules/Pro';
 import { useSkills } from '@/modules/Skills';
+import { useTemplates } from '@/modules/Template';
 import { isRunGoing, useUpdateWatch } from '@/modules/Update';
 import { useChatOnly } from '@/modules/Workspace';
 import { AppWindow, Platform } from '@/services';
@@ -62,6 +63,7 @@ export const useAppViewModel = () => {
   useArchive();
   useVariables();
   useSkills();
+  useTemplates();
   useLanguage();
   useKeybinds();
   useRunTicker();

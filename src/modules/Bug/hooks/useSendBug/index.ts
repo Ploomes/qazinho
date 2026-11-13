@@ -5,8 +5,9 @@ import { BUG_REPORT } from '@/modules/Bug/constants';
 import { bugReportOf, filingPlanOf } from '@/modules/Bug/library';
 import { frameUrlOf } from '@/modules/Plan/library';
 import { bugVideoOf, failedRequestsNear, formatClock } from '@/modules/Run';
+import { templateFor } from '@/modules/Template/library';
 import { Bugs, Run } from '@/services';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useTemplateStore, useWorkspaceStore } from '@/store';
 
 export const useSendBug = () => {
   const { t } = useTranslation();
@@ -131,6 +132,14 @@ export const useSendBug = () => {
               ]),
         ],
         words,
+        template: templateFor({
+          kind: 'bug',
+          chosen: useAppStore
+            .getState()
+            .projects.find(({ id }) => id === workspace.projectId)?.templates,
+          templates: useTemplateStore.getState().templates,
+          orgDefault: null,
+        }),
       });
 
       props.onReady();

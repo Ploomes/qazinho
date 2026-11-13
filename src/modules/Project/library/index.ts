@@ -7,6 +7,7 @@ export * from './projectMarkOf';
 export * from './readProjects';
 export * from './repositoriesOf';
 export * from './secretIn';
+export * from './templatesIn';
 export * from './tokenIn';
 export * from './variableChangesOf';
 export * from './variableNameOf';

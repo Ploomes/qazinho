@@ -1,6 +1,7 @@
 import type { IProject } from '@/modules/Project/types';
 import { issueTargetIn } from './issueTargetIn';
 import { repositoriesOf } from './repositoriesOf';
+import { templatesIn } from './templatesIn';
 import { webAddressOf } from './webAddressOf';
 
 /**
@@ -26,7 +27,7 @@ export function readProjects(json: string): IProject[] {
         typeof (one as IProject).id === 'string' &&
         Array.isArray((one as IProject).targets),
     )
-    .map(({ issueTarget, readyColumn, readyStatuses, ...project }) => ({
+    .map(({ issueTarget, readyColumn, readyStatuses, templates, ...project }) => ({
       ...project,
       ...(issueTargetIn(issueTarget) === undefined
         ? {}
@@ -36,6 +37,9 @@ export function readProjects(json: string): IProject[] {
       readyStatuses.every((status) => typeof status === 'string')
         ? { readyStatuses }
         : {}),
+      ...(templatesIn(templates) === null
+        ? {}
+        : { templates: templatesIn(templates) ?? {} }),
       ...(typeof readyColumn?.boardId === 'number' &&
       typeof readyColumn.board === 'string' &&
       typeof readyColumn.column === 'string'
