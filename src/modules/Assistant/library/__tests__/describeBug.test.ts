@@ -9,7 +9,7 @@ describe('describeBug', () => {
     expect(isError).toBe(false);
     expect(text.split('\n')).toEqual([
       'Bug BUG-01 of w1 "Checkout regression": "Nothing happens on submit", severity high.',
-      'Caught in r-01 at 09:41, on TC-01 "Open the store and find a product" step 2, walked on Web · Chrome 1280 × 800 by Claude Code (Haiku).',
+      'Caught in r-01 at 09:41, on TC-01 "Open the store and find a product" step 2, walked on Web, Chrome 1280 × 800 by Claude Code (Haiku).',
       'Expected: At least one result comes back',
       'Got: Nothing moved.',
       'The page did not do it.',

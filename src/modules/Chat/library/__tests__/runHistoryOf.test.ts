@@ -39,7 +39,7 @@ describe('runHistoryOf', () => {
     expect(latest).toMatchObject({
       kind: 'run',
       id: 'r-01',
-      title: 'The whole plan · 09:41',
+      title: 'The whole plan, 09:41',
     });
     expect(latest?.facts).toContain('  step 1 passed: Open the target URL');
     expect(latest?.facts.at(-1)).toBe('note: Closed a banner.');

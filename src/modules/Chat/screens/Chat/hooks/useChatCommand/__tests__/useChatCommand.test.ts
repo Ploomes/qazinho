@@ -763,7 +763,7 @@ describe('useChatCommand', () => {
       expect(pickImport).toHaveBeenCalledTimes(1);
       expect(result.current.command?.parts.map(({ text }) => text)).toEqual([
         'loja-e2e',
-        'playwright · maestro',
+        'playwright, maestro',
       ]);
       expect(result.current.ask('Keep the P1 ones.')).toEqual({
         text: 'Plan the tests from the tests I already have in the folder loja-e2e.\n\nKeep the P1 ones.',

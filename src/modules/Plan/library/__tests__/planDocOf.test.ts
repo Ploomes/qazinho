@@ -107,7 +107,7 @@ describe('planDocOf', () => {
           { label: 'Last run', value: 'RUN-03, Oct 22, 10:00', url: null },
         ],
       },
-      { kind: 'heading', text: 'TC-01 · Apply a coupon' },
+      { kind: 'heading', text: 'TC-01 Apply a coupon' },
       {
         kind: 'facts',
         items: [

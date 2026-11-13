@@ -40,7 +40,7 @@ describe('useSuggestionCardViewModel', () => {
         useSuggestionCardViewModel({ message: MESSAGE, onTake: vi.fn() }),
       );
 
-      expect(result.current.eyebrow).toBe('Suggested plan · r-03');
+      expect(result.current.eyebrow).toBe('Plan suggested by exploration r-03');
       expect(result.current.summary).toBe('Two screens. The cart total is wrong.');
       expect(
         result.current.cases.map(({ priority, title }) => `${priority} ${title}`),

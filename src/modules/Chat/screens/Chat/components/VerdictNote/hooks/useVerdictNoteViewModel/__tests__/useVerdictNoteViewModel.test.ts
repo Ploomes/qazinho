@@ -26,14 +26,14 @@ describe('useVerdictNoteViewModel', () => {
     expect(
       renderHook(() => useVerdictNoteViewModel({ message: MESSAGE })).result.current
         .title,
-    ).toBe('Step 3 · Apply EXPIRED10');
+    ).toBe('Step 3: Apply EXPIRED10');
 
     await i18n.changeLanguage('pt');
 
     expect(
       renderHook(() => useVerdictNoteViewModel({ message: MESSAGE })).result.current
         .title,
-    ).toBe('Passo 3 · Apply EXPIRED10');
+    ).toBe('Passo 3: Apply EXPIRED10');
   });
 
   it('shows only what the step did when an old record lost its number', () => {

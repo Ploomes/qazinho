@@ -294,7 +294,7 @@ describe('useIslandViewModel', () => {
       icon: 'failed',
       mood: 'bug',
       count: '2',
-      line: '5 passed · 2 failed',
+      line: '5 passed and 2 failed',
     });
   });
 

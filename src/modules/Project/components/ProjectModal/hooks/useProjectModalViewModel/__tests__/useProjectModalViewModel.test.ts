@@ -486,7 +486,7 @@ describe('useProjectModalViewModel', () => {
       });
 
       expect(result.current.footerHint).toBe(
-        'A workspace runs against Web, so it cannot go empty',
+        'A plan runs against Web, so it cannot go empty',
       );
     });
 
@@ -562,7 +562,7 @@ describe('useProjectModalViewModel', () => {
         deleteTitle: 'Delete Shop · staging',
         deleteText: 'The project leaves this machine for good, and takes with it:',
         losses: [
-          'its workspace, with the plan, chat, runs and bugs',
+          'its plan, with the cases, chat, runs and bugs',
           'the 2 variables it keeps, values and all',
         ],
         hasLosses: true,
@@ -583,7 +583,7 @@ describe('useProjectModalViewModel', () => {
 
       expect(result.current).toMatchObject({
         deleteText:
-          'The project leaves this machine for good. It has no workspace or variable to take with it.',
+          'The project leaves this machine for good. It has no plan or variable to take with it.',
         losses: [],
         hasLosses: false,
       });
@@ -598,7 +598,7 @@ describe('useProjectModalViewModel', () => {
       });
 
       expect(renderHook(() => useProjectModalViewModel()).result.current.losses).toEqual([
-        'its 2 workspaces, with their plans, chats, runs and bugs',
+        'its 2 plans, with their cases, chats, runs and bugs',
       ]);
     });
 

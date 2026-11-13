@@ -75,7 +75,7 @@ describe('useIslandAsk', () => {
     const { result } = renderHook(() => useIslandAsk([SIZE]));
 
     expect(result.current.view).toMatchObject({
-      title: 'Loja · Compra',
+      title: 'Loja / Compra',
       question: 'Qual tamanho?',
       position: null,
       hasOptions: true,

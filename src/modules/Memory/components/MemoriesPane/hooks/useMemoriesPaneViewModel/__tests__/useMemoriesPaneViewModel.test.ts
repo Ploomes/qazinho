@@ -49,7 +49,7 @@ describe('useMemoriesPaneViewModel', () => {
     it('names the plan and the target when the memory only holds there', () => {
       seed([memory({ scope: 'plan', workspaceId: 'w-1', target: 'android' })]);
 
-      expect(view().current.rows[0]?.where).toBe('Cupons · Android');
+      expect(view().current.rows[0]?.where).toBe('Cupons, Android');
     });
   });
 

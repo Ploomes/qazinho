@@ -65,7 +65,7 @@ describe('useProMergeModalViewModel', () => {
       const [plan] = result.current.plans;
 
       expect(plan?.name).toBe(HERE.name);
-      expect(plan?.byline).toMatch(/^Changed by Bruno · Oct 24, 2026/);
+      expect(plan?.byline).toMatch(/^Changed by Bruno, Oct 24, 2026/);
       expect(plan?.clashes.map(({ key }) => key)).toEqual([FIRST.id]);
       expect(plan?.clashes[0]?.sides.map(({ title }) => title)).toEqual([
         'Here',
@@ -150,7 +150,7 @@ describe('useProMergeModalViewModel', () => {
       useProStore.setState({ shares: [shareBy(null)] });
       const { result } = renderHook(() => useProMergeModalViewModel());
 
-      expect(result.current.plans[0]?.byline).toMatch(/^Changed in the org · /);
+      expect(result.current.plans[0]?.byline).toMatch(/^Changed in the org, /);
     });
 
     it('does NOT list a plan whose changes join on their own', () => {

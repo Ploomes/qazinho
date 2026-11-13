@@ -27,7 +27,7 @@ describe('useResourcePopoverViewModel', () => {
   it('counts what the machine is really running', () => {
     const { result } = renderHook(() => useResourcePopoverViewModel());
 
-    expect(result.current.header).toBe('CPU 16% · RAM 2.2 / 32 GB');
+    expect(result.current.header).toBe('CPU 16%, RAM 2.2 of 32 GB');
   });
 
   it('shows QAzinho itself above the projects it is running', () => {
@@ -59,8 +59,8 @@ describe('useResourcePopoverViewModel', () => {
 
     const { result } = renderHook(() => useResourcePopoverViewModel());
 
-    expect(result.current.nodes[0]?.name).toBe('QAzinho · 2 processos');
-    expect(result.current.nodes.at(-1)?.name).toBe('Google Chrome · 2 processos');
+    expect(result.current.nodes[0]?.name).toBe('QAzinho, 2 processos');
+    expect(result.current.nodes.at(-1)?.name).toBe('Google Chrome, 2 processos');
     await i18n.changeLanguage('en');
   });
 

@@ -77,7 +77,7 @@ describe('useImportFieldViewModel', () => {
     expect(result.current).toMatchObject({
       hasFolder: true,
       name: 'loja-e2e',
-      kinds: 'playwright · maestro',
+      kinds: 'playwright, maestro',
       path: '/Users/qa/loja-e2e',
     });
 

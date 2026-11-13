@@ -79,7 +79,7 @@ describe('useProLinkModalViewModel', () => {
     const { result } = renderHook(() => useProLinkModalViewModel());
 
     await waitFor(() => {
-      expect(result.current.names).toBe('App da loja · Login');
+      expect(result.current.names).toBe('App da loja / Login');
     });
     expect(result.current).toMatchObject({
       hasNames: true,

@@ -115,7 +115,7 @@ describe('makeBug', () => {
       verdicts: BROKE,
     });
 
-    expect(phone.bugs[0]?.target).toBe('Web · Chrome 390 × 844');
+    expect(phone.bugs[0]?.target).toBe('Web, Chrome 390 × 844');
   });
 
   it('names the phone the run walked on: an Android build, or an iOS one', () => {

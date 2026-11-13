@@ -66,7 +66,7 @@ describe('referencesOf', () => {
       exploration: 'Exploration',
     });
 
-    expect(run?.title).toBe('O plano inteiro · 09:41');
+    expect(run?.title).toBe('O plano inteiro, 09:41');
   });
 
   it('has only the plan to offer before anything ran', () => {

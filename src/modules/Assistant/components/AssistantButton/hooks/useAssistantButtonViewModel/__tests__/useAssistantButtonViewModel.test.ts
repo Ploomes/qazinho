@@ -91,7 +91,7 @@ describe('useAssistantButtonViewModel', () => {
 
     const { result } = renderHook(() => useAssistantButtonViewModel());
 
-    expect(result.current.tip).toBe('Talk to the Intern · ⌘J');
+    expect(result.current.tip).toBe('Talk to the Intern (⌘J)');
 
     act(() => {
       useSettingsStore.setState({ keybinds: [] });
@@ -104,7 +104,7 @@ describe('useAssistantButtonViewModel', () => {
     window.qazinho = fakeQazinhoApi('win32');
 
     expect(renderHook(() => useAssistantButtonViewModel()).result.current.tip).toBe(
-      'Talk to the Intern · Ctrl+J',
+      'Talk to the Intern (Ctrl+J)',
     );
   });
 });

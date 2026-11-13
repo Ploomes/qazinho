@@ -83,7 +83,7 @@ describe('useRunReplayViewModel', () => {
 
     expect(result.current).toMatchObject({
       isOpen: true,
-      kicker: 'Run r-01 · the whole plan',
+      kicker: 'Run r-01, the whole plan',
       title: 'Checkout regression',
       timeText: '0:00 / 0:12',
     });
@@ -143,7 +143,7 @@ describe('useRunReplayViewModel', () => {
       });
 
       expect(result.current.caption).toMatchObject({
-        kicker: 'TC-02 · Step 2',
+        kicker: 'TC-02, Step 2',
         text: 'Leave the house number empty',
       });
       expect(result.current.chapterLabel.text).toBe('TC-02 · Checkout with a test card');
@@ -194,7 +194,7 @@ describe('useRunReplayViewModel', () => {
       const result = open({ kind: 'case', caseId: 'TC-02' });
 
       expect(result.current).toMatchObject({
-        kicker: 'Take · TC-02',
+        kicker: 'Take of TC-02',
         title: 'Checkout with a test card',
         take: { fromMs: 5_500, toMs: 11_500 },
       });
@@ -218,7 +218,7 @@ describe('useRunReplayViewModel', () => {
       });
 
       expect(result.current.take).toBeNull();
-      expect(result.current.kicker).toBe('Run r-01 · the whole plan');
+      expect(result.current.kicker).toBe('Run r-01, the whole plan');
     });
   });
 
