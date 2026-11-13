@@ -295,7 +295,7 @@ describe('useProjectModalViewModel', () => {
         tools: {
           androidSdk: { isFound: true, path: '/sdk' },
           xcode: { isFound: true, path: '/Applications/Xcode.app' },
-          idb: { isFound: false, path: null },
+          axe: { isFound: false, path: null },
         },
       });
 

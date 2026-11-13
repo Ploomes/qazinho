@@ -29,7 +29,7 @@ const RESOURCES = { cpu: 12.5, ramMb: 2048, ramCeilingGb: 64, processes: [] };
 const TOOLS = {
   androidSdk: { isFound: true, path: '/Users/qa/Library/Android/sdk' },
   xcode: { isFound: false, path: null },
-  idb: { isFound: false, path: null },
+  axe: { isFound: false, path: null },
 };
 
 beforeEach(() => {
@@ -39,7 +39,7 @@ beforeEach(() => {
     tools: {
       androidSdk: { isFound: false, path: null },
       xcode: { isFound: false, path: null },
-      idb: { isFound: false, path: null },
+      axe: { isFound: false, path: null },
     },
     hasDetected: false,
     usage: null,
@@ -321,14 +321,14 @@ describe('useMachineWatch', () => {
       return () => undefined;
     });
     useSetupStore.setState({
-      installs: { idb: { phase: 'installing', stage: 1, stages: 4, line: '' } },
+      installs: { axe: { phase: 'installing', stage: 1, stages: 4, line: '' } },
     });
 
     renderHook(() => useMachineWatch());
 
-    hear({ item: 'idb', stage: 2, stages: 4, line: '==> Pouring' });
+    hear({ item: 'axe', stage: 2, stages: 4, line: '==> Pouring' });
 
-    expect(useSetupStore.getState().installs.idb).toEqual({
+    expect(useSetupStore.getState().installs.axe).toEqual({
       phase: 'installing',
       stage: 2,
       stages: 4,

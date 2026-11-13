@@ -2,7 +2,7 @@
 
 O QAzinho roda no **Windows, no Linux e no macOS**, e toda mudança o mantém rodando nos três. Um
 QA no Windows recebe o mesmo app que um num Mac. Só o que o próprio SO proíbe é diferente: os
-simuladores de iOS só existem num Mac, então o alvo iOS e o idb vivem só lá.
+simuladores de iOS só existem num Mac, então o alvo iOS e o AXe vivem só lá.
 
 ## Iniciando um comando
 

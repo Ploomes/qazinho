@@ -18,7 +18,7 @@ import { buildFixtureApp } from './fixtures/buildFixtureApp';
  */
 const tools = new DeviceToolDetector().detect();
 const sdkRoot = tools.androidSdk.path ?? '';
-const idb = tools.idb.path ?? '';
+const axe = tools.axe.path ?? '';
 let apk: string | null = null;
 let avd: string | undefined;
 let app: string | null = null;
@@ -30,7 +30,7 @@ beforeAll(async () => {
     apk = avd === undefined ? null : await buildFixtureApk(sdkRoot);
   }
 
-  if (idb !== '') {
+  if (axe !== '') {
     udid = (await listSimulators())[0];
     app = udid === undefined ? null : await buildFixtureApp();
   }
@@ -177,14 +177,14 @@ describe('a fresh start on a real iOS simulator', () => {
   it('clears what a case saved before the next case starts', async (context) => {
     if (app === null || udid === undefined) {
       console.log(
-        'iOS fresh start skipped: no idb, no simulator, or the fixture did not build.',
+        'iOS fresh start skipped: no AXe, no simulator, or the fixture did not build.',
       );
       context.skip();
 
       return;
     }
 
-    driver = new IosDriver({ idb, udid, app });
+    driver = new IosDriver({ axe, udid, app });
     await driver.open();
     expect(await visits(driver)).toBe('Visits: 0');
 
@@ -205,7 +205,7 @@ describe('a fresh start on a real iOS simulator', () => {
     await driver.act({ kind: 'click', target: 'Save visit', value: '' });
     expect(await visits(driver)).toBe('Visits: 1');
 
-    const next = new IosDriver({ idb, udid, app });
+    const next = new IosDriver({ axe, udid, app });
 
     await next.open();
     expect(await visits(next)).toBe('Visits: 0');

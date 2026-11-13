@@ -220,14 +220,14 @@ describe('useSettingsViewModel', () => {
     });
   });
 
-  /** A aba de dispositivos mandava um QA sem idb digitar "brew install idb-companion". */
-  describe('installing idb', () => {
+  /** A aba de dispositivos oferecia instalar o idb; agora instala o AXe. */
+  describe('installing AXe', () => {
     afterEach(() => {
       Reflect.deleteProperty(window, 'qazinho');
       useSetupStore.setState({ managers: null, installs: {} });
     });
 
-    it('checks the machine when the devices tab opens, so it knows whether brew is there', async () => {
+    it('checks the machine when the devices tab opens, so it knows what is here', async () => {
       const checkMachine = vi.fn(fakeQazinhoApi('darwin').checkMachine);
 
       // Uma checagem que um teste anterior iniciou ainda pode chegar; deixe-a chegar,
@@ -245,24 +245,7 @@ describe('useSettingsViewModel', () => {
       expect(checkMachine).toHaveBeenCalledOnce();
     });
 
-    it('offers to install idb when it is missing and brew is there, instead of a command', () => {
-      window.qazinho = fakeQazinhoApi('darwin');
-      useSetupStore.setState({
-        managers: {
-          npm: { isFound: true, path: '/bin/npm' },
-          brew: { isFound: true, path: '/bin/brew' },
-        },
-      });
-
-      const { result } = renderHook(() => useSettingsViewModel());
-      const idb = result.current.devices.find(({ name }) => name === 'idb');
-
-      expect(idb?.canInstall).toBe(true);
-      expect(idb?.detail).not.toContain('brew install');
-      expect(result.current.needsBrew).toBe(false);
-    });
-
-    it('does NOT offer it without brew, and says brew comes first', () => {
+    it('offers to install AXe when it is missing on a Mac, with no Homebrew needed', () => {
       window.qazinho = fakeQazinhoApi('darwin');
       useSetupStore.setState({
         managers: {
@@ -271,12 +254,12 @@ describe('useSettingsViewModel', () => {
         },
       });
 
-      const { result } = renderHook(() => useSettingsViewModel());
-
-      expect(result.current.devices.find(({ name }) => name === 'idb')?.canInstall).toBe(
-        false,
+      const axe = renderHook(() => useSettingsViewModel()).result.current.devices.find(
+        ({ name }) => name === 'AXe',
       );
-      expect(result.current.needsBrew).toBe(true);
+
+      expect(axe?.canInstall).toBe(true);
+      expect(axe?.detail).not.toContain('brew install');
     });
   });
 

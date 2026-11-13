@@ -18,8 +18,8 @@ import { buildFixtureApp } from './fixtures/buildFixtureApp';
  * botão "Save visit". Um build de simulador é a pasta `.app`, nunca um `.ipa`.
  */
 const tools = new DeviceToolDetector().detect();
-const idb = tools.idb.path ?? '';
-const hasIdb = tools.idb.isFound;
+const axe = tools.axe.path ?? '';
+const hasAxe = tools.axe.isFound;
 
 let app: string | null = null;
 let udid: string | undefined;
@@ -27,7 +27,7 @@ let driver: IosDriver | null = null;
 let shotDir: string;
 
 beforeAll(async () => {
-  if (!hasIdb) return;
+  if (!hasAxe) return;
 
   udid = (await listSimulators())[0];
 
@@ -38,7 +38,7 @@ beforeAll(async () => {
   if (app === null) throw new Error('The fixture app did not build: is Xcode installed?');
 
   shotDir = await mkdtemp(join(tmpdir(), 'qazinho-ios-'));
-  driver = new IosDriver({ idb, udid, app });
+  driver = new IosDriver({ axe, udid, app });
 
   await driver.open();
 }, 300_000);
@@ -47,7 +47,7 @@ afterAll(async () => {
   await driver?.close();
 });
 
-describe.skipIf(!hasIdb)(
+describe.skipIf(!hasAxe)(
   'a real iOS simulator',
   () => {
     it('installs the build and brings it to the front', async () => {
@@ -84,7 +84,7 @@ describe.skipIf(!hasIdb)(
   300_000,
 );
 
-describe.skipIf(!hasIdb)('a real run on a simulator', () => {
+describe.skipIf(!hasAxe)('a real run on a simulator', () => {
   it('walks a plan on the simulator with the QA own agent', async () => {
     const events: IRunEvent[] = [];
     const deviceTools = new McpHost();
@@ -98,7 +98,7 @@ describe.skipIf(!hasIdb)('a real run on a simulator', () => {
         onEvent: () => undefined,
       }),
       findAndroid: async () => null,
-      findIos: async () => (udid === undefined ? null : { idb, udid }),
+      findIos: async () => (udid === undefined ? null : { axe, udid }),
       findCommand: async (id) =>
         (await new AgentDetector().detect()).find((one) => one.id === id)?.path ?? null,
       live: new LiveStream(),
@@ -151,10 +151,10 @@ describe.skipIf(!hasIdb)('a real run on a simulator', () => {
   }, 600_000);
 });
 
-describe.skipIf(hasIdb)('an iOS smoke with nothing to drive', () => {
+describe.skipIf(hasAxe)('an iOS smoke with nothing to drive', () => {
   it('says what is missing instead of passing quietly', () => {
-    console.log('iOS smoke skipped: idb missing (brew install idb-companion).');
+    console.log('iOS smoke skipped: AXe missing (install it from Settings → Agent).');
 
-    expect(hasIdb).toBe(false);
+    expect(hasAxe).toBe(false);
   });
 });

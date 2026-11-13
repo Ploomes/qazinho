@@ -69,7 +69,7 @@ describe('useOnboardingViewModel', () => {
       const tools = {
         androidSdk: { isFound: true, path: '/sdk' },
         xcode: { isFound: true, path: '/Applications/Xcode.app' },
-        idb: { isFound: true, path: '/bin/idb' },
+        axe: { isFound: true, path: '/bin/axe' },
       };
 
       window.qazinho = {

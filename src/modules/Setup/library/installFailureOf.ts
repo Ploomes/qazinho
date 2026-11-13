@@ -5,7 +5,6 @@ const MISSING: Record<string, ParseKeys> = {
   npm: 'SETUP.INSTALL_MISSING_NPM',
   brew: 'SETUP.INSTALL_MISSING_BREW',
   winget: 'SETUP.INSTALL_MISSING_WINGET',
-  python3: 'SETUP.INSTALL_MISSING_PYTHON',
 };
 
 /**

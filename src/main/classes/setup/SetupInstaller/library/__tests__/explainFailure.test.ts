@@ -46,7 +46,7 @@ describe('explainFailure', () => {
   it('offers the Command Line Tools when Homebrew asks for them', () => {
     expect(
       explainFailure([
-        '==> Installing idb-companion from facebook/fb',
+        '==> Building a formula from source',
         'Error: Xcode alone is not sufficient on Tahoe.',
         'Install the Command Line Tools:',
         'xcode-select --install',

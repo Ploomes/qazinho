@@ -242,7 +242,7 @@ export class RunCoordinator {
         profileDir: join(this.dataRoot, RUN_WALK.profiles, run.workspaceId),
         sdkRoot: android?.sdkRoot ?? '',
         avd: android?.avd ?? '',
-        idb: ios?.idb ?? '',
+        axe: ios?.axe ?? '',
         udid: ios?.udid ?? '',
       });
     } finally {

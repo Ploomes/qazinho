@@ -50,12 +50,12 @@ describe('useInstall', () => {
 
   it('does NOT start a second install of a tool already installing', async () => {
     useSetupStore.setState({
-      installs: { idb: { phase: 'installing', stage: 2, stages: 4, line: '' } },
+      installs: { axe: { phase: 'installing', stage: 2, stages: 4, line: '' } },
     });
     const install = vi.spyOn(window.qazinho, 'installTool');
     const { result } = renderHook(() => useInstall());
 
-    await act(() => result.current.install('idb'));
+    await act(() => result.current.install('axe'));
 
     expect(install).not.toHaveBeenCalled();
   });

@@ -1,8 +1,7 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { InstallProgress, ToolCard } from '@/modules/Setup/components';
 import { Button, Icon } from '@/shared/components/atoms';
-import { MOTION } from '@/shared/constants';
 import { useStepDevicesViewModel } from './hooks';
 import './styles.css';
 
@@ -12,12 +11,10 @@ export const StepDevices: React.FC = () => {
     hasNote,
     note,
     canCheckAgain,
-    needsBrew,
-    brewUrl,
     android,
     xcode,
-    idb,
-    onInstallIdb,
+    axe,
+    onInstallAxe,
     onCheckAgain,
   } = useStepDevicesViewModel();
   const { t } = useTranslation();
@@ -67,48 +64,25 @@ export const StepDevices: React.FC = () => {
           }
         />
         <ToolCard
-          name="idb"
-          detail={idb.detail}
-          state={idb.state}
-          badge={idb.badge}
+          name="AXe"
+          detail={axe.detail}
+          state={axe.state}
+          badge={axe.badge}
           action={
-            idb.canInstall && (
-              <Button size="sm" onClick={onInstallIdb}>
+            axe.canInstall && (
+              <Button size="sm" onClick={onInstallAxe}>
                 {t('SETUP.INSTALL')}
               </Button>
             )
           }
         >
           <AnimatePresence initial={false}>
-            {idb.install !== null && (
-              <InstallProgress key="install" state={idb.install} onRetry={onInstallIdb} />
+            {axe.install !== null && (
+              <InstallProgress key="install" state={axe.install} onRetry={onInstallAxe} />
             )}
           </AnimatePresence>
         </ToolCard>
       </div>
-
-      <AnimatePresence initial={false}>
-        {needsBrew && (
-          <motion.p
-            key="brew"
-            className="step-devices__note step-devices__note--attn"
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-          >
-            {t('SETUP.NEEDS_BREW')}{' '}
-            <a
-              className="step-devices__get"
-              href={brewUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              brew.sh <Icon name="external" />
-            </a>
-          </motion.p>
-        )}
-      </AnimatePresence>
 
       {hasNote && <p className="step-devices__note">{note}</p>}
 

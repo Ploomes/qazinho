@@ -89,7 +89,7 @@ describe('usePlanActionsViewModel', () => {
     });
 
     /**
-     * As runs de iOS eram recusadas aqui enquanto o idb nunca tinha tocado um simulador
+     * As runs de iOS eram recusadas aqui enquanto o AXe nunca tinha tocado um simulador
      * real; agora tocou.
      */
     it('runs an iOS build on the simulator, the way it runs the rest', () => {

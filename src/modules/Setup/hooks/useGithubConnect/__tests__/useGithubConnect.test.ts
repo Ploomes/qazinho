@@ -133,7 +133,7 @@ describe('useGithubConnect', () => {
         tools: {
           androidSdk: { isFound: false, path: null },
           xcode: { isFound: false, path: null },
-          idb: { isFound: false, path: null },
+          axe: { isFound: false, path: null },
         },
         managers: {
           npm: { isFound: true, path: null },

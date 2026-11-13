@@ -26,7 +26,7 @@ export function diagnosticsOf(props: {
     'Devices:',
     `- Android SDK: ${said(props.devices.androidSdk.isFound)}`,
     `- Xcode: ${said(props.devices.xcode.isFound)}`,
-    `- idb: ${said(props.devices.idb.isFound)}`,
+    `- AXe: ${said(props.devices.axe.isFound)}`,
     '',
     `Last ${String(props.log.length)} lines of the log:`,
     ...props.log,

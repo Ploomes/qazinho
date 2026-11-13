@@ -602,7 +602,7 @@ export const en = {
     FAILED_NO_EMULATOR:
       'QAzinho found no Android emulator to open. Make one in Android Studio, then run the plan again.',
     FAILED_NO_SIMULATOR:
-      'QAzinho needs idb and an iPhone simulator to drive iOS, and one of them is missing: Settings → Agent shows which.',
+      'QAzinho needs AXe and an iPhone simulator to drive iOS, and one of them is missing: Settings → Agent shows which.',
     FAILED_UNREACHABLE:
       'Chrome could not open {{url}} ({{code}}). Check that the app is up and that this machine can reach it, then run the plan again.',
     FAILED_AGENT_ERROR: 'The agent answered with an error, so the run stopped: {{said}}',
@@ -1077,8 +1077,6 @@ export const en = {
       'QAzinho installs this with Homebrew, and this machine has no Homebrew. Install it from brew.sh, then try again.',
     INSTALL_MISSING_WINGET:
       'QAzinho installs gh with winget, and this Windows has none. Install App Installer from the Microsoft Store, or gh from cli.github.com, then try again.',
-    INSTALL_MISSING_PYTHON:
-      'Installing idb needs Python 3, and this machine has none. Install the Command Line Tools, then try again.',
     INSTALL_MISSING_OTHER: '{{tool}} is not on this machine.',
     INSTALL_STOPPED: '{{tool}} stopped with code {{code}}.',
     CONNECT_UNAUTHORIZED:
@@ -1111,9 +1109,9 @@ export const en = {
     DEVICES_SAY_ANDROID_READY: 'Android is ready.',
     DEVICES_SAY_ANDROID_MISSING: 'Android needs the Android SDK.',
     DEVICES_SAY_IOS_READY: 'So is iOS.',
-    DEVICES_SAY_IOS_NEEDS_IDB: 'iOS only needs idb.',
+    DEVICES_SAY_IOS_NEEDS_AXE: 'iOS only needs AXe.',
     DEVICES_SAY_IOS_NEEDS_XCODE: 'iOS needs Xcode.',
-    DEVICES_SAY_IOS_NEEDS_BOTH: 'iOS needs Xcode and idb.',
+    DEVICES_SAY_IOS_NEEDS_BOTH: 'iOS needs Xcode and AXe.',
     DEVICES_SAY_IOS_NO_MAC: 'iOS only runs on a Mac.',
     WELCOME_TITLE: 'Which language do we speak?',
     WELCOME_LEAD: "Hi, I'm the Intern. Four quick questions and we test together.",
@@ -1140,8 +1138,6 @@ export const en = {
     CHECKING: 'checking…',
     GET_ANDROID_STUDIO: 'Get Android Studio',
     GET_XCODE: 'Get Xcode',
-    NEEDS_BREW:
-      'Installing idb needs Homebrew, and this machine has none. Install it, then check again.',
     DEVICES_NOTE:
       'Found the SDK after installing it? Open it once so it finishes setting up, then check again.',
     IOS_OFF_NOTE: 'iOS needs a Mac, so its tools stay off on this machine.',

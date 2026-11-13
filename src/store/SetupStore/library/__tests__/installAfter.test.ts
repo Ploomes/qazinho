@@ -8,13 +8,13 @@ describe('installAfter', () => {
     expect(
       installAfter({
         state: INSTALLING,
-        news: { item: 'idb', stage: 2, stages: 4, line: '==> Pouring idb-companion' },
+        news: { item: 'axe', stage: 2, stages: 4, line: '==> Extracting AXe' },
       }),
     ).toEqual({
       phase: 'installing',
       stage: 2,
       stages: 4,
-      line: '==> Pouring idb-companion',
+      line: '==> Extracting AXe',
     });
   });
 

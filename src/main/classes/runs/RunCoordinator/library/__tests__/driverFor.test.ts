@@ -22,7 +22,7 @@ function run(props: { kind: TargetKind; value: string }): IWalkRun {
     profileDir: '/tmp/profile',
     sdkRoot: '/sdk',
     avd: 'Pixel',
-    idb: '/opt/homebrew/bin/idb',
+    axe: '/opt/homebrew/bin/axe',
     udid: 'UDID',
     values: [],
     uploads: [],
@@ -44,7 +44,7 @@ describe('driverFor', () => {
     ).toBeInstanceOf(AndroidDriver);
   });
 
-  it('drives a simulator build with idb', () => {
+  it('drives a simulator build with axe', () => {
     expect(
       driverFor({ run: run({ kind: 'ios', value: '/tmp/App.app' }) }),
     ).toBeInstanceOf(IosDriver);

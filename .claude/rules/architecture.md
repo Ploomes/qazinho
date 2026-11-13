@@ -844,7 +844,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `CodeExport`                          | escreve os casos gravados como código Playwright ou Maestro, numa pasta que o QA escolhe                    |
 | `ResourceCollector` / `ProcessOwners` | uma varredura de processos (`ps`, ou `WindowsProcesses`), cobrada de quem a iniciou                         |
 | `Archive`                             | os projetos, workspaces e planos do QA em disco, cada um escrito inteiro; um plano quebrado de lado         |
-| `SetupInstaller`                      | instala uma CLI de agente, o idb ou o gh a pedido, transmitindo cada linha que imprime                      |
+| `SetupInstaller`                      | instala uma CLI de agente, o AXe ou o gh a pedido, transmitindo cada linha que imprime                      |
 | `AppUpdater`                          | procura e baixa uma versão nova em segundo plano, e a instala quando o app sai ou o QA pede                 |
 | `IntegrationVault`                    | conecta os trackers: o GitHub como a conta do gh, o token do Jira lacrado pelo `safeStorage`                |
 | `ConfluenceApi`                       | lê e publica páginas do Confluence no site do Jira, com o token do Jira                                     |

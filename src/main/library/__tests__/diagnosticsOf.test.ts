@@ -25,7 +25,7 @@ describe('diagnosticsOf', () => {
           path: 'C:\\Users\\Ana\\AppData\\Local\\Android\\Sdk',
         },
         xcode: { isFound: false, path: null },
-        idb: { isFound: false, path: null },
+        axe: { isFound: false, path: null },
       },
       log: ['2026-10-24T03:00:00.000Z ERROR [main] boom'],
     });
@@ -40,7 +40,7 @@ describe('diagnosticsOf', () => {
       'Devices:',
       '- Android SDK: yes',
       '- Xcode: no',
-      '- idb: no',
+      '- AXe: no',
       '',
       'Last 1 lines of the log:',
       '2026-10-24T03:00:00.000Z ERROR [main] boom',
@@ -68,7 +68,7 @@ describe('diagnosticsOf', () => {
         devices: {
           androidSdk: { isFound: false, path: null },
           xcode: { isFound: true, path: '/Applications/Xcode.app' },
-          idb: { isFound: true, path: '/Users/ana/.local/bin/idb' },
+          axe: { isFound: true, path: '/Users/ana/.local/bin/axe' },
         },
         log: [],
       }),

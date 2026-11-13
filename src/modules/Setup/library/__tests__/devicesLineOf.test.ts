@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { devicesLineOf } from '@/modules/Setup/library';
 
-function tools(found: { android?: boolean; xcode?: boolean; idb?: boolean }) {
+function tools(found: { android?: boolean; xcode?: boolean; axe?: boolean }) {
   return {
     androidSdk: { isFound: found.android ?? false, path: null },
     xcode: { isFound: found.xcode ?? false, path: null },
-    idb: { isFound: found.idb ?? false, path: null },
+    axe: { isFound: found.axe ?? false, path: null },
   };
 }
 
@@ -14,7 +14,7 @@ describe('devicesLineOf', () => {
     expect(
       devicesLineOf({
         isMac: true,
-        tools: tools({ android: true, xcode: true, idb: true }),
+        tools: tools({ android: true, xcode: true, axe: true }),
       }),
     ).toEqual([
       'SETUP.DEVICES_SAY_INTRO',
@@ -31,14 +31,14 @@ describe('devicesLineOf', () => {
     ]);
   });
 
-  it('asks only for idb when Xcode is already here', () => {
+  it('asks only for axe when Xcode is already here', () => {
     expect(devicesLineOf({ isMac: true, tools: tools({ xcode: true }) })).toContain(
-      'SETUP.DEVICES_SAY_IOS_NEEDS_IDB',
+      'SETUP.DEVICES_SAY_IOS_NEEDS_AXE',
     );
   });
 
-  it('asks for Xcode when only idb is here, and for both when neither is', () => {
-    expect(devicesLineOf({ isMac: true, tools: tools({ idb: true }) })).toContain(
+  it('asks for Xcode when only axe is here, and for both when neither is', () => {
+    expect(devicesLineOf({ isMac: true, tools: tools({ axe: true }) })).toContain(
       'SETUP.DEVICES_SAY_IOS_NEEDS_XCODE',
     );
     expect(devicesLineOf({ isMac: true, tools: tools({}) })).toContain(

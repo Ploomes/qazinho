@@ -24,7 +24,7 @@ beforeEach(() => {
       tools: {
         androidSdk: { isFound: true, path: '/sdk' },
         xcode: { isFound: false, path: null },
-        idb: { isFound: false, path: null },
+        axe: { isFound: false, path: null },
       },
       managers: {
         npm: { isFound: true, path: '/bin/npm' },

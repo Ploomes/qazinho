@@ -31,7 +31,7 @@ export function driverFor(props: {
 
   if (run.target.kind === 'ios')
     return new IosDriver({
-      idb: run.idb,
+      axe: run.axe,
       udid: run.udid,
       app: run.target.value,
       ...(props.shrink === undefined ? {} : { shrink: props.shrink }),

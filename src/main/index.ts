@@ -690,13 +690,13 @@ async function findAndroid() {
 }
 
 async function findIos() {
-  const idb = deviceTools.detect().idb.path;
+  const axe = deviceTools.detect().axe.path;
 
-  if (idb === null) return null;
+  if (axe === null) return null;
 
   const udid = (await listSimulators())[0];
 
-  return udid === undefined ? null : { idb, udid };
+  return udid === undefined ? null : { axe, udid };
 }
 
 const phonePeek = new PhonePeek({

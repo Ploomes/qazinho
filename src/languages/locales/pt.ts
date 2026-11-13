@@ -606,7 +606,7 @@ export const pt: typeof en = {
     FAILED_NO_EMULATOR:
       'O QAzinho não achou um emulador Android para abrir. Crie um no Android Studio e rode o plano de novo.',
     FAILED_NO_SIMULATOR:
-      'O QAzinho precisa do idb e de um simulador de iPhone para dirigir o iOS, e falta um deles: Configurações → Agente mostra qual.',
+      'O QAzinho precisa do AXe e de um simulador de iPhone para dirigir o iOS, e falta um deles: Configurações → Agente mostra qual.',
     FAILED_UNREACHABLE:
       'O Chrome não conseguiu abrir {{url}} ({{code}}). Confira se o app está no ar e se esta máquina o alcança, e rode o plano de novo.',
     FAILED_AGENT_ERROR: 'O agente respondeu com um erro, então a run parou: {{said}}',
@@ -1081,8 +1081,6 @@ export const pt: typeof en = {
       'O QAzinho instala isso com o Homebrew, e esta máquina não tem Homebrew. Instale em brew.sh e tente de novo.',
     INSTALL_MISSING_WINGET:
       'O QAzinho instala o gh com o winget, e este Windows não tem. Instale o Instalador de Aplicativo pela Microsoft Store, ou o gh em cli.github.com, e tente de novo.',
-    INSTALL_MISSING_PYTHON:
-      'Instalar o idb precisa do Python 3, e esta máquina não tem. Instale as Command Line Tools e tente de novo.',
     INSTALL_MISSING_OTHER: 'O {{tool}} não está nesta máquina.',
     INSTALL_STOPPED: 'O {{tool}} parou com o código {{code}}.',
     CONNECT_UNAUTHORIZED:
@@ -1115,9 +1113,9 @@ export const pt: typeof en = {
     DEVICES_SAY_ANDROID_READY: 'O Android está pronto.',
     DEVICES_SAY_ANDROID_MISSING: 'O Android precisa do Android SDK.',
     DEVICES_SAY_IOS_READY: 'O iOS também.',
-    DEVICES_SAY_IOS_NEEDS_IDB: 'O iOS só precisa do idb.',
+    DEVICES_SAY_IOS_NEEDS_AXE: 'O iOS só precisa do AXe.',
     DEVICES_SAY_IOS_NEEDS_XCODE: 'O iOS precisa do Xcode.',
-    DEVICES_SAY_IOS_NEEDS_BOTH: 'O iOS precisa do Xcode e do idb.',
+    DEVICES_SAY_IOS_NEEDS_BOTH: 'O iOS precisa do Xcode e do AXe.',
     DEVICES_SAY_IOS_NO_MAC: 'O iOS só roda num Mac.',
     WELCOME_TITLE: 'Que idioma falamos?',
     WELCOME_LEAD:
@@ -1145,8 +1143,6 @@ export const pt: typeof en = {
     CHECKING: 'verificando…',
     GET_ANDROID_STUDIO: 'Baixar Android Studio',
     GET_XCODE: 'Baixar Xcode',
-    NEEDS_BREW:
-      'Instalar o idb precisa do Homebrew, e esta máquina não tem. Instale e verifique de novo.',
     DEVICES_NOTE:
       'Instalou o SDK? Abra ele uma vez para terminar a configuração e então verifique de novo.',
     IOS_OFF_NOTE:

@@ -7,7 +7,7 @@ export interface IWalkRun extends IStartRun {
   profileDir: string;
   sdkRoot: string;
   avd: string;
-  idb: string;
+  axe: string;
   udid: string;
   values: IVariableValue[];
   uploads: { name: string; path: string }[];

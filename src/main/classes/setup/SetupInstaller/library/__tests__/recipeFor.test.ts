@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { INSTALL } from '@/main/classes/setup/SetupInstaller/constants';
 import { recipeFor } from '@/main/classes/setup/SetupInstaller/library';
 
 const HOME = '/Users/qa';
@@ -33,46 +34,17 @@ describe('recipeFor', () => {
     ).toEqual([['winget', 'install', 'GitHub.cli', 'list']]);
   });
 
-  it('installs the idb companion before the client that talks to it', () => {
-    const idb = lines('idb');
-
-    expect(idb.indexOf('brew install facebook/fb/idb-companion')).toBeLessThan(
-      idb.indexOf('/Users/qa/.local/share/qazinho/idb/bin/pip install --upgrade fb-idb'),
-    );
-  });
-
-  it("gives idb's client a Python of its own and links it where the detector looks", () => {
-    expect(lines('idb').slice(2)).toEqual([
-      'python3 -m venv /Users/qa/.local/share/qazinho/idb',
-      '/Users/qa/.local/share/qazinho/idb/bin/pip install --upgrade fb-idb',
+  it('downloads the AXe release and links its binary where the detector looks', () => {
+    expect(lines('axe')).toEqual([
+      'mkdir -p /Users/qa/.local/share/qazinho/axe',
+      `curl -fsSL -o /Users/qa/.local/share/qazinho/axe/axe.tar.gz ${INSTALL.axeUrl}`,
+      'tar xzf /Users/qa/.local/share/qazinho/axe/axe.tar.gz -C /Users/qa/.local/share/qazinho/axe',
       'mkdir -p /Users/qa/.local/bin',
-      'ln -sf /Users/qa/.local/share/qazinho/idb/bin/idb /Users/qa/.local/bin/idb',
+      'ln -sf /Users/qa/.local/share/qazinho/axe/axe /Users/qa/.local/bin/axe',
     ]);
   });
 
-  it('never installs pipx or another Python through Homebrew', () => {
-    expect(lines('idb').some((line) => /pipx|install python/.test(line))).toBe(false);
-  });
-
-  it('knows when each heavy step is already done, so a second run skips it', () => {
-    const [tap, companion, venv, client] = recipeFor({
-      item: 'idb',
-      home: HOME,
-      platform: 'darwin',
-    });
-
-    expect(tap?.doneIf).toEqual({
-      command: 'brew',
-      args: ['list', '--versions', 'idb-companion'],
-    });
-    expect(companion?.doneIf).toEqual(tap?.doneIf);
-    expect(venv?.doneIf?.args).toEqual([
-      '-x',
-      '/Users/qa/.local/share/qazinho/idb/bin/python',
-    ]);
-    expect(client?.doneIf?.args).toEqual([
-      '-x',
-      '/Users/qa/.local/share/qazinho/idb/bin/idb',
-    ]);
+  it('never installs AXe through Homebrew or Python, because the release is a plain binary', () => {
+    expect(lines('axe').some((line) => /brew|pip|python|pipx/.test(line))).toBe(false);
   });
 });

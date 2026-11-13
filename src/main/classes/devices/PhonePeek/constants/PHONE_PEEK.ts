@@ -4,6 +4,6 @@ export const PHONE_PEEK = {
   reasons: {
     busy: 'a run is using the device now',
     android: 'this machine has no Android emulator',
-    ios: 'this machine has no iOS simulator with idb',
+    ios: 'this machine has no iOS simulator with AXe',
   },
 } as const;

@@ -5,10 +5,10 @@ describe('commandLineOf', () => {
   it('joins the steps into one line a terminal runs in order', () => {
     expect(
       commandLineOf([
-        { command: 'brew', args: ['tap', 'facebook/fb'] },
-        { command: 'pipx', args: ['install', 'fb-idb'] },
+        { command: 'mkdir', args: ['-p', '/tmp/axe'] },
+        { command: 'tar', args: ['xzf', 'axe.tar.gz', '-C', '/tmp/axe'] },
       ]),
-    ).toBe('brew tap facebook/fb && pipx install fb-idb');
+    ).toBe('mkdir -p /tmp/axe && tar xzf axe.tar.gz -C /tmp/axe');
   });
 
   it('writes a single step without a separator', () => {

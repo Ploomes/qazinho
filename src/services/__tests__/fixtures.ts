@@ -37,7 +37,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
       Promise.resolve({
         androidSdk: { isFound: false, path: null },
         xcode: { isFound: false, path: null },
-        idb: { isFound: false, path: null },
+        axe: { isFound: false, path: null },
       }),
     readResources: () =>
       Promise.resolve({ cpu: 0, ramMb: 0, ramCeilingGb: 32, processes: [] }),
@@ -93,7 +93,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         tools: {
           androidSdk: { isFound: false, path: null },
           xcode: { isFound: false, path: null },
-          idb: { isFound: false, path: null },
+          axe: { isFound: false, path: null },
         },
         managers: {
           npm: { isFound: true, path: '/bin/npm' },

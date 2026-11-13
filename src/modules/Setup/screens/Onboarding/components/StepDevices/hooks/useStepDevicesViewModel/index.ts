@@ -2,19 +2,17 @@ import { useTranslation } from 'react-i18next';
 import { SETUP_LINKS } from '@/modules/Setup/constants';
 import { useInstall, useMachineCheck } from '@/modules/Setup/hooks';
 import { Platform } from '@/services';
-import { useMachineStore, useSetupStore } from '@/store';
+import { useMachineStore } from '@/store';
 
 export const useStepDevicesViewModel = () => {
   const { t } = useTranslation();
   const tools = useMachineStore((state) => state.tools);
-  const managers = useSetupStore((state) => state.managers);
   const { installs, install } = useInstall();
   const { isChecking, check } = useMachineCheck();
   const isMac = Platform.isMac();
-  const hasBrew = managers?.brew.isFound ?? false;
-  const idbInstall = installs.idb;
+  const axeInstall = installs.axe;
   const hasMissing =
-    !tools.androidSdk.isFound || (isMac && (!tools.xcode.isFound || !tools.idb.isFound));
+    !tools.androidSdk.isFound || (isMac && (!tools.xcode.isFound || !tools.axe.isFound));
 
   const stateOf = (isFound: boolean) =>
     !isMac ? ('off' as const) : isFound ? ('found' as const) : ('missing' as const);
@@ -26,8 +24,6 @@ export const useStepDevicesViewModel = () => {
     hasNote: !isMac || !tools.androidSdk.isFound || !tools.xcode.isFound,
     note: isMac ? t('SETUP.DEVICES_NOTE') : t('SETUP.IOS_OFF_NOTE'),
     canCheckAgain: hasMissing,
-    needsBrew: isMac && managers !== null && !hasBrew && !tools.idb.isFound,
-    brewUrl: SETUP_LINKS.brew,
     android: {
       state: tools.androidSdk.isFound ? ('found' as const) : ('missing' as const),
       badge: tools.androidSdk.isFound ? t('SETUP.FOUND') : t('SETUP.MISSING'),
@@ -44,21 +40,20 @@ export const useStepDevicesViewModel = () => {
           : t('SETUP.NOT_ON_MACHINE'),
       link: isMac && !tools.xcode.isFound ? SETUP_LINKS.xcode : null,
     },
-    idb: {
-      state: stateOf(tools.idb.isFound),
-      badge: badgeOf(tools.idb.isFound),
+    axe: {
+      state: stateOf(tools.axe.isFound),
+      badge: badgeOf(tools.axe.isFound),
       detail: !isMac
         ? t('SETUP.MAC_ONLY')
-        : tools.idb.isFound
+        : tools.axe.isFound
           ? undefined
           : t('SETUP.NOT_ON_MACHINE'),
-      canInstall:
-        isMac && !tools.idb.isFound && hasBrew && idbInstall?.phase !== 'installing',
+      canInstall: isMac && !tools.axe.isFound && axeInstall?.phase !== 'installing',
       install:
-        idbInstall !== undefined && idbInstall.phase !== 'installed' ? idbInstall : null,
+        axeInstall !== undefined && axeInstall.phase !== 'installed' ? axeInstall : null,
     },
-    onInstallIdb: () => {
-      void install('idb');
+    onInstallAxe: () => {
+      void install('axe');
     },
     onCheckAgain: () => {
       void check();

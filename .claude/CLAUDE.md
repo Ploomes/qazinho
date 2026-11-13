@@ -9,11 +9,11 @@ que o QA esperava. O QA continua no comando; o agente é o assistente.
 | ------- | ------------------------------------------- | ------------------------------------------------- | ---------------- |
 | web     | a URL do ambiente                           | Playwright sobre o próprio Chrome do QA           | de ponta a ponta |
 | Android | um `.apk`                                   | o próprio AVD do QA, pelo `adb` e o `uiautomator` | de ponta a ponta |
-| iOS     | um build `.app` de simulador, não um `.ipa` | `simctl` sobe e fotografa; `idb` lê e toca        | de ponta a ponta |
+| iOS     | um build `.app` de simulador, não um `.ipa` | `simctl` sobe e fotografa; o AXe lê e toca        | de ponta a ponta |
 
-O QAzinho acha o SDK, o emulador e o idb onde eles já estão, e nomeia o que falta onde o QA lê.
-**Ele instala só o que é leve, e só quando o QA pede**: as CLIs de agente pelo npm, e o idb como o
-companheiro do Homebrew mais o cliente Python dele num virtualenv próprio (o simctl não tem
+O QAzinho acha o SDK, o emulador e o AXe onde eles já estão, e nomeia o que falta onde o QA lê.
+**Ele instala só o que é leve, e só quando o QA pede**: as CLIs de agente pelo npm, e o AXe como o
+binário universal pré-compilado do release dele (o simctl não tem
 comando que toque a tela). O SDK do Android e o Xcode são grandes demais: a configuração da
 primeira execução os linka e confere de novo.
 
@@ -91,7 +91,7 @@ contador de visitas construído do fonte no AVD do próprio QA, lê a tela do `u
 que o agente nomeou, e julga o que vê.
 
 **O iOS funciona do mesmo jeito**, provado pelo `tests/smoke/ios.test.ts`: um contador de visitas
-construído do fonte para o simulador (`tests/smoke/fixtures/`), lido e tocado pelo idb, e um plano
+construído do fonte para o simulador (`tests/smoke/fixtures/`), lido e tocado pelo AXe, e um plano
 andado e julgado pelo agente do próprio QA. Todo caso começa com o app aberto de novo: o Android
 limpa os dados dele, o iOS o reinstala, a web limpa o navegador (`device-fresh.test.ts`,
 `fresh.test.ts`). Um passo que fecha o app e o abre de novo faz isso de verdade com `reopen`, com

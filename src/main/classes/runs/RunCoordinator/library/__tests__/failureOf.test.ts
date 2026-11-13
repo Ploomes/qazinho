@@ -34,15 +34,14 @@ describe('failureOf', () => {
 
   /** O stderr de um comando quebrado traz o porquê real, não só a linha "Command failed". */
   it("folds a command's stderr into the detail, under its summary", () => {
-    const error = Object.assign(new Error('Command failed: idb ui describe-all'), {
-      stderr: 'idb: no running simulator with that udid',
+    const error = Object.assign(new Error('Command failed: axe describe-ui'), {
+      stderr: 'axe: no running simulator with that udid',
     });
 
     expect(failureOf(error)).toEqual({
       reason: 'other',
-      said: 'Command failed: idb ui describe-all',
-      detail:
-        'Command failed: idb ui describe-all\nidb: no running simulator with that udid',
+      said: 'Command failed: axe describe-ui',
+      detail: 'Command failed: axe describe-ui\naxe: no running simulator with that udid',
     });
   });
 

@@ -16,7 +16,7 @@ beforeEach(() => {
     tools: {
       androidSdk: { isFound: true, path: '/Users/qa/Library/Android/sdk' },
       xcode: { isFound: false, path: null },
-      idb: { isFound: false, path: null },
+      axe: { isFound: false, path: null },
     },
   });
   useSetupStore.setState({ managers: MANAGERS, installs: {}, isChecking: false });
@@ -56,7 +56,7 @@ describe('useStepDevicesViewModel', () => {
       tools: {
         androidSdk: { isFound: true, path: '/Users/qa/Library/Android/sdk' },
         xcode: { isFound: true, path: '/Applications/Xcode.app' },
-        idb: { isFound: true, path: '/opt/homebrew/bin/idb' },
+        axe: { isFound: true, path: '/Users/qa/.local/bin/axe' },
       },
     });
     const ready = renderHook(() => useStepDevicesViewModel());
@@ -64,21 +64,19 @@ describe('useStepDevicesViewModel', () => {
     expect(ready.result.current).toMatchObject({ hasNote: false, canCheckAgain: false });
   });
 
-  it('offers to install idb with Homebrew', () => {
+  it('offers to install AXe when it is missing on a Mac', () => {
     const { result } = renderHook(() => useStepDevicesViewModel());
 
-    expect(result.current.idb.canInstall).toBe(true);
-    expect(result.current.needsBrew).toBe(false);
+    expect(result.current.axe.canInstall).toBe(true);
   });
 
-  it('does NOT offer idb without Homebrew, and says what to get', () => {
+  it('still offers AXe without Homebrew, because the release is a plain binary', () => {
     useSetupStore.setState({
       managers: { ...MANAGERS, brew: { isFound: false, path: null } },
     });
     const { result } = renderHook(() => useStepDevicesViewModel());
 
-    expect(result.current.idb.canInstall).toBe(false);
-    expect(result.current.needsBrew).toBe(true);
+    expect(result.current.axe.canInstall).toBe(true);
   });
 
   it('turns the iOS tools off away from a Mac', () => {
@@ -86,19 +84,19 @@ describe('useStepDevicesViewModel', () => {
     const { result } = renderHook(() => useStepDevicesViewModel());
 
     expect(result.current.xcode).toMatchObject({ state: 'off', link: null });
-    expect(result.current.idb.canInstall).toBe(false);
+    expect(result.current.axe.canInstall).toBe(false);
   });
 
-  describe('onInstallIdb', () => {
-    it('installs idb', () => {
+  describe('onInstallAxe', () => {
+    it('installs AXe', () => {
       const install = vi.spyOn(window.qazinho, 'installTool');
       const { result } = renderHook(() => useStepDevicesViewModel());
 
       act(() => {
-        result.current.onInstallIdb();
+        result.current.onInstallAxe();
       });
 
-      expect(install).toHaveBeenCalledWith('idb');
+      expect(install).toHaveBeenCalledWith('axe');
     });
   });
 });

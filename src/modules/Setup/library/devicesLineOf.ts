@@ -17,11 +17,11 @@ export function devicesLineOf(props: {
   if (!isMac) return ['SETUP.DEVICES_SAY_INTRO', android, 'SETUP.DEVICES_SAY_IOS_NO_MAC'];
 
   const ios: ParseKeys =
-    tools.xcode.isFound && tools.idb.isFound
+    tools.xcode.isFound && tools.axe.isFound
       ? 'SETUP.DEVICES_SAY_IOS_READY'
       : tools.xcode.isFound
-        ? 'SETUP.DEVICES_SAY_IOS_NEEDS_IDB'
-        : tools.idb.isFound
+        ? 'SETUP.DEVICES_SAY_IOS_NEEDS_AXE'
+        : tools.axe.isFound
           ? 'SETUP.DEVICES_SAY_IOS_NEEDS_XCODE'
           : 'SETUP.DEVICES_SAY_IOS_NEEDS_BOTH';
 

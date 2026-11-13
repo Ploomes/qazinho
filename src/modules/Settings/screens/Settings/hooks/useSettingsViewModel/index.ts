@@ -50,8 +50,7 @@ export const useSettingsViewModel = () => {
   const signIn = useAgentSignIn();
   const { installs, install } = useInstall();
   const { isChecking, check } = useMachineCheck();
-  const idbInstall = installs.idb;
-  const hasBrew = managers?.brew.isFound ?? false;
+  const axeInstall = installs.axe;
   const hasNpm = managers?.npm.isFound ?? false;
 
   const agentId = detected.find(({ name }) => name === agent)?.id ?? 'claude-code';
@@ -153,23 +152,20 @@ export const useSettingsViewModel = () => {
         install: null,
       },
       {
-        name: 'idb',
-        ...toolState({ isFound: tools.idb.isFound, isOn: isMac, path: tools.idb.path }),
+        name: 'AXe',
+        ...toolState({ isFound: tools.axe.isFound, isOn: isMac, path: tools.axe.path }),
         hasLink: false,
         link: '',
         linkLabel: '',
-        canInstall:
-          isMac && !tools.idb.isFound && hasBrew && idbInstall?.phase !== 'installing',
+        canInstall: isMac && !tools.axe.isFound && axeInstall?.phase !== 'installing',
         install:
-          idbInstall !== undefined && idbInstall.phase !== 'installed'
-            ? idbInstall
+          axeInstall !== undefined && axeInstall.phase !== 'installed'
+            ? axeInstall
             : null,
       },
     ],
-    needsBrew: isMac && managers !== null && !hasBrew && !tools.idb.isFound,
-    brewUrl: SETUP_LINKS.brew,
-    onInstallIdb: () => {
-      void install('idb');
+    onInstallAxe: () => {
+      void install('axe');
     },
     integrations: INTEGRATIONS,
     mcpServers: MCP_SERVERS,

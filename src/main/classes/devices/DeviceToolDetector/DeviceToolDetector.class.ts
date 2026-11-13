@@ -25,18 +25,18 @@ export class DeviceToolDetector {
     const xcode =
       process.platform === 'darwin' ? findExistingPath([...TOOL_PATHS.xcode]) : null;
 
-    const idb =
+    const axe =
       process.platform === 'darwin'
         ? findOnPath({
-            command: 'idb',
-            directories: [...TOOL_PATHS.idb, join(home, '.local', 'bin')],
+            command: 'axe',
+            directories: [...TOOL_PATHS.axe, join(home, '.local', 'bin')],
           })
         : null;
 
     this.detected = {
       androidSdk: { isFound: androidSdk !== null, path: androidSdk },
       xcode: { isFound: xcode !== null, path: xcode },
-      idb: { isFound: idb !== null, path: idb },
+      axe: { isFound: axe !== null, path: axe },
     };
 
     return this.detected;

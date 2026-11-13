@@ -108,7 +108,7 @@ describe('PhonePeek', () => {
     expect(await missing.look({ kind: 'ios', value: '/apps/Visitas.app' })).toMatchObject(
       {
         isOpen: false,
-        reason: 'this machine has no iOS simulator with idb',
+        reason: 'this machine has no iOS simulator with AXe',
       },
     );
 

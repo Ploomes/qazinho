@@ -8,8 +8,8 @@ const MESSAGE = {
   kind: 'error' as const,
   runId: 'r-01',
   at: '18:37',
-  text: 'A run parou: Command failed: idb ui describe-all',
-  detail: 'Command failed: idb ui describe-all\nidb: no running simulator',
+  text: 'A run parou: Command failed: axe describe-ui',
+  detail: 'Command failed: axe describe-ui\naxe: no running simulator',
   fix: null,
 };
 

@@ -8,7 +8,7 @@ describe('installableAgentOf', () => {
   });
 
   it('does NOT offer to install something that is not an agent', () => {
-    expect(installableAgentOf('idb')).toBeNull();
+    expect(installableAgentOf('axe')).toBeNull();
     expect(installableAgentOf('gemini-cli')).toBeNull();
   });
 });

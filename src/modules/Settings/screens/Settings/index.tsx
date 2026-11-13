@@ -24,9 +24,7 @@ export const Settings: React.FC = () => {
     devices,
     needsNpm,
     nodeUrl,
-    needsBrew,
-    brewUrl,
-    onInstallIdb,
+    onInstallAxe,
     integrations,
     mcpServers,
     themes,
@@ -165,7 +163,7 @@ export const Settings: React.FC = () => {
                           </a>
                         )}
                         {item.canInstall && (
-                          <Button size="sm" onClick={onInstallIdb}>
+                          <Button size="sm" onClick={onInstallAxe}>
                             {t('SETUP.INSTALL')}
                           </Button>
                         )}
@@ -177,26 +175,13 @@ export const Settings: React.FC = () => {
                         <InstallProgress
                           key="install"
                           state={item.install}
-                          onRetry={onInstallIdb}
+                          onRetry={onInstallAxe}
                         />
                       )}
                     </AnimatePresence>
                   </ToolCard>
                 ))}
               </div>
-              {needsBrew && (
-                <p className="settings__note">
-                  {t('SETUP.NEEDS_BREW')}{' '}
-                  <a
-                    className="settings__link"
-                    href={brewUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    brew.sh <Icon name="external" />
-                  </a>
-                </p>
-              )}
             </div>
           )}
 

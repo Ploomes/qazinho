@@ -1,15 +1,16 @@
 import type { IInstallStep } from '@/main/classes/setup/SetupInstaller/types';
 import type { InstallableId } from '@/shared/types';
 import { join } from 'node:path';
+import { INSTALL } from '@/main/classes/setup/SetupInstaller/constants';
 
-const AGENTS: Record<Exclude<InstallableId, 'idb' | 'gh'>, string> = {
+const AGENTS: Record<Exclude<InstallableId, 'axe' | 'gh'>, string> = {
   'claude-code': '@anthropic-ai/claude-code',
   codex: '@openai/codex',
 };
 
 /**
- * Os comandos que instalam uma ferramenta, em ordem: o gh com winget ou Homebrew, o idb
- * num Python próprio.
+ * Os comandos que instalam uma ferramenta, em ordem; o AXe vem do tarball universal
+ * pré-compilado do release, extraído com os frameworks dele e ligado no PATH do QA.
  */
 export function recipeFor(props: {
   item: InstallableId;
@@ -44,30 +45,18 @@ export function recipeFor(props: {
       },
     ];
 
-  if (item !== 'idb') return [{ command: 'npm', args: ['install', '-g', AGENTS[item]] }];
+  if (item !== 'axe') return [{ command: 'npm', args: ['install', '-g', AGENTS[item]] }];
 
-  const venv = join(home, '.local', 'share', 'qazinho', 'idb');
+  const dir = join(home, '.local', 'share', 'qazinho', 'axe');
   const bin = join(home, '.local', 'bin');
-  const companion = { command: 'brew', args: ['list', '--versions', 'idb-companion'] };
+  const tarball = join(dir, 'axe.tar.gz');
+  const axe = join(dir, 'axe');
 
   return [
-    { command: 'brew', args: ['tap', 'facebook/fb'], doneIf: companion },
-    {
-      command: 'brew',
-      args: ['install', 'facebook/fb/idb-companion'],
-      doneIf: companion,
-    },
-    {
-      command: 'python3',
-      args: ['-m', 'venv', venv],
-      doneIf: { command: 'test', args: ['-x', join(venv, 'bin', 'python')] },
-    },
-    {
-      command: join(venv, 'bin', 'pip'),
-      args: ['install', '--upgrade', 'fb-idb'],
-      doneIf: { command: 'test', args: ['-x', join(venv, 'bin', 'idb')] },
-    },
+    { command: 'mkdir', args: ['-p', dir] },
+    { command: 'curl', args: ['-fsSL', '-o', tarball, INSTALL.axeUrl] },
+    { command: 'tar', args: ['xzf', tarball, '-C', dir] },
     { command: 'mkdir', args: ['-p', bin] },
-    { command: 'ln', args: ['-sf', join(venv, 'bin', 'idb'), join(bin, 'idb')] },
+    { command: 'ln', args: ['-sf', axe, join(bin, 'axe')] },
   ];
 }
