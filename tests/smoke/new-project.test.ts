@@ -17,8 +17,9 @@ const SDK = join(
 );
 
 /**
- * Um agente fake: no chat responde uma frase; numa exploração anota a vitrine da loja de
- * exemplo, busca vazio e termina sugerindo um caso.
+ * Um agente fake: no chat responde uma frase e um nome para o projeto, depois de um
+ * instante, para o site nomear antes; numa exploração anota a vitrine da loja de exemplo,
+ * busca vazio e termina sugerindo um caso.
  */
 const AGENT = `#!/usr/bin/env node
 const { Client } = require(${JSON.stringify(join(SDK, 'index.js'))});
@@ -33,7 +34,8 @@ process.stdin.resume();
 process.stdin.on('end', async () => {
   say({ type: 'system', subtype: 'init', session_id: 's-1' });
   if (argv.includes('--json-schema')) {
-    say({ type: 'assistant', message: { content: [{ type: 'tool_use', name: 'StructuredOutput', input: { reply: 'Li o design.' } }] } });
+    await new Promise((done) => setTimeout(done, 1500));
+    say({ type: 'assistant', message: { content: [{ type: 'tool_use', name: 'StructuredOutput', input: { reply: 'Li o design.', projectName: 'Cupons' } }] } });
     say({ type: 'result', session_id: 's-1', is_error: false, result: '' });
     return;
   }
@@ -56,7 +58,9 @@ const PORT = 4373;
 const site = createServer((_request, response) => {
   response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
   response.end(
-    '<!doctype html><html lang="pt"><h1>Checkout</h1><button>Pagar</button></html>',
+    '<!doctype html><html lang="pt"><head><title>Checkout</title>' +
+      '<meta property="og:site_name" content="Loja Online"></head>' +
+      '<body><h1>Checkout</h1><button>Pagar</button></body></html>',
   );
 });
 
@@ -116,7 +120,7 @@ afterAll(async () => {
 });
 
 describe('creating a project from cards', () => {
-  it('asks only for what was picked, and opens the new project with its plan started', async () => {
+  it('asks only for what was picked, and names the new project after its site', async () => {
     await page.getByRole('button', { name: 'Novo projeto', exact: true }).first().click();
     await page.getByRole('button', { name: /Um endereço/ }).click();
     await page.getByRole('button', { name: /Um design/ }).click();
@@ -129,12 +133,8 @@ describe('creating a project from cards', () => {
       .getByLabel('O design')
       .fill('https://www.figma.com/design/AbC123/Loja-Checkout?node-id=12-34');
 
-    expect(await page.getByLabel('Nome do projeto').inputValue()).toBe(
-      `localhost:${String(PORT)}`,
-    );
     expect(await page.getByLabel('O build').count()).toBe(0);
-
-    await page.getByLabel('Nome do projeto').fill('Loja');
+    expect(await page.getByLabel('Nome do projeto').count()).toBe(0);
 
     await page.getByRole('button', { name: 'Criar projeto' }).click();
 
@@ -144,8 +144,19 @@ describe('creating a project from cards', () => {
       })
       .toBe(1);
     await expect
+      .poll(() => page.locator('.sidebar__group-name').allTextContents(), {
+        timeout: 10_000,
+      })
+      .toContain('Loja Online');
+    expect(
+      await page.getByText('Chamei o projeto de Loja Online, pelo site.').count(),
+    ).toBe(1);
+    await expect
       .poll(() => page.getByText('Li o design.').count(), { timeout: 20_000 })
       .toBeGreaterThan(0);
+    expect(await page.locator('.sidebar__group-name').allTextContents()).not.toContain(
+      'Cupons',
+    );
   });
 
   it('starts from nothing on the example shop, and explores it', async () => {
@@ -163,4 +174,26 @@ describe('creating a project from cards', () => {
       .poll(() => page.getByText(/Plano sugerido/).count(), { timeout: 60_000 })
       .toBeGreaterThan(0);
   }, 90_000);
+
+  it('plans before the app, and takes the name the chat agent gives', async () => {
+    await page.getByRole('button', { name: 'Novo projeto', exact: true }).first().click();
+    await page.getByRole('button', { name: /Não tenho nada ainda/ }).click();
+    await page.getByRole('button', { name: /Continuar/ }).click();
+    await page.getByRole('button', { name: /Planejar antes do app/ }).click();
+    await page.getByLabel('Planejar antes do app').fill('O cupom de primeira compra');
+    await page.getByRole('button', { name: 'Começar' }).click();
+
+    await expect
+      .poll(() => page.locator('.sidebar__group-name--pending').count(), {
+        timeout: 5_000,
+      })
+      .toBe(1);
+    await expect
+      .poll(() => page.locator('.sidebar__group-name').allTextContents(), {
+        timeout: 20_000,
+      })
+      .toContain('Cupons');
+    expect(await page.locator('.sidebar__group-name--pending').count()).toBe(0);
+    expect(await page.getByText('Chamei o projeto de Cupons.').count()).toBe(1);
+  }, 40_000);
 });
