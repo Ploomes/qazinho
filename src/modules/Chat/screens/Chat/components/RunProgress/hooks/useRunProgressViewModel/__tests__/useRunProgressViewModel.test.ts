@@ -20,7 +20,17 @@ describe('useRunProgressViewModel', () => {
   });
 
   it('opens the case it walks step by step, the walked marked and the rest waiting', () => {
-    useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+    const walked = walkRun({ verdicts: ['passed'] });
+
+    /* O passo em andamento vem do evento doing da run, que o fixture não manda. */
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...walked,
+          live: walked.live === null ? null : { ...walked.live, doingIndex: 1 },
+        },
+      ],
+    });
 
     const [now, next] = renderHook(() => useRunProgressViewModel()).result.current.cases;
 

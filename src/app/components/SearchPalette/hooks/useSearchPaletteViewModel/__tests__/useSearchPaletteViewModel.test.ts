@@ -63,6 +63,9 @@ describe('useSearchPaletteViewModel', () => {
     const { result } = renderHook(() => useSearchPaletteViewModel());
 
     act(() => {
+      result.current.onQuery('checkout');
+    });
+    act(() => {
       result.current.onPick(`bugs:${failed.id}`);
     });
 

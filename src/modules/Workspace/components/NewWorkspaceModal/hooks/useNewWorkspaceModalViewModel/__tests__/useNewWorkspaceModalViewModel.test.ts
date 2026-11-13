@@ -50,10 +50,10 @@ describe('useNewWorkspaceModalViewModel', () => {
     expect(result.current.chosenTargetId).toBe('t1');
   });
 
-  it('cannot create a workspace with no name', () => {
+  it('creates a plan with no name, which the first ask then names', () => {
     const { result } = renderHook(() => useNewWorkspaceModalViewModel());
 
-    expect(result.current.canCreate).toBe(false);
+    expect(result.current.canCreate).toBe(true);
   });
 
   it('creates the workspace on the chosen target and opens it', () => {

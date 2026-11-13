@@ -877,7 +877,10 @@ describe('useChatViewModel', () => {
     it('says the day a run started with its time, and only the time when no step kept it', () => {
       answering({});
 
-      const walked = walkRun({ verdicts: ['passed'], isFinished: true });
+      const walked = walkRun({
+        verdicts: ['passed', 'passed', 'passed', 'passed', 'passed', 'passed'],
+        isFinished: true,
+      });
       const at = (span: { from: number; to: number } | null) => ({
         ...walked,
         runs: walked.runs.map((run) => ({
@@ -1098,7 +1101,7 @@ describe('useChatViewModel', () => {
         expect(ask).toHaveBeenCalledOnce();
       });
       expect(ask.mock.calls[0]?.[0].runs).toMatchObject([
-        { kind: 'run', id: 'r-01', title: 'The whole plan · 09:41' },
+        { kind: 'run', id: 'r-01', title: 'The whole plan, 09:41' },
       ]);
     });
   });
