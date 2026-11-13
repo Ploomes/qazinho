@@ -705,6 +705,7 @@ export const pt: typeof en = {
     STEPS_PROGRESS: '{{current}} de {{total}}',
     SCREENS: 'telas',
     SHOT_ALT: 'o dispositivo depois do último passo',
+    TOUCH_LABEL: 'O dispositivo: clique, role e digite aqui',
     FOCUS: 'Ampliar',
     FOCUS_LEAVE: 'Voltar',
     FOCUS_NOW: 'agora',

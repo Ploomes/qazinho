@@ -701,6 +701,7 @@ export const en = {
     STEPS_PROGRESS: '{{current}} of {{total}}',
     SCREENS: 'screens',
     SHOT_ALT: 'the device after the last step',
+    TOUCH_LABEL: 'The device: click, scroll and type here',
     FOCUS: 'Expand',
     FOCUS_LEAVE: 'Back',
     FOCUS_NOW: 'now',
