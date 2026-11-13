@@ -7,6 +7,7 @@ import type { IPlanDoubt } from '@/shared/types';
 export interface IDoubtsModalProps {
   storyKey: string;
   doubts: IPlanDoubt[];
+  texts?: { intro: string; closing: string } | null;
   onCancel: () => void;
   onPosted: (props: {
     sent: { url: string; at: string };

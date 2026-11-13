@@ -152,4 +152,23 @@ describe('useDoubtsModalViewModel', () => {
     expect(view.result.current.canConfirm).toBe(false);
     expect(askStory).not.toHaveBeenCalled();
   });
+
+  it('opens and closes the comment with the texts of the team’s template', () => {
+    jira({ people: { isRead: true, reporter: null, isWatching: false } });
+
+    const view = renderHook(() =>
+      useDoubtsModalViewModel({
+        storyKey: 'SHOP-878',
+        doubts: DOUBTS,
+        texts: { intro: 'Oi, time! Dúvidas:', closing: 'Respondam aqui.' },
+        onCancel: vi.fn(),
+        onPosted: vi.fn(),
+      }),
+    );
+
+    expect(view.result.current).toMatchObject({
+      intro: 'Oi, time! Dúvidas:',
+      closing: 'Respondam aqui.',
+    });
+  });
 });

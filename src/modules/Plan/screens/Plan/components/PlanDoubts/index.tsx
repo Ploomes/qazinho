@@ -26,6 +26,7 @@ export const PlanDoubts: React.FC<IPlanDoubtsProps> = (props) => {
     isModalOpen,
     storyKey,
     unsent,
+    texts,
     onSend,
     onCancelModal,
     onPosted,
@@ -152,6 +153,7 @@ export const PlanDoubts: React.FC<IPlanDoubtsProps> = (props) => {
             key="doubts"
             storyKey={storyKey}
             doubts={unsent}
+            texts={texts}
             onCancel={onCancelModal}
             onPosted={onPosted}
           />

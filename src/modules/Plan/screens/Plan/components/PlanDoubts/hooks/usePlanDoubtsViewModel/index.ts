@@ -5,17 +5,20 @@ import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat';
 import { useStoryCheck } from '@/modules/Plan/hooks/useStoryCheck';
 import {
+  doubtsTextsOf,
   doubtsWithSent,
   heldDoubtsOf,
   planWithoutDoubt,
   waitingDoubtsOf,
 } from '@/modules/Plan/library';
 import { JIRA_FAILURE_KEYS } from '@/modules/Setup/constants';
+import { templateFor } from '@/modules/Template/library';
 import {
   useAppStore,
   useAssistantStore,
   useSettingsStore,
   useSetupStore,
+  useTemplateStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -24,6 +27,16 @@ export const usePlanDoubtsViewModel = (props: IPlanDoubtsProps) => {
   const { t, i18n } = useTranslation();
   const { check } = useStoryCheck();
   const { askAgent } = useChatAgent();
+  const projectId = useWorkspaceStore(
+    (state) => state.workspaces.find(({ id }) => id === workspaceId)?.projectId ?? null,
+  );
+  const chosen = useAppStore(
+    (state) => state.projects.find(({ id }) => id === projectId)?.templates,
+  );
+  const templates = useTemplateStore((state) => state.templates);
+  const planName = useWorkspaceStore(
+    (state) => state.workspaces.find(({ id }) => id === workspaceId)?.name ?? '',
+  );
   const isJiraConnected = useSetupStore((state) =>
     state.integrations.some(({ id }) => id === 'jira'),
   );
@@ -75,6 +88,20 @@ export const usePlanDoubtsViewModel = (props: IPlanDoubtsProps) => {
       : { text: t('PLAN.DOUBT_SENT'), icon: 'pending' };
   };
 
+  const doubtsTemplate = templateFor({
+    kind: 'doubts',
+    chosen,
+    templates,
+    orgDefault: null,
+  });
+  const doubtsTexts =
+    doubtsTemplate === null
+      ? null
+      : doubtsTextsOf({
+          template: doubtsTemplate,
+          values: { story: storyKey, plan: planName },
+        });
+
   return {
     isShown: doubts.length > 0,
     title: t('PLAN.DOUBTS'),
@@ -111,6 +138,7 @@ export const usePlanDoubtsViewModel = (props: IPlanDoubtsProps) => {
     isModalOpen,
     storyKey,
     unsent,
+    texts: doubtsTexts,
     onSend: () => {
       if (isJiraConnected) {
         setModalOpen(true);

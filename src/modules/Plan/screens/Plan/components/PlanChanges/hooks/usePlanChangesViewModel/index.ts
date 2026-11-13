@@ -19,9 +19,16 @@ import {
   storyNoteOf,
 } from '@/modules/Plan/library';
 import { REFUSALS } from '@/modules/Plan/screens/Plan/components/PlanChanges/constants';
+import { templateFor } from '@/modules/Template/library';
 import { Sources } from '@/services';
 import { useSourceCheck } from '@/shared/hooks/useSourceCheck';
-import { useMachineStore, useSettingsStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useMachineStore,
+  useSettingsStore,
+  useTemplateStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
   const { workspaceId, plan, doubts, issue, changed, review, isLocked } = props;
@@ -36,6 +43,11 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
   const agentName = useSettingsStore((state) => state.agent);
   const model = useSettingsStore((state) => state.model);
   const agents = useMachineStore((state) => state.agents);
+  const templates = useTemplateStore((state) => state.templates);
+  const projects = useAppStore((state) => state.projects);
+  const workspaceNow = useWorkspaceStore(
+    (state) => state.workspaces.find(({ id }) => id === workspaceId) ?? null,
+  );
   const [isChecking, setChecking] = useState(false);
   const [isProposing, setProposing] = useState(false);
   const [refusingId, setRefusingId] = useState<string | null>(null);
@@ -265,6 +277,18 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
               changed: (one) => t('PLAN.NOTE_CHANGED', one),
               added: (title) => t('PLAN.NOTE_ADDED', { title }),
               doubt: (question) => t('PLAN.NOTE_DOUBT', { question }),
+            },
+            template: templateFor({
+              kind: 'decisions',
+              chosen: projects.find(({ id }) => id === workspaceNow?.projectId)
+                ?.templates,
+              templates,
+              orgDefault: null,
+            }),
+            values: {
+              story: issue?.key ?? '',
+              meeting: meeting === undefined ? '' : changeNameOf(meeting),
+              plan: workspaceNow?.name ?? '',
             },
           }),
     onCheck: () => {

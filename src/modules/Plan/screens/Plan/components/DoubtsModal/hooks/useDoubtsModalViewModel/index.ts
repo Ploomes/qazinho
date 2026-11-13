@@ -10,7 +10,7 @@ export const useDoubtsModalViewModel = (props: IDoubtsModalProps) => {
   const { storyKey, onPosted } = props;
   const { t } = useTranslation();
   const [people, setPeople] = useState<StoryPeople | null>(null);
-  const [intro, setIntro] = useState(() => t('PLAN.DOUBTS_INTRO'));
+  const [intro, setIntro] = useState(() => props.texts?.intro ?? t('PLAN.DOUBTS_INTRO'));
   const [questions, setQuestions] = useState(() =>
     props.doubts.map(({ id, question }) => ({ id, question })),
   );
@@ -32,7 +32,8 @@ export const useDoubtsModalViewModel = (props: IDoubtsModalProps) => {
 
   const reporter = people?.isRead === true ? people.reporter : null;
   const isWatching = people?.isRead === true && people.isWatching;
-  const closing = t('PLAN.DOUBTS_CLOSING', { id: questions[0]?.id ?? 'D1' });
+  const closing =
+    props.texts?.closing ?? t('PLAN.DOUBTS_CLOSING', { id: questions[0]?.id ?? 'D1' });
 
   return {
     title: t('PLAN.DOUBTS_MODAL_TITLE', { key: storyKey }),
