@@ -26,6 +26,8 @@ export function followRunEvent(props: {
 
   if (event.kind === 'asked') return { ...run, question: event.question };
 
+  if (event.kind === 'manual') return { ...run, manual: event.turn };
+
   if (event.kind === 'answered')
     return {
       ...run,

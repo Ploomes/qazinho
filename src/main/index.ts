@@ -3,6 +3,7 @@ import type {
   AgentSignInProgress,
   AppUpdate,
   ConfluenceSwitch,
+  DeviceInput,
   GithubSignInProgress,
   IAgentEvent,
   IAgentTurn,
@@ -23,6 +24,7 @@ import type {
   IImportSource,
   IJiraStoryCopy,
   IKeepMemories,
+  IManualMark,
   IMcpServerTarget,
   IMcpSignIn,
   ImportPick,
@@ -1679,6 +1681,18 @@ void app.whenReady().then(async () => {
       runs.answer(props);
     },
   );
+  ipcMain.handle(
+    CHANNELS.touchRun,
+    (_event, props: { workspaceId: string; input: DeviceInput }) => runs.touch(props),
+  );
+  ipcMain.handle(CHANNELS.markRun, (_event, mark: IManualMark) => runs.mark(mark));
+  ipcMain.handle(
+    CHANNELS.typeRunVariable,
+    (_event, props: { workspaceId: string; name: string }) => runs.typeVariable(props),
+  );
+  ipcMain.handle(CHANNELS.endManual, (_event, workspaceId: string) => {
+    runs.endManual(workspaceId);
+  });
   ipcMain.handle(CHANNELS.runsInFlight, () => runs.inFlight());
   ipcMain.handle(
     CHANNELS.resizeDevice,

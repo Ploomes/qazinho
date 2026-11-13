@@ -21,6 +21,7 @@ export function developsACase(props: {
 
     return (
       caseId !== undefined &&
+      flat[0]?.caseIsManual !== true &&
       (wanted === null || wanted.has(caseId)) &&
       recipeFor({ book, steps: flat, targetKind: run.target.kind }) === null
     );

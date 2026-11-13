@@ -9,6 +9,7 @@ export * from './failureOf';
 export * from './followRunEvent';
 export {
   bookWith,
+  bookWithPrep,
   callLineOf,
   casesOf,
   expectedValuesOf,
@@ -20,6 +21,8 @@ export {
   outcomeOfReport,
   partialFor,
   partialRecipeOf,
+  prepFor,
+  prepStepOf,
   privateUrlOf,
   proofHolds,
   proofWithValues,
@@ -38,6 +41,7 @@ export {
   variablePort,
 } from '@salve-software/qazinho-harness/engine';
 export * from './markedBoxOf';
+export * from './markedOutcomeOf';
 export * from './pageKeyOf';
 export * from './progressAside';
 export * from './revealTarget';
