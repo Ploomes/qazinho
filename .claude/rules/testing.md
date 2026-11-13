@@ -87,7 +87,7 @@ próprio comando, e o CI nunca as roda.
 | `login.test.ts`        | um `claude` e um `codex` fakes: login num terminal, status lido, sem terminal, cancela     |
 | `record.test.ts`       | o app construído grava uma run web como um MP4 H.264 pela janela escondida                 |
 | `github.test.ts`       | um gh fake: login por código de dispositivo e cancelar, repositórios, branches             |
-| `jira.test.ts`         | um site do Jira fake: histórias buscadas e lidas, os arquivos delas baixados               |
+| `jira.test.ts`         | um site do Jira fake: histórias buscadas e lidas, os arquivos baixados, a sprint aberta    |
 | `confluence.test.ts`   | um site do Confluence fake: uma página buscada e lida, um plano publicado duas vezes       |
 | `filing.test.ts`       | um Jira e um gh fakes: um bug registrado com arquivos e história, recusas em palavras      |
 | `review.test.ts`       | um agente fake pesa um bug visto de novo contra a issue num Jira fake                      |

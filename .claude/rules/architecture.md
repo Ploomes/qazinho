@@ -136,6 +136,15 @@ pausada, uma a continuar, uma falha, casos sem gravação) e os planos abertos p
 `selectWorkspace` guarda (`recent`, com o tema). Cada item abre o workspace na aba em que a coisa
 está. Ele pergunta à main quais casos têm gravação em cada plano (`Run.developed`).
 
+A sprint também chega ao Início. Num projeto com a coluna de pronto num board (`readyColumn`), o
+`useSprintStories` lê a sprint aberta dele quando o Início abre (`JiraApi.sprintStories`,
+`activeSprintOf`, `sprintStoriesOf`, sem subtarefas nem épicos), e o `homeOf` lista as histórias
+que nenhum plano do projeto tem (`toPlan`). "Planejar" cria o plano com a história
+(`sprintWorkspaceOf`) e "Planejar as N" cria todos; os dois os põem na fila (`planQueue`), que o
+`usePlanQueue` passa ao agente um de cada vez, com a mensagem do `/jira`, só depois de o chat
+anterior terminar (`planning`). O Início mostra o que está sendo escrito (`drafting`) e um chat que
+espera as respostas do QA (`toAnswer`, `openRoundOf`).
+
 Sem projeto, o app é a primeira execução (`FirstRun`), duas perguntas sem barra lateral: qual app
 o QA vai testar (um endereço, ou um .apk ou .app escolhido no disco) e o que ele quer testar
 primeiro. Só a segunda cria alguma coisa: o projeto, com o nome do site ou do build

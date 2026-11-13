@@ -246,6 +246,15 @@ falhou, casos ainda sem gravação, cada um numa linha com a ação que o leva l
 por último. A sidebar abre nele pela linha Início, que conta o que espera o QA. Testes unitários
 provam os grupos; nenhum QA usou ainda.
 
+**A sprint chega ao Início.** Num projeto que escolheu a coluna de pronto num board do Jira, o
+Início lista as histórias da sprint aberta desse board que ainda não têm plano. "Planejar" cria o
+plano com a história e o abre no chat, que começa como o QA começaria; "Planejar as 3" cria todos e
+os passa ao agente do QA um de cada vez, e cada um para na rodada de perguntas, esperando o QA, que o
+Início também mostra. Nada lê a sprint sem o QA abrir o Início, e nada chama o agente sem um clique.
+O Figma só é lido quando o QA abre o plano. O `tests/smoke/jira.test.ts` lê uma sprint de um Jira
+fake, e testes unitários provam a fila; nenhum agente real andou uma fila, e um site real do Jira não
+foi tentado.
+
 **Uma run que o app fechou no meio continua.** Ao reabrir, o workspace aparece pausado e o botão principal vira Continuar, que anda só os casos que não terminaram; o caso cortado recomeça, e o que falta entra numa run nova. Testes unitários provam a escolha dos casos; nenhuma run real foi fechada e continuada.
 
 **O agente pergunta ao QA no meio da run.** O agente de um caso, ou o explorador, que não pode
