@@ -40,4 +40,5 @@ export interface IAskAgent {
   skill?: string | null;
   doubts?: IPlanDoubt[];
   readyStatuses?: string[];
+  isProjectUnnamed?: boolean;
 }
