@@ -7,6 +7,7 @@ import {
   Bugs,
   Builds,
   Confluence,
+  Files,
   Github,
   Integrations,
   Jira,
@@ -234,6 +235,9 @@ describe('a page with no bridge', () => {
     expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
     expect(await Jira.boards('')).toEqual({ isListed: false, failure: 'unreachable' });
     expect(await Templates.list()).toEqual([]);
+    expect(await Files.saveText({ name: 'Cupom', extension: 'feature', text: '' })).toBe(
+      'failed',
+    );
     expect(
       await Templates.save({
         id: null,

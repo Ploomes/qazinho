@@ -72,6 +72,7 @@ import type { ISavedState } from './ISavedState';
 import type { ISavedWorkspace } from './ISavedWorkspace';
 import type { ISaveSkill } from './ISaveSkill';
 import type { ISaveTemplate } from './ISaveTemplate';
+import type { ISaveText } from './ISaveText';
 import type { ISetupEvent } from './ISetupEvent';
 import type { ISkill } from './ISkill';
 import type { ISkillDraftFile } from './ISkillDraftFile';
@@ -163,6 +164,7 @@ export interface IQazinhoApi {
   storageUsage: () => Promise<IStorageUsage>;
   sweepVideos: (olderThanDays: number) => Promise<IVideoSweep>;
   saveVideo: (props: { name: string; data: Uint8Array }) => Promise<SaveOutcome>;
+  saveText: (props: ISaveText) => Promise<SaveOutcome>;
   pickImport: () => Promise<ImportPick>;
   listSkills: () => Promise<ISkill[]>;
   saveSkill: (skill: ISaveSkill) => Promise<SkillSaved>;

@@ -76,6 +76,7 @@ import type {
   ISavedWorkspace,
   ISaveSkill,
   ISaveTemplate,
+  ISaveText,
   ISetupEvent,
   ISkill,
   ISkillDraftFile,
@@ -224,6 +225,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.sweepVideos, olderThanDays) as Promise<IVideoSweep>,
   saveVideo: (props: { name: string; data: Uint8Array }) =>
     ipcRenderer.invoke(CHANNELS.saveVideo, props) as Promise<SaveOutcome>,
+  saveText: (props: ISaveText) =>
+    ipcRenderer.invoke(CHANNELS.saveText, props) as Promise<SaveOutcome>,
   pickImport: () => ipcRenderer.invoke(CHANNELS.pickImport) as Promise<ImportPick>,
   listSkills: () => ipcRenderer.invoke(CHANNELS.listSkills) as Promise<ISkill[]>,
   saveSkill: (skill: ISaveSkill) =>

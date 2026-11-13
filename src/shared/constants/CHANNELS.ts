@@ -33,6 +33,7 @@ export const CHANNELS = {
   storageUsage: 'storage:usage',
   sweepVideos: 'storage:sweep-videos',
   saveVideo: 'run:save-video',
+  saveText: 'files:save-text',
   pickImport: 'import:pick',
   listSkills: 'skills:list',
   saveSkill: 'skills:save',

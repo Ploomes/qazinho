@@ -43,6 +43,7 @@ import type {
   ISavedWorkspace,
   ISaveSkill,
   ISaveTemplate,
+  ISaveText,
   ISetupEvent,
   ISkill,
   ISkillDraftFile,
@@ -1411,6 +1412,25 @@ async function saveVideo(props: {
   );
 }
 
+async function saveText(props: ISaveText): Promise<SaveOutcome> {
+  const extension = props.extension.replace(/[^a-z0-9]/gi, '') || 'txt';
+  const options = {
+    defaultPath: join(app.getPath('downloads'), `${fileNameOf(props.name)}.${extension}`),
+    filters: [{ name: extension.toUpperCase(), extensions: [extension] }],
+  };
+  const [open] = appWindows();
+  const picked = open
+    ? await dialog.showSaveDialog(open, options)
+    : await dialog.showSaveDialog(options);
+
+  if (picked.canceled || picked.filePath === undefined) return 'cancelled';
+
+  return writeFile(picked.filePath, props.text).then(
+    () => 'saved' as const,
+    () => 'failed' as const,
+  );
+}
+
 async function saveShot(props: {
   file: string | null;
   src: string | null;
@@ -1732,6 +1752,7 @@ void app.whenReady().then(async () => {
     CHANNELS.saveVideo,
     (_event, props: { name: string; data: Uint8Array }) => saveVideo(props),
   );
+  ipcMain.handle(CHANNELS.saveText, (_event, props: ISaveText) => saveText(props));
   ipcMain.handle(CHANNELS.stopRun, (_event, workspaceId: string) => {
     runs.stop(workspaceId);
   });

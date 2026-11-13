@@ -167,6 +167,7 @@ export type * from './IRunVideo';
 export type * from './ISavedState';
 export type * from './ISavedWorkspace';
 export type * from './ISaveTemplate';
+export type * from './ISaveText';
 export type * from './ISetupEvent';
 export type * from './IslandAction';
 export type * from './IslandState';
