@@ -8,4 +8,7 @@ export interface IButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
   disabled?: boolean;
+  pressed?: boolean;
+  expanded?: boolean;
+  popup?: 'menu';
 }
