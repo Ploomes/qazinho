@@ -1,4 +1,4 @@
-/** As linhas que saíram e as que entraram de um texto para outro, sem espaços nas pontas. */
+/** As linhas que saíram e as que entraram de um texto para outro. */
 export function lineDiffOf(props: { before: string; after: string }): {
   removed: string[];
   added: string[];

@@ -1,6 +1,6 @@
 import type { IAdfNode } from '@/main/classes/integrations/JiraApi/types';
 
-/** Um documento da Atlassian com uma pessoa mencionada no começo do primeiro parágrafo. */
+/** Um documento da Atlassian com uma pessoa mencionada no começo dele. */
 export function adfWithMention(props: {
   doc: IAdfNode;
   mention: { id: string; name: string } | null;

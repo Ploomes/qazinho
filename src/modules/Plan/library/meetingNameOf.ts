@@ -1,6 +1,6 @@
 import { MEETING_NAME } from '@/modules/Plan/constants';
 
-/** O nome de uma reunião colada: a primeira linha, quando é um título, ou o de reserva. */
+/** O nome de uma reunião colada: a primeira linha, quando é um título. */
 export function meetingNameOf(props: { text: string; fallback: string }): string {
   const first =
     props.text

@@ -386,7 +386,7 @@ export class JiraApi {
       : { isRead: false, failure: 'unexpected' };
   }
 
-  /** O que se escreveu numa história depois de um momento, menos o que o QAzinho postou. */
+  /** O que se escreveu ou editou numa história depois de um momento. */
   public async commentsSince(props: {
     key: string;
     since: string;
