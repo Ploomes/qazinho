@@ -258,6 +258,25 @@ describe('usePlanViewModel', () => {
       ]);
     });
 
+    it('puts Gherkin and every export in More, for a narrow column', () => {
+      useAppStore.setState({ projects: [PROJECT] });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.moreItems.map(({ key }) => key)).toEqual([
+        'gherkin',
+        'code',
+        'feature',
+        'publish',
+      ]);
+
+      act(() => {
+        result.current.moreItems[0]?.onPick();
+      });
+
+      expect(result.current.isGherkin).toBe(true);
+    });
+
     it('leaves out of the menu what this plan cannot do', () => {
       useAppStore.setState({ projects: [] });
       useSetupStore.setState({ integrations: [] });

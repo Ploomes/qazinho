@@ -107,6 +107,7 @@ function render(over: Partial<IPlanChangesProps> = {}) {
       canCheck: true,
       isLocked: false,
       actions: null,
+      more: [],
       ...over,
     });
   });
@@ -152,6 +153,28 @@ describe('usePlanChangesViewModel', () => {
         canCheck: false,
         canMeet: false,
       });
+    });
+
+    it('gathers the meeting and the plan’s own actions in More, for a narrow column', () => {
+      const onPick = vi.fn();
+      const { result } = render({
+        more: [{ key: 'feature', label: 'Arquivo .feature', icon: 'download', onPick }],
+      });
+
+      expect(result.current.hasMore).toBe(true);
+      expect(result.current.moreItems.map(({ key }) => key)).toEqual(['meet', 'feature']);
+
+      act(() => {
+        result.current.moreItems[0]?.onPick();
+      });
+
+      expect(result.current.isMeeting).toBe(true);
+    });
+
+    it('does NOT offer the meeting in More while a change waits for review', () => {
+      const { result } = render({ plan: [], more: [] });
+
+      expect(result.current).toMatchObject({ hasMore: false, moreItems: [] });
     });
 
     it('does NOT draw an empty bar', () => {

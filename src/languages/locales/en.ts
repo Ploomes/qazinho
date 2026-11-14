@@ -682,6 +682,7 @@ export const en = {
     ORG_MOVED: '{{who}} changed this plan in the org.',
     ORG_UPDATE: 'Update',
     ORG_SOMEONE: 'Someone',
+    MORE: 'More',
     EXPORT_MENU: 'Export',
     EXPORT_CODE: 'Test code',
     PUBLISH: 'Publish in Confluence',

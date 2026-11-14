@@ -688,6 +688,7 @@ export const pt: typeof en = {
     ORG_MOVED: '{{who}} mudou este plano na org.',
     ORG_UPDATE: 'Atualizar',
     ORG_SOMEONE: 'Alguém',
+    MORE: 'Mais',
     EXPORT_MENU: 'Exportar',
     EXPORT_CODE: 'Código de teste',
     PUBLISH: 'Publicar no Confluence',

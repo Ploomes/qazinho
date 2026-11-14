@@ -1,5 +1,6 @@
 import type { IChangeReview, IPendingChange, ITestCase } from '@/modules/Plan/types';
 import type { IIssue } from '@/modules/Workspace/types';
+import type { IMenuButtonItem } from '@/shared/components/molecules/MenuButton/types';
 import type { IPlanDoubt } from '@/shared/types';
 import type { ReactNode } from 'react';
 
@@ -17,4 +18,5 @@ export interface IPlanChangesProps {
   canCheck: boolean;
   isLocked: boolean;
   actions: ReactNode;
+  more: IMenuButtonItem[];
 }

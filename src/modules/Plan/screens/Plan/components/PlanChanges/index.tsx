@@ -3,7 +3,7 @@ import { AnimatePresence } from 'motion/react';
 import { MeetingModal } from '@/modules/Plan/screens/Plan/components/MeetingModal';
 import { TellStoryModal } from '@/modules/Plan/screens/Plan/components/TellStoryModal';
 import { Button, Icon, IconButton } from '@/shared/components/atoms';
-import { Fold } from '@/shared/components/molecules';
+import { Fold, MenuButton } from '@/shared/components/molecules';
 import { usePlanChangesViewModel } from './hooks';
 import './styles.css';
 
@@ -15,6 +15,9 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
   const {
     hasBar,
     actions,
+    hasMore,
+    moreLabel,
+    moreItems,
     canCheck,
     isChecking,
     checkLabel,
@@ -71,12 +74,19 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
             </Button>
           )}
           {canMeet && (
-            <Button variant="ghost" size="sm" disabled={isProposing} onClick={onMeet}>
-              <Icon name="file" />
-              {meetLabel}
-            </Button>
+            <span className="plan-changes__wide">
+              <Button variant="ghost" size="sm" disabled={isProposing} onClick={onMeet}>
+                <Icon name="file" />
+                {meetLabel}
+              </Button>
+            </span>
           )}
-          <div className="plan-changes__actions">{actions}</div>
+          <div className="plan-changes__actions plan-changes__wide">{actions}</div>
+          {hasMore && (
+            <span className="plan-changes__narrow">
+              <MenuButton label={moreLabel} icon="more" items={moreItems} />
+            </span>
+          )}
         </div>
       )}
 

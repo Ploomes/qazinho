@@ -384,6 +384,38 @@ export const usePlanViewModel = () => {
   const publishTip =
     published === null ? t('PLAN.PUBLISH_TIP') : t('PLAN.PUBLISH_AGAIN_TIP');
 
+  const exportItems = [
+    ...(canExport
+      ? [
+          {
+            key: 'code',
+            label: t('PLAN.EXPORT_CODE'),
+            icon: 'download' as const,
+            tip: t('PLAN.EXPORT_TIP'),
+            onPick: exportCode,
+          },
+        ]
+      : []),
+    {
+      key: 'feature',
+      label: t('PLAN.EXPORT_FEATURE'),
+      icon: 'download' as const,
+      onPick: exportFeature,
+    },
+    ...(canPublish
+      ? [
+          {
+            key: 'publish',
+            label: publishLabel,
+            icon: 'up' as const,
+            tip: publishTip,
+            isDisabled: isPublishing,
+            onPick: publishPlan,
+          },
+        ]
+      : []),
+  ];
+
   return {
     topRef,
     onToTop,
@@ -637,34 +669,19 @@ export const usePlanViewModel = () => {
     dismissExportLabel: t('COMMON.CLOSE'),
     onExport: exportCode,
     exportMenuLabel: t('PLAN.EXPORT_MENU'),
-    exportItems: [
-      ...(canExport
+    exportItems,
+    moreItems: [
+      ...(plan.length > 0 && !isLocked
         ? [
             {
-              key: 'code',
-              label: t('PLAN.EXPORT_CODE'),
-              icon: 'download' as const,
-              tip: t('PLAN.EXPORT_TIP'),
-              onPick: exportCode,
+              key: 'gherkin',
+              label: isGherkin ? t('PLAN.SHOW_CASES') : t('PLAN.SHOW_GHERKIN'),
+              icon: 'plan' as const,
+              onPick: () => {
+                setGherkin(!isGherkin);
+              },
             },
-          ]
-        : []),
-      {
-        key: 'feature',
-        label: t('PLAN.EXPORT_FEATURE'),
-        icon: 'download' as const,
-        onPick: exportFeature,
-      },
-      ...(canPublish
-        ? [
-            {
-              key: 'publish',
-              label: publishLabel,
-              icon: 'up' as const,
-              tip: publishTip,
-              isDisabled: isPublishing,
-              onPick: publishPlan,
-            },
+            ...exportItems,
           ]
         : []),
     ],

@@ -74,6 +74,7 @@ export const Plan: React.FC = () => {
     dismissExportLabel,
     exportMenuLabel,
     exportItems,
+    moreItems,
     onDismissExport,
     onDraftInChat,
     onAddCase,
@@ -155,6 +156,7 @@ export const Plan: React.FC = () => {
             review={review}
             canCheck={canCheck}
             isLocked={isLocked}
+            more={moreItems}
             actions={
               hasTopActions ? (
                 <>

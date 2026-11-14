@@ -212,9 +212,29 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
   const canCheck = props.canCheck && changed === null && review === null && !isLocked;
   const canMeet = plan.length > 0 && changed === null && review === null && !isLocked;
 
+  const moreItems = [
+    ...(canMeet
+      ? [
+          {
+            key: 'meet',
+            label: t('PLAN.READ_MEETING'),
+            icon: 'file' as const,
+            isDisabled: isProposing,
+            onPick: () => {
+              setMeeting(true);
+            },
+          },
+        ]
+      : []),
+    ...props.more,
+  ];
+
   return {
-    hasBar: canCheck || canMeet || props.actions !== null,
+    hasBar: canCheck || canMeet || props.actions !== null || moreItems.length > 0,
     actions: props.actions,
+    hasMore: moreItems.length > 0,
+    moreLabel: t('PLAN.MORE'),
+    moreItems,
     canCheck,
     isChecking,
     checkLabel: isChecking ? t('PLAN.CHECKING_CHANGES') : t('PLAN.CHECK_CHANGES'),

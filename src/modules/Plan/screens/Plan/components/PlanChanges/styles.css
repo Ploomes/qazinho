@@ -14,6 +14,30 @@
   margin-left: auto;
 }
 
+.plan-changes__wide {
+  display: contents;
+}
+
+.plan-changes__actions.plan-changes__wide {
+  display: flex;
+}
+
+.plan-changes__narrow {
+  display: none;
+  margin-left: auto;
+}
+
+@container workspace (width < 640px) {
+  .plan-changes__wide,
+  .plan-changes__actions.plan-changes__wide {
+    display: none;
+  }
+
+  .plan-changes__narrow {
+    display: inline-flex;
+  }
+}
+
 .plan-changes__fold {
   padding-top: var(--space-2);
 }
