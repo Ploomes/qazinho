@@ -13,6 +13,8 @@ import './styles.css';
  */
 export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
   const {
+    hasBar,
+    actions,
     canCheck,
     isChecking,
     checkLabel,
@@ -60,8 +62,8 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
 
   return (
     <>
-      {(canCheck || canMeet) && (
-        <div className="plan-changes__check">
+      {hasBar && (
+        <div className="plan-changes__bar">
           {canCheck && (
             <Button variant="ghost" size="sm" disabled={isChecking} onClick={onCheck}>
               <Icon name="reload" />
@@ -74,6 +76,7 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
               {meetLabel}
             </Button>
           )}
+          <div className="plan-changes__actions">{actions}</div>
         </div>
       )}
 
@@ -188,7 +191,7 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
                     <Button
                       size="sm"
                       variant="ghost"
-                      aria-expanded={item.isRefusing}
+                      expanded={item.isRefusing}
                       onClick={() => {
                         onRefuse(item.id);
                       }}

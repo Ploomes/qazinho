@@ -209,8 +209,13 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
     issue?.source === 'jira' &&
     (review?.items.some(({ state }) => state === 'applied') ?? false);
 
+  const canCheck = props.canCheck && changed === null && review === null && !isLocked;
+  const canMeet = plan.length > 0 && changed === null && review === null && !isLocked;
+
   return {
-    canCheck: props.canCheck && changed === null && review === null && !isLocked,
+    hasBar: canCheck || canMeet || props.actions !== null,
+    actions: props.actions,
+    canCheck,
     isChecking,
     checkLabel: isChecking ? t('PLAN.CHECKING_CHANGES') : t('PLAN.CHECK_CHANGES'),
     notice: shownNotice,
@@ -323,7 +328,7 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
     onPropose: () => {
       if (changed !== null && review === null) propose(changed);
     },
-    canMeet: plan.length > 0 && changed === null && review === null && !isLocked,
+    canMeet,
     meetLabel: t('PLAN.READ_MEETING'),
     isMeeting,
     onMeet: () => {

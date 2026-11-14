@@ -331,6 +331,59 @@ export const usePlanViewModel = () => {
 
   const waiting = manualWaitingOf({ plan, runs: workspace?.runs ?? [] });
 
+  const exportFeature = () => {
+    if (workspaceId === null) return;
+
+    void Files.saveText({
+      name: workspace?.name ?? '',
+      extension: 'feature',
+      text: gherkinOfPlan(),
+    }).then((outcome) => {
+      if (outcome !== 'cancelled')
+        setFeatureSaved({
+          workspaceId,
+          text: outcome === 'saved' ? t('PLAN.FEATURE_SAVED') : t('PLAN.FEATURE_FAILED'),
+        });
+    });
+  };
+  const publishPlan = () => {
+    if (published === null) {
+      setIsPublishOpen(true);
+
+      return;
+    }
+
+    void publish({
+      pageId: published.page.id,
+      spaceId: published.spaceId,
+      parentId: published.parentId,
+      title: published.page.title,
+    });
+  };
+  const exportCode = () => {
+    if (workspaceId === null || target === null) return;
+
+    const viewport = viewportOf(workspace?.viewportId);
+
+    void Run.exportCode({
+      workspaceId,
+      target: { kind: target.kind, value: target.value },
+      viewport: { width: viewport.width, height: viewport.height },
+      steps: flattenPlanSteps(plan),
+    }).then((outcome) => {
+      setExportedIn({ workspaceId, outcome });
+    });
+  };
+  const canPublish = isConfluenceOn && plan.length > 0 && !isLocked;
+  const canExport = plan.length > 0 && !isLocked && target !== null;
+  const publishLabel = isPublishing
+    ? t('PLAN.PUBLISHING')
+    : published === null
+      ? t('PLAN.PUBLISH')
+      : t('PLAN.PUBLISH_AGAIN');
+  const publishTip =
+    published === null ? t('PLAN.PUBLISH_TIP') : t('PLAN.PUBLISH_AGAIN_TIP');
+
   return {
     topRef,
     onToTop,
@@ -520,38 +573,18 @@ export const usePlanViewModel = () => {
     isGherkin,
     gherkin: isGherkin ? gherkinOfPlan() : '',
     gherkinLabel: isGherkin ? t('PLAN.SHOW_CASES') : t('PLAN.SHOW_GHERKIN'),
-    featureLabel: t('PLAN.EXPORT_FEATURE'),
     featureNotice: featureSaved?.workspaceId === workspaceId ? featureSaved.text : null,
     onToggleGherkin: () => {
       setGherkin(!isGherkin);
     },
-    onExportFeature: () => {
-      if (workspaceId === null) return;
-
-      void Files.saveText({
-        name: workspace?.name ?? '',
-        extension: 'feature',
-        text: gherkinOfPlan(),
-      }).then((outcome) => {
-        if (outcome !== 'cancelled')
-          setFeatureSaved({
-            workspaceId,
-            text:
-              outcome === 'saved' ? t('PLAN.FEATURE_SAVED') : t('PLAN.FEATURE_FAILED'),
-          });
-      });
-    },
+    onExportFeature: exportFeature,
     onDismissFeature: () => {
       setFeatureSaved(null);
     },
-    canPublish: isConfluenceOn && plan.length > 0 && !isLocked,
+    canPublish,
     isPublishing,
-    publishLabel: isPublishing
-      ? t('PLAN.PUBLISHING')
-      : published === null
-        ? t('PLAN.PUBLISH')
-        : t('PLAN.PUBLISH_AGAIN'),
-    publishTip: published === null ? t('PLAN.PUBLISH_TIP') : t('PLAN.PUBLISH_AGAIN_TIP'),
+    publishLabel,
+    publishTip,
     publishNotice:
       shownPublishing === null
         ? null
@@ -573,20 +606,7 @@ export const usePlanViewModel = () => {
             },
     isPublishOpen,
     publishTitle: t('PLAN.PUBLISH_TITLE', { workspace: workspace?.name ?? '' }),
-    onPublish: () => {
-      if (published === null) {
-        setIsPublishOpen(true);
-
-        return;
-      }
-
-      void publish({
-        pageId: published.page.id,
-        spaceId: published.spaceId,
-        parentId: published.parentId,
-        title: published.page.title,
-      });
-    },
+    onPublish: publishPlan,
     onConfirmPublish: (choice: {
       spaceId: string;
       parentId: string | null;
@@ -601,8 +621,7 @@ export const usePlanViewModel = () => {
     onDismissPublish: () => {
       setPublishing(null);
     },
-    exportLabel: t('PLAN.EXPORT'),
-    canExport: plan.length > 0 && !isLocked && target !== null,
+    canExport,
     exportNotice:
       exported === null || exported.kind === 'cancelled'
         ? null
@@ -616,20 +635,39 @@ export const usePlanViewModel = () => {
                   : 'PLAN.EXPORT_FAILED',
               ),
     dismissExportLabel: t('COMMON.CLOSE'),
-    onExport: () => {
-      if (workspaceId === null || target === null) return;
-
-      const viewport = viewportOf(workspace?.viewportId);
-
-      void Run.exportCode({
-        workspaceId,
-        target: { kind: target.kind, value: target.value },
-        viewport: { width: viewport.width, height: viewport.height },
-        steps: flattenPlanSteps(plan),
-      }).then((outcome) => {
-        setExportedIn({ workspaceId, outcome });
-      });
-    },
+    onExport: exportCode,
+    exportMenuLabel: t('PLAN.EXPORT_MENU'),
+    exportItems: [
+      ...(canExport
+        ? [
+            {
+              key: 'code',
+              label: t('PLAN.EXPORT_CODE'),
+              icon: 'download' as const,
+              tip: t('PLAN.EXPORT_TIP'),
+              onPick: exportCode,
+            },
+          ]
+        : []),
+      {
+        key: 'feature',
+        label: t('PLAN.EXPORT_FEATURE'),
+        icon: 'download' as const,
+        onPick: exportFeature,
+      },
+      ...(canPublish
+        ? [
+            {
+              key: 'publish',
+              label: publishLabel,
+              icon: 'up' as const,
+              tip: publishTip,
+              isDisabled: isPublishing,
+              onPick: publishPlan,
+            },
+          ]
+        : []),
+    ],
     onDismissExport: () => {
       setExportedIn(null);
     },

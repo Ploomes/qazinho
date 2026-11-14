@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button, EmptyState, Icon, IconButton } from '@/shared/components/atoms';
-import { ToTop, Tooltip } from '@/shared/components/molecules';
+import { MenuButton, ToTop, Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import {
   PlanCase,
@@ -61,27 +61,19 @@ export const Plan: React.FC = () => {
     isGherkin,
     gherkin,
     gherkinLabel,
-    featureLabel,
     featureNotice,
     onToggleGherkin,
-    onExportFeature,
     onDismissFeature,
-    canPublish,
-    isPublishing,
-    publishLabel,
-    publishTip,
     publishNotice,
     isPublishOpen,
     publishTitle,
-    onPublish,
     onConfirmPublish,
     onCancelPublish,
     onDismissPublish,
-    exportLabel,
-    canExport,
     exportNotice,
     dismissExportLabel,
-    onExport,
+    exportMenuLabel,
+    exportItems,
     onDismissExport,
     onDraftInChat,
     onAddCase,
@@ -154,6 +146,37 @@ export const Plan: React.FC = () => {
         />
       ) : (
         <div className="plan">
+          <PlanChanges
+            workspaceId={workspaceId}
+            plan={plan}
+            doubts={doubts}
+            issue={issue}
+            changed={changed}
+            review={review}
+            canCheck={canCheck}
+            isLocked={isLocked}
+            actions={
+              hasTopActions ? (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    pressed={isGherkin}
+                    onClick={onToggleGherkin}
+                  >
+                    <Icon name="plan" />
+                    {gherkinLabel}
+                  </Button>
+                  <MenuButton
+                    label={exportMenuLabel}
+                    icon="download"
+                    items={exportItems}
+                  />
+                </>
+              ) : null
+            }
+          />
+
           {filesNotice !== null && (
             <Tooltip content={filesNotice.tip}>
               <p className="plan__files">
@@ -161,43 +184,6 @@ export const Plan: React.FC = () => {
                 {filesNotice.text}
               </p>
             </Tooltip>
-          )}
-
-          {hasTopActions && (
-            <div className="plan__toolbar">
-              <Button
-                variant="ghost"
-                size="sm"
-                aria-pressed={isGherkin}
-                onClick={onToggleGherkin}
-              >
-                {gherkinLabel}
-              </Button>
-              {isGherkin && (
-                <Button variant="ghost" size="sm" onClick={onExportFeature}>
-                  {featureLabel}
-                </Button>
-              )}
-              {canPublish && (
-                <Tooltip content={publishTip}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    disabled={isPublishing}
-                    onClick={onPublish}
-                  >
-                    {publishLabel}
-                  </Button>
-                </Tooltip>
-              )}
-              {canExport && (
-                <Tooltip content={t('PLAN.EXPORT_TIP')}>
-                  <Button variant="ghost" size="sm" onClick={onExport}>
-                    {exportLabel}
-                  </Button>
-                </Tooltip>
-              )}
-            </div>
           )}
 
           <AnimatePresence initial={false}>
@@ -407,17 +393,6 @@ export const Plan: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
-
-          <PlanChanges
-            workspaceId={workspaceId}
-            plan={plan}
-            doubts={doubts}
-            issue={issue}
-            changed={changed}
-            review={review}
-            canCheck={canCheck}
-            isLocked={isLocked}
-          />
 
           <PlanDoubts
             workspaceId={workspaceId}

@@ -1,8 +1,17 @@
-.plan-changes__check {
+.plan-changes__bar {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: var(--space-3);
+  align-items: center;
+  gap: var(--space-2);
+  margin-inline: calc(var(--space-4) * -1);
+}
+
+.plan-changes__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
 }
 
 .plan-changes__fold {

@@ -244,6 +244,31 @@ describe('usePlanViewModel', () => {
       });
     });
 
+    it('puts the code, the .feature and the page in one Export menu', () => {
+      useAppStore.setState({ projects: [PROJECT] });
+
+      expect(
+        renderHook(() => usePlanViewModel()).result.current.exportItems.map(
+          ({ key, label }) => [key, label],
+        ),
+      ).toEqual([
+        ['code', 'Test code'],
+        ['feature', 'A .feature file'],
+        ['publish', 'Publish in Confluence'],
+      ]);
+    });
+
+    it('leaves out of the menu what this plan cannot do', () => {
+      useAppStore.setState({ projects: [] });
+      useSetupStore.setState({ integrations: [] });
+
+      expect(
+        renderHook(() => usePlanViewModel()).result.current.exportItems.map(
+          ({ key }) => key,
+        ),
+      ).toEqual(['feature']);
+    });
+
     it('offers to publish only with Confluence on and a plan to publish', () => {
       expect(renderHook(() => usePlanViewModel()).result.current.canPublish).toBe(true);
 

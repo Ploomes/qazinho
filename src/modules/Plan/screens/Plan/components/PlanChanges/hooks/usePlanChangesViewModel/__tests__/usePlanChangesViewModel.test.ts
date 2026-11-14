@@ -106,6 +106,7 @@ function render(over: Partial<IPlanChangesProps> = {}) {
       review: workspace?.review ?? null,
       canCheck: true,
       isLocked: false,
+      actions: null,
       ...over,
     });
   });
@@ -131,6 +132,35 @@ afterEach(() => {
 });
 
 describe('usePlanChangesViewModel', () => {
+  describe('the bar', () => {
+    it('keeps what comes into the plan and what goes out of it in one bar', () => {
+      const { result } = render({ actions: 'Ver em Gherkin' });
+
+      expect(result.current).toMatchObject({
+        hasBar: true,
+        canCheck: true,
+        canMeet: true,
+        actions: 'Ver em Gherkin',
+      });
+    });
+
+    it('still shows the plan’s own actions when there is nothing to check', () => {
+      const { result } = render({ canCheck: false, plan: [], actions: 'Ver em Gherkin' });
+
+      expect(result.current).toMatchObject({
+        hasBar: true,
+        canCheck: false,
+        canMeet: false,
+      });
+    });
+
+    it('does NOT draw an empty bar', () => {
+      const { result } = render({ canCheck: false, plan: [], actions: null });
+
+      expect(result.current.hasBar).toBe(false);
+    });
+  });
+
   describe('checking the sources', () => {
     it('says when nothing changed, with no agent asked', async () => {
       const read = bridge({});
