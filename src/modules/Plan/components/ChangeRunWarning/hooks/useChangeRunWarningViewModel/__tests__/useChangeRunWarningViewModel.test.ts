@@ -42,6 +42,15 @@ describe('useChangeRunWarningViewModel', () => {
     expect(result.current.text).toContain('Checkout regression');
   });
 
+  /** No teste de usabilidade, um plano sem nome deixava a frase com um buraco: "As fontes de mudaram". */
+  it('names a plan with no name the way the sidebar shows it', () => {
+    useWorkspaceStore.setState({ workspaces: [{ ...makeWorkspace(), name: '' }] });
+
+    const { result } = renderHook(() => useChangeRunWarningViewModel());
+
+    expect(result.current.text).toContain('New plan');
+  });
+
   it('takes the QA to the plan to review, without running', () => {
     const startRun = vi.fn(() => Promise.resolve());
 

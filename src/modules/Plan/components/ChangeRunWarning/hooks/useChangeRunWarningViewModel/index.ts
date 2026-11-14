@@ -14,7 +14,12 @@ export const useChangeRunWarningViewModel = () => {
 
   return {
     title: t('PLAN.RUN_CHANGED_TITLE'),
-    text: t('PLAN.RUN_CHANGED_TEXT', { plan: workspace?.name ?? '' }),
+    text: t('PLAN.RUN_CHANGED_TEXT', {
+      plan:
+        workspace === null || workspace.name === ''
+          ? t('WORKSPACE.UNNAMED')
+          : workspace.name,
+    }),
     confirmLabel: t('PLAN.RUN_CHANGED_REVIEW'),
     canConfirm: workspace !== null,
     runLabel: t('PLAN.RUN_CHANGED_RUN'),
