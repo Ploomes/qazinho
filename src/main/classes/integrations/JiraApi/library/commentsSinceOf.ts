@@ -3,8 +3,8 @@ import { adfToMarkdown } from './adfToMarkdown';
 type Loose = Record<string, unknown>;
 
 /**
- * Os comentários de uma história escritos depois de um momento, menos os que o QAzinho
- * postou, os mais velhos primeiro.
+ * Os comentários escritos ou editados numa história depois de um momento, os mais velhos
+ * primeiro; um que o QAzinho postou só conta quando alguém o editou depois.
  */
 export function commentsSinceOf(props: {
   body: unknown;
@@ -19,16 +19,21 @@ export function commentsSinceOf(props: {
       const comment = record(value);
       const author = record(comment.author);
 
+      const created = typeof comment.created === 'string' ? comment.created : '';
+      const updated = typeof comment.updated === 'string' ? comment.updated : created;
+      const isEdited = Date.parse(updated) > Date.parse(created);
+
       return {
         id: typeof comment.id === 'string' ? comment.id : '',
         author: typeof author.displayName === 'string' ? author.displayName : '',
-        at: typeof comment.created === 'string' ? comment.created : '',
+        at: isEdited ? updated : created,
+        isEdited,
         text: adfToMarkdown(comment.body).trim(),
       };
     })
     .filter(
-      ({ id, at, text }) =>
-        text !== '' && !props.skip.includes(id) && Date.parse(at) > since,
+      ({ id, at, isEdited, text }) =>
+        text !== '' && (isEdited || !props.skip.includes(id)) && Date.parse(at) > since,
     )
     .sort((one, other) => Date.parse(one.at) - Date.parse(other.at))
     .map(({ author, at, text }) => ({ author, at, text }));
