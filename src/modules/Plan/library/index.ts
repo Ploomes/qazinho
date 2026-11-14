@@ -16,6 +16,7 @@ export * from './heldDoubtsOf';
 export * from './isReadyStatus';
 export * from './keepVerdicts';
 export * from './liveCasesOf';
+export * from './meetingNameOf';
 export * from './mapCase';
 export * from './missingVariablesOf';
 export * from './moveCase';

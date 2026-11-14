@@ -2,7 +2,7 @@ import type { IMeetingModalProps } from '@/modules/Plan/screens/Plan/components/
 import type { ChangeEvent, DragEvent } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { transcriptOf } from '@/modules/Plan/library';
+import { meetingNameOf, transcriptOf } from '@/modules/Plan/library';
 import { MEETING_MODAL } from '@/modules/Plan/screens/Plan/components/MeetingModal/constants';
 
 export const useMeetingModalViewModel = (props: IMeetingModalProps) => {
@@ -61,7 +61,13 @@ export const useMeetingModalViewModel = (props: IMeetingModalProps) => {
 
       if (read === '') return;
 
-      onRead({ name: name === '' ? t('PLAN.MEETING_PASTED') : name, text: read });
+      onRead({
+        name:
+          name === ''
+            ? meetingNameOf({ text: read, fallback: t('PLAN.MEETING_PASTED') })
+            : name,
+        text: read,
+      });
     },
   };
 };

@@ -70,6 +70,23 @@ describe('useMeetingModalViewModel', () => {
     });
   });
 
+  it('names a pasted transcript by the title it opens with', () => {
+    const { onRead, view } = render();
+
+    act(() => {
+      view.result.current.onText(
+        typed('Alinhamento do cupom · 14/11\nRui: o cupom vencido some da lista.'),
+      );
+    });
+    act(() => {
+      view.result.current.onConfirm();
+    });
+
+    expect(onRead).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'Alinhamento do cupom · 14/11' }),
+    );
+  });
+
   it('does NOT read an empty transcript', () => {
     const { onRead, view } = render();
 
