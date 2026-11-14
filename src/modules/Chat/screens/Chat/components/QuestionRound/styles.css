@@ -139,18 +139,21 @@
   background: var(--accent-soft);
 }
 
-.question-round__label {
+.question-round__words {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
   min-width: 0;
+}
+
+.question-round__label {
   font: var(--font-ui-md);
 }
 
 .question-round__note {
-  flex: 0 1 auto;
-  min-width: 0;
   color: var(--ink3);
   font: var(--font-ui-sm);
-  text-align: right;
 }
 
 .question-round__lock {

@@ -86,10 +86,16 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                               view.onPick({ index: question.index, label: option.label });
                             }}
                           >
-                            <span className="question-round__label">{option.label}</span>
-                            {option.hasNote && (
-                              <span className="question-round__note">{option.note}</span>
-                            )}
+                            <span className="question-round__words">
+                              <span className="question-round__label">
+                                {option.label}
+                              </span>
+                              {option.hasNote && (
+                                <span className="question-round__note">
+                                  {option.note}
+                                </span>
+                              )}
+                            </span>
                             {option.hasLock && (
                               <span className="question-round__lock">
                                 <Icon name="lock" />
@@ -115,8 +121,12 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                               view.onOwn(question.index);
                             }}
                           >
-                            <span className="question-round__label">{view.ownLabel}</span>
-                            <span className="question-round__note">{view.ownNote}</span>
+                            <span className="question-round__words">
+                              <span className="question-round__label">
+                                {view.ownLabel}
+                              </span>
+                              <span className="question-round__note">{view.ownNote}</span>
+                            </span>
                           </button>
                         )}
                         {view.canAskStory && (
@@ -128,10 +138,14 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                               view.onAskStory(question.index);
                             }}
                           >
-                            <span className="question-round__label">
-                              {view.storyLabel}
+                            <span className="question-round__words">
+                              <span className="question-round__label">
+                                {view.storyLabel}
+                              </span>
+                              <span className="question-round__note">
+                                {view.storyNote}
+                              </span>
                             </span>
-                            <span className="question-round__note">{view.storyNote}</span>
                           </button>
                         )}
                       </div>
