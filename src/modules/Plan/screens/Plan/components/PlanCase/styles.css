@@ -269,6 +269,7 @@
 }
 
 .plan-case__step .editable-text:placeholder-shown:not(:read-only) {
+  margin-block: 0;
   border-color: var(--line);
 }
 
@@ -290,6 +291,27 @@
   min-width: 0;
   margin: -3px -5px -3px -1px;
   color: var(--ink3);
+}
+
+.plan-case__expected:has(.editable-text:placeholder-shown:not(:read-only)) {
+  margin: var(--space-2) -5px 0;
+  padding-left: calc(var(--space-2) + 1px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.plan-case__expected:has(.editable-text:placeholder-shown:not(:read-only)):hover {
+  border-color: var(--line2);
+}
+
+.plan-case__expected:has(.editable-text:placeholder-shown:not(:read-only):focus) {
+  border-color: var(--accent-ink);
+}
+
+.plan-case__expected .editable-text:placeholder-shown:not(:read-only) {
+  margin: 0;
+  border-color: transparent;
 }
 
 .plan-case__got,
