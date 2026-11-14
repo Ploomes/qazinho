@@ -152,6 +152,7 @@ describe('the device as MCP tools', () => {
       'drag',
       'hover',
       'upload',
+      'open_download',
       'tab',
       'wait',
       'report',
@@ -315,7 +316,7 @@ describe('the device as MCP tools', () => {
     await client.close();
   });
 
-  it('waits for a late answer, and says how far the page jumped meanwhile', async () => {
+  it('waits for a late answer before it says what the click did', async () => {
     const client = await connect('w1');
     const loaded = await client.callTool({
       name: 'click',
@@ -323,7 +324,7 @@ describe('the device as MCP tools', () => {
     });
 
     expect(textOf(loaded)).toContain('Loaded 20 more');
-    expect(textOf(loaded)).toMatch(/the layout shifted \d\.\d\d in \d+ moves?/);
+    expect(textOf(loaded)).not.toMatch(/layout shifted|frame/);
     await client.close();
   });
 
