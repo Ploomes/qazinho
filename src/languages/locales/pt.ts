@@ -568,6 +568,7 @@ export const pt: typeof en = {
     STRATEGY_DATA: 'Dados',
     STRATEGY_RISKS: 'Riscos',
     DOUBTS: 'Dúvidas na história',
+    CASES_TITLE: 'Casos',
     DOUBTS_SEND: 'Mandar à história',
     DOUBTS_READ: 'Ver respostas',
     DOUBTS_READING: 'Conferindo…',

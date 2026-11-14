@@ -39,6 +39,8 @@ export const Plan: React.FC = () => {
     isLocked,
     lockedLabel,
     isEmpty,
+    casesTitle,
+    casesCount,
     workspaceId,
     strategy,
     doubts,
@@ -414,38 +416,44 @@ export const Plan: React.FC = () => {
           {isGherkin && <pre className="plan__gherkin">{gherkin}</pre>}
 
           {!isGherkin && (
-            <Reorder.Group
-              axis="y"
-              values={plan}
-              onReorder={onReorder}
-              className="plan__cases"
-            >
-              <AnimatePresence initial={false}>
-                {plan.map((testCase) => (
-                  <PlanCase
-                    key={testCase.id}
-                    testCase={testCase}
-                    lastRun={lastRuns[testCase.id]}
-                    liveStatus={liveStatuses[testCase.id]}
-                    isDeveloped={developedIds.includes(testCase.id)}
-                    design={design}
-                    isOpen={openCaseId === testCase.id}
-                    isFresh={freshCaseId === testCase.id}
-                    changeWhy={changeWhys[testCase.id]}
-                    isLocked={isLocked}
-                    onToggle={onToggleCase}
-                    onRunCase={onRunCase}
-                    onEditCase={onEditCase}
-                    onRemoveCase={onRemoveCase}
-                    onOpenBug={onOpenBug}
-                    onMoveCase={onMoveCase}
-                    onAddStep={onAddStep}
-                    onRemoveStep={onRemoveStep}
-                    onEditStep={onEditStep}
-                  />
-                ))}
-              </AnimatePresence>
-            </Reorder.Group>
+            <section className="plan__list" aria-label={casesTitle}>
+              <h2 className="plan__list-head">
+                <span className="plan__list-title">{casesTitle}</span>
+                <span className="plan__list-count">{casesCount}</span>
+              </h2>
+              <Reorder.Group
+                axis="y"
+                values={plan}
+                onReorder={onReorder}
+                className="plan__cases"
+              >
+                <AnimatePresence initial={false}>
+                  {plan.map((testCase) => (
+                    <PlanCase
+                      key={testCase.id}
+                      testCase={testCase}
+                      lastRun={lastRuns[testCase.id]}
+                      liveStatus={liveStatuses[testCase.id]}
+                      isDeveloped={developedIds.includes(testCase.id)}
+                      design={design}
+                      isOpen={openCaseId === testCase.id}
+                      isFresh={freshCaseId === testCase.id}
+                      changeWhy={changeWhys[testCase.id]}
+                      isLocked={isLocked}
+                      onToggle={onToggleCase}
+                      onRunCase={onRunCase}
+                      onEditCase={onEditCase}
+                      onRemoveCase={onRemoveCase}
+                      onOpenBug={onOpenBug}
+                      onMoveCase={onMoveCase}
+                      onAddStep={onAddStep}
+                      onRemoveStep={onRemoveStep}
+                      onEditStep={onEditStep}
+                    />
+                  ))}
+                </AnimatePresence>
+              </Reorder.Group>
+            </section>
           )}
 
           {!isLocked && (

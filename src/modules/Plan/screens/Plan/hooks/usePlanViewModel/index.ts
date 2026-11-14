@@ -502,6 +502,8 @@ export const usePlanViewModel = () => {
     isLocked,
     lockedLabel: t('PLAN.LOCKED', { agent }),
     isEmpty: plan.length === 0,
+    casesTitle: t('PLAN.CASES_TITLE'),
+    casesCount: String(plan.length),
     workspaceId: workspaceId ?? '',
     strategy: workspace?.strategy ?? null,
     doubts: workspace?.doubts ?? PLAN_NO_DOUBTS,

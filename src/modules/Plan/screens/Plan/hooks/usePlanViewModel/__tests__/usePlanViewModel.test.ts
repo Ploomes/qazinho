@@ -91,6 +91,18 @@ const PAGE = {
 };
 
 describe('usePlanViewModel', () => {
+  describe('the list of cases', () => {
+    /** A lista dos casos ganha um título, para não se misturar com as dúvidas acima dela. */
+    it('names the list with how many cases the plan has', () => {
+      useSettingsStore.setState({ language: 'en' });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.casesTitle).toBe('Cases');
+      expect(result.current.casesCount).toBe(String(CASES.length));
+    });
+  });
+
   describe('the variables a plan types', () => {
     const typing = () =>
       useWorkspaceStore.setState({

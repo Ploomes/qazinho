@@ -564,6 +564,7 @@ export const en = {
     STRATEGY_DATA: 'Data',
     STRATEGY_RISKS: 'Risks',
     DOUBTS: 'Doubts on the story',
+    CASES_TITLE: 'Cases',
     DOUBTS_SEND: 'Send to the story',
     DOUBTS_READ: 'Check answers',
     DOUBTS_READING: 'Checking…',

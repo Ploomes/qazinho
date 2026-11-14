@@ -71,31 +71,33 @@ export const PlanDoubts: React.FC<IPlanDoubtsProps> = (props) => {
                   <Icon name={row.icon} />
                   {row.state}
                 </span>
-                {row.url !== null && (
-                  <Tooltip content={row.openLabel}>
-                    <a
-                      className="plan-doubts__open"
-                      href={row.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={row.openLabel}
-                    >
-                      <Icon name="external" />
-                    </a>
-                  </Tooltip>
-                )}
-                {row.canRemove && (
-                  <Tooltip content={row.removeLabel}>
-                    <IconButton
-                      icon="close"
-                      size="sm"
-                      label={row.removeLabel}
-                      onClick={() => {
-                        onRemove(row.id);
-                      }}
-                    />
-                  </Tooltip>
-                )}
+                <span className="plan-doubts__tools">
+                  {row.url !== null && (
+                    <Tooltip content={row.openLabel}>
+                      <a
+                        className="plan-doubts__open"
+                        href={row.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={row.openLabel}
+                      >
+                        <Icon name="external" />
+                      </a>
+                    </Tooltip>
+                  )}
+                  {row.canRemove && (
+                    <Tooltip content={row.removeLabel}>
+                      <IconButton
+                        icon="close"
+                        size="sm"
+                        label={row.removeLabel}
+                        onClick={() => {
+                          onRemove(row.id);
+                        }}
+                      />
+                    </Tooltip>
+                  )}
+                </span>
               </li>
             ))}
           </ul>
