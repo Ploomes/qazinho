@@ -30,7 +30,8 @@ const WORDS: IPlanDocWords = {
   answer: 'Answer',
   doubtWaiting: 'Waiting on the team',
   doubtNotSent: 'Not sent yet',
-  sources: 'From',
+  sources: 'Source',
+  source: (source) => source.replace(/^C(\d+)$/, 'criterion $1'),
   waitsOn: 'Waits on',
   verdicts: {
     pending: 'pending',
@@ -257,7 +258,7 @@ describe('planDocOf', () => {
     expect(blocks[6]).toMatchObject({
       kind: 'facts',
       items: expect.arrayContaining([
-        { label: 'From', value: 'C1, C2', url: null },
+        { label: 'Source', value: 'criterion 1, criterion 2', url: null },
         { label: 'Waits on', value: 'D2', url: null },
       ]) as unknown,
     });

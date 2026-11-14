@@ -1,6 +1,7 @@
 export * from './addCase';
 export * from './addStep';
 export * from './caseIdsUsed';
+export * from './caseSourceOf';
 export * from './changeBriefOf';
 export * from './changeNameOf';
 export * from './doubtsTextsOf';

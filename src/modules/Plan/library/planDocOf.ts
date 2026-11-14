@@ -129,7 +129,7 @@ export function planDocOf(props: {
                 : [
                     {
                       label: words.sources,
-                      value: (testCase.sources ?? []).join(', '),
+                      value: (testCase.sources ?? []).map(words.source).join(', '),
                       url: null,
                     },
                   ]),

@@ -1,3 +1,4 @@
+export type * from './CaseSourceKey';
 export type * from './IChangeReview';
 export type * from './ILiveCase';
 export type * from './IPendingChange';

@@ -3,7 +3,7 @@ import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import type { KeyboardEvent } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { frameUrlOf } from '@/modules/Plan/library';
+import { caseSourceOf, frameUrlOf } from '@/modules/Plan/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 
 export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
@@ -56,7 +56,19 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     reasonTip:
       !isNow && waitsOn.length === 0 && changeWhy !== null ? changeWhy : undefined,
     sources:
-      sources.length === 0 ? null : t('PLAN.CASE_SOURCES', { sources: listOf(sources) }),
+      sources.length === 0
+        ? null
+        : t('PLAN.CASE_SOURCES', {
+            sources: listOf(
+              sources.map((source) => {
+                const word = caseSourceOf(source);
+
+                return word === null
+                  ? source
+                  : t(word.key, { number: word.number, id: word.id });
+              }),
+            ),
+          }),
     priority: reason === '' && testCase.priority === 'P1' ? testCase.priority : null,
     expectedPrefix: t('PLAN.EXPECTED_PREFIX'),
     gotPrefix: t('PLAN.GOT_PREFIX'),

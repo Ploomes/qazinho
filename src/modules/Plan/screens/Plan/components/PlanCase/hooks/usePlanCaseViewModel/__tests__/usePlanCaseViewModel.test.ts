@@ -429,7 +429,9 @@ describe('usePlanCaseViewModel', () => {
         }),
       );
 
-      expect(result.current.sources).toBe('From C1, C3, and SHOP-878');
+      expect(result.current.sources).toBe(
+        'Source: criterion 1, criterion 3, and SHOP-878',
+      );
     });
 
     it('says nothing for a case written with no source', () => {

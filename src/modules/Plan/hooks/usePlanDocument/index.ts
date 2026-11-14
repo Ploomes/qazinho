@@ -1,7 +1,7 @@
 import type { IWorkspace } from '@/modules/Workspace';
 import type { BugReportBlock } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
-import { planDocOf } from '@/modules/Plan/library';
+import { caseSourceOf, planDocOf } from '@/modules/Plan/library';
 import { DOC_VERDICT_KEYS } from '@/modules/Plan/screens/Plan/constants';
 import { useTemplateOf } from '@/modules/Template/hooks';
 import { useSettingsStore } from '@/store';
@@ -90,6 +90,13 @@ export const usePlanDocument = () => {
           doubtWaiting: t('PLAN_DOC.DOUBT_WAITING'),
           doubtNotSent: t('PLAN_DOC.DOUBT_NOT_SENT'),
           sources: t('PLAN_DOC.SOURCES'),
+          source: (source) => {
+            const word = caseSourceOf(source);
+
+            return word === null
+              ? source
+              : t(word.key, { number: word.number, id: word.id });
+          },
           waitsOn: t('PLAN_DOC.WAITS_ON'),
           verdicts: {
             pending: t(DOC_VERDICT_KEYS.pending),

@@ -23,6 +23,7 @@ export interface IPlanDocWords {
   doubtWaiting: string;
   doubtNotSent: string;
   sources: string;
+  source: (source: string) => string;
   waitsOn: string;
   verdicts: Record<StepVerdict, string>;
   gherkin: {
