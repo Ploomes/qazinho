@@ -196,6 +196,7 @@ export interface IWorkspaceStore {
   markStreaming: (props: { workspaceId: string; url: string }) => void;
   markManual: (props: { workspaceId: string; turn: IManualTurn }) => void;
   setDoubts: (props: { workspaceId: string; doubts: IPlanDoubt[] }) => void;
+  addTold: (props: { workspaceId: string; url: string }) => void;
   markStoryRead: (props: { workspaceId: string; at: number }) => void;
   setStoryStage: (props: { workspaceId: string; stage: StoryStage | null }) => void;
   setChanged: (props: { workspaceId: string; changed: IPendingChange | null }) => void;

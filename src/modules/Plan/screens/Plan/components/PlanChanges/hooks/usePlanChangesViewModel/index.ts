@@ -14,7 +14,10 @@ import {
   changeBriefOf,
   changeNameOf,
   doubtsWithAnswers,
+  doubtsWithSent,
+  lineDiffOf,
   planWithItem,
+  reviewDoubtsOf,
   reviewOf,
   storyNoteOf,
 } from '@/modules/Plan/library';
@@ -40,6 +43,7 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
   const setReview = useWorkspaceStore((state) => state.setReview);
   const setChanged = useWorkspaceStore((state) => state.setChanged);
   const resolveChanges = useWorkspaceStore((state) => state.resolveChanges);
+  const addTold = useWorkspaceStore((state) => state.addTold);
   const language = useSettingsStore((state) => state.language);
   const agentName = useSettingsStore((state) => state.agent);
   const model = useSettingsStore((state) => state.model);
@@ -60,12 +64,16 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
   const [isChecking, setChecking] = useState(false);
   const [isProposing, setProposing] = useState(false);
   const [refusingId, setRefusingId] = useState<string | null>(null);
+  const [otherId, setOtherId] = useState<string | null>(null);
+  const [otherNote, setOtherNote] = useState('');
   const [isTelling, setTelling] = useState(false);
   const [isMeeting, setMeeting] = useState(false);
+  const [isShowingDetail, setShowingDetail] = useState(false);
   const [notice, setNotice] = useState<{
     workspaceId: string;
     text: string;
     url: string | null;
+    isCheck: boolean;
   } | null>(null);
 
   const listOf = (names: string[]) =>
@@ -73,7 +81,7 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
       names,
     );
   const say = (text: string, url: string | null = null) => {
-    setNotice({ workspaceId, text, url });
+    setNotice({ workspaceId, text, url, isCheck: false });
   };
   const lineOf = (change: ISourceChange) => {
     if (change.kind === 'page') return t('PLAN.CHANGED_PAGE', { title: change.title });
@@ -83,15 +91,40 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
     if (change.kind === 'meeting')
       return t('PLAN.CHANGED_MEETING', { name: change.name });
 
-    return change.before.replace(/\s+/g, ' ').trim() !==
-      change.after.replace(/\s+/g, ' ').trim() || change.comments.length === 0
-      ? t('PLAN.CHANGED_STORY', { key: change.key })
+    const isTextChanged =
+      change.before.replace(/\s+/g, ' ').trim() !==
+      change.after.replace(/\s+/g, ' ').trim();
+    const count = change.comments.length;
+
+    if (count === 0) return t('PLAN.CHANGED_STORY', { key: change.key });
+
+    return isTextChanged
+      ? t(count === 1 ? 'PLAN.CHANGED_STORY_BOTH_ONE' : 'PLAN.CHANGED_STORY_BOTH_OTHER', {
+          key: change.key,
+          count,
+        })
       : t(
-          change.comments.length === 1
+          count === 1
             ? 'PLAN.CHANGED_STORY_COMMENTS_ONE'
             : 'PLAN.CHANGED_STORY_COMMENTS_OTHER',
-          { key: change.key, count: change.comments.length },
+          { key: change.key, count },
         );
+  };
+  const detailOf = (change: ISourceChange) => {
+    if (change.kind === 'meeting') return { removed: [], added: [], said: [] };
+
+    if (change.kind === 'code')
+      return { removed: [], added: change.files.map(({ path }) => path), said: [] };
+
+    return {
+      ...lineDiffOf({ before: change.before, after: change.after }),
+      said:
+        change.kind === 'story'
+          ? change.comments.map(({ author, text }) =>
+              t('PLAN.CHANGED_SAID', { author, text: text.replace(/\s+/g, ' ').trim() }),
+            )
+          : [],
+    };
   };
   const stepsOf = (drafted: Pick<IDraftedCase, 'steps'> | undefined) =>
     (drafted?.steps ?? []).map(
@@ -102,6 +135,7 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
     id: string;
     state: ReviewItem['state'];
     refusal?: RefusalReason;
+    note?: string;
   }) => {
     if (review === null) return;
 
@@ -115,6 +149,9 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
                 ...item,
                 state: decided.state,
                 ...(decided.refusal === undefined ? {} : { refusal: decided.refusal }),
+                ...(decided.note === undefined || decided.note.trim() === ''
+                  ? {}
+                  : { refusalNote: decided.note.trim() }),
               }
             : item,
         ),
@@ -177,6 +214,7 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
           workspaceId,
           doubts: doubtsWithAnswers({
             doubts,
+            isAnyDoubt: true,
             answers: reading.read.answered.map(({ doubtId, text }) => ({
               doubtId,
               text,
@@ -203,7 +241,28 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
   const meeting = changed?.found.find((one) => one.kind === 'meeting');
   const open = review?.items.filter(({ state }) => state === 'open') ?? [];
   const isDone = review !== null && open.length === 0;
-  const shownNotice = notice?.workspaceId === workspaceId ? notice : null;
+  const shownNotice =
+    notice?.workspaceId === workspaceId && !(notice.isCheck && changed !== null)
+      ? notice
+      : null;
+  const stateOf = (item: ReviewItem) => {
+    if (item.state === 'open') return '';
+
+    if (item.state === 'refused') {
+      const reason = REFUSALS.find(({ reason: one }) => one === item.refusal);
+      const why = item.refusalNote ?? (reason === undefined ? '' : t(reason.labelKey));
+
+      return why === ''
+        ? t('PLAN.REVIEW_REFUSED')
+        : t('PLAN.REVIEW_REFUSED_WHY', { why });
+    }
+
+    return item.kind === 'add'
+      ? t('PLAN.REVIEW_ADDED')
+      : item.kind === 'doubt'
+        ? t('PLAN.REVIEW_DOUBT_ADDED')
+        : t('PLAN.REVIEW_APPLIED');
+  };
   const canTellOf = () =>
     isDone &&
     issue?.source === 'jira' &&
@@ -240,7 +299,28 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
     checkLabel: isChecking ? t('PLAN.CHECKING_CHANGES') : t('PLAN.CHECK_CHANGES'),
     notice: shownNotice,
     closeLabel: t('COMMON.CLOSE'),
-    changedLines: review === null ? (changed?.found.map(lineOf) ?? []) : [],
+    changes:
+      review === null
+        ? (changed?.found ?? []).map((change, index) => ({
+            key: `${change.kind}-${String(index)}`,
+            line: lineOf(change),
+            ...detailOf(change),
+          }))
+        : [],
+    hasDetail:
+      review === null &&
+      (changed?.found ?? []).some((change) => {
+        const detail = detailOf(change);
+
+        return detail.removed.length + detail.added.length + detail.said.length > 0;
+      }),
+    isShowingDetail,
+    detailLabel: isShowingDetail ? t('PLAN.CHANGED_HIDE') : t('PLAN.CHANGED_SHOW'),
+    removedLabel: t('PLAN.CHANGED_REMOVED'),
+    addedLabel: t('PLAN.CHANGED_ADDED'),
+    onDetail: () => {
+      setShowingDetail(!isShowingDetail);
+    },
     canPropose: changed !== null && review === null && !isLocked,
     isProposing,
     proposeLabel: isProposing ? t('PLAN.PROPOSING') : t('PLAN.PROPOSE'),
@@ -272,12 +352,16 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
           isChanged: item.kind === 'change' && !before.includes(line),
         })),
         isOpen: item.state === 'open' && !isLocked,
-        state:
-          item.state === 'applied'
-            ? t('PLAN.REVIEW_APPLIED')
-            : item.state === 'refused'
-              ? t('PLAN.REVIEW_REFUSED')
-              : '',
+        isDecided: item.state !== 'open',
+        className:
+          item.state === 'open'
+            ? 'plan-changes__item'
+            : 'plan-changes__item plan-changes__item--decided',
+        state: stateOf(item),
+        isOther: otherId === item.id,
+        otherNote,
+        otherLabel: t('PLAN.REVIEW_REFUSE_OTHER_LABEL'),
+        otherConfirmLabel: t('PLAN.REVIEW_REFUSE'),
         applyLabel:
           item.kind === 'change' ? t('PLAN.REVIEW_APPLY') : t('PLAN.REVIEW_ADD'),
         refuseLabel: t('PLAN.REVIEW_REFUSE'),
@@ -297,6 +381,7 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
     doneVariant: canTellOf() ? ('ghost' as const) : ('primary' as const),
     isTelling,
     storyKey: issue?.key ?? '',
+    isMentioning: review !== null && reviewDoubtsOf({ review, doubts }).length > 0,
     note:
       review === null
         ? ''
@@ -310,8 +395,12 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
                   : t('PLAN.NOTE_MEETING', { name: changeNameOf(meeting), summary }),
               changed: (one) => t('PLAN.NOTE_CHANGED', one),
               added: (title) => t('PLAN.NOTE_ADDED', { title }),
-              doubt: (question) => t('PLAN.NOTE_DOUBT', { question }),
+              doubt: ({ id, question }) =>
+                id === ''
+                  ? t('PLAN.NOTE_DOUBT', { question })
+                  : t('PLAN.NOTE_DOUBT_ID', { id, question }),
             },
+            doubts,
             template: templateFor({
               kind: 'decisions',
               chosen: projects.find(({ id }) => id === workspaceNow?.projectId)
@@ -338,11 +427,15 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
           return;
         }
 
-        say(
-          checked.missed.length === 0
-            ? t('PLAN.CHANGES_NONE')
-            : t('PLAN.CHANGES_MISSED', { names: listOf(checked.missed) }),
-        );
+        setNotice({
+          workspaceId,
+          text:
+            checked.missed.length === 0
+              ? t('PLAN.CHANGES_NONE')
+              : t('PLAN.CHANGES_MISSED', { names: listOf(checked.missed) }),
+          url: null,
+          isCheck: true,
+        });
       });
     },
     onPropose: () => {
@@ -393,10 +486,25 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
     },
     onRefuse: (id: string) => {
       setRefusingId(refusingId === id ? null : id);
+      setOtherId(null);
+      setOtherNote('');
     },
     onRefusal: (refused: { id: string; reason: RefusalReason }) => {
+      if (refused.reason === 'other') {
+        setOtherId(refused.id);
+
+        return;
+      }
+
       setRefusingId(null);
       decide({ id: refused.id, state: 'refused', refusal: refused.reason });
+    },
+    onOtherNote: setOtherNote,
+    onOtherConfirm: (id: string) => {
+      setRefusingId(null);
+      setOtherId(null);
+      decide({ id, state: 'refused', refusal: 'other', note: otherNote });
+      setOtherNote('');
     },
     onApplyAll: () => {
       if (review === null || isLocked) return;
@@ -419,7 +527,21 @@ export const usePlanChangesViewModel = (props: IPlanChangesProps) => {
       setTelling(false);
     },
     onTold: (url: string) => {
+      const told = review === null ? [] : reviewDoubtsOf({ review, doubts });
+
       setTelling(false);
+
+      if (told.length > 0)
+        setDoubts({
+          workspaceId,
+          doubts: doubtsWithSent({
+            doubts,
+            sent: { url, at: new Date().toISOString() },
+            questions: told,
+          }),
+        });
+
+      addTold({ workspaceId, url });
       resolveChanges(workspaceId);
       say(t('PLAN.TELL_POSTED', { key: issue?.key ?? '' }), url);
     },

@@ -2,6 +2,7 @@
 export interface ITellStoryModalProps {
   storyKey: string;
   note: string;
+  isMentioning: boolean;
   onCancel: () => void;
   onPosted: (url: string) => void;
 }

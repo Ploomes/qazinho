@@ -4,6 +4,7 @@ import {
   changeBriefOf,
   planWithItem,
   reviewOf,
+  reviewDoubtsOf,
   storyNoteOf,
 } from '@/modules/Plan/library';
 
@@ -185,18 +186,39 @@ describe('the review of a change', () => {
           plan: [CASE],
           words: {
             intro: (summary) => `Plano atualizado: ${summary}`,
-            changed: ({ id, title, why }) => `${id} ${title}: ${why}`,
+            changed: ({ id, title }) => `${id} ${title}`,
             added: (title) => `Novo caso: ${title}`,
-            doubt: (question) => `Dúvida: ${question}`,
+            doubt: ({ id, question }) => `${id}: ${question}`,
           },
+          doubts: [
+            { id: 'D4', question: 'O bloqueio dura quanto?', sent: null, answer: null },
+          ],
         }),
       ).toBe(
         [
           'Plano atualizado: O critério 3 passou de 3 para 5 tentativas.',
-          '- TC-04 Cupom inválido bloqueia: C3 diz 5',
-          '- Dúvida: O bloqueio dura quanto?',
+          '- TC-04 Cupom inválido bloqueia',
+          '- D4: O bloqueio dura quanto?',
         ].join('\n'),
       );
+    });
+
+    it('names the doubts the review added by the ids they got', () => {
+      const review = reviewOf({ read: READ, at: '' });
+      const decided = {
+        ...review,
+        items: review.items.map((item) => ({ ...item, state: 'applied' as const })),
+      };
+
+      expect(
+        reviewDoubtsOf({
+          review: decided,
+          doubts: [
+            { id: 'D1', question: 'Outra coisa?', sent: null, answer: null },
+            { id: 'D4', question: 'O bloqueio dura quanto?', sent: null, answer: null },
+          ],
+        }),
+      ).toEqual([{ id: 'D4', question: 'O bloqueio dura quanto?' }]);
     });
   });
 });

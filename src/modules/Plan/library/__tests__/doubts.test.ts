@@ -100,6 +100,17 @@ describe('the doubts of a plan', () => {
         }),
       ).toEqual([doubt({ id: 'D1' }), doubt({ id: 'D2', sent: SENT, answer: first })]);
     });
+
+    /** A leitura de uma mudança acha a resposta mesmo de uma dúvida que foi no comentário do plano. */
+    it('answers any doubt when the reader of a change says so, sent or not', () => {
+      expect(
+        doubtsWithAnswers({
+          doubts: [doubt({ id: 'D1' })],
+          answers: [{ doubtId: 'D1', ...ANSWER }],
+          isAnyDoubt: true,
+        }),
+      ).toEqual([doubt({ id: 'D1', answer: ANSWER })]);
+    });
   });
 
   describe('waitingDoubtsOf', () => {

@@ -31,7 +31,11 @@ export const useTellStoryModalViewModel = (props: ITellStoryModalProps) => {
 
       setPosting(true);
       setFailure('');
-      void Jira.tell({ key: storyKey, text: text.trim() }).then((posted) => {
+      void Jira.tell({
+        key: storyKey,
+        text: text.trim(),
+        isMentioning: props.isMentioning,
+      }).then((posted) => {
         setPosting(false);
 
         if (posted.isPosted) onPosted(posted.url);

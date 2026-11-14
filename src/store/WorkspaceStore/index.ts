@@ -748,6 +748,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  addTold: ({ workspaceId, url }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({ ...workspace, told: [...(workspace.told ?? []), url] }),
+      }),
+    })),
+
   setStoryStage: ({ workspaceId, stage }) =>
     set((state) => ({
       workspaces: mapWorkspace({

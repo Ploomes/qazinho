@@ -38,7 +38,7 @@ describe('the comments in the team’s template', () => {
           intro: (summary) => summary,
           changed: ({ id }) => id,
           added: (title) => title,
-          doubt: (question) => `Dúvida: ${question}`,
+          doubt: ({ question }) => `Dúvida: ${question}`,
         },
         template: {
           ...TEMPLATE,

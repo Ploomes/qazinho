@@ -2,7 +2,7 @@ import type { IPlanChangesProps } from './types';
 import { AnimatePresence } from 'motion/react';
 import { MeetingModal } from '@/modules/Plan/screens/Plan/components/MeetingModal';
 import { TellStoryModal } from '@/modules/Plan/screens/Plan/components/TellStoryModal';
-import { Button, Icon, IconButton } from '@/shared/components/atoms';
+import { Button, Caret, Icon, IconButton, Input } from '@/shared/components/atoms';
 import { Fold, MenuButton } from '@/shared/components/molecules';
 import { usePlanChangesViewModel } from './hooks';
 import './styles.css';
@@ -23,7 +23,13 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
     checkLabel,
     notice,
     closeLabel,
-    changedLines,
+    changes,
+    hasDetail,
+    isShowingDetail,
+    detailLabel,
+    removedLabel,
+    addedLabel,
+    onDetail,
     canPropose,
     isProposing,
     proposeLabel,
@@ -42,6 +48,7 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
     doneVariant,
     isTelling,
     storyKey,
+    isMentioning,
     note,
     canMeet,
     meetLabel,
@@ -55,6 +62,8 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
     onApply,
     onRefuse,
     onRefusal,
+    onOtherNote,
+    onOtherConfirm,
     onApplyAll,
     onTell,
     onCancelTell,
@@ -117,15 +126,66 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
           </Fold>
         )}
 
-        {changedLines.length > 0 && (
+        {changes.length > 0 && (
           <Fold key="changed" className="plan-changes__fold">
             <div className="plan-changes__banner" role="status">
               <div className="plan-changes__lines">
-                {changedLines.map((line) => (
-                  <span key={line} className="plan-changes__line">
-                    {line}
+                {changes.map((change) => (
+                  <span key={change.key} className="plan-changes__line">
+                    {change.line}
                   </span>
                 ))}
+                {hasDetail && (
+                  <button
+                    type="button"
+                    className="plan-changes__detail-toggle"
+                    aria-expanded={isShowingDetail}
+                    onClick={onDetail}
+                  >
+                    <Caret isOpen={isShowingDetail} />
+                    {detailLabel}
+                  </button>
+                )}
+                <AnimatePresence initial={false}>
+                  {isShowingDetail && (
+                    <Fold key="detail" className="plan-changes__detail">
+                      {changes.map((change) => (
+                        <div key={change.key} className="plan-changes__diff">
+                          {change.removed.map((line) => (
+                            <span
+                              key={`removed-${line}`}
+                              className="plan-changes__diff-line plan-changes__diff-line--removed"
+                            >
+                              <span className="plan-changes__diff-mark">
+                                {removedLabel}
+                              </span>
+                              {line}
+                            </span>
+                          ))}
+                          {change.added.map((line) => (
+                            <span
+                              key={`added-${line}`}
+                              className="plan-changes__diff-line plan-changes__diff-line--added"
+                            >
+                              <span className="plan-changes__diff-mark">
+                                {addedLabel}
+                              </span>
+                              {line}
+                            </span>
+                          ))}
+                          {change.said.map((line) => (
+                            <span
+                              key={`said-${line}`}
+                              className="plan-changes__diff-said"
+                            >
+                              {line}
+                            </span>
+                          ))}
+                        </div>
+                      ))}
+                    </Fold>
+                  )}
+                </AnimatePresence>
               </div>
               {canPropose && (
                 <div className="plan-changes__actions">
@@ -149,80 +209,107 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
 
           <ul className="plan-changes__items">
             {items.map((item) => (
-              <li key={item.id} className="plan-changes__item">
+              <li key={item.id} className={item.className}>
                 <div className="plan-changes__item-head">
                   <span className="plan-changes__item-title">{item.title}</span>
                   {item.state !== '' && (
                     <span className="plan-changes__item-state">{item.state}</span>
                   )}
                 </div>
-                <p className="plan-changes__item-text">{item.text}</p>
+                <AnimatePresence initial={false}>
+                  {!item.isDecided && (
+                    <Fold key="body" className="plan-changes__body">
+                      <p className="plan-changes__item-text">{item.text}</p>
 
-                {item.after.length > 0 && (
-                  <div className="plan-changes__compare">
-                    {item.before.length > 0 && (
-                      <div className="plan-changes__side">
-                        <span className="plan-changes__side-label">{nowLabel}</span>
-                        {item.before.map((line) => (
-                          <span key={line} className="plan-changes__step">
-                            {line}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    <div className="plan-changes__side">
-                      <span className="plan-changes__side-label">{thenLabel}</span>
-                      {item.after.map((one) => (
-                        <span
-                          key={one.line}
-                          className={
-                            one.isChanged
-                              ? 'plan-changes__step plan-changes__step--changed'
-                              : 'plan-changes__step'
-                          }
-                        >
-                          {one.line}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                      {item.after.length > 0 && (
+                        <div className="plan-changes__compare">
+                          {item.before.length > 0 && (
+                            <div className="plan-changes__side">
+                              <span className="plan-changes__side-label">{nowLabel}</span>
+                              {item.before.map((line) => (
+                                <span key={line} className="plan-changes__step">
+                                  {line}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          <div className="plan-changes__side">
+                            <span className="plan-changes__side-label">{thenLabel}</span>
+                            {item.after.map((one) => (
+                              <span
+                                key={one.line}
+                                className={
+                                  one.isChanged
+                                    ? 'plan-changes__step plan-changes__step--changed'
+                                    : 'plan-changes__step'
+                                }
+                              >
+                                {one.line}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
-                {item.isOpen && (
-                  <div className="plan-changes__item-actions">
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        onApply(item.id);
-                      }}
-                    >
-                      {item.applyLabel}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      expanded={item.isRefusing}
-                      onClick={() => {
-                        onRefuse(item.id);
-                      }}
-                    >
-                      {item.refuseLabel}
-                    </Button>
-                    {item.isRefusing &&
-                      item.refusals.map((refusal) => (
-                        <button
-                          key={refusal.reason}
-                          type="button"
-                          className="plan-changes__refusal"
-                          onClick={() => {
-                            onRefusal({ id: item.id, reason: refusal.reason });
-                          }}
-                        >
-                          {refusal.label}
-                        </button>
-                      ))}
-                  </div>
-                )}
+                      {item.isOpen && (
+                        <div className="plan-changes__item-actions">
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              onApply(item.id);
+                            }}
+                          >
+                            {item.applyLabel}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            expanded={item.isRefusing}
+                            onClick={() => {
+                              onRefuse(item.id);
+                            }}
+                          >
+                            {item.refuseLabel}
+                          </Button>
+                          {item.isRefusing &&
+                            !item.isOther &&
+                            item.refusals.map((refusal) => (
+                              <button
+                                key={refusal.reason}
+                                type="button"
+                                className="plan-changes__refusal"
+                                onClick={() => {
+                                  onRefusal({ id: item.id, reason: refusal.reason });
+                                }}
+                              >
+                                {refusal.label}
+                              </button>
+                            ))}
+                          {item.isOther && (
+                            <span className="plan-changes__other">
+                              <Input
+                                value={item.otherNote}
+                                label={item.otherLabel}
+                                placeholder={item.otherLabel}
+                                isCompact
+                                isAutoFocused
+                                onChange={onOtherNote}
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  onOtherConfirm(item.id);
+                                }}
+                              >
+                                {item.otherConfirmLabel}
+                              </Button>
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </Fold>
+                  )}
+                </AnimatePresence>
               </li>
             ))}
           </ul>
@@ -259,6 +346,7 @@ export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
             key="tell"
             storyKey={storyKey}
             note={note}
+            isMentioning={isMentioning}
             onCancel={onCancelTell}
             onPosted={onTold}
           />

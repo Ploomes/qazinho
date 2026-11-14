@@ -228,10 +228,86 @@ describe('usePlanChangesViewModel', () => {
       rerender();
 
       expect(result.current).toMatchObject({
-        changedLines: ['SHOP-878 changed after this plan.'],
+        changes: [{ line: 'SHOP-878 changed after this plan.' }],
         canPropose: true,
         canCheck: false,
       });
+    });
+
+    /** No teste de usabilidade, o QA só via o que mudou depois de chamar o agente. */
+    it('shows the lines that left and came, without the agent', () => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace([CASE]), changed: CHANGED }],
+      });
+      const { result } = render();
+
+      expect(result.current).toMatchObject({
+        hasDetail: true,
+        isShowingDetail: false,
+        detailLabel: 'See what changed',
+      });
+      expect(result.current.changes[0]).toMatchObject({
+        removed: ['C3. 3 tentativas'],
+        added: ['C3. 5 tentativas'],
+      });
+
+      act(() => {
+        result.current.onDetail();
+      });
+
+      expect(result.current).toMatchObject({
+        isShowingDetail: true,
+        detailLabel: 'Hide what changed',
+      });
+    });
+
+    it('says the story changed and got a comment when both came', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace([CASE]),
+            changed: {
+              ...CHANGED,
+              found: [
+                {
+                  ...FOUND,
+                  comments: [{ author: 'Rui', at: '2026-11-13', text: 'Agora 5.' }],
+                },
+              ],
+            },
+          },
+        ],
+      });
+      const { result } = render();
+
+      expect(result.current.changes[0]).toMatchObject({
+        line: 'SHOP-878 changed and got 1 new comment after this plan.',
+        said: ['Rui: Agora 5.'],
+      });
+    });
+
+    it('does NOT keep saying nothing changed once a check finds a change', async () => {
+      bridge({ checked: { changes: [] } });
+      const { result, rerender } = render();
+
+      act(() => {
+        result.current.onCheck();
+      });
+
+      await waitFor(() => {
+        expect(result.current.notice?.text).toBe(
+          'Nothing changed in the sources since this plan.',
+        );
+      });
+
+      act(() => {
+        useWorkspaceStore.setState({
+          workspaces: [{ ...makeWorkspace([CASE]), issue: ISSUE, changed: CHANGED }],
+        });
+      });
+      rerender();
+
+      expect(result.current.notice).toBeNull();
     });
 
     it('says a story got new comments when only comments came', () => {
@@ -261,7 +337,7 @@ describe('usePlanChangesViewModel', () => {
         ],
       });
 
-      expect(render().result.current.changedLines).toEqual([
+      expect(render().result.current.changes.map(({ line }) => line)).toEqual([
         'SHOP-878 got 1 new comment after this plan.',
         'The branch feat/coupon moved after this plan.',
       ]);
@@ -399,7 +475,9 @@ describe('usePlanChangesViewModel', () => {
           text: 'Rui: fica 5 tentativas.',
         }),
       ]);
-      expect(result.current.note).toMatch(/^Decided in the meeting “alinhamento\.vtt”: /);
+      expect(result.current.note).toMatch(
+        /^I updated the test plan by what the meeting “alinhamento\.vtt” decided\./,
+      );
 
       act(() => {
         result.current.onDone();
@@ -467,6 +545,62 @@ describe('usePlanChangesViewModel', () => {
       expect(now()?.plan).toEqual([CASE]);
     });
 
+    /** No teste de usabilidade, cada item decidido seguia aberto e uma dúvida dizia "Aplicada". */
+    it('folds what was decided into a line that says how', () => {
+      const { result, rerender } = render();
+
+      act(() => {
+        result.current.onApply('R1');
+      });
+      rerender();
+      act(() => {
+        result.current.onApply('R2');
+      });
+      rerender();
+
+      expect(
+        result.current.items.map(({ isDecided, state, className }) => [
+          isDecided,
+          state,
+          className,
+        ]),
+      ).toEqual([
+        [true, 'Applied', 'plan-changes__item plan-changes__item--decided'],
+        [true, 'In the doubts', 'plan-changes__item plan-changes__item--decided'],
+      ]);
+    });
+
+    it('asks the QA why when the reason is another one, and keeps the words', () => {
+      const { result, rerender } = render();
+
+      act(() => {
+        result.current.onRefuse('R1');
+      });
+      rerender();
+      act(() => {
+        result.current.onRefusal({ id: 'R1', reason: 'other' });
+      });
+      rerender();
+
+      expect(result.current.items[0]).toMatchObject({ isOther: true, isOpen: true });
+
+      act(() => {
+        result.current.onOtherNote('A loja não tem esse produto');
+      });
+      rerender();
+      act(() => {
+        result.current.onOtherConfirm('R1');
+      });
+      rerender();
+
+      expect(now()?.review?.items[0]).toMatchObject({
+        state: 'refused',
+        refusal: 'other',
+        refusalNote: 'A loja não tem esse produto',
+      });
+      expect(result.current.items[0]?.state).toBe('Refused: A loja não tem esse produto');
+    });
+
     it('applies them all at once, then offers to tell the story or be done', () => {
       const { result, rerender } = render();
 
@@ -479,10 +613,35 @@ describe('usePlanChangesViewModel', () => {
       expect(result.current.note).toBe(
         [
           'I updated the test plan for this change: O critério 3 passou de 3 para 5 tentativas.',
-          '- TC-04 Cupom inválido bloqueia: C3 diz 5',
-          '- Doubt: O bloqueio dura quanto?',
+          '- TC-04 Cupom inválido bloqueia',
+          '- D1: O bloqueio dura quanto?',
         ].join('\n'),
       );
+      expect(result.current.isMentioning).toBe(true);
+    });
+
+    /** No teste de usabilidade, as dúvidas que foram no comentário seguiam "Não enviada" e nunca fechavam. */
+    it('marks the doubts the comment carried as sent, and keeps the comment as its own', () => {
+      const { result, rerender } = render();
+      const url = 'https://shop.atlassian.net/browse/SHOP-878?focusedCommentId=10052';
+
+      act(() => {
+        result.current.onApplyAll();
+      });
+      rerender();
+      act(() => {
+        result.current.onTold(url);
+      });
+
+      expect(now()?.doubts).toEqual([
+        {
+          id: 'D1',
+          question: 'O bloqueio dura quanto?',
+          sent: { url, at: expect.any(String) as string },
+          answer: null,
+        },
+      ]);
+      expect(now()?.told).toEqual([url]);
     });
 
     it('takes how the sources read now as the baseline once the QA is done', () => {

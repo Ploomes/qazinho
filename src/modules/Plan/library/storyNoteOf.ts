@@ -1,5 +1,5 @@
 import type { IChangeReview, ITestCase } from '@/modules/Plan/types';
-import type { ITemplate } from '@/shared/types';
+import type { IPlanDoubt, ITemplate } from '@/shared/types';
 import { renderParts, textOfBlocks } from '@/modules/Template/library';
 
 /**
@@ -11,10 +11,11 @@ export function storyNoteOf(props: {
   plan: ITestCase[];
   words: {
     intro: (summary: string) => string;
-    changed: (props: { id: string; title: string; why: string }) => string;
+    changed: (props: { id: string; title: string }) => string;
     added: (title: string) => string;
-    doubt: (question: string) => string;
+    doubt: (props: { id: string; question: string }) => string;
   };
+  doubts?: IPlanDoubt[];
   template?: ITemplate | null;
   values?: Record<string, string>;
 }): string {
@@ -22,17 +23,20 @@ export function storyNoteOf(props: {
   const lines = review.items
     .filter(({ state }) => state === 'applied')
     .map((item) => {
-      if (item.kind === 'doubt') return words.doubt(item.question);
+      if (item.kind === 'doubt')
+        return words.doubt({
+          id:
+            (props.doubts ?? []).find(
+              ({ question }) => question.trim() === item.question.trim(),
+            )?.id ?? '',
+          question: item.question,
+        });
 
       if (item.kind === 'add') return words.added(item.case.title);
 
       const kept = plan.find(({ id }) => id === item.caseId);
 
-      return words.changed({
-        id: item.caseId,
-        title: kept?.title ?? item.case.title,
-        why: item.why,
-      });
+      return words.changed({ id: item.caseId, title: kept?.title ?? item.case.title });
     });
 
   if (props.template !== undefined && props.template !== null)

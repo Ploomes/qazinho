@@ -23,6 +23,7 @@ function render() {
     useTellStoryModalViewModel({
       storyKey: 'SHOP-878',
       note: 'Atualizei o plano.\n- TC-04: 5 tentativas',
+      isMentioning: true,
       onCancel: vi.fn(),
       onPosted,
     }),
@@ -57,7 +58,11 @@ describe('useTellStoryModalViewModel', () => {
     await waitFor(() => {
       expect(onPosted).toHaveBeenCalledWith('https://shop.atlassian.net/browse/SHOP-878');
     });
-    expect(tell).toHaveBeenCalledWith({ key: 'SHOP-878', text: 'Plano atualizado.' });
+    expect(tell).toHaveBeenCalledWith({
+      key: 'SHOP-878',
+      text: 'Plano atualizado.',
+      isMentioning: true,
+    });
   });
 
   it('says why Jira refused, and keeps the window', async () => {
