@@ -126,12 +126,12 @@
 
 .integration-card__key {
   color: var(--ink3);
-  font: 500 11px/1.5 var(--font-mono);
+  font: var(--font-meta-sm);
 }
 
 .integration-card__value {
   color: var(--ink);
-  font: 400 12px/1.5 var(--font-ui);
+  font: var(--font-ui-sm);
 }
 
 .integration-card__hint {
