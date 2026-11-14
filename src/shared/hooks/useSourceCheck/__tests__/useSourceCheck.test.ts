@@ -51,6 +51,36 @@ afterEach(() => {
 });
 
 describe('useSourceCheck', () => {
+  /** O QAzinho não pode tomar o próprio comentário por novidade da história. */
+  it('tells the check which comments QAzinho posted on the story', async () => {
+    const check = sources({});
+
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...makeWorkspace(),
+          snapshots: [SNAP],
+          told: ['https://shop.atlassian.net/browse/SHOP-878?focusedCommentId=10052'],
+          doubts: [
+            {
+              id: 'D1',
+              question: 'Quanto dura?',
+              sent: {
+                url: 'https://shop.atlassian.net/browse/SHOP-878?focusedCommentId=10041',
+                at: '',
+              },
+              answer: null,
+            },
+          ],
+        },
+      ],
+    });
+
+    await renderHook(() => useSourceCheck()).result.current.check('w1');
+
+    expect(check.mock.calls[0]?.[0].posted).toEqual(['10041', '10052']);
+  });
+
   it('reads the sources again against how they read, and keeps what changed', async () => {
     const check = sources({
       changes: [FOUND],
@@ -60,7 +90,7 @@ describe('useSourceCheck', () => {
 
     await act(() => result.current.check('w1'));
 
-    expect(check).toHaveBeenCalledWith({ snapshots: [SNAP], code: null });
+    expect(check).toHaveBeenCalledWith({ snapshots: [SNAP], code: null, posted: [] });
     expect(now()?.changed).toMatchObject({
       found: [FOUND],
       snapshots: [{ ...SNAP, text: 'C3. 5 tentativas' }],

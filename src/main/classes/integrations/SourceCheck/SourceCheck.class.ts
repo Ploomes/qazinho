@@ -23,7 +23,9 @@ export class SourceCheck {
   /** O que mudou em cada fonte, como cada uma está agora, e as que não deu para ler. */
   public async check(ask: ISourcesCheckAsk): Promise<ISourcesChecked> {
     const [read, code] = await Promise.all([
-      Promise.all(ask.snapshots.map((snapshot) => this.snapshot(snapshot))),
+      Promise.all(
+        ask.snapshots.map((snapshot) => this.snapshot({ snapshot, skip: ask.posted })),
+      ),
       ask.code === null ? Promise.resolve(null) : this.code(ask.code),
     ]);
 
@@ -41,11 +43,12 @@ export class SourceCheck {
     };
   }
 
-  private async snapshot(snapshot: ISourceSnapshot): Promise<{
+  private async snapshot(props: { snapshot: ISourceSnapshot; skip: string[] }): Promise<{
     change: ISourceChange | null;
     now: ISourceSnapshot;
     missed: string | null;
   }> {
+    const { snapshot } = props;
     const at = new Date().toISOString();
 
     if (snapshot.kind === 'page') {
@@ -75,7 +78,11 @@ export class SourceCheck {
 
     const [read, comments] = await Promise.all([
       this.ports.readStory(snapshot.key),
-      this.ports.readComments({ key: snapshot.key, since: snapshot.at }),
+      this.ports.readComments({
+        key: snapshot.key,
+        since: snapshot.at,
+        skip: props.skip,
+      }),
     ]);
 
     if (!read.isRead) return { change: null, now: snapshot, missed: snapshot.key };

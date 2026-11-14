@@ -31,7 +31,7 @@ describe('commentsSinceOf', () => {
           ],
         },
         since: '2026-11-13T13:00:00.000Z',
-        me: 'qa',
+        skip: ['10041'],
       }),
     ).toEqual([
       { author: 'Lia Dev', at: '2026-11-13T15:00:00.000Z', text: 'Subi no staging.' },
@@ -39,12 +39,14 @@ describe('commentsSinceOf', () => {
     ]);
   });
 
-  it('does NOT count what the QA wrote, nor an empty comment', () => {
+  /** Um comentário que o QA escreveu à mão no Jira é novidade; só o que o QAzinho postou não é. */
+  it('does NOT count what QAzinho posted, nor an empty comment', () => {
     expect(
       commentsSinceOf({
         body: {
           comments: [
             {
+              id: '10041',
               author: { accountId: 'qa', displayName: 'Ana QA' },
               created: '2026-11-13T15:00:00.000Z',
               body: doc('D1 Quanto dura?'),
@@ -57,8 +59,33 @@ describe('commentsSinceOf', () => {
           ],
         },
         since: '2026-11-13T13:00:00.000Z',
-        me: 'qa',
+        skip: ['10041'],
       }),
     ).toEqual([]);
+  });
+
+  it('counts what the QA wrote by hand in the story', () => {
+    expect(
+      commentsSinceOf({
+        body: {
+          comments: [
+            {
+              id: '10050',
+              author: { accountId: 'qa', displayName: 'Ana QA' },
+              created: '2026-11-13T15:00:00.000Z',
+              body: doc('Falei com a Marina: minúsculas valem.'),
+            },
+          ],
+        },
+        since: '2026-11-13T13:00:00.000Z',
+        skip: ['10041'],
+      }),
+    ).toEqual([
+      {
+        author: 'Ana QA',
+        at: '2026-11-13T15:00:00.000Z',
+        text: 'Falei com a Marina: minúsculas valem.',
+      },
+    ]);
   });
 });

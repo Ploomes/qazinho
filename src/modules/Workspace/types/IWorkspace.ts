@@ -48,6 +48,7 @@ export interface IWorkspace {
   snapshots?: ISourceSnapshot[];
   changed?: IPendingChange;
   review?: IChangeReview;
+  told?: string[];
   unreadPlan: IUnreadPlan | null;
   plainValues: string[];
   planSource: ICodeSource | null;

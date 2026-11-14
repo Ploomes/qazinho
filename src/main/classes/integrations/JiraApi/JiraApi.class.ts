@@ -385,29 +385,23 @@ export class JiraApi {
       : { isRead: false, failure: 'unexpected' };
   }
 
-  /** O que outros escreveram numa história depois de um momento, do mais velho. */
+  /** O que se escreveu numa história depois de um momento, menos o que o QAzinho postou. */
   public async commentsSince(props: {
     key: string;
     since: string;
+    skip: string[];
   }): Promise<{ author: string; at: string; text: string }[] | null> {
     const signed = await this.credentials();
 
     if (signed === null) return null;
 
-    const [comments, me] = await Promise.all([
-      this.request({
-        signed,
-        path: `/rest/api/3/issue/${encodeURIComponent(props.key)}/comment?orderBy=-created&maxResults=${String(JIRA_READ.answerComments)}`,
-      }),
-      this.request({ signed, path: '/rest/api/3/myself' }),
-    ]);
+    const comments = await this.request({
+      signed,
+      path: `/rest/api/3/issue/${encodeURIComponent(props.key)}/comment?orderBy=-created&maxResults=${String(JIRA_READ.answerComments)}`,
+    });
 
     return comments.isOk
-      ? commentsSinceOf({
-          body: comments.body,
-          since: props.since,
-          me: (me.isOk ? this.personOf(me.body)?.id : null) ?? '',
-        })
+      ? commentsSinceOf({ body: comments.body, since: props.since, skip: props.skip })
       : null;
   }
 

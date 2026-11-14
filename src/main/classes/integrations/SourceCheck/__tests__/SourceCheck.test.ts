@@ -69,7 +69,9 @@ function check(over: Partial<ISourceCheck> = {}) {
 
 describe('SourceCheck', () => {
   it('finds nothing when the story, the page and the branch read as before', async () => {
-    expect(await check().check({ snapshots: [SNAP, PAGE], code: CODE })).toEqual({
+    expect(
+      await check().check({ snapshots: [SNAP, PAGE], code: CODE, posted: [] }),
+    ).toEqual({
       changes: [],
       snapshots: [SNAP, PAGE],
       code: CODE,
@@ -88,7 +90,7 @@ describe('SourceCheck', () => {
         Promise.resolve([
           { author: 'Rui PO', at: '2026-11-13T15:00:00.000Z', text: 'Agora 5.' },
         ]),
-    }).check({ snapshots: [SNAP], code: null });
+    }).check({ snapshots: [SNAP], code: null, posted: [] });
 
     expect(checked.changes).toEqual([
       expect.objectContaining({
@@ -113,7 +115,7 @@ describe('SourceCheck', () => {
         Promise.resolve([
           { author: 'Rui PO', at: '2026-11-13T15:00:00.000Z', text: 'D1: 10 min.' },
         ]),
-    }).check({ snapshots: [SNAP], code: null });
+    }).check({ snapshots: [SNAP], code: null, posted: [] });
 
     expect(checked.changes.map(({ kind }) => kind)).toEqual(['story']);
   });
@@ -126,7 +128,7 @@ describe('SourceCheck', () => {
           page: { id: '42', title: 'Regras', space: 'SHOP', url: PAGE.url },
           text: 'Dois cupons por pedido.',
         }),
-    }).check({ snapshots: [PAGE], code: null });
+    }).check({ snapshots: [PAGE], code: null, posted: [] });
 
     expect(checked.changes).toEqual([
       expect.objectContaining({
@@ -150,7 +152,7 @@ describe('SourceCheck', () => {
                 }),
               },
         ),
-    }).check({ snapshots: [], code: CODE });
+    }).check({ snapshots: [], code: CODE, posted: [] });
 
     expect(checked.changes).toEqual([
       {
@@ -170,7 +172,7 @@ describe('SourceCheck', () => {
       readStory: () => Promise.resolve({ isRead: false, failure: 'unreachable' }),
       githubApi: () =>
         Promise.resolve({ isOk: false, failure: 'no-cli', httpStatus: null, said: '' }),
-    }).check({ snapshots: [SNAP], code: CODE });
+    }).check({ snapshots: [SNAP], code: CODE, posted: [] });
 
     expect(checked).toEqual({
       changes: [],

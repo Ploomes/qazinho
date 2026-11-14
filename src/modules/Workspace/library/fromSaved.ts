@@ -57,6 +57,9 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     ...(changeReviewOf(read.review) === null
       ? {}
       : { review: changeReviewOf(read.review) ?? undefined }),
+    ...(Array.isArray(read.told) && read.told.every((url) => typeof url === 'string')
+      ? { told: read.told }
+      : {}),
     design: read.design ?? null,
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
     plan: planOfYaml(saved.planYaml),

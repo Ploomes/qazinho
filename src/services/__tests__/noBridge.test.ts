@@ -277,6 +277,7 @@ describe('a page with no bridge', () => {
       await Sources.check({
         snapshots: [{ kind: 'story', key: 'SHOP-878', url: '', text: '', at: '' }],
         code: null,
+        posted: [],
       }),
     ).toEqual({
       changes: [],

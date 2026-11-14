@@ -11,6 +11,7 @@ export interface ISourceCheck {
   readComments: (props: {
     key: string;
     since: string;
+    skip: string[];
   }) => Promise<{ author: string; at: string; text: string }[] | null>;
   readPage: (pageId: string) => Promise<ConfluenceRead>;
   githubApi: (path: string) => Promise<GhAnswer>;

@@ -1,4 +1,5 @@
 import type { ISourcesChecked } from '@/shared/types';
+import { postedCommentsOf } from '@/modules/Plan/library';
 import { Sources } from '@/services';
 import { useWorkspaceStore } from '@/store';
 
@@ -12,7 +13,14 @@ export const useSourceCheck = () => {
 
     if (workspace === undefined || (snapshots.length === 0 && code === null)) return null;
 
-    const checked = await Sources.check({ snapshots, code });
+    const checked = await Sources.check({
+      snapshots,
+      code,
+      posted: postedCommentsOf({
+        doubts: workspace.doubts ?? [],
+        told: workspace.told ?? [],
+      }),
+    });
     const { setChanged } = useWorkspaceStore.getState();
 
     if (checked.changes.length > 0)

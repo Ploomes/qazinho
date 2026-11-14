@@ -30,6 +30,7 @@ export * from './planWithRestored';
 export * from './planWithSecretNamed';
 export * from './planWithoutDoubt';
 export * from './planWithVariableRenamed';
+export * from './postedCommentsOf';
 export * from './removeCase';
 export * from './removeStep';
 export * from './reviewOf';
