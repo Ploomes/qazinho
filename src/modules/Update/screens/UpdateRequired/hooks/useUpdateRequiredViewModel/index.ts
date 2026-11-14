@@ -15,14 +15,15 @@ export const useUpdateRequiredViewModel = () => {
       : 0;
   const isReady = update.phase === 'ready';
   const isFailed = update.phase === 'failed';
-  const mood: InternMood = isReady ? 'passed' : isFailed ? 'flaky' : 'running';
+  const isStore = update.phase === 'store';
+  const mood: InternMood = isReady || isStore ? 'passed' : isFailed ? 'flaky' : 'running';
 
   return {
     mood,
     title: t('UPDATE.REQUIRED_TITLE'),
     body: t('UPDATE.REQUIRED_BODY'),
-    stateKey: isReady ? 'ready' : isFailed ? 'failed' : 'working',
-    isWorking: !isReady && !isFailed,
+    stateKey: isReady ? 'ready' : isFailed ? 'failed' : isStore ? 'store' : 'working',
+    isWorking: !isReady && !isFailed && !isStore,
     workingLabel: isInstalling
       ? t('UPDATE.RESTARTING')
       : update.phase === 'downloading'
@@ -40,6 +41,12 @@ export const useUpdateRequiredViewModel = () => {
     downloadLabel: t('UPDATE.DOWNLOAD'),
     onDownload: () => {
       void Pro.openPage('/download');
+    },
+    isStore,
+    storeLabel: t('UPDATE.STORE'),
+    openStoreLabel: t('UPDATE.OPEN_STORE'),
+    onOpenStore: () => {
+      Updates.openStore();
     },
   };
 };

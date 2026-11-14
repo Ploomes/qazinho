@@ -162,6 +162,7 @@ import { MEMORY_KEEPER } from '@/main/classes/agents/MemoryKeeper/constants';
 import { buildIdOf, javaHomesOf } from '@/main/classes/builds/AppBuilder/library';
 import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
 import { downloaderOf, uploaderOf } from '@/main/classes/pro/ProSync/library';
+import { APP_UPDATE } from '@/main/classes/setup/AppUpdater/constants';
 import { SKILL_WRITER } from '@/main/classes/skills/SkillWriter/constants';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import {
@@ -547,7 +548,9 @@ const appUpdater = new AppUpdater({
     isPackaged: app.isPackaged,
     hasFeed: updateFeed !== null,
     appImage: process.env.APPIMAGE,
+    isStore: process.windowsStore === true,
   }),
+  isStore: process.windowsStore === true,
   onChange: (update) => {
     broadcast({ channel: CHANNELS.appUpdateEvent, event: update });
   },
@@ -2075,6 +2078,9 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.installUpdate, () => {
     appUpdater.install();
   });
+  ipcMain.handle(CHANNELS.openStoreUpdates, () =>
+    shell.openExternal(APP_UPDATE.storeUpdates),
+  );
   ipcMain.handle(CHANNELS.openProPage, async (_event, path: string) => {
     const url = proPageUrlOf({ base: PRO_API.web, path });
 

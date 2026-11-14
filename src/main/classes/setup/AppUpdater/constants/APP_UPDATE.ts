@@ -3,4 +3,5 @@ export const APP_UPDATE = {
   everyMs: 4 * 60 * 60 * 1000,
   requiredEveryMs: 60_000,
   installWaitMs: 30_000,
+  storeUpdates: 'ms-windows-store://downloadsandupdates',
 } as const;

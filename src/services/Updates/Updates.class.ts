@@ -12,6 +12,11 @@ export class Updates {
     void window.qazinho?.installUpdate();
   }
 
+  /** Abre as atualizações da Microsoft Store, de onde uma cópia da loja se atualiza. */
+  public static openStore(): void {
+    void window.qazinho?.openStoreUpdates();
+  }
+
   public static onChange(listener: (update: AppUpdate) => void): () => void {
     return window.qazinho?.onAppUpdate(listener) ?? (() => undefined);
   }

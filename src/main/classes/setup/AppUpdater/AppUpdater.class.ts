@@ -9,6 +9,7 @@ import { APP_UPDATE } from './constants';
 export class AppUpdater {
   private readonly port: IUpdaterPort;
   private readonly isAvailable: boolean;
+  private readonly isStore: boolean;
   private readonly onChange: (update: AppUpdate) => void;
   private readonly log: (message: string) => void;
   private update: AppUpdate = { phase: 'idle', isRequired: false };
@@ -19,6 +20,7 @@ export class AppUpdater {
   public constructor(props: IAppUpdater) {
     this.port = props.port;
     this.isAvailable = props.isAvailable;
+    this.isStore = props.isStore;
     this.onChange = props.onChange;
     this.log = props.log;
   }
@@ -39,9 +41,15 @@ export class AppUpdater {
     return this.update;
   }
 
-  /** Torna a atualização obrigatória e procura na hora, e de novo a cada minuto. */
+  /** Torna a atualização obrigatória e procura na hora; uma cópia da loja vai à loja. */
   public require(): void {
     if (this.update.isRequired) return;
+
+    if (this.isStore) {
+      this.change({ phase: 'store', isRequired: true });
+
+      return;
+    }
 
     if (!this.isAvailable || this.isInstallBroken) {
       this.change({ phase: 'failed', isRequired: true });

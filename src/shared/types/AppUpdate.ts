@@ -1,6 +1,6 @@
 /**
- * Em que pé a atualização do app está, e se ela é obrigatória: quem está logado numa
- * versão que a API recusa só consegue atualizar.
+ * Em que pé a atualização do app está, e se ela é obrigatória; uma cópia da Microsoft
+ * Store só atualiza pela loja.
  */
 export type AppUpdate = { isRequired: boolean } & (
   | { phase: 'idle' }
@@ -8,4 +8,5 @@ export type AppUpdate = { isRequired: boolean } & (
   | { phase: 'ready'; version: string }
   | { phase: 'installing' }
   | { phase: 'failed' }
+  | { phase: 'store' }
 );

@@ -325,6 +325,7 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.installTool, item) as Promise<IInstallResult>,
   appUpdate: () => ipcRenderer.invoke(CHANNELS.appUpdate) as Promise<AppUpdate>,
   installUpdate: () => ipcRenderer.invoke(CHANNELS.installUpdate) as Promise<void>,
+  openStoreUpdates: () => ipcRenderer.invoke(CHANNELS.openStoreUpdates) as Promise<void>,
   onAppUpdate: (listener: (update: AppUpdate) => void) => {
     const forward = (_: unknown, update: AppUpdate) => {
       listener(update);

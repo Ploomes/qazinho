@@ -42,6 +42,15 @@ export const UpdateRequired: React.FC = () => {
               {view.restartLabel}
             </Button>
           )}
+          {view.isStore && (
+            <>
+              <p className="update-required__note">{view.storeLabel}</p>
+              <Button variant="primary" onClick={view.onOpenStore}>
+                {view.openStoreLabel}
+                <Icon name="external" />
+              </Button>
+            </>
+          )}
           {view.isFailed && (
             <>
               <p className="update-required__note">{view.failedLabel}</p>

@@ -77,4 +77,22 @@ describe('useUpdateRequiredViewModel', () => {
 
     expect(openProPage).toHaveBeenCalledWith('/download');
   });
+
+  // Uma cópia da Microsoft Store não baixa nada sozinha: quem a atualiza é a loja.
+  it('sends a copy from the Microsoft Store to the store, not to the site', () => {
+    const openStoreUpdates = vi.fn(() => Promise.resolve());
+    const openProPage = vi.fn(() => Promise.resolve(true));
+
+    window.qazinho = { ...fakeQazinhoApi('win32'), openStoreUpdates, openProPage };
+    useUpdateStore.setState({ update: { phase: 'store', isRequired: true } });
+
+    const view = mount();
+
+    expect(view).toMatchObject({ isStore: true, isWorking: false, isFailed: false });
+
+    view.onOpenStore();
+
+    expect(openStoreUpdates).toHaveBeenCalledOnce();
+    expect(openProPage).not.toHaveBeenCalled();
+  });
 });

@@ -59,6 +59,8 @@ export const en = {
     RESTARTING: 'Restarting…',
     FAILED: 'It could not update from here.',
     DOWNLOAD: 'Download from the site',
+    STORE: 'This copy came from the Microsoft Store, so it updates there.',
+    OPEN_STORE: 'Open the Microsoft Store',
   },
   SIDEBAR: {
     NEW_WORKSPACE: 'New plan',

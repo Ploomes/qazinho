@@ -5,7 +5,7 @@ import { AppUpdater } from '@/main/classes/setup/AppUpdater';
 import { APP_UPDATE } from '@/main/classes/setup/AppUpdater/constants';
 
 /** Um atualizador do sistema que o teste controla: conta as buscas e diz o que aconteceu. */
-const setUp = (isAvailable = true) => {
+const setUp = (isAvailable = true, isStore = false) => {
   const seen: AppUpdate[] = [];
   const logged: string[] = [];
   const port = {
@@ -28,6 +28,7 @@ const setUp = (isAvailable = true) => {
   const updater = new AppUpdater({
     port,
     isAvailable,
+    isStore,
     onChange: (update) => seen.push(update),
     log: (message) => logged.push(message),
   });
@@ -319,6 +320,16 @@ describe('AppUpdater', () => {
       updater.require();
 
       expect(updater.state()).toEqual({ phase: 'failed', isRequired: true });
+      expect(port.checks).toBe(0);
+    });
+
+    // Uma cópia da Microsoft Store só atualiza pela loja, que leva dias para aprovar.
+    it('sends a copy from the Microsoft Store to the store, without looking', () => {
+      const { updater, port } = setUp(false, true);
+
+      updater.require();
+
+      expect(updater.state()).toEqual({ phase: 'store', isRequired: true });
       expect(port.checks).toBe(0);
     });
   });

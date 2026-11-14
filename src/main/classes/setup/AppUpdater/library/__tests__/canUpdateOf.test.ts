@@ -7,6 +7,7 @@ const can = (change: Partial<Parameters<typeof canUpdateOf>[0]>) =>
     isPackaged: true,
     hasFeed: false,
     appImage: undefined,
+    isStore: false,
     ...change,
   });
 
@@ -28,5 +29,11 @@ describe('canUpdateOf', () => {
   it('follows a feed it was pointed at, even from the code', () => {
     expect(can({ isPackaged: false, hasFeed: true })).toBe(true);
     expect(can({ platform: 'linux', hasFeed: true })).toBe(true);
+  });
+
+  /** A loja instala e atualiza a cópia dela: o atualizador próprio brigaria com ela. */
+  it('does NOT update a copy the Microsoft Store installed, feed or not', () => {
+    expect(can({ platform: 'win32', isStore: true })).toBe(false);
+    expect(can({ platform: 'win32', isStore: true, hasFeed: true })).toBe(false);
   });
 });

@@ -61,6 +61,8 @@ export const pt: typeof en = {
     RESTARTING: 'Reiniciando…',
     FAILED: 'Não deu para atualizar daqui.',
     DOWNLOAD: 'Baixar do site',
+    STORE: 'Esta cópia veio da Microsoft Store e se atualiza por lá.',
+    OPEN_STORE: 'Abrir a Microsoft Store',
   },
   SIDEBAR: {
     NEW_WORKSPACE: 'Novo plano',

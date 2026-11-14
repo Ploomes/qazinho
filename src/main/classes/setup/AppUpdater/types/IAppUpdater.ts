@@ -5,6 +5,7 @@ import type { AppUpdate } from '@/shared/types';
 export interface IAppUpdater {
   port: IUpdaterPort;
   isAvailable: boolean;
+  isStore: boolean;
   onChange: (update: AppUpdate) => void;
   log: (message: string) => void;
 }
