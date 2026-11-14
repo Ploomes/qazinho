@@ -1,6 +1,7 @@
 export * from './activeSprintOf';
 export * from './adfOfDoubts';
 export * from './adfOfNote';
+export * from './adfWithMention';
 export * from './adfOfReport';
 export * from './adfToMarkdown';
 export * from './askAtlassian';

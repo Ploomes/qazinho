@@ -26,6 +26,7 @@ import {
   activeSprintOf,
   adfOfDoubts,
   adfOfNote,
+  adfWithMention,
   adfOfReport,
   askAtlassian,
   boardColumnsOf,
@@ -512,11 +513,14 @@ export class JiraApi {
 
     if (signed === null) return { isPosted: false, failure: 'not-connected', said: '' };
 
+    const path = `/rest/api/3/issue/${encodeURIComponent(told.key)}`;
+    const mention =
+      told.isMentioning === true ? await this.reporterOf({ signed, path }) : null;
     const answer = await this.request({
       signed,
-      path: `/rest/api/3/issue/${encodeURIComponent(told.key)}/comment`,
+      path: `${path}/comment`,
       method: 'POST',
-      json: { body: adfOfNote(told.text) },
+      json: { body: adfWithMention({ doc: adfOfNote(told.text), mention }) },
     });
 
     if (!answer.isOk)
@@ -608,6 +612,22 @@ export class JiraApi {
     return typeof fields === 'object' && fields !== null
       ? (fields as Record<string, unknown>)
       : {};
+  }
+
+  private async reporterOf(props: {
+    signed: IJiraCredentials;
+    path: string;
+  }): Promise<{ id: string; name: string } | null> {
+    const [story, me] = await Promise.all([
+      this.request({ signed: props.signed, path: `${props.path}?fields=reporter` }),
+      this.request({ signed: props.signed, path: '/rest/api/3/myself' }),
+    ]);
+    const reporter = story.isOk
+      ? this.personOf(this.fieldsOf(story.body).reporter)
+      : null;
+    const myself = me.isOk ? this.personOf(me.body) : null;
+
+    return reporter !== null && reporter.id !== myself?.id ? reporter : null;
   }
 
   private personOf(value: unknown): { id: string; name: string } | null {
