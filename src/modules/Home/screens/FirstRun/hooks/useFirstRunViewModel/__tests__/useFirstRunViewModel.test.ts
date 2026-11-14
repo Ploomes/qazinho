@@ -155,6 +155,7 @@ describe('useFirstRunViewModel', () => {
 
       expect(project).toMatchObject({
         name: 'Loja',
+        isNamePending: true,
         targets: [{ kind: 'web', value: 'http://staging.loja.test' }],
       });
       expect(workspace).toMatchObject({

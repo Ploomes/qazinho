@@ -164,6 +164,7 @@ export const useFirstRunViewModel = () => {
       name: projectNameOf(target),
       targets: [target],
       repositories: [],
+      isNamePending: true,
     };
     const made = newWorkspaceIn({
       project,
