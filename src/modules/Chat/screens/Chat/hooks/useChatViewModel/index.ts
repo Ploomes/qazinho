@@ -29,6 +29,7 @@ import {
   groupRunMessages,
   insertMention,
   isFollowUp,
+  lastSaidOf,
   mentionCandidates,
   mentionQueryOf,
   mentionsIn,
@@ -216,9 +217,9 @@ export const useChatViewModel = () => {
   const lastAgentId =
     (workspace?.chat ?? []).filter(({ kind }) => kind === 'agent').at(-1)?.id ?? null;
   const hasPreview = !isAgentTyping && liveText !== '';
-  const lastId = (workspace?.chat ?? []).at(-1)?.id ?? null;
+  const lastMessage = lastSaidOf(workspace?.chat ?? []);
+  const lastId = lastMessage?.id ?? null;
   const lastSaid = (workspace?.chat ?? []).findLast(({ kind }) => kind === 'user');
-  const lastMessage = (workspace?.chat ?? []).at(-1);
 
   const pending = attached.workspaceId === workspace?.id ? attached.items : [];
   const keep = (props: { workspaceId: string; outcome: AttachOutcome }) => {
