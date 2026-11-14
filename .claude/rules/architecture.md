@@ -141,8 +141,9 @@ A sprint também chega ao Início. Num projeto com a coluna de pronto num board 
 `activeSprintOf`, `sprintStoriesOf`, sem subtarefas nem épicos), e o `homeOf` lista as histórias
 que nenhum plano do projeto tem (`toPlan`). "Planejar" cria o plano com a história
 (`sprintWorkspaceOf`) e "Planejar as N" cria todos; os dois os põem na fila (`planQueue`), que o
-`usePlanQueue` passa ao agente um de cada vez, com a mensagem do `/jira`, só depois de o chat
-anterior terminar (`planning`). O Início mostra o que está sendo escrito (`drafting`) e um chat que
+`usePlanQueue` passa ao agente com a mensagem do `/jira`, até `PLAN_QUEUE.atOnce` chats de uma vez
+(`planning`): o seguinte começa quando um deles termina, e um chat que o QA abriu por conta própria
+não ocupa vaga. O Início mostra o que está sendo escrito (`drafting`) e um chat que
 espera as respostas do QA (`toAnswer`, `openRoundOf`).
 
 Um projeto novo nasce de cartões (`NewProject`, a tela `newProject`), não de uma janela. O QA marca

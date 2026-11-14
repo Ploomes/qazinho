@@ -264,8 +264,9 @@ onde veio, com "Trocar". O nome é decidido uma vez, e um QA que já o renomeou 
 
 **A sprint chega ao Início.** Num projeto que escolheu a coluna de pronto num board do Jira, o
 Início lista as histórias da sprint aberta desse board que ainda não têm plano. "Planejar" cria o
-plano com a história e o abre no chat, que começa como o QA começaria; "Planejar as 3" cria todos e
-os passa ao agente do QA um de cada vez, e cada um para na rodada de perguntas, esperando o QA, que o
+plano com a história e o abre no chat, que começa como o QA começaria; "Planejar as 5" cria um plano
+por história, cada um com o próprio chat, e o agente do QA escreve até três ao mesmo tempo: o
+seguinte começa quando um termina. Cada um para na rodada de perguntas, esperando o QA, que o
 Início também mostra. Nada lê a sprint sem o QA abrir o Início, e nada chama o agente sem um clique.
 O Figma só é lido quando o QA abre o plano. O `tests/smoke/jira.test.ts` lê uma sprint de um Jira
 fake, e testes unitários provam a fila; nenhum agente real andou uma fila, e um site real do Jira não
