@@ -17,7 +17,12 @@ import {
 
 describe('useAppViewModel', () => {
   beforeEach(() => {
-    useAppStore.setState({ theme: 'dark', screen: 'welcome', projects: [] });
+    useAppStore.setState({
+      theme: 'dark',
+      screen: 'welcome',
+      projects: [],
+      isLoaded: true,
+    });
     useSettingsStore.setState({ hasOnboarded: true });
   });
 
@@ -172,6 +177,16 @@ describe('useAppViewModel', () => {
     const { result } = renderHook(() => useAppViewModel());
 
     expect(result.current.isFirstRun).toBe(true);
+  });
+
+  /** O primeiro frame mostrava a primeira execução enquanto os projetos ainda vinham do disco. */
+  it('does NOT open on the first run before the projects were read', () => {
+    useAppStore.setState({ isLoaded: false });
+
+    const { result } = renderHook(() => useAppViewModel());
+
+    expect(result.current.isFirstRun).toBe(false);
+    expect(result.current.isHome).toBe(false);
   });
 
   it('writes the theme on the document, because the tokens hang off it', () => {

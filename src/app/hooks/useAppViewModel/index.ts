@@ -44,6 +44,7 @@ export const useAppViewModel = () => {
   const theme = useAppStore(shownThemeOf);
   const screen = useAppStore((state) => state.screen);
   const projects = useAppStore((state) => state.projects);
+  const isLoaded = useAppStore((state) => state.isLoaded);
   const modal = useAppStore((state) => state.modal);
   const editingProjectId = useAppStore((state) => state.editingProjectId);
   const media = useAppStore((state) => state.media);
@@ -140,7 +141,7 @@ export const useAppViewModel = () => {
     isTitlebarBare: isUpdateBlocked || !hasOnboarded,
     isOnboarding: !hasOnboarded,
     hasSidebar: projects.length > 0 && screen !== 'settings',
-    isFirstRun: screen !== 'settings' && projects.length === 0,
+    isFirstRun: isLoaded && screen !== 'settings' && projects.length === 0,
     isHome: screen === 'welcome' && projects.length > 0,
     isWorkspace: screen === 'workspace',
     isChatOnly,
