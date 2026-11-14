@@ -5,11 +5,12 @@ import type {
   IDesignLink,
   IImportSource,
   IJiraIssueRef,
+  ISkill,
 } from '@/shared/types';
 
 /**
  * Um comando que o QA está montando no composer: qual, e o que escolheu até agora, do
- * repositório e da branch à pasta de testes.
+ * repositório e da branch à pasta de testes ou à skill.
  */
 export interface ICommandDraft {
   id: ChatCommandId;
@@ -19,4 +20,5 @@ export interface ICommandDraft {
   page: IConfluencePageRef | null;
   design: IDesignLink | null;
   folder: IImportSource | null;
+  skill: ISkill | null;
 }

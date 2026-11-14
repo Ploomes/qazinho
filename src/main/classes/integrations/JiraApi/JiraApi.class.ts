@@ -1,25 +1,44 @@
 import type { IJiraApi, JiraAnswer, JiraFetcher, JiraFiled } from './types';
 import type { IJiraCredentials } from '@/main/types';
 import type {
+  BoardColumnList,
   BugComment,
   IBugReport,
   IJiraIssueRef,
   IJiraStory,
+  IStoryAnswersAsk,
+  IStoryDoubtsPost,
+  ITellStory,
   ITrackerIssue,
+  JiraBoardList,
   JiraFailure,
   JiraIssueList,
   JiraProjectList,
+  SprintStories,
+  StoryAnswers,
+  StoryDoubtsPosted,
+  StoryPeople,
+  StoryStatus,
 } from '@/shared/types';
 import { writeFile } from 'node:fs/promises';
 import { JIRA_READ, JIRA_WRITE } from './constants';
 import {
+  activeSprintOf,
+  adfOfDoubts,
+  adfOfNote,
+  adfWithMention,
   adfOfReport,
   askAtlassian,
+  boardColumnsOf,
   bugTypeOf,
+  commentsSinceOf,
+  jiraBoardsOf,
   jiraIssueOf,
   jiraProjectsOf,
   jiraStoryOf,
   pickedIssuesOf,
+  sprintStoriesOf,
+  storyAnswersOf,
 } from './library';
 
 /**
@@ -267,6 +286,255 @@ export class JiraApi {
     };
   }
 
+  /** Os boards do Jira do QA, os que casam com o nome digitado. */
+  public async boards(query: string): Promise<JiraBoardList> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isListed: false, failure: 'not-connected' };
+
+    const params = new URLSearchParams({ maxResults: String(JIRA_READ.boards) });
+
+    if (query.trim() !== '') params.set('name', query.trim());
+
+    const answer = await this.request({
+      signed,
+      path: `/rest/agile/1.0/board?${params.toString()}`,
+    });
+
+    return answer.isOk
+      ? { isListed: true, boards: jiraBoardsOf(answer.body) }
+      : { isListed: false, failure: answer.failure };
+  }
+
+  /** As colunas de um board, cada uma com os status que caem nela. */
+  public async columns(boardId: number): Promise<BoardColumnList> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isListed: false, failure: 'not-connected' };
+
+    const [config, statuses] = await Promise.all([
+      this.request({
+        signed,
+        path: `/rest/agile/1.0/board/${String(boardId)}/configuration`,
+      }),
+      this.request({ signed, path: '/rest/api/3/status' }),
+    ]);
+
+    if (!config.isOk) return { isListed: false, failure: config.failure };
+
+    if (!statuses.isOk) return { isListed: false, failure: statuses.failure };
+
+    return {
+      isListed: true,
+      columns: boardColumnsOf({ config: config.body, statuses: statuses.body }),
+    };
+  }
+
+  /** As histórias da sprint aberta de um board, sem subtarefas nem épicos. */
+  public async sprintStories(boardId: number): Promise<SprintStories> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isListed: false, failure: 'not-connected' };
+
+    const sprints = await this.request({
+      signed,
+      path: `/rest/agile/1.0/board/${String(boardId)}/sprint?state=active`,
+    });
+
+    if (!sprints.isOk) return { isListed: false, failure: sprints.failure };
+
+    const sprint = activeSprintOf(sprints.body);
+
+    if (sprint === null) return { isListed: true, sprint: null, stories: [] };
+
+    const params = new URLSearchParams({
+      fields: 'summary,status,issuetype',
+      maxResults: String(JIRA_READ.sprintStories),
+    });
+    const issues = await this.request({
+      signed,
+      path: `/rest/agile/1.0/sprint/${String(sprint.id)}/issue?${params.toString()}`,
+    });
+
+    return issues.isOk
+      ? {
+          isListed: true,
+          sprint: sprint.name,
+          stories: sprintStoriesOf({ body: issues.body, site: signed.site }),
+        }
+      : { isListed: false, failure: issues.failure };
+  }
+
+  /** Em que status uma história está agora. */
+  public async status(key: string): Promise<StoryStatus> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isRead: false, failure: 'not-connected' };
+
+    const answer = await this.request({
+      signed,
+      path: `/rest/api/3/issue/${encodeURIComponent(key)}?fields=status`,
+    });
+
+    if (!answer.isOk) return { isRead: false, failure: answer.failure };
+
+    const status = (this.fieldsOf(answer.body).status as { name?: unknown } | undefined)
+      ?.name;
+
+    return typeof status === 'string'
+      ? { isRead: true, status }
+      : { isRead: false, failure: 'unexpected' };
+  }
+
+  /** O que se escreveu ou editou numa história depois de um momento. */
+  public async commentsSince(props: {
+    key: string;
+    since: string;
+    skip: string[];
+  }): Promise<{ author: string; at: string; text: string }[] | null> {
+    const signed = await this.credentials();
+
+    if (signed === null) return null;
+
+    const comments = await this.request({
+      signed,
+      path: `/rest/api/3/issue/${encodeURIComponent(props.key)}/comment?orderBy=-created&maxResults=${String(JIRA_READ.answerComments)}`,
+    });
+
+    return comments.isOk
+      ? commentsSinceOf({ body: comments.body, since: props.since, skip: props.skip })
+      : null;
+  }
+
+  /** Quem escreveu uma história e se o QA já a acompanha. */
+  public async people(key: string): Promise<StoryPeople> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isRead: false, failure: 'not-connected' };
+
+    const answer = await this.request({
+      signed,
+      path: `/rest/api/3/issue/${encodeURIComponent(key)}?fields=reporter,watches`,
+    });
+
+    if (!answer.isOk) return { isRead: false, failure: answer.failure };
+
+    const fields = this.fieldsOf(answer.body);
+    const reporter = this.personOf(fields.reporter);
+
+    return {
+      isRead: true,
+      reporter: reporter?.name ?? null,
+      isWatching:
+        (fields.watches as { isWatching?: unknown } | undefined)?.isWatching === true,
+    };
+  }
+
+  /**
+   * Posta as dúvidas do QA sob uma história, mencionando quem a escreveu, e o põe para
+   * acompanhá-la quando ele pediu: onde o comentário fica, ou por que não.
+   */
+  public async askStory(post: IStoryDoubtsPost): Promise<StoryDoubtsPosted> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isPosted: false, failure: 'not-connected', said: '' };
+
+    const path = `/rest/api/3/issue/${encodeURIComponent(post.key)}`;
+    const [story, me] = await Promise.all([
+      this.request({ signed, path: `${path}?fields=reporter` }),
+      this.request({ signed, path: '/rest/api/3/myself' }),
+    ]);
+    const reporter = story.isOk
+      ? this.personOf(this.fieldsOf(story.body).reporter)
+      : null;
+    const myself = me.isOk ? this.personOf(me.body) : null;
+    const mention = reporter !== null && reporter.id !== myself?.id ? reporter : null;
+    const posted = await this.request({
+      signed,
+      path: `${path}/comment`,
+      method: 'POST',
+      json: { body: adfOfDoubts({ ...post, mention }) },
+    });
+
+    if (!posted.isOk)
+      return { isPosted: false, failure: posted.failure, said: posted.said };
+
+    if (post.isWatching && myself !== null)
+      await this.request({
+        signed,
+        path: `${path}/watchers`,
+        method: 'POST',
+        json: myself.id,
+        isEmpty: true,
+      });
+
+    const { id, created } = (posted.body ?? {}) as { id?: unknown; created?: unknown };
+
+    return {
+      isPosted: true,
+      url: `${signed.site}/browse/${post.key}${typeof id === 'string' ? `?focusedCommentId=${id}` : ''}`,
+      at:
+        typeof created === 'string'
+          ? new Date(created).toISOString()
+          : new Date().toISOString(),
+      mentioned: mention?.name ?? null,
+    };
+  }
+
+  /** O que o time respondeu às dúvidas mandadas a uma história, nos comentários. */
+  public async answers(ask: IStoryAnswersAsk): Promise<StoryAnswers> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isRead: false, failure: 'not-connected' };
+
+    const [comments, me] = await Promise.all([
+      this.request({
+        signed,
+        path: `/rest/api/3/issue/${encodeURIComponent(ask.key)}/comment?orderBy=-created&maxResults=${String(JIRA_READ.answerComments)}`,
+      }),
+      this.request({ signed, path: '/rest/api/3/myself' }),
+    ]);
+
+    if (!comments.isOk) return { isRead: false, failure: comments.failure };
+
+    return {
+      isRead: true,
+      answers: storyAnswersOf({
+        comments: comments.body,
+        doubts: ask.doubts,
+        me: (me.isOk ? this.personOf(me.body)?.id : null) ?? '',
+      }),
+    };
+  }
+
+  /** Posta sob uma história o comentário que o QA escreveu, ou diz por que não. */
+  public async tell(told: ITellStory): Promise<BugComment> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isPosted: false, failure: 'not-connected', said: '' };
+
+    const path = `/rest/api/3/issue/${encodeURIComponent(told.key)}`;
+    const mention =
+      told.isMentioning === true ? await this.reporterOf({ signed, path }) : null;
+    const answer = await this.request({
+      signed,
+      path: `${path}/comment`,
+      method: 'POST',
+      json: { body: adfWithMention({ doc: adfOfNote(told.text), mention }) },
+    });
+
+    if (!answer.isOk)
+      return { isPosted: false, failure: answer.failure, said: answer.said };
+
+    const id = (answer.body as { id?: unknown } | null)?.id;
+
+    return {
+      isPosted: true,
+      url: `${signed.site}/browse/${told.key}${typeof id === 'string' ? `?focusedCommentId=${id}` : ''}`,
+      missed: [],
+    };
+  }
+
   /** Anexa um arquivo a uma issue; false quando o Jira não o aceitou. */
   public async attach(props: {
     key: string;
@@ -336,6 +604,41 @@ export class JiraApi {
           },
         ]
       : [];
+  }
+
+  private fieldsOf(body: unknown): Record<string, unknown> {
+    const { fields } = (body ?? {}) as { fields?: unknown };
+
+    return typeof fields === 'object' && fields !== null
+      ? (fields as Record<string, unknown>)
+      : {};
+  }
+
+  private async reporterOf(props: {
+    signed: IJiraCredentials;
+    path: string;
+  }): Promise<{ id: string; name: string } | null> {
+    const [story, me] = await Promise.all([
+      this.request({ signed: props.signed, path: `${props.path}?fields=reporter` }),
+      this.request({ signed: props.signed, path: '/rest/api/3/myself' }),
+    ]);
+    const reporter = story.isOk
+      ? this.personOf(this.fieldsOf(story.body).reporter)
+      : null;
+    const myself = me.isOk ? this.personOf(me.body) : null;
+
+    return reporter !== null && reporter.id !== myself?.id ? reporter : null;
+  }
+
+  private personOf(value: unknown): { id: string; name: string } | null {
+    const { accountId, displayName } = (value ?? {}) as {
+      accountId?: unknown;
+      displayName?: unknown;
+    };
+
+    return typeof accountId === 'string' && accountId !== ''
+      ? { id: accountId, name: typeof displayName === 'string' ? displayName : '' }
+      : null;
   }
 
   private request(

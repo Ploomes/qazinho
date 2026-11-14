@@ -8,4 +8,5 @@ export * from './RUN_HOW_KEYS';
 export * from './RUN_PAGE_SIZE';
 export * from './RUN_TALLY_KEYS';
 export * from './RUN_VERDICTS';
+export * from './RUN_WALK_LOOKS';
 export * from './UNWALKED_KEYS';

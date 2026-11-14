@@ -102,6 +102,43 @@ describe('bugReportOf', () => {
     });
   });
 
+  /** O modelo do time muda a ordem, os títulos e o texto, e a evidência continua a mesma. */
+  it('lays the report out by the team’s template, title included', () => {
+    expect(
+      bugReportOf({
+        ...REPORT,
+        template: {
+          id: 't-1',
+          kind: 'bug',
+          name: 'Bug do time',
+          title: '[{{case}}] {{title}}',
+          parts: [
+            { kind: 'text', text: 'Severidade: a definir\nRun: {{run}}, passo {{step}}' },
+            { kind: 'section', field: 'expected', heading: 'Resultado esperado' },
+            { kind: 'section', field: 'steps', heading: 'Como reproduzir' },
+          ],
+          cases: 'steps',
+          updatedAt: '',
+        },
+      }),
+    ).toEqual({
+      title: '[TC-02] An expired coupon is taken',
+      blocks: [
+        { kind: 'paragraph', text: 'Severidade: a definir\nRun: r-03, passo 2' },
+        { kind: 'heading', text: 'Resultado esperado' },
+        { kind: 'paragraph', text: 'The message "Este cupom expirou"' },
+        { kind: 'heading', text: 'Como reproduzir' },
+        {
+          kind: 'steps',
+          items: [
+            { text: 'Open the cart', isBad: false },
+            { text: 'Apply EXPIRED', isBad: true },
+          ],
+        },
+      ],
+    });
+  });
+
   it('adds the app and the story as links, the requests that failed and what goes attached', () => {
     const report = bugReportOf({
       ...REPORT,

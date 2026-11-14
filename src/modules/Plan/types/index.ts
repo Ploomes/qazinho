@@ -1,7 +1,13 @@
+export type * from './CaseSourceKey';
+export type * from './IChangeReview';
 export type * from './ILiveCase';
+export type * from './IPendingChange';
 export type * from './IPlanDocWords';
 export type * from './IPublishedPlan';
 export type * from './ITestCase';
 export type * from './ITestStep';
 export type * from './IWrittenSecret';
 export type * from './Priority';
+export type * from './RefusalReason';
+export type * from './ReviewItem';
+export type * from './ReviewState';

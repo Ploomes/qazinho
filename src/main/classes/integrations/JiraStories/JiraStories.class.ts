@@ -3,7 +3,7 @@ import type { IJiraFile, IJiraStoryCopy, JiraStep } from '@/shared/types';
 import { mkdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { JIRA_FILES } from './constants';
-import { fileNameOf, filesToReadOf } from './library';
+import { fileNameOf, filesToReadOf, readinessOf } from './library';
 
 /**
  * Lê uma história do Jira para o agente planejar, com os arquivos que ele consegue ler
@@ -21,11 +21,12 @@ export class JiraStories {
 
   /**
    * Lê uma história para um workspace e baixa os arquivos que consegue, no lugar de
-   * qualquer história que o workspace tinha.
+   * qualquer história que o workspace tinha, dizendo se ela já chegou para teste.
    */
   public async prepare(props: {
     workspaceId: string;
     key: string;
+    readyStatuses?: string[];
     onStep: (step: { at: JiraStep; bytes: number }) => void;
   }): Promise<JiraStoryResult> {
     const { workspaceId, onStep } = props;
@@ -70,7 +71,16 @@ export class JiraStories {
       files.push(isSaved ? { ...file, path } : { ...file, note: 'failed' });
     }
 
-    const copy: IJiraStoryCopy = { story: read.story, root, files };
+    const readiness = readinessOf({
+      status: read.story.status,
+      ready: props.readyStatuses ?? [],
+    });
+    const copy: IJiraStoryCopy = {
+      story: read.story,
+      root,
+      files,
+      ...(readiness === null ? {} : { readiness }),
+    };
 
     this.copies.set(workspaceId, copy);
 

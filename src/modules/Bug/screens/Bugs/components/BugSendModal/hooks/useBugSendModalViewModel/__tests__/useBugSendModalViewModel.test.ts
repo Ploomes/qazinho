@@ -84,6 +84,43 @@ afterEach(() => {
 });
 
 describe('useBugSendModalViewModel', () => {
+  /** O bug falso que um QA descobre testando: o esperado veio de uma história que mudou. */
+  describe('a plan whose sources changed', () => {
+    it('warns before sending a bug of a plan whose story changed after it', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...WORKSPACE,
+            changed: {
+              found: [
+                {
+                  kind: 'story',
+                  key: 'SHOP-12',
+                  url: STORY.url,
+                  at: '2026-11-13',
+                  before: 'C3. 3',
+                  after: 'C3. 5',
+                  comments: [],
+                },
+              ],
+              snapshots: [],
+              code: null,
+              at: '2026-11-13',
+            },
+          },
+        ],
+      });
+
+      expect(modal().result.current.changeWarning).toBe(
+        'SHOP-12 changed after this plan. Check that it is really a bug before sending it.',
+      );
+    });
+
+    it('says nothing when the sources hold', () => {
+      expect(modal().result.current.changeWarning).toBeNull();
+    });
+  });
+
   describe('picked', () => {
     it('suggests the Jira project of the story the workspace works from, named as Jira lists it', async () => {
       const { result } = modal();

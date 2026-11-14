@@ -8,8 +8,8 @@ const comboOf = (keybinds: { id: string; combo: string }[], id: string) =>
 describe('rebind', () => {
   it('gives the action the combo the QA pressed', () => {
     expect(
-      comboOf(rebind({ keybinds: KEYBINDS, keybindId: 'run', combo: '⌘K' }), 'run'),
-    ).toBe('⌘K');
+      comboOf(rebind({ keybinds: KEYBINDS, keybindId: 'run', combo: '⌘Y' }), 'run'),
+    ).toBe('⌘Y');
   });
 
   it('swaps with the action that had the combo, so neither goes dead', () => {
@@ -20,7 +20,7 @@ describe('rebind', () => {
   });
 
   it('does NOT touch the other actions', () => {
-    const changed = rebind({ keybinds: KEYBINDS, keybindId: 'run', combo: '⌘K' }).filter(
+    const changed = rebind({ keybinds: KEYBINDS, keybindId: 'run', combo: '⌘Y' }).filter(
       (keybind, index) => keybind.combo !== KEYBINDS[index]?.combo,
     );
 

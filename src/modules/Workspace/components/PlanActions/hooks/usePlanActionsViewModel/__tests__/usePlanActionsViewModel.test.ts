@@ -55,6 +55,46 @@ describe('usePlanActionsViewModel', () => {
     expect(result.current.canRun).toBe(false);
   });
 
+  it('asks for the app of a plan written before it, and opens the project where it goes', () => {
+    useWorkspaceStore.setState({ workspaces: [{ ...makeWorkspace(), targetId: '' }] });
+
+    const { result } = renderHook(() => usePlanActionsViewModel());
+
+    expect(result.current).toMatchObject({ needsApp: true, canExplore: false });
+
+    act(() => {
+      result.current.onPickApp();
+    });
+
+    expect(useAppStore.getState()).toMatchObject({
+      modal: 'project',
+      editingProjectId: 'p1',
+      projectSection: 'general',
+    });
+  });
+
+  it('says what story a plan ahead of the app waits for', () => {
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...makeWorkspace(),
+          storyStage: 'ahead',
+          issue: {
+            key: 'SHOP-878',
+            title: 'Coupons',
+            source: 'jira',
+            url: 'https://shop.atlassian.net/browse/SHOP-878',
+          },
+        },
+      ],
+    });
+
+    expect(renderHook(() => usePlanActionsViewModel()).result.current).toMatchObject({
+      waitsFor: 'SHOP-878',
+      needsApp: false,
+    });
+  });
+
   describe('onRun', () => {
     it('starts the run of the workspace on screen', () => {
       const { result } = renderHook(() => usePlanActionsViewModel());
@@ -148,6 +188,25 @@ describe('usePlanActionsViewModel', () => {
       expect(renderHook(() => usePlanActionsViewModel()).result.current.pauseLabel).toBe(
         'Resume',
       );
+    });
+
+    it('does NOT offer a pause while the QA walks a case by hand, only a stop', () => {
+      const walked = walkRun({ verdicts: ['passed'] });
+
+      useWorkspaceStore.setState({ workspaces: [walked] });
+
+      expect(renderHook(() => usePlanActionsViewModel()).result.current.canPause).toBe(
+        true,
+      );
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walked, live: { ...walked.live!, mode: 'manual' } }],
+      });
+
+      expect(renderHook(() => usePlanActionsViewModel()).result.current).toMatchObject({
+        isLive: true,
+        canPause: false,
+      });
     });
   });
 

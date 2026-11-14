@@ -1,25 +1,42 @@
 import type { IWorkspace } from '@/modules/Workspace';
 import type { BugReportBlock } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
-import { planDocOf } from '@/modules/Plan/library';
+import { caseSourceOf, planDocOf } from '@/modules/Plan/library';
 import { DOC_VERDICT_KEYS } from '@/modules/Plan/screens/Plan/constants';
+import { useTemplateOf } from '@/modules/Template/hooks';
 import { useSettingsStore } from '@/store';
 
 export const usePlanDocument = () => {
   const { t } = useTranslation();
   const language = useSettingsStore((state) => state.language);
+  const templateOf = useTemplateOf();
 
   return {
     titleOf: (workspaceName: string) =>
       t('PLAN.PUBLISH_TITLE', { workspace: workspaceName }),
     documentOf: (
-      workspace: Pick<IWorkspace, 'plan' | 'runs' | 'issue' | 'sourcePage' | 'design'>,
+      workspace: Pick<
+        IWorkspace,
+        | 'name'
+        | 'projectId'
+        | 'plan'
+        | 'runs'
+        | 'issue'
+        | 'sourcePage'
+        | 'design'
+        | 'strategy'
+        | 'doubts'
+      >,
     ): BugReportBlock[] => {
       const run = workspace.runs.find(({ kind }) => kind !== 'explore') ?? null;
       const { issue, sourcePage } = workspace;
 
       return planDocOf({
+        name: workspace.name,
+        template: templateOf({ kind: 'plan', projectId: workspace.projectId }),
         plan: workspace.plan,
+        strategy: workspace.strategy ?? null,
+        doubts: workspace.doubts ?? [],
         run,
         when:
           run === null
@@ -59,6 +76,28 @@ export const usePlanDocument = () => {
           expected: t('PLAN_DOC.EXPECTED'),
           frame: t('PLAN_DOC.FRAME'),
           result: t('PLAN_DOC.RESULT'),
+          strategy: t('PLAN_DOC.STRATEGY'),
+          strategyParts: {
+            covers: t('PLAN_DOC.COVERS'),
+            leavesOut: t('PLAN_DOC.LEAVES_OUT'),
+            where: t('PLAN_DOC.WHERE'),
+            data: t('PLAN_DOC.DATA'),
+            risks: t('PLAN_DOC.RISKS'),
+          },
+          doubts: t('PLAN_DOC.DOUBTS'),
+          doubt: t('PLAN_DOC.DOUBT'),
+          answer: t('PLAN_DOC.ANSWER'),
+          doubtWaiting: t('PLAN_DOC.DOUBT_WAITING'),
+          doubtNotSent: t('PLAN_DOC.DOUBT_NOT_SENT'),
+          sources: t('PLAN_DOC.SOURCES'),
+          source: (source) => {
+            const word = caseSourceOf(source);
+
+            return word === null
+              ? source
+              : t(word.key, { number: word.number, id: word.id });
+          },
+          waitsOn: t('PLAN_DOC.WAITS_ON'),
           verdicts: {
             pending: t(DOC_VERDICT_KEYS.pending),
             running: t(DOC_VERDICT_KEYS.running),
@@ -68,6 +107,14 @@ export const usePlanDocument = () => {
             skipped: t(DOC_VERDICT_KEYS.skipped),
           },
           keptBy: t('PLAN_DOC.KEPT_BY'),
+          gherkin: {
+            language: t('PLAN_DOC.GHERKIN_LANGUAGE'),
+            feature: t('PLAN_DOC.GHERKIN_FEATURE'),
+            scenario: t('PLAN_DOC.GHERKIN_SCENARIO'),
+            given: t('PLAN_DOC.GHERKIN_GIVEN'),
+            when: t('PLAN_DOC.GHERKIN_WHEN'),
+            then: t('PLAN_DOC.GHERKIN_THEN'),
+          },
         },
       });
     },

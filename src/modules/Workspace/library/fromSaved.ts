@@ -2,10 +2,13 @@ import type { IRun } from '@/modules/Run';
 import type { IWorkspace, SavedBug, SavedMessage } from '@/modules/Workspace/types';
 import type { ISavedWorkspace } from '@/shared/types';
 import { viewportOf } from '@/modules/Device/library';
-import { planOfYaml } from '@/modules/Plan/library';
+import { planExtrasOfYaml, planOfYaml } from '@/modules/Plan/library';
 import { bugOfSaved } from './bugOfSaved';
+import { changeReviewOf } from './changeReviewOf';
 import { codeSourceOf } from './codeSourceOf';
 import { messageOfSaved } from './messageOfSaved';
+import { pendingChangeOf } from './pendingChangeOf';
+import { snapshotsOf } from './snapshotsOf';
 
 type SavedRun = Omit<IRun, 'endedBy' | 'costUsd' | 'video'> &
   Partial<Pick<IRun, 'endedBy' | 'costUsd' | 'video'>> & {
@@ -42,9 +45,25 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     sessionAgentId: read.sessionAgentId ?? null,
     status: read.status ?? 'idle',
     issue: read.issue ?? null,
+    ...(read.storyStage === 'ahead' || read.storyStage === 'arrived'
+      ? { storyStage: read.storyStage }
+      : {}),
+    ...(snapshotsOf(read.snapshots).length === 0
+      ? {}
+      : { snapshots: snapshotsOf(read.snapshots) }),
+    ...(pendingChangeOf(read.changed) === null
+      ? {}
+      : { changed: pendingChangeOf(read.changed) ?? undefined }),
+    ...(changeReviewOf(read.review) === null
+      ? {}
+      : { review: changeReviewOf(read.review) ?? undefined }),
+    ...(Array.isArray(read.told) && read.told.every((url) => typeof url === 'string')
+      ? { told: read.told }
+      : {}),
     design: read.design ?? null,
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
     plan: planOfYaml(saved.planYaml),
+    ...planExtrasOfYaml(saved.planYaml),
     unreadPlan: saved.unreadPlan ?? read.unreadPlan ?? null,
     plainValues: read.plainValues ?? [],
     planSource: codeSourceOf(read.planSource),

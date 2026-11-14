@@ -32,6 +32,7 @@ export const Chat: React.FC = () => {
     lookStatus,
     draft,
     lockedText,
+    canAskStory,
     composerHint,
     canAttachFiles,
     talkStatus,
@@ -103,6 +104,7 @@ export const Chat: React.FC = () => {
                   isNew={item.isNew}
                   isFollowUp={item.isFollowUp}
                   isAnswerable={item.isAnswerable}
+                  canAskStory={canAskStory}
                   isRetryable={item.isRetryable}
                   onRetry={onRetry}
                   onAnswerQuestions={onAnswerQuestions}

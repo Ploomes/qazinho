@@ -19,7 +19,7 @@ interface ISent {
 
 type Refusal = { isOk: false; status: number; error: string; details?: unknown };
 
-/** O plano da org como outro QA o deixou: versão 4, do Bruno. */
+/** O plano da org como outro QA o deixou: versão 4, do Caio. */
 const MOVED = {
   version: 4,
   cases: [
@@ -32,7 +32,7 @@ const MOVED = {
       steps: [{ action: 'Copiar o código Pix', expected: 'O código é copiado' }],
     },
   ],
-  editedBy: 'Bruno',
+  editedBy: 'Caio',
   editedAt: '2026-10-24T11:30:00.000Z',
 };
 
@@ -577,7 +577,7 @@ describe('ProSync', () => {
           base: batch.plans[0]?.cases,
           version: 4,
           cases: MOVED.cases,
-          editedBy: 'Bruno',
+          editedBy: 'Caio',
         },
       ],
     });
@@ -654,7 +654,7 @@ describe('ProSync', () => {
           base: batch.plans[0]?.cases,
           version: 3,
           cases: MOVED.cases,
-          editedBy: 'Bruno',
+          editedBy: 'Caio',
           editedAt: MOVED.editedAt,
         },
       ],

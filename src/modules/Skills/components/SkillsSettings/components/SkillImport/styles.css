@@ -1,0 +1,87 @@
+.skill-import {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.skill-import__part {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.skill-import__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.skill-import__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.skill-import__label {
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.skill-import__picked {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-code-md);
+  cursor: pointer;
+}
+
+.skill-import__list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skill-import__skill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.skill-import__skill:last-child {
+  border-bottom: none;
+}
+
+.skill-import__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.skill-import__name {
+  color: var(--ink);
+  font: var(--font-code-md);
+}
+
+.skill-import__description,
+.skill-import__kept {
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.skill-import__note {
+  margin: 0;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+}

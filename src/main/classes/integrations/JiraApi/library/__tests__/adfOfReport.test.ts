@@ -240,4 +240,19 @@ describe('adfOfReport', () => {
         .content,
     ).toEqual([]);
   });
+
+  it('writes a code block as one, keeping its lines', () => {
+    expect(
+      adfOfReport({
+        title: '',
+        blocks: [{ kind: 'code', text: 'Cenário: Cupom vencido\n  Dado um carrinho' }],
+      }).content,
+    ).toEqual([
+      {
+        type: 'codeBlock',
+        attrs: {},
+        content: [{ type: 'text', text: 'Cenário: Cupom vencido\n  Dado um carrinho' }],
+      },
+    ]);
+  });
 });

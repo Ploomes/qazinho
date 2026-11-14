@@ -86,6 +86,28 @@ describe('JiraStories', () => {
     expect(kept.storyOf('w1')?.story.key).toBe('SHOP-12');
   });
 
+  /**
+   * O projeto diz em quais status uma história chegou para teste; fora deles o agente
+   * planeja antes do app, sem andar uma tela que ainda não existe.
+   */
+  it('says whether the story arrived for testing by the statuses the project counts', async () => {
+    const { stories: kept } = await stories();
+    const readinessOf = async (readyStatuses?: string[]) => {
+      const result = await kept.prepare({
+        workspaceId: 'w1',
+        key: 'SHOP-12',
+        onStep: () => undefined,
+        ...(readyStatuses === undefined ? {} : { readyStatuses }),
+      });
+
+      return result.isReady ? result.copy.readiness : 'not read';
+    };
+
+    expect(await readinessOf(['To Do'])).toBe('ready');
+    expect(await readinessOf(['Ready for QA'])).toBe('ahead');
+    expect(await readinessOf()).toBeUndefined();
+  });
+
   it('says why when Jira does not hand the story over, and keeps nothing', async () => {
     const { stories: kept } = await stories();
     const result = await kept.prepare({

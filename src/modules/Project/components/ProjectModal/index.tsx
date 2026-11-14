@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { MemoriesPane } from '@/modules/Memory/components/MemoriesPane';
 import { ProjectProPane } from '@/modules/Pro/components/ProjectProPane';
+import { RepoField } from '@/modules/Project/components/RepoField';
+import { TargetCard } from '@/modules/Project/components/TargetCard';
 import { Button, Eyebrow, Input, Switch } from '@/shared/components/atoms';
 import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
@@ -8,8 +10,8 @@ import {
   BuildFromCode,
   ProjectNav,
   ProjectPane,
-  RepoField,
-  TargetCard,
+  ReadyField,
+  TemplateChoice,
   VariableField,
 } from './components';
 import { PROJECT_MODAL } from './constants';
@@ -27,6 +29,9 @@ export const ProjectModal: React.FC = () => {
     apk,
     app,
     repositories,
+    hasReadyField,
+    readyColumn,
+    readyStatuses,
     variables,
     savedVariables,
     projectId,
@@ -49,6 +54,10 @@ export const ProjectModal: React.FC = () => {
     isConfirmQuiet,
     onNameChange,
     onRepositoriesChange,
+    onReadyChange,
+    templates,
+    templatesOrg,
+    onTemplatesChange,
     onVariablesChange,
     onUrlChange,
     onPickApk,
@@ -159,6 +168,16 @@ export const ProjectModal: React.FC = () => {
               </TargetCard>
             </div>
           </div>
+
+          {hasReadyField && (
+            <div className="project-modal__group">
+              <ReadyField
+                column={readyColumn}
+                statuses={readyStatuses}
+                onChange={onReadyChange}
+              />
+            </div>
+          )}
         </ProjectPane>
 
         <ProjectPane label={t('PROJECT.SECTION_CODE')} isOpen={isOpen.code}>
@@ -171,6 +190,14 @@ export const ProjectModal: React.FC = () => {
             variables={variables}
             saved={savedVariables}
             onChange={onVariablesChange}
+          />
+        </ProjectPane>
+
+        <ProjectPane label={t('PROJECT.SECTION_TEMPLATES')} isOpen={isOpen.templates}>
+          <TemplateChoice
+            chosen={templates}
+            orgSlug={templatesOrg}
+            onChange={onTemplatesChange}
           />
         </ProjectPane>
 

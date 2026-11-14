@@ -45,7 +45,7 @@ describe('useBuildProgressViewModel', () => {
     const { result } = progress();
 
     expect(result.current).toMatchObject({
-      title: 'An .apk of acme/loja-app · main',
+      title: 'An .apk of acme/loja-app, branch main',
       mood: 'running',
       isWorking: true,
       lines: ['$ npm ci', '$ ./gradlew assembleRelease'],
@@ -95,7 +95,7 @@ describe('useBuildProgressViewModel', () => {
     const { result } = progress();
 
     expect(result.current).toMatchObject({
-      built: 'Built: acme-loja-app-main-c0ffee1.apk · 2 MB',
+      built: 'Built: acme-loja-app-main-c0ffee1.apk, 2 MB',
       builtNote: 'The project tests it now.',
       lines: [],
       hasActions: false,

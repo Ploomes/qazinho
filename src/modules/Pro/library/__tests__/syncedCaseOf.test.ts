@@ -16,6 +16,18 @@ describe('syncedCaseOf', () => {
     });
   });
 
+  it('keeps where the case comes from and the doubts it waits on, only when it has them', () => {
+    expect(
+      syncedCaseOf({ ...CASES[0]!, sources: ['C2'], blockedBy: ['D1'] }),
+    ).toMatchObject({ sources: ['C2'], blockedBy: ['D1'] });
+    expect(syncedCaseOf({ ...CASES[0]!, sources: [] })).not.toHaveProperty('sources');
+  });
+
+  it('says a case is walked by hand only when it is', () => {
+    expect(syncedCaseOf({ ...CASES[0]!, isManual: true }).isManual).toBe(true);
+    expect(syncedCaseOf(CASES[0]!)).not.toHaveProperty('isManual');
+  });
+
   it('keeps a step’s frame only where it names one', () => {
     const synced = syncedCaseOf({
       ...CASES[0]!,

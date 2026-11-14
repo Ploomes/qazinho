@@ -48,7 +48,7 @@ const MOVED = {
   base: [],
   version: 4,
   cases: [],
-  editedBy: 'Bruno',
+  editedBy: 'Caio',
   editedAt: '2026-10-24T11:30:00.000Z',
 };
 
@@ -156,7 +156,7 @@ describe('useProjectProPaneViewModel', () => {
       expect(result.current.local.brief).toBe('');
 
       await waitFor(() => {
-        expect(result.current.local.brief).toBe('1 plan · 3 runs · 0 bugs');
+        expect(result.current.local.brief).toBe('1 plan, 3 runs and 0 bugs');
       });
       expect(result.current.local.mediaSwitch).toContain('1.4 GB');
     });
@@ -394,7 +394,7 @@ describe('useProjectProPaneViewModel', () => {
 
       const copy = useAppStore.getState().projects[1];
 
-      expect(copy?.name).toBe('Loja · copy');
+      expect(copy?.name).toBe('Loja (copy)');
       expect(useAppStore.getState().projectSection).toBe('pro');
       expect(
         useWorkspaceStore

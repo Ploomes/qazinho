@@ -10,6 +10,10 @@ describe('caseWalkOf', () => {
     expect(caseWalkOf([{ by: 'healed' }, {}])).toBe('healed');
   });
 
+  it('reads a case the QA walked by hand as theirs, even with a step left unwalked', () => {
+    expect(caseWalkOf([{ by: 'qa' }, {}])).toBe('qa');
+  });
+
   it("does NOT call an agent's own walk anything, nor a case with no step", () => {
     expect(caseWalkOf([{}, { by: 'replay' }])).toBeNull();
     expect(caseWalkOf([])).toBeNull();

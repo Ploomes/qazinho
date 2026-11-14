@@ -224,6 +224,59 @@ export function fakeJira(props: {
         return;
       }
 
+      if (url.pathname === '/rest/agile/1.0/board/7/sprint') {
+        json(response, {
+          status: 200,
+          body: {
+            values: [
+              { id: 41, name: 'Sprint 41', state: 'closed' },
+              { id: 42, name: 'Sprint 42', state: 'active' },
+            ],
+          },
+        });
+
+        return;
+      }
+
+      if (url.pathname === '/rest/agile/1.0/sprint/42/issue') {
+        const issue = ({
+          key,
+          summary,
+          level,
+        }: {
+          key: string;
+          summary: string;
+          level: number;
+        }) => ({
+          key,
+          fields: {
+            summary,
+            status: { name: 'Pronto para dev' },
+            issuetype: {
+              name: level === 0 ? 'Story' : 'Sub-task',
+              hierarchyLevel: level,
+            },
+          },
+        });
+
+        json(response, {
+          status: 200,
+          body: {
+            issues: [
+              issue({ key: 'SHOP-12', summary: 'Aplicar cupom no checkout', level: 0 }),
+              issue({
+                key: 'SHOP-14',
+                summary: 'Frete grátis acima de R$ 200',
+                level: 0,
+              }),
+              issue({ key: 'SHOP-15', summary: 'Ajustar o texto do botão', level: -1 }),
+            ],
+          },
+        });
+
+        return;
+      }
+
       if (url.pathname === '/rest/api/3/project/recent') {
         json(response, {
           status: 200,

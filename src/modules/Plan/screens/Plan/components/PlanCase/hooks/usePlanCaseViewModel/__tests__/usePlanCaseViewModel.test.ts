@@ -356,12 +356,88 @@ describe('usePlanCaseViewModel', () => {
       expect(result.current.reason).toBe('');
     });
 
+    it('says a case the QA walks by hand is done by hand, with no status beside it', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, testCase: { ...TEST_CASE, isManual: true } }),
+      );
+
+      expect(result.current).toMatchObject({
+        reason: 'by hand',
+        hasStatus: false,
+        runCaseLabel: 'Walk this case by hand',
+        runIcon: 'manual',
+      });
+    });
+
     it('does NOT give a reason while the run walks the case', () => {
       const { result } = renderHook(() =>
         usePlanCaseViewModel({ ...PROPS, liveStatus: 'running' }),
       );
 
       expect(result.current.reason).toBe('');
+    });
+
+    /**
+     * Um caso cuja resposta esperada depende de uma dúvida que ninguém aqui sabe responder
+     * espera o time: dizer "passo 2" ou "por desenvolver" esconderia por que ele está assim.
+     */
+    it('says what doubts a case waits on, before anything else, in the color of a question', () => {
+      const lastRun = lastRunOf([ranStep({ number: 1, verdict: 'failed' })]);
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({
+          ...PROPS,
+          lastRun,
+          testCase: { ...TEST_CASE, blockedBy: ['D1', 'D3'] },
+        }),
+      );
+
+      expect(result.current).toMatchObject({
+        reason: 'waits on D1 and D3',
+        reasonClassName: 'plan-case__reason plan-case__reason--waits',
+      });
+    });
+  });
+
+  describe('a case a proposed swap touches', () => {
+    it('says it is to review, with why on hover', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, changeWhy: 'C3 diz 5 tentativas' }),
+      );
+
+      expect(result.current).toMatchObject({
+        reason: 'to review',
+        reasonTip: 'C3 diz 5 tentativas',
+        reasonClassName: 'plan-case__reason plan-case__reason--waits',
+      });
+    });
+
+    it('says nothing of it while the run walks the case', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, changeWhy: 'C3', liveStatus: 'running' }),
+      );
+
+      expect(result.current).toMatchObject({ reason: '', reasonTip: undefined });
+    });
+  });
+
+  describe('where a case came from', () => {
+    it('names the criteria and sources the agent wrote it from', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({
+          ...PROPS,
+          testCase: { ...TEST_CASE, sources: ['C1', 'C3', 'SHOP-878'] },
+        }),
+      );
+
+      expect(result.current.sources).toBe(
+        'Source: criterion 1, criterion 3, and SHOP-878',
+      );
+    });
+
+    it('says nothing for a case written with no source', () => {
+      expect(
+        renderHook(() => usePlanCaseViewModel(PROPS)).result.current.sources,
+      ).toBeNull();
     });
   });
 
@@ -566,6 +642,43 @@ describe('usePlanCaseViewModel', () => {
         renderHook(() => usePlanCaseViewModel({ ...PROPS, testCase: p1 })).result.current
           .priority,
       ).toBeNull();
+    });
+  });
+
+  describe('walking a case by hand', () => {
+    it('marks an automated case as one the QA walks by hand, and back', () => {
+      const onEditCase = vi.fn();
+      const automated = renderHook(() => usePlanCaseViewModel({ ...PROPS, onEditCase }));
+
+      expect(automated.result.current.manualLabel).toBe('Walk it by hand');
+
+      act(() => {
+        automated.result.current.onManualToggle();
+      });
+
+      expect(onEditCase).toHaveBeenLastCalledWith({
+        caseId: TEST_CASE.id,
+        fields: { isManual: true },
+      });
+
+      const manual = renderHook(() =>
+        usePlanCaseViewModel({
+          ...PROPS,
+          testCase: { ...TEST_CASE, isManual: true },
+          onEditCase,
+        }),
+      );
+
+      expect(manual.result.current.manualLabel).toBe('Automate it');
+
+      act(() => {
+        manual.result.current.onManualToggle();
+      });
+
+      expect(onEditCase).toHaveBeenLastCalledWith({
+        caseId: TEST_CASE.id,
+        fields: { isManual: false },
+      });
     });
   });
 });

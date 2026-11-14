@@ -339,7 +339,8 @@ describe('useRunEvents', () => {
       });
     });
 
-    it('asks again once the bug’s tracker connects', async () => {
+    /** Desde 12/11 o agente do QA só trabalha quando o QA pede: nada revisa ao abrir. */
+    it('does NOT review on its own when the app loads or a tracker connects', async () => {
       const [first] = walkRun({
         verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
       }).bugs;
@@ -397,10 +398,11 @@ describe('useRunEvents', () => {
       act(() => {
         useSetupStore.setState({ integrations: [JIRA] });
       });
-
-      await waitFor(() => {
-        expect(reviewBug).toHaveBeenCalledTimes(1);
+      await act(async () => {
+        await Promise.resolve();
       });
+
+      expect(reviewBug).not.toHaveBeenCalled();
     });
 
     it('opens the run whose notification the QA clicked', () => {
@@ -478,7 +480,7 @@ describe('useRunEvents', () => {
       expect(alertRun).toHaveBeenCalledWith({
         workspaceId: 'w1',
         runId: 'r-01',
-        title: 'Checkout regression · the agent asks you something',
+        title: 'The agent of Checkout regression asks you something',
         body: 'Which plan should I pick?',
       });
     });

@@ -20,6 +20,21 @@ describe('planStageOf', () => {
       total: 3,
       developed: ['TC-02'],
       toDevelop: ['TC-01', 'TC-03'],
+      manual: [],
+    });
+  });
+
+  it('keeps a case the QA walks by hand out of what is developed and what is left', () => {
+    expect(
+      planStageOf({
+        plan: [...plan, { ...testCase('TC-04'), isManual: true }],
+        developed: ['TC-02'],
+      }),
+    ).toEqual({
+      total: 3,
+      developed: ['TC-02'],
+      toDevelop: ['TC-01', 'TC-03'],
+      manual: ['TC-04'],
     });
   });
 

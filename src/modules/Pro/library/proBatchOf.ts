@@ -46,6 +46,8 @@ export function proBatchOf(props: {
       targetKind: target.kind,
       issue: workspace.issue,
       design: workspace.design,
+      strategy: workspace.strategy ?? null,
+      doubts: workspace.doubts ?? [],
       cases: workspace.plan.map(syncedCaseOf),
     })),
     runs: kept.flatMap(({ workspace, target }) =>

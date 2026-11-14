@@ -13,6 +13,7 @@ import {
 } from '@/modules/Run/library';
 import { Run } from '@/services';
 import { EXPLORATION } from '@/shared/constants';
+import { useSourceCheck } from '@/shared/hooks/useSourceCheck';
 import {
   useAppStore,
   useMachineStore,
@@ -27,6 +28,7 @@ export const useRunActions = () => {
   const pause = useWorkspaceStore((state) => state.pauseRun);
   const stop = useWorkspaceStore((state) => state.stopRun);
   const landRunFailed = useWorkspaceStore((state) => state.landRunFailed);
+  const { check } = useSourceCheck();
 
   const opened = (workspaceId: string | null) => {
     const { projects } = useAppStore.getState();
@@ -51,10 +53,16 @@ export const useRunActions = () => {
     const { workspaceId, mode, caseIds } = props;
     const { workspace, target } = opened(workspaceId);
     const isExploring = mode === 'explore';
-    const scoped = caseIds === undefined || caseIds.length === 0 ? undefined : caseIds;
-    const steps = isExploring
-      ? []
-      : walkedStepsOf({ plan: workspace?.plan ?? [], caseIds: scoped });
+    const plan = workspace?.plan ?? [];
+    const pool =
+      mode === 'manual' ? plan : plan.filter(({ isManual }) => isManual !== true);
+    const scoped =
+      caseIds !== undefined && caseIds.length > 0
+        ? caseIds
+        : pool.length < plan.length
+          ? pool.map(({ id }) => id)
+          : undefined;
+    const steps = isExploring ? [] : walkedStepsOf({ plan: pool, caseIds: scoped });
     const live = workspace?.live ?? null;
 
     if (
@@ -140,7 +148,33 @@ export const useRunActions = () => {
       return;
     }
 
-    begin({ workspaceId, mode, ...(caseIds === undefined ? {} : { caseIds }) });
+    const scoped = caseIds === undefined ? {} : { caseIds };
+    const { workspace } = opened(workspaceId);
+    const { holdForChanges } = useWorkspaceStore.getState();
+
+    if (workspace === null || mode === 'explore') {
+      begin({ workspaceId, mode, ...scoped });
+
+      return;
+    }
+
+    if (workspace.changed !== undefined || workspace.review !== undefined) {
+      holdForChanges({ workspaceId: workspace.id, mode, ...scoped });
+
+      return;
+    }
+
+    if ((workspace.snapshots ?? []).length === 0 && workspace.planSource === null) {
+      begin({ workspaceId, mode, ...scoped });
+
+      return;
+    }
+
+    void check(workspace.id).then((checked) => {
+      if (checked !== null && checked.changes.length > 0)
+        holdForChanges({ workspaceId: workspace.id, mode, ...scoped });
+      else begin({ workspaceId, mode, ...scoped });
+    });
   };
 
   const stageOfSelected = () => {
@@ -199,7 +233,15 @@ export const useRunActions = () => {
       runOwn('explore');
     },
     onRunCase: (caseId: string) => {
-      runOwn('replay', [caseId]);
+      const { workspace } = opened(selectedId());
+      const isManual = workspace?.plan.some(
+        ({ id, isManual: byHand }) => id === caseId && byHand === true,
+      );
+
+      runOwn(isManual === true ? 'manual' : 'replay', [caseId]);
+    },
+    onWalkByHand: (caseId: string) => {
+      runOwn('manual', [caseId]);
     },
     onPause: () => {
       const { workspace } = opened(selectedId());

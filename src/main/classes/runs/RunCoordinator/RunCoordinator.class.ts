@@ -1,6 +1,7 @@
 import type {
   IAskQa,
   ICaseRecipe,
+  IManualWalk,
   IOpenQuestion,
   IRecipeBook,
   IRunCoordinator,
@@ -14,13 +15,16 @@ import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IToolImage, IVariableValue, ShrinkImage } from '@/main/types';
 import type {
+  DeviceInput,
   IAndroidSetup,
   IDevelopedAsk,
   IDevelopedPlan,
   IFlatStep,
   IIosSetup,
+  IManualMark,
   IRunEvent,
   KeepEvent,
+  ManualPrep,
   IDesignShot,
   IRunInFlight,
   IRunQuestion,
@@ -57,11 +61,12 @@ import { agentFailure, writeAtomically } from '@/main/library';
 import { EXPLORATION } from '@/shared/constants';
 import { mcpConfigWith } from '@salve-software/qazinho-harness';
 import { WEB_DRIVER } from '@salve-software/qazinho-harness/engine';
-import { EXPLORE_PUSHES, RUN_WALK, RUN_WATCH, UNWALKED } from './constants';
+import { EXPLORE_PUSHES, RUN_MANUAL, RUN_WALK, RUN_WATCH, UNWALKED } from './constants';
 import {
   answerWords,
   askedAtOf,
   bookWith,
+  bookWithPrep,
   casesOf,
   developsACase,
   driverFor,
@@ -77,10 +82,13 @@ import {
   hiddenValues,
   keptBugId,
   markedBoxOf,
+  markedOutcomeOf,
   maskedBody,
   outcomeOfReport,
   partialFor,
   partialRecipeOf,
+  prepFor,
+  prepStepOf,
   privateUrlOf,
   proofHolds,
   progressAside,
@@ -119,6 +127,7 @@ export class RunCoordinator {
   private readonly attachmentsOf: NonNullable<IRunCoordinator['attachmentsOf']>;
   private readonly fetchFiles: NonNullable<IRunCoordinator['fetchFiles']> | null;
   private readonly keepVariable: NonNullable<IRunCoordinator['keepVariable']>;
+  private readonly skillsOf: NonNullable<IRunCoordinator['skillsOf']>;
   private readonly askWaitMs: number;
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
@@ -132,6 +141,9 @@ export class RunCoordinator {
   private readonly learnings = new Map<string, KeepEvent[]>();
   private readonly heardMemories = new Map<string, Set<string>>();
   private readonly addresses = new Map<string, { url: string; at: number }>();
+  private readonly manualTurns = new Map<string, IManualWalk>();
+  private readonly touches = new Map<string, Promise<void>>();
+  private readonly framePumps = new Map<string, () => void>();
 
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
@@ -149,6 +161,7 @@ export class RunCoordinator {
     this.attachmentsOf = props.attachmentsOf ?? (() => Promise.resolve([]));
     this.fetchFiles = props.fetchFiles ?? null;
     this.keepVariable = props.keepVariable ?? (() => Promise.resolve(false));
+    this.skillsOf = props.skillsOf ?? (() => Promise.resolve([]));
     this.askWaitMs = props.askWaitMs ?? RUN_WALK.askWaitMs;
   }
 
@@ -265,6 +278,7 @@ export class RunCoordinator {
 
     this.stopping.add(workspaceId);
     this.questions.get(workspaceId)?.settle({ kind: 'stopped' });
+    this.manualTurns.get(workspaceId)?.end();
     this.runner.cancel(workspaceId);
     void this.drivers.get(workspaceId)?.close();
   }
@@ -365,6 +379,110 @@ export class RunCoordinator {
    */
   public inFlight(): IRunInFlight[] {
     return [...this.inFlightRuns.values()];
+  }
+
+  /** Um gesto do QA no dispositivo de um caso à mão, cada um depois do anterior. */
+  public touch(props: { workspaceId: string; input: DeviceInput }): Promise<void> {
+    const { workspaceId, input } = props;
+    const turn = this.manualTurns.get(workspaceId);
+
+    if (turn?.driver.touch === undefined) return Promise.resolve();
+
+    const { driver } = turn;
+    const queued = (this.touches.get(workspaceId) ?? Promise.resolve())
+      .then(() => driver.touch?.(input))
+      .catch(() => undefined);
+
+    this.touches.set(workspaceId, queued);
+
+    return queued;
+  }
+
+  /**
+   * O QA marca o passo em que está num caso à mão: a tela de agora vira a evidência dele,
+   * e o seguinte começa; depois do último, a vez do QA acaba.
+   */
+  public async mark(mark: IManualMark): Promise<void> {
+    const { workspaceId } = mark;
+    const turn = this.manualTurns.get(workspaceId);
+    const walking = turn?.pending.shift();
+
+    if (turn === undefined || walking === undefined) return;
+
+    await (this.touches.get(workspaceId) ?? Promise.resolve());
+
+    const shot = await turn.driver
+      .shoot(join(turn.run.shotDir, `step-${String(walking.index + 1)}.jpg`))
+      .catch(() => null);
+    const at = Date.now();
+
+    this.emit({
+      kind: 'step',
+      outcome: markedOutcomeOf({
+        step: walking.step,
+        index: walking.index,
+        workspaceId,
+        verdict: mark.verdict,
+        note: hiddenValues({ text: mark.note.trim(), values: turn.run.values }),
+        tookMs: at - turn.began,
+        at,
+        shot,
+      }),
+    });
+    turn.began = at;
+
+    const next = turn.pending[0];
+
+    if (next === undefined) {
+      turn.end();
+
+      return;
+    }
+
+    this.emit({ kind: 'doing', workspaceId, index: next.index, how: 'manual' });
+  }
+
+  /** Digita no campo em foco o valor de uma variável, que nunca passa pela página. */
+  public async typeVariable(props: {
+    workspaceId: string;
+    name: string;
+  }): Promise<boolean> {
+    const turn = this.manualTurns.get(props.workspaceId);
+    const value = turn?.run.values.find(({ name }) => name === props.name)?.value;
+
+    if (turn?.driver.touch === undefined || value === undefined) return false;
+
+    await this.touch({
+      workspaceId: props.workspaceId,
+      input: { kind: 'type', text: value },
+    });
+
+    return true;
+  }
+
+  /** Termina o caso à mão: o que o QA não marcou fica sem marca, com o porquê. */
+  public endManual(workspaceId: string): void {
+    const turn = this.manualTurns.get(workspaceId);
+
+    if (turn === undefined) return;
+
+    const at = Date.now();
+
+    for (const { step, index } of turn.pending.splice(0))
+      this.emit({
+        kind: 'step',
+        outcome: unwalkedOutcome({
+          step,
+          index,
+          workspaceId,
+          verdict: 'skipped',
+          why: UNWALKED.ended,
+          reason: 'ended',
+          at,
+        }),
+      });
+
+    turn.end();
   }
 
   private whatIsMissing(props: {
@@ -470,7 +588,9 @@ export class RunCoordinator {
     const broke = await (
       run.mode === 'explore'
         ? this.explore({ run, driver })
-        : this.walkSteps({ run, driver })
+        : run.mode === 'manual'
+          ? this.walkManual({ run, driver })
+          : this.walkSteps({ run, driver })
     ).then(
       (failure) => failure,
       (reason: unknown) =>
@@ -603,7 +723,9 @@ export class RunCoordinator {
       const wanted = run.caseIds === undefined ? null : new Set(run.caseIds);
       const toWalk = casesOf(run.steps).filter(
         ([first]) =>
-          wanted === null || (first !== undefined && wanted.has(first.step.caseId)),
+          first !== undefined &&
+          first.step.caseIsManual !== true &&
+          (wanted === null || wanted.has(first.step.caseId)),
       );
 
       for (const [position, steps] of toWalk.entries()) {
@@ -690,6 +812,290 @@ export class RunCoordinator {
         new Promise((wake) => setTimeout(wake, RUN_WALK.costsWaitMs)),
       ]);
     }
+  }
+
+  /**
+   * Um caso à mão: o preparo, pela gravação dele ou pelo agente, e a vez do QA, que marca
+   * cada passo até o último, até terminar o caso ou até parar a run.
+   */
+  private async walkManual(props: {
+    run: IWalkRun;
+    driver: IDeviceDriver;
+  }): Promise<RunFailure | null> {
+    const { run, driver } = props;
+    const { workspaceId } = run;
+    const wanted = run.caseIds === undefined ? null : new Set(run.caseIds);
+    const steps = casesOf(run.steps).find(
+      ([first]) =>
+        first !== undefined && (wanted === null || wanted.has(first.step.caseId)),
+    );
+    const first = steps?.[0];
+
+    if (steps === undefined || first === undefined) return null;
+
+    this.pumpFrames({ run, driver });
+
+    try {
+      const prep = await this.prepareManual({ run, driver, steps });
+
+      if (this.stopping.has(workspaceId)) return null;
+
+      const ended = new Promise<void>((end) => {
+        this.manualTurns.set(workspaceId, {
+          run,
+          driver,
+          pending: [...steps],
+          began: Date.now(),
+          end,
+        });
+      });
+
+      this.emit({
+        kind: 'manual',
+        workspaceId,
+        turn: { caseId: first.step.caseId, prep },
+      });
+      this.emit({ kind: 'doing', workspaceId, index: first.index, how: 'manual' });
+      await ended;
+      await (this.touches.get(workspaceId) ?? Promise.resolve());
+
+      return null;
+    } finally {
+      this.manualTurns.delete(workspaceId);
+      this.touches.delete(workspaceId);
+      this.framePumps.get(workspaceId)?.();
+      this.framePumps.delete(workspaceId);
+    }
+  }
+
+  /**
+   * Leva o app às pré-condições de um caso à mão: pela gravação do preparo enquanto ela
+   * vale, senão pelo agente, que o grava; 'failed' deixa o preparo com o QA.
+   */
+  private async prepareManual(props: {
+    run: IWalkRun;
+    driver: IDeviceDriver;
+    steps: { step: IFlatStep; index: number }[];
+  }): Promise<ManualPrep> {
+    const { run, driver, steps } = props;
+    const { workspaceId } = run;
+    const flat = steps.map(({ step }) => step);
+    const prepStep = prepStepOf(flat);
+    const first = steps[0];
+
+    if (prepStep === null || first === undefined) return 'none';
+
+    this.emit({ kind: 'doing', workspaceId, index: first.index, how: 'prepare' });
+
+    const book = await this.readBook(workspaceId);
+    const recipe = prepFor({ book, step: prepStep, targetKind: run.target.kind });
+
+    if (recipe !== null) {
+      if (await this.replayPrep({ run, driver, recipe })) return 'replayed';
+
+      await driver.restart().catch(() => undefined);
+    }
+
+    if (this.stopping.has(workspaceId)) return 'failed';
+
+    const prepared = await this.agentPrep({ run, driver, prepStep, steps: flat });
+
+    if (prepared === null) return 'failed';
+
+    await this.writeBook({
+      workspaceId,
+      book: bookWithPrep({ book: await this.readBook(workspaceId), prep: prepared }),
+    }).catch(() => undefined);
+
+    return 'agent';
+  }
+
+  private async replayPrep(props: {
+    run: IWalkRun;
+    driver: IDeviceDriver;
+    recipe: ICaseRecipe;
+  }): Promise<boolean> {
+    const device = this.portOf({ run: props.run, driver: props.driver });
+    const [kept] = props.recipe.steps;
+
+    if (kept === undefined) return false;
+
+    const isDone = await (async () => {
+      for (const action of kept.actions) await device.act(action);
+    })().then(
+      () => true,
+      () => false,
+    );
+
+    return isDone && (await this.proofShows({ device, proof: kept.proof }));
+  }
+
+  /**
+   * O agente leva o app às pré-condições de um caso à mão num turno só, e o preparo vira
+   * uma gravação quando ele o relata pronto, com a prova.
+   */
+  private async agentPrep(props: {
+    run: IWalkRun;
+    driver: IDeviceDriver;
+    prepStep: IFlatStep;
+    steps: IFlatStep[];
+  }): Promise<ICaseRecipe | null> {
+    const { run, driver, prepStep } = props;
+    const { workspaceId } = run;
+    const device = this.portOf({ run, driver });
+    const actions: IStepAction[] = [];
+    let prepared: ICaseRecipe | null = null;
+    let over: () => void = () => undefined;
+    const isOver = new Promise<null>((resolve) => {
+      over = () => {
+        resolve(null);
+      };
+    });
+    const endTurn = (said: string) => {
+      over();
+      setImmediate(() => {
+        this.tools.detach(workspaceId);
+        this.runner.cancel(workspaceId);
+      });
+
+      return said;
+    };
+    const onReport = async (report: IStepReport): Promise<string> => {
+      if (report.step !== 1)
+        return 'Report step 1, the preparation: the steps of the case are the QA’s.';
+
+      if (report.verdict !== 'passed')
+        return endTurn('Noted: the QA prepares the case. End your turn now.');
+
+      const screen = await device.describe().catch(() => '');
+
+      prepared = recipeOf({
+        steps: [prepStep],
+        targetKind: run.target.kind,
+        actions: new Map([[1, actions]]),
+        proofs: new Map([
+          [1, provableProof({ proof: report.proof, screen, values: run.values })],
+        ]),
+        runId: run.runId,
+        at: Date.now(),
+      });
+
+      return endTurn('Prepared: the QA takes it from here. End your turn now.');
+    };
+    const mcpConfig = this.tools.mcpConfigFor(
+      workspaceId,
+      this.askWaitMs + RUN_WALK.toolMarginMs,
+    );
+
+    if (mcpConfig === null) return null;
+
+    this.tools.attach({
+      workspaceId,
+      driver: {
+        describe: () => device.describe(),
+        inspect: (target) => device.inspect(target),
+        failedCalls: () => device.failedCalls(),
+        calls: (ask) => device.calls(ask),
+        glance: () => device.glance(),
+        act: async (action) => {
+          await device.act(action);
+          actions.push(
+            recordedAction({
+              appUrl: run.target.value,
+              action:
+                action.files === undefined
+                  ? action
+                  : {
+                      ...action,
+                      files: action.files.map((file) => run.uploadRefs.get(file) ?? file),
+                    },
+              found: driver.resolution?.() ?? null,
+              values: run.values,
+            }),
+          );
+        },
+      },
+      onReport,
+      onFinding: () =>
+        Promise.resolve('Not now: only prepare the case, the QA judges it.'),
+      onAsk: () =>
+        Promise.resolve(
+          'Prepare it without the QA: report step 1 blocked if you cannot.',
+        ),
+      onSay: () => Promise.resolve('Noted.'),
+    });
+
+    const screen = await device.describe().catch(() => '');
+
+    if (this.stopping.has(workspaceId)) {
+      this.tools.detach(workspaceId);
+
+      return null;
+    }
+
+    const asking = this.runner.ask({
+      workspaceId,
+      agentId: run.agentId,
+      command: run.command,
+      model: run.model,
+      sessionId: null,
+      systemPrompt: this.harness.run({
+        target: run.target,
+        viewport: this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport,
+        language: run.language,
+      }),
+      mcpConfig,
+      allowedTools: this.harness.toolsFor('runner').allowedTools,
+      prompt: this.harness.prepare({
+        steps: props.steps,
+        screen,
+        language: run.language,
+        variables: run.values.map(({ name, description }) => ({ name, description })),
+        memories: run.memories ?? [],
+      }),
+    });
+
+    void asking.then(
+      ({ costUsd }) => {
+        if (costUsd !== null) this.emit({ kind: 'cost', workspaceId, costUsd });
+      },
+      () => undefined,
+    );
+    await Promise.race([asking.catch(() => null), isOver]);
+    this.tools.detach(workspaceId);
+
+    return prepared;
+  }
+
+  /**
+   * Manda ao stream a tela de um celular, que não transmite sozinho, enquanto o QA anda
+   * um caso à mão nele.
+   */
+  private pumpFrames(props: { run: IWalkRun; driver: IDeviceDriver }): void {
+    const { run, driver } = props;
+    const { workspaceId } = run;
+    const url = this.live.urlFor(workspaceId);
+    const snapshot = driver.snapshot?.bind(driver);
+
+    if (snapshot === undefined || url === null) return;
+
+    let isOn = true;
+    const pump = async () => {
+      while (isOn && !this.stopping.has(workspaceId)) {
+        const frame = await snapshot().catch(() => null);
+
+        if (frame !== null && isOn)
+          this.live.push({ workspaceId, jpeg: frame.jpeg, ratio: frame.ratio });
+
+        await new Promise((wake) => setTimeout(wake, RUN_MANUAL.frameMs));
+      }
+    };
+
+    this.framePumps.set(workspaceId, () => {
+      isOn = false;
+    });
+    this.emit({ kind: 'streaming', workspaceId, url });
+    void pump();
   }
 
   /**
@@ -1363,6 +1769,10 @@ export class RunCoordinator {
     this.tools.attach(attached);
 
     const screen = await device.describe().catch(() => '');
+    const skills =
+      run.projectId === undefined
+        ? []
+        : await this.skillsOf(run.projectId).catch(() => []);
 
     if (this.stopping.has(workspaceId)) return null;
 
@@ -1395,6 +1805,7 @@ export class RunCoordinator {
         design: run.design ?? null,
         plan: run.plan ?? [],
         memories: run.memories ?? [],
+        skills,
       }),
     });
     const cost = asking.then(
@@ -1421,7 +1832,9 @@ export class RunCoordinator {
   private async watch(props: { run: IWalkRun; driver: IDeviceDriver }): Promise<void> {
     const { run, driver } = props;
     const { workspaceId } = run;
-    const isRecorded = !developsACase({ run, book: await this.readBook(workspaceId) });
+    const isRecorded =
+      run.mode === 'manual' ||
+      !developsACase({ run, book: await this.readBook(workspaceId) });
     const isStreaming = await driver.stream((jpeg, screen) => {
       const viewport =
         this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport;

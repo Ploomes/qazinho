@@ -55,7 +55,7 @@ describe('useAssistantEvents', () => {
       useAssistantEvents();
     });
     act(() => {
-      send({ kind: 'usage', workspaceId: '~assistant', usage });
+      send({ kind: 'usage', workspaceId: '~assistant', usage, hasLimits: true });
     });
 
     expect(useMachineStore.getState().usage).toEqual(usage);

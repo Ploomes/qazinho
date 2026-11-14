@@ -3,8 +3,8 @@ import type { IDraftedCase } from '@/shared/types';
 import { nextCaseId } from './nextCaseId';
 
 /**
- * Os casos que o agente rascunhou, como o plano: um caso que ele manteve conserva o id, e
- * um novo pega um id nunca usado; null quando nenhum tem título e um passo a rodar.
+ * Os casos que o agente rascunhou, como o plano: um caso mantido conserva o id e se é à
+ * mão, e um novo pega um id livre; null quando nenhum tem título e um passo a rodar.
  */
 export function planOfDraft(props: {
   cases: IDraftedCase[];
@@ -48,6 +48,11 @@ export function planOfDraft(props: {
       preconditions: one.preconditions.trim(),
       steps: one.steps,
       lastVerdict: null,
+      ...(props.plan.some((kept) => kept.id === id && kept.isManual === true)
+        ? { isManual: true }
+        : {}),
+      ...namesOf({ names: one.sources, key: 'sources' }),
+      ...namesOf({ names: one.blockedBy, key: 'blockedBy' }),
     };
   });
 
@@ -64,4 +69,13 @@ function keptIdOf(props: {
   const byTitle = plan.find(({ id, title }) => title === drafted.title && !taken.has(id));
 
   return byId?.id ?? byTitle?.id ?? null;
+}
+
+function namesOf(props: {
+  names: string[] | undefined;
+  key: 'sources' | 'blockedBy';
+}): Partial<Record<'sources' | 'blockedBy', string[]>> {
+  const names = (props.names ?? []).map((name) => name.trim()).filter(Boolean);
+
+  return names.length === 0 ? {} : { [props.key]: [...new Set(names)] };
 }

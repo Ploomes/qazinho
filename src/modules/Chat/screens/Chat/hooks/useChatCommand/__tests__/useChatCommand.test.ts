@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import type { IProjectRepository } from '@/modules/Project/types';
+import type { ISkill } from '@/shared/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
@@ -50,6 +51,7 @@ function command(props: {
   isGithubConnected?: boolean;
   isJiraConnected?: boolean;
   isConfluenceOn?: boolean;
+  skills?: ISkill[];
 }) {
   const onDraft = vi.fn();
   const onBlocked = vi.fn();
@@ -65,6 +67,7 @@ function command(props: {
           isGithubConnected: props.isGithubConnected ?? true,
           isJiraConnected: props.isJiraConnected ?? true,
           isConfluenceOn: props.isConfluenceOn ?? true,
+          skills: props.skills ?? [],
           onDraft,
           onBlocked,
         }),
@@ -157,6 +160,7 @@ describe('useChatCommand', () => {
           name: 'Shop Checkout',
         },
         source: null,
+        skill: null,
         command: { id: 'figma-plan', name: 'Shop Checkout', nodeId: '12:345', url: LINK },
       });
     });
@@ -358,6 +362,7 @@ describe('useChatCommand', () => {
         confluence: null,
         design: null,
         source: null,
+        skill: null,
         command: {
           id: 'code-plan',
           repository: 'acme/loja-web',
@@ -548,6 +553,7 @@ describe('useChatCommand', () => {
         confluence: null,
         design: null,
         source: null,
+        skill: null,
         command: {
           id: 'jira-plan',
           key: 'SHOP-12',
@@ -686,6 +692,7 @@ describe('useChatCommand', () => {
         confluence: { pageId: '98304' },
         design: null,
         source: null,
+        skill: null,
         command: {
           id: 'confluence-plan',
           pageId: '98304',
@@ -756,7 +763,7 @@ describe('useChatCommand', () => {
       expect(pickImport).toHaveBeenCalledTimes(1);
       expect(result.current.command?.parts.map(({ text }) => text)).toEqual([
         'loja-e2e',
-        'playwright · maestro',
+        'playwright, maestro',
       ]);
       expect(result.current.ask('Keep the P1 ones.')).toEqual({
         text: 'Plan the tests from the tests I already have in the folder loja-e2e.\n\nKeep the P1 ones.',
@@ -765,6 +772,7 @@ describe('useChatCommand', () => {
         confluence: null,
         design: null,
         source: { dir: '/Users/qa/loja-e2e' },
+        skill: null,
         command: {
           id: 'import-plan',
           name: 'loja-e2e',
@@ -860,6 +868,105 @@ describe('useChatCommand', () => {
 
       expect(result.current.command?.isReady).toBe(false);
       expect(result.current.picker?.heading).toBe('Folder of tests');
+    });
+  });
+
+  describe('a skill the QA calls', () => {
+    const EDGES: ISkill = {
+      id: 's1',
+      name: 'edges',
+      description: 'Limits, empty fields and permissions',
+      body: 'Every field gets a limit case.',
+      files: [],
+      use: 'called',
+      projectIds: null,
+      isOn: true,
+      source: { kind: 'created' },
+      updatedAt: '',
+    };
+    const PRIORITY: ISkill = {
+      ...EDGES,
+      id: 's2',
+      name: 'priority',
+      description: 'P1 to P3',
+    };
+
+    it('lists the skills after the commands, and narrows them by the slash', () => {
+      expect(
+        command({
+          draft: '/',
+          skills: [EDGES, PRIORITY],
+        }).result.current.picker?.rows.slice(5),
+      ).toEqual([
+        {
+          id: 'skill:s1',
+          label: 'edges',
+          tag: 'skill',
+          detail: 'Limits, empty fields and permissions',
+          isBlocked: false,
+        },
+        {
+          id: 'skill:s2',
+          label: 'priority',
+          tag: 'skill',
+          detail: 'P1 to P3',
+          isBlocked: false,
+        },
+      ]);
+      expect(
+        command({ draft: '/empty', skills: [EDGES, PRIORITY] }).result.current.picker
+          ?.rows,
+      ).toEqual([expect.objectContaining({ id: 'skill:s1' })]);
+    });
+
+    it('lists the skills before the commands that still miss something', () => {
+      expect(
+        command({ draft: '/', isJiraConnected: false, skills: [EDGES] })
+          .result.current.picker?.rows.map(({ id }) => id)
+          .slice(-2),
+      ).toEqual(['skill:s1', 'jira-plan']);
+    });
+
+    it('sends the skill picked with the QA words after, for the agent to follow', () => {
+      const { result, rerender, onDraft } = command({ draft: '/', skills: [EDGES] });
+
+      act(() => {
+        result.current.onPick('skill:s1');
+      });
+      rerender('');
+
+      expect(onDraft).toHaveBeenLastCalledWith('');
+      expect(result.current.picker).toBeNull();
+      expect(result.current.command).toEqual({
+        name: 'Skill',
+        parts: [{ key: 'skill-s1', text: 'edges', isStrong: true }],
+        isReady: true,
+        placeholder: 'What should it be used on? Enter sends',
+      });
+      expect(result.current.ask(' The coupon field. ')).toEqual({
+        text: 'Follow the edges skill.\n\nThe coupon field.',
+        code: null,
+        jira: null,
+        confluence: null,
+        design: null,
+        source: null,
+        skill: 's1',
+        command: { id: 'skill', skillId: 's1', name: 'edges' },
+      });
+      expect(result.current.ask('')?.text).toBe('Follow the edges skill.');
+    });
+
+    it('lets go of the skill on the way back', () => {
+      const { result } = command({ draft: '/', skills: [EDGES] });
+
+      act(() => {
+        result.current.onPick('skill:s1');
+      });
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(result.current.command).toBeNull();
     });
   });
 });

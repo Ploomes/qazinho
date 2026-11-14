@@ -2,8 +2,8 @@ import type { ITestCase } from '@/modules/Plan';
 import type { IFlatStep } from '@/modules/Run/types';
 
 /**
- * Todo passo do plano em ordem de passeio, numerado como o caso dele o mostra; um passo
- * ainda sem nada a fazer fica de fora.
+ * Todo passo do plano em ordem de passeio, numerado como o caso dele o mostra e marcado
+ * quando o caso é à mão; um passo ainda sem nada a fazer fica de fora.
  */
 export function flattenPlanSteps(plan: ITestCase[]): IFlatStep[] {
   return plan.flatMap((testCase) =>
@@ -18,6 +18,7 @@ export function flattenPlanSteps(plan: ITestCase[]): IFlatStep[] {
         action: step.action,
         expected: step.expected,
         ...(step.frame === undefined ? {} : { frame: step.frame }),
+        ...(testCase.isManual === true ? { caseIsManual: true } : {}),
       }))
       .filter((step) => step.action.trim().length > 0),
   );

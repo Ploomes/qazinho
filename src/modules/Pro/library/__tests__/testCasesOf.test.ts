@@ -17,4 +17,14 @@ describe('testCasesOf', () => {
       { id: 'TC-09', title: 'Case TC-09', lastVerdict: null },
     ]);
   });
+
+  it('brings a case the org walks by hand as one here too', () => {
+    const [manual, plain] = testCasesOf({
+      cases: [{ ...caseOf({ id: 'TC-01' }), isManual: true }, caseOf({ id: 'TC-02' })],
+      local: [],
+    });
+
+    expect(manual?.isManual).toBe(true);
+    expect(plain).not.toHaveProperty('isManual');
+  });
 });

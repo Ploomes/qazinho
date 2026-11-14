@@ -36,6 +36,8 @@ describe('useSettingsViewModel', () => {
     expect(result.current.tab).toBe('agent');
     expect(result.current.tabs.map(({ id }) => id)).toEqual([
       'agent',
+      'skills',
+      'templates',
       'connections',
       'general',
       'storage',

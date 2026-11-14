@@ -34,7 +34,7 @@ export const useSidebarViewModel = () => {
   const projects = useAppStore((state) => state.projects);
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
-  const openModal = useAppStore((state) => state.openModal);
+  const openNewProject = useAppStore((state) => state.openNewProject);
   const openWorkspaceModal = useAppStore((state) => state.openWorkspaceModal);
   const openSettings = useAppStore((state) => state.openSettings);
   const goHome = useAppStore((state) => state.goHome);
@@ -201,6 +201,10 @@ export const useSidebarViewModel = () => {
         id: `group-${project.id}`,
         projectId: project.id,
         name: project.name,
+        nameClassName:
+          project.isNamePending === true
+            ? 'sidebar__group-name sidebar__group-name--pending'
+            : 'sidebar__group-name',
         initial: project.name.charAt(0).toUpperCase(),
         mark: projectMarkOf({ name: project.name, app, icons }),
         place: places.format(app.places),
@@ -240,7 +244,7 @@ export const useSidebarViewModel = () => {
         live.question !== undefined,
     ) ?? null;
 
-  const onNewProject = () => openModal('project');
+  const onNewProject = () => openNewProject();
 
   const onToggleProject = (projectId: string) => {
     setExpansions((current) => ({
@@ -329,6 +333,8 @@ export const useSidebarViewModel = () => {
       recent: [],
       shown: 0,
       unnamed: '',
+      sprints: {},
+      planning: { queued: [], asking: [] },
     }),
   );
 

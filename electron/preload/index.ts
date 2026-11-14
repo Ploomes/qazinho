@@ -1,12 +1,18 @@
 import type {
   AgentSignInProgress,
+  AppNameSource,
+  AppUpdate,
+  AttachOutcome,
+  BoardColumnList,
   BugComment,
   BugFiling,
   BugReview,
+  ChangeReading,
   CodeRead,
   ConfluencePageList,
   ConfluenceSpaceList,
   ConfluenceSwitch,
+  DeviceInput,
   ExportOutcome,
   GithubSignInProgress,
   IAgentEvent,
@@ -22,7 +28,6 @@ import type {
   IBuildResult,
   IChatTurn,
   ICommentBug,
-  IKeepMemories,
   IConnectIntegration,
   IConnectResult,
   IDetectedAgent,
@@ -36,10 +41,11 @@ import type {
   IInstallResult,
   IIntegrationStatus,
   IIsland,
-  IslandAction,
   IIslandApi,
   IIslandFrame,
+  IKeepMemories,
   IMachineCheck,
+  IManualMark,
   IMcpServerStatus,
   IMcpServerTarget,
   IMcpSignIn,
@@ -57,6 +63,7 @@ import type {
   IProSyncBatch,
   IPublishPlan,
   IQazinhoApi,
+  IReadChange,
   IRemovedVideo,
   IRepositoryList,
   IRepositoryRef,
@@ -68,16 +75,33 @@ import type {
   IRunRef,
   ISavedState,
   ISavedWorkspace,
+  ISaveSkill,
+  ISaveOrgTemplate,
+  ISaveTemplate,
+  ISaveText,
   ISetupEvent,
-  AppUpdate,
-  AttachOutcome,
+  ISkill,
+  ISkillDraftFile,
+  ISkillFound,
+  ISkillImport,
+  IslandAction,
+  ISourcesCheckAsk,
+  ISourcesChecked,
   IStartBuild,
   IStartRun,
   IStorageUsage,
+  IStoryAnswersAsk,
+  IStoryDoubtsPost,
+  ITellStory,
+  IOrgTemplateDefault,
+  IOrgTemplateRef,
+  ITemplate,
   ITrayWords,
   IVideoSweep,
   IViewport,
   IWindowControls,
+  IWriteSkill,
+  JiraBoardList,
   JiraIssueList,
   JiraProjectList,
   McpActionResult,
@@ -93,6 +117,18 @@ import type {
   ProStatus,
   QaReply,
   SaveOutcome,
+  SkillSaved,
+  SkillsFound,
+  SkillWritten,
+  SprintStories,
+  StoryAnswers,
+  StoryDoubtsPosted,
+  StoryPeople,
+  StoryStatus,
+  OrgTemplateDone,
+  OrgTemplateSaved,
+  OrgTemplatesRead,
+  TemplateSaved,
   UnreadPlanRead,
   VariablesOutcome,
   WindowFit,
@@ -157,6 +193,14 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.stopRun, workspaceId) as Promise<void>,
   answerRun: (props: { workspaceId: string; questionId: string; reply: QaReply }) =>
     ipcRenderer.invoke(CHANNELS.answerRun, props) as Promise<void>,
+  touchRun: (props: { workspaceId: string; input: DeviceInput }) =>
+    ipcRenderer.invoke(CHANNELS.touchRun, props) as Promise<void>,
+  markRun: (mark: IManualMark) =>
+    ipcRenderer.invoke(CHANNELS.markRun, mark) as Promise<void>,
+  typeRunVariable: (props: { workspaceId: string; name: string }) =>
+    ipcRenderer.invoke(CHANNELS.typeRunVariable, props) as Promise<boolean>,
+  endManual: (workspaceId: string) =>
+    ipcRenderer.invoke(CHANNELS.endManual, workspaceId) as Promise<void>,
   resizeDevice: (props: { workspaceId: string; viewport: IViewport }) =>
     ipcRenderer.invoke(CHANNELS.resizeDevice, props) as Promise<void>,
   focusDevice: (props: { workspaceId: string; isFocused: boolean }) =>
@@ -189,7 +233,32 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.sweepVideos, olderThanDays) as Promise<IVideoSweep>,
   saveVideo: (props: { name: string; data: Uint8Array }) =>
     ipcRenderer.invoke(CHANNELS.saveVideo, props) as Promise<SaveOutcome>,
+  saveText: (props: ISaveText) =>
+    ipcRenderer.invoke(CHANNELS.saveText, props) as Promise<SaveOutcome>,
   pickImport: () => ipcRenderer.invoke(CHANNELS.pickImport) as Promise<ImportPick>,
+  listSkills: () => ipcRenderer.invoke(CHANNELS.listSkills) as Promise<ISkill[]>,
+  saveSkill: (skill: ISaveSkill) =>
+    ipcRenderer.invoke(CHANNELS.saveSkill, skill) as Promise<SkillSaved>,
+  removeSkill: (id: string) =>
+    ipcRenderer.invoke(CHANNELS.removeSkill, id) as Promise<void>,
+  foundSkills: () => ipcRenderer.invoke(CHANNELS.foundSkills) as Promise<ISkillFound[]>,
+  foundSkillsIn: (props: { repository: string; branch: string; folder: string }) =>
+    ipcRenderer.invoke(CHANNELS.foundSkillsIn, props) as Promise<SkillsFound>,
+  importSkills: (request: ISkillImport) =>
+    ipcRenderer.invoke(CHANNELS.importSkills, request) as Promise<ISkill[]>,
+  importSkillFile: () =>
+    ipcRenderer.invoke(CHANNELS.importSkillFile) as Promise<ISkill[]>,
+  refreshSkills: () => ipcRenderer.invoke(CHANNELS.refreshSkills) as Promise<ISkill[]>,
+  exportSkill: (id: string) =>
+    ipcRenderer.invoke(CHANNELS.exportSkill, id) as Promise<string | null>,
+  attachToSkill: (draftId: string) =>
+    ipcRenderer.invoke(CHANNELS.attachToSkill, draftId) as Promise<ISkillDraftFile[]>,
+  dropSkillDraft: (draftId: string) =>
+    ipcRenderer.invoke(CHANNELS.dropSkillDraft, draftId) as Promise<void>,
+  writeSkill: (request: IWriteSkill) =>
+    ipcRenderer.invoke(CHANNELS.writeSkill, request) as Promise<SkillWritten>,
+  stopSkill: (draftId: string) =>
+    ipcRenderer.invoke(CHANNELS.stopSkill, draftId) as Promise<void>,
   setIsland: (island: IIsland) => {
     ipcRenderer.send(CHANNELS.islandSet, island);
   },
@@ -223,6 +292,10 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.saveProjects, json) as Promise<void>,
   siteIcon: (address: string) =>
     ipcRenderer.invoke(CHANNELS.siteIcon, address) as Promise<string | null>,
+  exampleShop: (language: string) =>
+    ipcRenderer.invoke(CHANNELS.exampleShop, language) as Promise<string | null>,
+  appName: (source: AppNameSource) =>
+    ipcRenderer.invoke(CHANNELS.appName, source) as Promise<string | null>,
   saveWorkspace: (saved: ISavedWorkspace) =>
     ipcRenderer.invoke(CHANNELS.saveWorkspace, saved) as Promise<void>,
   removeWorkspace: (workspaceId: string) =>
@@ -386,6 +459,42 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.searchJira, query) as Promise<JiraIssueList>,
   listJiraProjects: () =>
     ipcRenderer.invoke(CHANNELS.listJiraProjects) as Promise<JiraProjectList>,
+  listTemplates: () => ipcRenderer.invoke(CHANNELS.listTemplates) as Promise<ITemplate[]>,
+  saveTemplate: (template: ISaveTemplate) =>
+    ipcRenderer.invoke(CHANNELS.saveTemplate, template) as Promise<TemplateSaved>,
+  removeTemplate: (id: string) =>
+    ipcRenderer.invoke(CHANNELS.removeTemplate, id) as Promise<boolean>,
+  listOrgTemplates: (orgSlug: string) =>
+    ipcRenderer.invoke(CHANNELS.listOrgTemplates, orgSlug) as Promise<OrgTemplatesRead>,
+  saveOrgTemplate: (save: ISaveOrgTemplate) =>
+    ipcRenderer.invoke(CHANNELS.saveOrgTemplate, save) as Promise<OrgTemplateSaved>,
+  removeOrgTemplate: (template: IOrgTemplateRef) =>
+    ipcRenderer.invoke(CHANNELS.removeOrgTemplate, template) as Promise<OrgTemplateDone>,
+  setOrgTemplateDefault: (choice: IOrgTemplateDefault) =>
+    ipcRenderer.invoke(
+      CHANNELS.setOrgTemplateDefault,
+      choice,
+    ) as Promise<OrgTemplateDone>,
+  checkSources: (ask: ISourcesCheckAsk) =>
+    ipcRenderer.invoke(CHANNELS.checkSources, ask) as Promise<ISourcesChecked>,
+  readChange: (request: IReadChange) =>
+    ipcRenderer.invoke(CHANNELS.readChange, request) as Promise<ChangeReading>,
+  listJiraBoards: (query: string) =>
+    ipcRenderer.invoke(CHANNELS.listJiraBoards, query) as Promise<JiraBoardList>,
+  sprintStories: (boardId: number) =>
+    ipcRenderer.invoke(CHANNELS.sprintStories, boardId) as Promise<SprintStories>,
+  listBoardColumns: (boardId: number) =>
+    ipcRenderer.invoke(CHANNELS.listBoardColumns, boardId) as Promise<BoardColumnList>,
+  readStoryStatus: (key: string) =>
+    ipcRenderer.invoke(CHANNELS.readStoryStatus, key) as Promise<StoryStatus>,
+  tellStory: (told: ITellStory) =>
+    ipcRenderer.invoke(CHANNELS.tellStory, told) as Promise<BugComment>,
+  readStoryPeople: (key: string) =>
+    ipcRenderer.invoke(CHANNELS.readStoryPeople, key) as Promise<StoryPeople>,
+  askStory: (post: IStoryDoubtsPost) =>
+    ipcRenderer.invoke(CHANNELS.askStory, post) as Promise<StoryDoubtsPosted>,
+  readStoryAnswers: (ask: IStoryAnswersAsk) =>
+    ipcRenderer.invoke(CHANNELS.readStoryAnswers, ask) as Promise<StoryAnswers>,
   switchConfluence: (isOn: boolean) =>
     ipcRenderer.invoke(CHANNELS.switchConfluence, isOn) as Promise<ConfluenceSwitch>,
   searchConfluence: (query: string) =>

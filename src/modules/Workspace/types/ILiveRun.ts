@@ -2,6 +2,7 @@ import type { ILiveQuestion } from './ILiveQuestion';
 import type { IWalkedBy } from './IWalkedBy';
 import type { IRunSuggestion } from '@/modules/Run/types';
 import type {
+  IManualTurn,
   IRunAsked,
   IRunScreen,
   IStepOutcome,
@@ -10,8 +11,8 @@ import type {
 } from '@/shared/types';
 
 /**
- * A run em andamento: o passo, o tempo, o que ela decidiu, e as perguntas que o agente
- * dela fez.
+ * A run em andamento: o passo, o tempo, o que ela decidiu, as perguntas que o agente dela
+ * fez, e a vez do QA num caso à mão.
  */
 export interface ILiveRun {
   id: string;
@@ -36,4 +37,5 @@ export interface ILiveRun {
   suggestion?: IRunSuggestion;
   question?: ILiveQuestion;
   asked?: IRunAsked[];
+  manual?: IManualTurn;
 }

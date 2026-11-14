@@ -113,7 +113,16 @@ const QAZINHO = {
 
 export default config(
   {
-    ignores: ['out', 'dist', 'release', 'node_modules', 'coverage', 'assets', 'packages'],
+    ignores: [
+      'out',
+      'dist',
+      'release',
+      'node_modules',
+      'coverage',
+      'assets',
+      'packages',
+      'tmp',
+    ],
   },
 
   js.configs.recommended,

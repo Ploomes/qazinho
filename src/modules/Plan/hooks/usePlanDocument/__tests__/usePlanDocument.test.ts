@@ -24,6 +24,6 @@ describe('usePlanDocument', () => {
   it('names a page after its workspace', () => {
     const { result } = renderHook(() => usePlanDocument());
 
-    expect(result.current.titleOf('Checkout')).toBe('Test plan · Checkout');
+    expect(result.current.titleOf('Checkout')).toBe('Test plan: Checkout');
   });
 });

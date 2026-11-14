@@ -13,6 +13,7 @@ import { viewportOf } from '@/modules/Device';
 import { MEMORY } from '@/modules/Memory/constants';
 import { memoriesFor } from '@/modules/Memory/library';
 import { caseIdsUsed, planOfDraft } from '@/modules/Plan';
+import { useNameProject } from '@/modules/Project';
 import { flattenPlanSteps } from '@/modules/Run';
 import {
   CONFLUENCE_FAILURE_KEYS,
@@ -31,6 +32,7 @@ import {
 
 export const useChatAgent = () => {
   const { t } = useTranslation();
+  const nameAs = useNameProject();
 
   const askAgent = (props: {
     workspaceId: string;
@@ -40,6 +42,7 @@ export const useChatAgent = () => {
     jira: IJiraAsk | null;
     confluence: IConfluenceAsk | null;
     source?: IImportAsk | null;
+    skill?: string | null;
     isFromAgent?: boolean;
     attachments?: IChatAttachment[];
   }) => {
@@ -60,8 +63,15 @@ export const useChatAgent = () => {
         .projects.find(({ id }) => id === workspace.projectId)
         ?.targets.find(({ id }) => id === workspace.targetId) ?? null;
     const size = viewportOf(workspace.viewportId);
-    const { landAgentText, landPlan, landQuestions, landAgentError, landAgentStopped } =
-      useWorkspaceStore.getState();
+    const {
+      landAgentText,
+      landPlan,
+      landQuestions,
+      landAgentError,
+      landAgentStopped,
+      landFollowedSkills,
+      setStoryStage,
+    } = useWorkspaceStore.getState();
     const project =
       useAppStore.getState().projects.find(({ id }) => id === workspace.projectId) ??
       null;
@@ -94,7 +104,15 @@ export const useChatAgent = () => {
         workspaceId,
         ...(target === null ? {} : { targetKind: target.kind }),
       }),
+      ...(project?.readyStatuses === undefined || project.readyStatuses.length === 0
+        ? {}
+        : { readyStatuses: project.readyStatuses }),
+      ...(workspace.doubts === undefined || workspace.doubts.length === 0
+        ? {}
+        : { doubts: workspace.doubts }),
       ...(props.isFromAgent === true ? { isFromAgent: true } : {}),
+      ...(project?.isNamePending === true ? { isProjectUnnamed: true } : {}),
+      ...(props.skill == null ? {} : { skill: props.skill }),
       ...(props.attachments === undefined || props.attachments.length === 0
         ? {}
         : { attachments: props.attachments }),
@@ -160,6 +178,14 @@ export const useChatAgent = () => {
       const live = now?.live;
       const isWalking = live !== null && live !== undefined && !live.isDone;
 
+      landFollowedSkills({ workspaceId, names: turn.followed });
+
+      if (turn.readiness !== undefined)
+        setStoryStage({
+          workspaceId,
+          stage: turn.readiness === 'ahead' ? 'ahead' : null,
+        });
+
       if (plan === null || isWalking)
         landAgentText({
           workspaceId,
@@ -177,12 +203,22 @@ export const useChatAgent = () => {
           workspaceId,
           summary: answer.reply,
           plan,
+          strategy: answer.plan?.strategy ?? null,
+          ...(turn.snapshots === undefined ? {} : { snapshots: turn.snapshots }),
           source: turn.code,
           story: turn.story,
           page: turn.page,
           who: agentName,
           agentId,
           sessionId: turn.sessionId,
+        });
+
+      if (answer.projectName !== undefined)
+        nameAs({
+          projectId: workspace.projectId,
+          name: answer.projectName,
+          from: 'agent',
+          workspaceId,
         });
 
       landQuestions({ workspaceId, questions: answer.questions });

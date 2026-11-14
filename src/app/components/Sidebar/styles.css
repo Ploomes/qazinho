@@ -416,6 +416,16 @@
   white-space: nowrap;
 }
 
+.sidebar__group-name--pending {
+  color: var(--ink2);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sidebar__group-name--pending {
+    animation: gc-breathe 1.4s ease-in-out infinite;
+  }
+}
+
 .sidebar__group-place {
   flex: 1;
   min-width: 0;

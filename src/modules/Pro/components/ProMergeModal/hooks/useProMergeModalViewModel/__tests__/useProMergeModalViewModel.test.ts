@@ -18,7 +18,7 @@ const HERE = {
   ),
 };
 
-/** O Bruno renomeou o primeiro caso na org, e este computador o renomeou também. */
+/** O Caio renomeou o primeiro caso na org, e este computador o renomeou também. */
 const shareBy = (editedBy: string | null): IProShare => ({
   projectId: 'p1',
   orgSlug: 'loja',
@@ -46,10 +46,10 @@ beforeEach(() => {
     resolveProConflict: (props) => {
       resolved.push(props.version);
 
-      return Promise.resolve({ ...shareBy('Bruno'), conflicts: [] });
+      return Promise.resolve({ ...shareBy('Caio'), conflicts: [] });
     },
   };
-  useProStore.setState({ shares: [shareBy('Bruno')], merging: 'p1' });
+  useProStore.setState({ shares: [shareBy('Caio')], merging: 'p1' });
   useWorkspaceStore.setState({ workspaces: [HERE] });
   useSettingsStore.setState({ language: 'en' });
 });
@@ -65,7 +65,7 @@ describe('useProMergeModalViewModel', () => {
       const [plan] = result.current.plans;
 
       expect(plan?.name).toBe(HERE.name);
-      expect(plan?.byline).toMatch(/^Changed by Bruno · Oct 24, 2026/);
+      expect(plan?.byline).toMatch(/^Changed by Caio, Oct 24, 2026/);
       expect(plan?.clashes.map(({ key }) => key)).toEqual([FIRST.id]);
       expect(plan?.clashes[0]?.sides.map(({ title }) => title)).toEqual([
         'Here',
@@ -111,10 +111,10 @@ describe('useProMergeModalViewModel', () => {
       useProStore.setState({
         shares: [
           {
-            ...shareBy('Bruno'),
+            ...shareBy('Caio'),
             conflicts: [
               {
-                ...shareBy('Bruno').conflicts[0]!,
+                ...shareBy('Caio').conflicts[0]!,
                 cases: [
                   {
                     ...FIRST,
@@ -150,7 +150,7 @@ describe('useProMergeModalViewModel', () => {
       useProStore.setState({ shares: [shareBy(null)] });
       const { result } = renderHook(() => useProMergeModalViewModel());
 
-      expect(result.current.plans[0]?.byline).toMatch(/^Changed in the org · /);
+      expect(result.current.plans[0]?.byline).toMatch(/^Changed in the org, /);
     });
 
     it('does NOT list a plan whose changes join on their own', () => {
@@ -164,8 +164,8 @@ describe('useProMergeModalViewModel', () => {
       useProStore.setState({
         shares: [
           {
-            ...shareBy('Bruno'),
-            conflicts: [{ ...shareBy('Bruno').conflicts[0]!, cases: BASE.slice(1) }],
+            ...shareBy('Caio'),
+            conflicts: [{ ...shareBy('Caio').conflicts[0]!, cases: BASE.slice(1) }],
           },
         ],
       });

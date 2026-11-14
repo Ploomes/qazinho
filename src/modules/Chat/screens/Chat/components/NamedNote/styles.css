@@ -1,0 +1,41 @@
+.named-note {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.named-note__mark {
+  display: inline-flex;
+  flex: none;
+  color: var(--ink3);
+}
+
+.named-note__name {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.named-note__rename {
+  display: inline;
+  margin-left: var(--space-3);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink2);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--line2);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease),
+    text-decoration-color var(--dur-fast) var(--ease);
+}
+
+.named-note__rename:hover {
+  color: var(--ink);
+  text-decoration-color: var(--ink);
+}

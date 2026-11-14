@@ -1,5 +1,7 @@
 export * from './isSecretName';
 export * from './issueTargetIn';
+export * from './nameSourcesOf';
+export * from './namingWorkspaceOf';
 export * from './newProjectId';
 export * from './passwordsIn';
 export * from './projectAppOf';
@@ -7,6 +9,7 @@ export * from './projectMarkOf';
 export * from './readProjects';
 export * from './repositoriesOf';
 export * from './secretIn';
+export * from './templatesIn';
 export * from './tokenIn';
 export * from './variableChangesOf';
 export * from './variableNameOf';

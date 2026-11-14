@@ -11,6 +11,8 @@ export function planBodyOf(plan: IProSyncPlan) {
     targetKind: plan.targetKind,
     issue: plan.issue,
     design: plan.design,
+    strategy: plan.strategy ?? null,
+    doubts: plan.doubts ?? [],
     cases: plan.cases,
   };
 }

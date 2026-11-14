@@ -81,6 +81,9 @@ function sameCase(
             expected,
             frame ?? null,
           ]),
+          testCase.isManual === true,
+          testCase.sources ?? [],
+          testCase.blockedBy ?? [],
         ]);
 
   return said(one) === said(other);

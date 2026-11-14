@@ -29,7 +29,7 @@ describe('useAskNoteViewModel', () => {
   it("says what was asked at which step, and the QA's answer as they gave it", () => {
     expect(note({})).toMatchObject({
       label: 'Asked you',
-      where: 'TC-02 · step 3',
+      where: 'At step 3 of TC-02',
       question: 'Which plan should I pick?',
       isAnswered: true,
       who: 'You',

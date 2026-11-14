@@ -1,3 +1,4 @@
+import type { IQuestionsMessage } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import { describe, expect, it } from 'vitest';
 import { homeOf } from '@/modules/Home/library';
@@ -22,8 +23,35 @@ const home = (
     recent: [],
     shown: 4,
     unnamed: 'New plan',
+    sprints: {},
+    planning: { queued: [], asking: [] },
     ...over,
   });
+
+const ROUND: IQuestionsMessage = {
+  id: 'm-2',
+  kind: 'questions',
+  at: '10:00',
+  questions: [
+    {
+      header: 'Frete',
+      question: 'O frete grátis vale para todo o país?',
+      options: [
+        { label: 'Sim', description: 'Todo CEP.' },
+        { label: 'Não', description: 'Só capitais.' },
+      ],
+      isMultiSelect: false,
+    },
+  ],
+  answers: null,
+};
+
+const STORY = {
+  key: 'SHOP-892',
+  title: 'Frete grátis acima de R$ 200',
+  status: 'Pronto para dev',
+  url: 'https://acme.atlassian.net/browse/SHOP-892',
+};
 
 describe('homeOf', () => {
   it('puts a question the agent asks in the group that waits for the QA', () => {
@@ -111,6 +139,119 @@ describe('homeOf', () => {
     ]);
   });
 
+  it('lists the cases by hand that wait for the QA once the plan ran, the first named', () => {
+    const workspace = makeWorkspace();
+    const ran = walkRun({
+      workspace: {
+        ...workspace,
+        plan: workspace.plan.map((one) =>
+          one.id === 'TC-02' ? { ...one, isManual: true } : one,
+        ),
+      },
+      verdicts: ['passed', 'passed', 'passed'],
+      isFinished: true,
+    });
+
+    expect(home([workspace]).byHand).toEqual([]);
+    expect(home([ran]).byHand).toEqual([
+      expect.objectContaining({ kind: 'byHand', cases: 1, caseId: 'TC-02' }),
+    ]);
+  });
+
+  /**
+   * Um plano escrito antes do app volta ao Início quando a história dele chega para teste,
+   * e uma dúvida respondida na história, enquanto ainda segura casos.
+   */
+  it('lists a story that arrived for testing in its own group, not among the plans to develop', () => {
+    const arrived = {
+      ...makeWorkspace(),
+      storyStage: 'arrived' as const,
+      issue: {
+        key: 'SHOP-878',
+        title: 'Coupons',
+        source: 'jira' as const,
+        url: 'https://shop.atlassian.net/browse/SHOP-878',
+      },
+    };
+    const shown = home([arrived], { developed: { w1: [] } });
+
+    expect(shown.arrived).toEqual([
+      expect.objectContaining({
+        kind: 'arrived',
+        key: 'SHOP-878',
+        plan: 'Checkout regression',
+      }),
+    ]);
+    expect(shown.toDevelop).toEqual([]);
+  });
+
+  it('lists the doubts the team answered while cases still wait for them', () => {
+    const workspace = makeWorkspace();
+    const answer = { text: 'They stack.', by: 'Rui PO', at: '2026-11-13T15:00:00.000Z' };
+    const sent = {
+      url: 'https://shop.atlassian.net/browse/SHOP-878',
+      at: '2026-11-13T13:00:00.000Z',
+    };
+    const held = {
+      ...workspace,
+      plan: workspace.plan.map((one, index) =>
+        index === 0 ? { ...one, blockedBy: ['D1'] } : one,
+      ),
+      doubts: [{ id: 'D1', question: 'Stack?', sent, answer }],
+    };
+
+    expect(home([held]).answered).toEqual([
+      expect.objectContaining({ kind: 'answered', ids: ['D1'] }),
+    ]);
+    expect(
+      home([{ ...workspace, doubts: [{ id: 'D1', question: 'Stack?', sent, answer }] }])
+        .answered,
+    ).toEqual([]);
+  });
+
+  it('lists a plan whose sources changed, and one with swaps still to review', () => {
+    const found = {
+      kind: 'story' as const,
+      key: 'SHOP-878',
+      url: 'https://shop.atlassian.net/browse/SHOP-878',
+      at: '2026-11-13',
+      before: '3',
+      after: '5',
+      comments: [],
+    };
+    const changed = {
+      ...makeWorkspace(),
+      changed: { found: [found], snapshots: [], code: null, at: '2026-11-13' },
+    };
+    const reviewing = {
+      ...changed,
+      id: 'w2',
+      review: {
+        summary: 'Mudou.',
+        at: '2026-11-13',
+        items: [
+          {
+            id: 'R1',
+            kind: 'doubt' as const,
+            question: 'Quanto?',
+            state: 'open' as const,
+          },
+          {
+            id: 'R2',
+            kind: 'doubt' as const,
+            question: 'Onde?',
+            state: 'refused' as const,
+          },
+        ],
+      },
+    };
+
+    expect(home([changed, reviewing]).changed).toEqual([
+      expect.objectContaining({ kind: 'changed', sources: ['SHOP-878'], toReview: 0 }),
+      expect.objectContaining({ workspaceId: 'w2', toReview: 1 }),
+    ]);
+  });
+
   it('shows nothing for a plan that passed and has everything recorded', () => {
     const passed = walkRun({ verdicts: ['passed'], isFinished: true });
     const all = [...new Set(passed.plan.map(({ id }) => id))];
@@ -167,7 +308,74 @@ describe('homeOf', () => {
         recent: [{ workspaceId: 'w1', at: 0 }],
         shown: 4,
         unnamed: 'New plan',
+        sprints: {},
+        planning: { queued: [], asking: [] },
       }),
     ).toMatchObject({ failed: [], recent: [] });
+  });
+
+  it('lists the stories of the open sprint that no plan of the project has', () => {
+    const planned = {
+      ...makeWorkspace([]),
+      issue: { key: 'SHOP-893', title: 'Endereço', source: 'jira' as const, url: '' },
+    };
+
+    expect(
+      home([planned], {
+        sprints: {
+          p1: {
+            sprint: 'Sprint 42',
+            stories: [STORY, { ...STORY, key: 'SHOP-893', title: 'Endereço' }],
+          },
+        },
+      }).toPlan,
+    ).toEqual([
+      {
+        ...STORY,
+        kind: 'toPlan',
+        projectId: 'p1',
+        project: 'Loja Web',
+        sprint: 'Sprint 42',
+      },
+    ]);
+  });
+
+  it('offers nothing to plan with no open sprint, or none read', () => {
+    expect(home([], { sprints: { p1: { sprint: null, stories: [] } } }).toPlan).toEqual(
+      [],
+    );
+    expect(home([]).toPlan).toEqual([]);
+  });
+
+  it('says a chat waits for the QA’s answers, and a story plan being written or queued', () => {
+    const waiting = { ...makeWorkspace([]), id: 'w1', chat: [ROUND] };
+    const writing = {
+      ...makeWorkspace([]),
+      id: 'w2',
+      issue: { key: 'SHOP-892', title: 'Frete', source: 'jira' as const, url: '' },
+    };
+    const queued = { ...writing, id: 'w3', issue: { ...writing.issue, key: 'SHOP-894' } };
+    const shown = home([waiting, writing, queued], {
+      planning: { queued: ['w3'], asking: ['w2'] },
+    });
+
+    expect(shown.toAnswer).toEqual([
+      expect.objectContaining({ workspaceId: 'w1', kind: 'toAnswer', questions: 1 }),
+    ]);
+    expect(shown.drafting.map(({ key, isQueued }) => [key, isQueued])).toEqual([
+      ['SHOP-892', false],
+      ['SHOP-894', true],
+    ]);
+  });
+
+  it('does NOT call a chat answering a plan that exists a plan being written', () => {
+    const answering = {
+      ...makeWorkspace(),
+      issue: { key: 'SHOP-892', title: 'Frete', source: 'jira' as const, url: '' },
+    };
+
+    expect(
+      home([answering], { planning: { queued: [], asking: ['w1'] } }).drafting,
+    ).toEqual([]);
   });
 });

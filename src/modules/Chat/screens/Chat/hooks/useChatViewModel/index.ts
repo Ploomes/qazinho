@@ -27,13 +27,15 @@ import {
   formatAnswers,
   formatSize,
   groupRunMessages,
-  withLiveRun,
   insertMention,
   isFollowUp,
+  lastSaidOf,
   mentionCandidates,
   mentionQueryOf,
   mentionsIn,
+  nextDoubtIdsOf,
   referencesOf,
+  withLiveRun,
 } from '@/modules/Chat/library';
 import { ATTACH_FAILURE_KEYS, CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
@@ -53,6 +55,7 @@ import {
   tallyPartsOf,
   useRunActions,
 } from '@/modules/Run';
+import { calledSkillsOf } from '@/modules/Skills';
 import { Agent, Attachments, Run } from '@/services';
 import { CHAT_ATTACHMENTS, EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -61,6 +64,7 @@ import {
   useAssistantStore,
   useSettingsStore,
   useSetupStore,
+  useSkillStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -88,6 +92,8 @@ export const useChatViewModel = () => {
     chat: opened.chat,
     design: opened.design,
     plan: opened.plan,
+    doubts: opened.doubts,
+    canAskStory: opened.issue?.source === 'jira',
     runs: opened.runs,
     bugs: opened.bugs,
     liveId: opened.live?.id ?? null,
@@ -125,6 +131,7 @@ export const useChatViewModel = () => {
   const startAskingUnheard = useWorkspaceStore((state) => state.startAskingUnheard);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
+  const setDoubts = useWorkspaceStore((state) => state.setDoubts);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const setPlan = useWorkspaceStore((state) => state.setPlan);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
@@ -145,12 +152,14 @@ export const useChatViewModel = () => {
   const selectSettingsTab = useSettingsStore((state) => state.selectTab);
   const openSettings = useAppStore((state) => state.openSettings);
   const openProjectSection = useAppStore((state) => state.openProjectSection);
+  const skills = useSkillStore((state) => state.skills);
   const chatCommand = useChatCommand({
     draft,
     repositories: project?.repositories ?? [],
     isGithubConnected,
     isJiraConnected,
     isConfluenceOn,
+    skills: calledSkillsOf({ skills, projectId: project?.id ?? null }),
     onDraft: setDraft,
     onBlocked: (blocker) => {
       say(t(blocker.tipKey));
@@ -176,6 +185,17 @@ export const useChatViewModel = () => {
     clearImport();
   }, [pendingImport, openWorkspaceId, startImport, clearImport]);
 
+  const pendingCommand = useAppStore((state) => state.pendingCommand);
+  const clearCommand = useAppStore((state) => state.clearCommand);
+  const startCommand = chatCommand.start;
+
+  useEffect(() => {
+    if (pendingCommand === null || pendingCommand.workspaceId !== openWorkspaceId) return;
+
+    startCommand(pendingCommand.command);
+    clearCommand();
+  }, [pendingCommand, openWorkspaceId, startCommand, clearCommand]);
+
   const readStep = workspace === null ? undefined : readSteps[workspace.id];
   const sentCommand = (workspace?.chat ?? [])
     .flatMap((message) =>
@@ -197,9 +217,9 @@ export const useChatViewModel = () => {
   const lastAgentId =
     (workspace?.chat ?? []).filter(({ kind }) => kind === 'agent').at(-1)?.id ?? null;
   const hasPreview = !isAgentTyping && liveText !== '';
-  const lastId = (workspace?.chat ?? []).at(-1)?.id ?? null;
+  const lastMessage = lastSaidOf(workspace?.chat ?? []);
+  const lastId = lastMessage?.id ?? null;
   const lastSaid = (workspace?.chat ?? []).findLast(({ kind }) => kind === 'user');
-  const lastMessage = (workspace?.chat ?? []).at(-1);
 
   const pending = attached.workspaceId === workspace?.id ? attached.items : [];
   const keep = (props: { workspaceId: string; outcome: AttachOutcome }) => {
@@ -228,6 +248,7 @@ export const useChatViewModel = () => {
     jira: IJiraAsk | null;
     confluence: IConfluenceAsk | null;
     source: IImportAsk | null;
+    skill?: string | null;
     attachments?: IChatAttachment[];
   }) => {
     if (workspace !== null) chatAgent.askAgent({ workspaceId: workspace.id, ...props });
@@ -324,6 +345,7 @@ export const useChatViewModel = () => {
       jira: asked?.jira ?? null,
       confluence: asked?.confluence ?? null,
       source: asked?.source ?? null,
+      skill: asked?.skill ?? null,
       attachments: pending,
     });
   };
@@ -386,9 +408,28 @@ export const useChatViewModel = () => {
     if (!workspace || round?.kind !== 'questions' || round.answers !== null) return;
     if (isAgentTyping || isWalking) return;
 
-    answerQuestions({ workspaceId: workspace.id, ...props });
+    const kept = workspace.doubts ?? [];
+    const ids = nextDoubtIdsOf({
+      doubts: kept,
+      count: props.answers.filter(({ toStory }) => toStory === true).length,
+    });
+    const answers = props.answers.map((one) =>
+      one.toStory === true ? { ...one, doubtId: ids.shift() } : one,
+    );
+    const asked = answers.flatMap(({ doubtId }, index) => {
+      const question = round.questions[index]?.question;
+
+      return doubtId === undefined || question === undefined
+        ? []
+        : [{ id: doubtId, question, sent: null, answer: null }];
+    });
+
+    if (asked.length > 0)
+      setDoubts({ workspaceId: workspace.id, doubts: [...kept, ...asked] });
+
+    answerQuestions({ workspaceId: workspace.id, messageId: props.messageId, answers });
     askAgent({
-      text: formatAnswers({ questions: round.questions, answers: props.answers }),
+      text: formatAnswers({ questions: round.questions, answers }),
       references: [],
       code: null,
       jira: null,
@@ -409,12 +450,7 @@ export const useChatViewModel = () => {
           ? t('COMMANDS.STEP_FILES', { key: sentCommand.key })
           : t('COMMANDS.STEP_FILES_SIZE', { key: sentCommand.key, size });
 
-    if (
-      sentCommand.id === 'figma-plan' ||
-      sentCommand.id === 'confluence-plan' ||
-      sentCommand.id === 'import-plan'
-    )
-      return '';
+    if (sentCommand.id !== 'code-plan') return '';
 
     return readStep.step === 'commit'
       ? t('COMMANDS.STEP_COMMIT', { branch: sentCommand.branch })
@@ -564,6 +600,7 @@ export const useChatViewModel = () => {
               !isWalking,
           },
     ),
+    canAskStory: workspace?.canAskStory ?? false,
     lockedText: question !== null ? '' : null,
     composerHint: isWalking
       ? t('CHAT.TALK_PLACEHOLDER')

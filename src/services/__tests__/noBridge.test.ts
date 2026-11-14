@@ -7,6 +7,7 @@ import {
   Bugs,
   Builds,
   Confluence,
+  Files,
   Github,
   Integrations,
   Jira,
@@ -15,6 +16,8 @@ import {
   Run,
   Setup,
   Sites,
+  Sources,
+  Templates,
   Updates,
   Memories,
   Variables,
@@ -230,6 +233,80 @@ describe('a page with no bridge', () => {
       false,
     );
     expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(await Jira.boards('')).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(await Jira.sprint(7)).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(await Sites.exampleShop('pt')).toBeNull();
+    expect(await Sites.appName({ kind: 'web', address: 'https://loja.test' })).toBeNull();
+    expect(await Templates.list()).toEqual([]);
+    expect(await Files.saveText({ name: 'Cupom', extension: 'feature', text: '' })).toBe(
+      'failed',
+    );
+    expect(
+      await Templates.save({
+        id: null,
+        kind: 'bug',
+        name: 'Bug',
+        title: '',
+        parts: [],
+        cases: 'steps',
+      }),
+    ).toEqual({ isSaved: false, reason: 'unwritable' });
+    expect(await Templates.remove('t-1')).toBe(false);
+    expect(await Templates.listOrg('loja')).toEqual({
+      isListed: false,
+      failure: 'unreachable',
+    });
+    expect(await Templates.removeOrg({ orgSlug: 'loja', id: 'org:loja:t1' })).toEqual({
+      isDone: false,
+      failure: 'unreachable',
+    });
+    expect(await Jira.tell({ key: 'SHOP-878', text: 'Oi.' })).toEqual({
+      isPosted: false,
+      failure: 'unreachable',
+      said: '',
+    });
+    expect(
+      await Sources.read({
+        workspaceId: 'w1',
+        agentId: 'claude-code',
+        model: 'haiku',
+        brief: { changes: [], cases: [], doubts: [], language: 'en' },
+      }),
+    ).toEqual({ isRead: false, reason: 'agent-missing' });
+    expect(
+      await Sources.check({
+        snapshots: [{ kind: 'story', key: 'SHOP-878', url: '', text: '', at: '' }],
+        code: null,
+        posted: [],
+      }),
+    ).toEqual({
+      changes: [],
+      snapshots: [{ kind: 'story', key: 'SHOP-878', url: '', text: '', at: '' }],
+      code: null,
+      missed: ['SHOP-878'],
+    });
+    expect(await Jira.columns(1)).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(await Jira.status('SHOP-878')).toEqual({
+      isRead: false,
+      failure: 'unreachable',
+    });
+    expect(await Jira.people('SHOP-878')).toEqual({
+      isRead: false,
+      failure: 'unreachable',
+    });
+    expect(
+      await Jira.askStory({
+        key: 'SHOP-878',
+        intro: '',
+        doubts: [{ id: 'D1', question: 'Does a coupon stack?' }],
+        closing: '',
+        isWatching: true,
+      }),
+    ).toEqual({ isPosted: false, failure: 'unreachable', said: '' });
+    expect(await Jira.answers({ key: 'SHOP-878', doubts: [] })).toEqual({
+      isRead: false,
+      failure: 'unreachable',
+    });
     expect(await Confluence.turn(true)).toEqual({
       isSwitched: false,
       failure: 'unreachable',

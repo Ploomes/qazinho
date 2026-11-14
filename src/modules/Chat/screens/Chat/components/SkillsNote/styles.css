@@ -1,0 +1,14 @@
+.skills-note {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.skills-note__mark {
+  display: inline-flex;
+  flex: none;
+  color: var(--ink3);
+}

@@ -4,6 +4,8 @@ import type { IChatAnswer } from './IChatAnswer';
 import type { ICodeSource } from './ICodeSource';
 import type { IConfluencePageRef } from './IConfluencePageRef';
 import type { IJiraIssueRef } from './IJiraIssueRef';
+import type { ISourceSnapshot } from './ISourceSnapshot';
+import type { StoryReadiness } from './StoryReadiness';
 
 /**
  * Um turno de chat: o que a CLI relatou, a resposta lida dele, por que falhou quando
@@ -14,5 +16,8 @@ export interface IChatTurn extends IAgentTurn {
   failure: ChatFailure | null;
   code: ICodeSource | null;
   story: IJiraIssueRef | null;
+  readiness?: StoryReadiness;
+  snapshots?: ISourceSnapshot[];
   page: IConfluencePageRef | null;
+  followed: string[];
 }

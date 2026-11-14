@@ -16,6 +16,8 @@ import {
   DEVICE_TOKEN_SCHEMA,
   EVIDENCE_UPLOAD_SCHEMA,
   ME_SCHEMA,
+  ORG_TEMPLATE_SCHEMA,
+  ORG_TEMPLATES_SCHEMA,
   RECORDINGS_SCHEMA,
   SYNC_BUG_SCHEMA,
   SYNC_MEMORIES_SCHEMA,
@@ -229,6 +231,78 @@ export class ProApi {
         authorization: `Bearer ${props.token}`,
       },
     };
+  }
+
+  /** Os modelos de uma org, e o que o papel da conta deixa fazer com eles. */
+  public async templates(props: {
+    token: string;
+    org: string;
+  }): Promise<ProAnswer<z.infer<typeof ORG_TEMPLATES_SCHEMA>>> {
+    return this.call({
+      request: {
+        method: 'GET',
+        path: `/api/orgs/${encodeURIComponent(props.org)}/templates`,
+        token: props.token,
+      },
+      schema: ORG_TEMPLATES_SCHEMA,
+    });
+  }
+
+  /** Publica um modelo na org, ou reescreve o que tem este id lá. */
+  public async saveTemplate(props: {
+    token: string;
+    org: string;
+    id: string | null;
+    body: unknown;
+  }): Promise<ProAnswer<z.infer<typeof ORG_TEMPLATE_SCHEMA>>> {
+    const { token, org, id, body } = props;
+    const templates = `/api/orgs/${encodeURIComponent(org)}/templates`;
+
+    return this.call({
+      request:
+        id === null
+          ? { method: 'POST', path: templates, body, token }
+          : {
+              method: 'PUT',
+              path: `${templates}/${encodeURIComponent(id)}`,
+              body,
+              token,
+            },
+      schema: ORG_TEMPLATE_SCHEMA,
+    });
+  }
+
+  public async removeTemplate(props: {
+    token: string;
+    org: string;
+    id: string;
+  }): Promise<ProAnswer<null>> {
+    return this.call({
+      request: {
+        method: 'DELETE',
+        path: `/api/orgs/${encodeURIComponent(props.org)}/templates/${encodeURIComponent(props.id)}`,
+        token: props.token,
+      },
+      schema: z.null(),
+    });
+  }
+
+  /** Faz de um modelo o padrão do tipo dele na org, ou deixa o tipo sem padrão. */
+  public async setDefaultTemplate(props: {
+    token: string;
+    org: string;
+    kind: string;
+    id: string | null;
+  }): Promise<ProAnswer<null>> {
+    return this.call({
+      request: {
+        method: 'PUT',
+        path: `/api/orgs/${encodeURIComponent(props.org)}/templates/defaults/${encodeURIComponent(props.kind)}`,
+        body: { templateId: props.id },
+        token: props.token,
+      },
+      schema: z.null(),
+    });
   }
 
   private async put<T>(props: {

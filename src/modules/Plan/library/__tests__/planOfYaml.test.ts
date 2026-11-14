@@ -20,6 +20,18 @@ describe('planOfYaml', () => {
     ]);
   });
 
+  it('reads a case the QA walks by hand, as QAzinho writes it or as a QA writes it', () => {
+    expect(
+      planOfYaml(
+        'cases:\n  - id: TC-01\n    isManual: true\n  - id: TC-02\n    manual: true\n  - id: TC-03\n    manual: "yes"\n',
+      ).map(({ id, isManual }) => [id, isManual === true]),
+    ).toEqual([
+      ['TC-01', true],
+      ['TC-02', true],
+      ['TC-03', false],
+    ]);
+  });
+
   /** Um passo sem ação quebrava o plano no momento em que era andado. */
   it('reads a field left out by hand as empty instead of breaking the plan', () => {
     expect(

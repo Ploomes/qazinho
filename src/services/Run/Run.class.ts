@@ -1,9 +1,11 @@
 import type {
   CodeRead,
+  DeviceInput,
   ExportOutcome,
   IDevelopedAsk,
   IDevelopedPlan,
   IExportCode,
+  IManualMark,
   INetworkEntry,
   IRemovedVideo,
   IRunAlert,
@@ -54,6 +56,25 @@ export class Run {
     reply: QaReply;
   }): void {
     void window.qazinho?.answerRun(props);
+  }
+
+  public static touch(props: { workspaceId: string; input: DeviceInput }): void {
+    void window.qazinho?.touchRun(props).catch(() => undefined);
+  }
+
+  public static mark(mark: IManualMark): void {
+    void window.qazinho?.markRun(mark);
+  }
+
+  public static async typeVariable(props: {
+    workspaceId: string;
+    name: string;
+  }): Promise<boolean> {
+    return (await window.qazinho?.typeRunVariable(props)) ?? false;
+  }
+
+  public static endManual(workspaceId: string): void {
+    void window.qazinho?.endManual(workspaceId);
   }
 
   public static resize(props: { workspaceId: string; viewport: IViewport }): void {

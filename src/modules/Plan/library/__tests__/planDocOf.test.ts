@@ -17,6 +17,22 @@ const WORDS: IPlanDocWords = {
   expected: 'Expected',
   frame: 'Figma',
   result: 'Result',
+  strategy: 'Strategy',
+  strategyParts: {
+    covers: 'Covers',
+    leavesOut: 'Leaves out',
+    where: 'Where',
+    data: 'Data',
+    risks: 'Risks',
+  },
+  doubts: 'Doubts',
+  doubt: 'Doubt',
+  answer: 'Answer',
+  doubtWaiting: 'Waiting on the team',
+  doubtNotSent: 'Not sent yet',
+  sources: 'Source',
+  source: (source) => source.replace(/^C(\d+)$/, 'criterion $1'),
+  waitsOn: 'Waits on',
   verdicts: {
     pending: 'pending',
     running: 'running',
@@ -26,6 +42,14 @@ const WORDS: IPlanDocWords = {
     skipped: 'skipped',
   },
   keptBy: 'Kept by QAzinho.',
+  gherkin: {
+    language: 'en',
+    feature: 'Feature',
+    scenario: 'Scenario',
+    given: 'Given',
+    when: 'When',
+    then: 'Then',
+  },
 };
 
 const COUPON: ITestCase = {
@@ -107,7 +131,7 @@ describe('planDocOf', () => {
           { label: 'Last run', value: 'RUN-03, Oct 22, 10:00', url: null },
         ],
       },
-      { kind: 'heading', text: 'TC-01 · Apply a coupon' },
+      { kind: 'heading', text: 'TC-01 Apply a coupon' },
       {
         kind: 'facts',
         items: [
@@ -174,6 +198,114 @@ describe('planDocOf', () => {
       'heading',
       'facts',
       'paragraph',
+    ]);
+  });
+
+  /** Quem lê o plano no Confluence vê o que ele cobre e o que ainda depende do time. */
+  it('writes the strategy and the doubts after where the plan came from', () => {
+    const sent = {
+      url: 'https://shop.atlassian.net/browse/SHOP-878',
+      at: '2026-11-13T13:00:00.000Z',
+    };
+    const blocks = planDocOf({
+      plan: [{ ...COUPON, sources: ['C1', 'C2'], blockedBy: ['D2'] }],
+      strategy: {
+        covers: 'Coupons at checkout',
+        leavesOut: '',
+        where: 'Staging',
+        data: '',
+        risks: 'A coupon that stacks',
+      },
+      doubts: [
+        {
+          id: 'D1',
+          question: 'Does a coupon stack?',
+          sent,
+          answer: { text: 'No.', by: 'Rui PO', at: '2026-11-13T15:00:00.000Z' },
+        },
+        { id: 'D2', question: 'Which error shows?', sent, answer: null },
+        { id: 'D3', question: 'A limit per buyer?', sent: null, answer: null },
+      ],
+      run: null,
+      when: '',
+      story: null,
+      page: null,
+      design: null,
+      words: WORDS,
+    });
+
+    expect(blocks.slice(1, 5)).toEqual([
+      { kind: 'heading', text: 'Strategy' },
+      {
+        kind: 'facts',
+        items: [
+          { label: 'Covers', value: 'Coupons at checkout', url: null },
+          { label: 'Where', value: 'Staging', url: null },
+          { label: 'Risks', value: 'A coupon that stacks', url: null },
+        ],
+      },
+      { kind: 'heading', text: 'Doubts' },
+      {
+        kind: 'table',
+        head: ['#', 'Doubt', 'Answer'],
+        rows: [
+          ['D1', 'Does a coupon stack?', 'No. (Rui PO)'],
+          ['D2', 'Which error shows?', 'Waiting on the team'],
+          ['D3', 'A limit per buyer?', 'Not sent yet'],
+        ],
+      },
+    ]);
+    expect(blocks[6]).toMatchObject({
+      kind: 'facts',
+      items: expect.arrayContaining([
+        { label: 'Source', value: 'criterion 1, criterion 2', url: null },
+        { label: 'Waits on', value: 'D2', url: null },
+      ]) as unknown,
+    });
+  });
+
+  /** O modelo do time escolhe a ordem, os títulos e o formato dos casos. */
+  it('lays the page out by the team’s template, with the cases in Gherkin', () => {
+    const blocks = planDocOf({
+      name: 'Cupom no checkout',
+      plan: [COUPON],
+      run: null,
+      when: '13/11/2026',
+      story: { key: 'SHOP-878', url: 'https://shop.atlassian.net/browse/SHOP-878' },
+      page: null,
+      design: null,
+      words: WORDS,
+      template: {
+        id: 't-plan',
+        kind: 'plan',
+        name: 'Plano do time',
+        title: '',
+        parts: [
+          { kind: 'text', text: 'Plano {{plan}}, da {{story}}, em {{date}}.' },
+          { kind: 'section', field: 'cases', heading: 'Cenários' },
+        ],
+        cases: 'gherkin',
+        updatedAt: '',
+      },
+    });
+
+    expect(blocks).toEqual([
+      { kind: 'paragraph', text: 'Plano Cupom no checkout, da SHOP-878, em 13/11/2026.' },
+      { kind: 'heading', text: 'Cenários' },
+      {
+        kind: 'code',
+        text: [
+          '# language: en',
+          'Feature: Cupom no checkout',
+          '',
+          '  @P1',
+          '  Scenario: TC-01 Apply a coupon',
+          '    When Type SAVE10',
+          '    Then The field holds it',
+          '    When Apply',
+          '    Then The total drops 10%',
+        ].join('\n'),
+      },
     ]);
   });
 });

@@ -61,6 +61,88 @@ describe('useRunButtonViewModel', () => {
     });
   });
 
+  /**
+   * Um plano escrito antes do app espera a história chegar para teste: o botão diz isso,
+   * e desenvolver mesmo assim é uma escolha no menu, que diz o que vai acontecer.
+   */
+  describe('a plan waiting for its story to arrive', () => {
+    it('says it waits for the app, and why on hover', () => {
+      const { result } = render({ developed: 0, toDevelop: 3, waitsFor: 'SHOP-878' });
+
+      expect(result.current).toMatchObject({
+        runLabel: 'Waiting for the app',
+        tip: 'SHOP-878 has not arrived for testing yet.',
+        hasChoices: true,
+      });
+      expect(result.current.className).toContain('run-button--waiting');
+    });
+
+    it('opens the menu instead of developing, and develops from Develop now', () => {
+      const { onRun, onRunPlan, result } = render({
+        canChoose: false,
+        developed: 0,
+        toDevelop: 3,
+        waitsFor: 'SHOP-878',
+      });
+
+      act(() => {
+        result.current.onRun();
+      });
+
+      expect(onRun).not.toHaveBeenCalled();
+      expect(result.current.isOpen).toBe(true);
+
+      const now = result.current.options.find(({ key }) => key === 'plan');
+
+      expect(now).toMatchObject({
+        title: 'Develop now',
+        hint: 'The agent walks the app as it is today.',
+      });
+
+      act(() => {
+        now?.onPick();
+      });
+
+      expect(onRunPlan).toHaveBeenCalledOnce();
+    });
+
+    it('does NOT wait once every case is developed, or to continue a run', () => {
+      expect(render({ waitsFor: 'SHOP-878' }).result.current.runLabel).toBe('Run plan');
+      expect(
+        render({ toDevelop: 2, toContinue: 2, waitsFor: 'SHOP-878' }).result.current
+          .runLabel,
+      ).toBe('Continue');
+    });
+  });
+
+  /** Um plano escrito de uma história antes do app: desenvolver começa por dizer onde ele roda. */
+  describe('a plan with no app yet', () => {
+    it('asks for the app on its face, and opens where the QA says it', () => {
+      const onPickApp = vi.fn();
+      const { onRun, onRunPlan, result } = render({
+        developed: 0,
+        toDevelop: 3,
+        waitsFor: 'SHOP-878',
+        needsApp: true,
+        onPickApp,
+      });
+
+      expect(result.current).toMatchObject({
+        runLabel: 'Choose the app',
+        tip: 'Say where the app runs, then develop the plan.',
+        hasChoices: false,
+      });
+
+      act(() => {
+        result.current.onRun();
+      });
+
+      expect(onPickApp).toHaveBeenCalledOnce();
+      expect(onRun).not.toHaveBeenCalled();
+      expect(onRunPlan).not.toHaveBeenCalled();
+    });
+  });
+
   describe('onRun', () => {
     it('runs the plan from the face of the button', () => {
       const { onRun, onRunWithAgent, result } = render();

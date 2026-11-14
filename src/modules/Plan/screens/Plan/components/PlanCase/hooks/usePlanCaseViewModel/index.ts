@@ -3,13 +3,13 @@ import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import type { KeyboardEvent } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { frameUrlOf } from '@/modules/Plan/library';
+import { caseSourceOf, frameUrlOf } from '@/modules/Plan/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 
 export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const { testCase, isLocked, onToggle } = props;
   const design = props.design ?? null;
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const caseId = testCase.id;
   const [isPickedUp, setIsPickedUp] = useState(false);
   const [freshStep, setFreshStep] = useState<number | null>(null);
@@ -22,19 +22,53 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     props.liveStatus === 'running' ||
     props.liveStatus === 'paused' ||
     props.liveStatus === 'attention';
+  const isManual = testCase.isManual === true;
   const hasGoal = testCase.goal !== '';
   const hasBefore = testCase.preconditions !== '';
   const verdict = props.liveStatus ?? testCase.lastVerdict ?? 'pending';
+  const listOf = (items: string[]) =>
+    new Intl.ListFormat(i18n.language, { style: 'long', type: 'conjunction' }).format(
+      items,
+    );
+  const waitsOn = testCase.blockedBy ?? [];
+  const sources = testCase.sources ?? [];
+  const changeWhy = props.changeWhy ?? null;
   const reason = isNow
     ? ''
-    : stopped !== undefined
-      ? t('PLAN.REASON_STEP', { number: stopped.number })
-      : props.isDeveloped === true
-        ? ''
-        : t('PLAN.REASON_TO_DEVELOP');
+    : waitsOn.length > 0
+      ? t('PLAN.REASON_WAITS', { ids: listOf(waitsOn) })
+      : changeWhy !== null
+        ? t('PLAN.REASON_TO_REVIEW')
+        : stopped !== undefined
+          ? t('PLAN.REASON_STEP', { number: stopped.number })
+          : isManual
+            ? t('PLAN.REASON_MANUAL')
+            : props.isDeveloped === true
+              ? ''
+              : t('PLAN.REASON_TO_DEVELOP');
 
   return {
     reason,
+    reasonClassName:
+      !isNow && (waitsOn.length > 0 || changeWhy !== null)
+        ? 'plan-case__reason plan-case__reason--waits'
+        : 'plan-case__reason',
+    reasonTip:
+      !isNow && waitsOn.length === 0 && changeWhy !== null ? changeWhy : undefined,
+    sources:
+      sources.length === 0
+        ? null
+        : t('PLAN.CASE_SOURCES', {
+            sources: listOf(
+              sources.map((source) => {
+                const word = caseSourceOf(source);
+
+                return word === null
+                  ? source
+                  : t(word.key, { number: word.number, id: word.id });
+              }),
+            ),
+          }),
     priority: reason === '' && testCase.priority === 'P1' ? testCase.priority : null,
     expectedPrefix: t('PLAN.EXPECTED_PREFIX'),
     gotPrefix: t('PLAN.GOT_PREFIX'),
@@ -86,7 +120,8 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     }),
     verdict,
     hasStatus:
-      verdict !== 'passed' && !(verdict === 'pending' && props.isDeveloped === true),
+      verdict !== 'passed' &&
+      !(verdict === 'pending' && (props.isDeveloped === true || isManual)),
     isTitleFocused: props.isFresh === true,
     canRemoveStep: testCase.steps.length > 1 && !isLocked,
     onHeadClick: () => {
@@ -96,7 +131,19 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     onFactAdd: (fact: 'goal' | 'before') => {
       setOpenFacts((current) => ({ ...current, [fact]: true }));
     },
-    runCaseLabel: t(props.isDeveloped === true ? 'PLAN.RUN_CASE' : 'PLAN.DEVELOP_CASE'),
+    runCaseLabel: t(
+      isManual
+        ? 'PLAN.WALK_BY_HAND'
+        : props.isDeveloped === true
+          ? 'PLAN.RUN_CASE'
+          : 'PLAN.DEVELOP_CASE',
+    ),
+    runIcon: isManual ? ('manual' as const) : ('play' as const),
+    manualLabel: t(isManual ? 'PLAN.AUTOMATE' : 'PLAN.MAKE_MANUAL'),
+    manualIcon: isManual ? ('play' as const) : ('manual' as const),
+    onManualToggle: () => {
+      props.onEditCase({ caseId, fields: { isManual: !isManual } });
+    },
     moveLabel: t('PLAN.MOVE_CASE'),
     onHeadKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => {
       if (isLocked || !event.altKey) return;

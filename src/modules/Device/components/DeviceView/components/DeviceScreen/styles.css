@@ -21,6 +21,26 @@
   object-position: left top;
 }
 
+.device-screen__surface {
+  align-self: flex-start;
+  width: min(100cqw, 100cqh * var(--screen-ratio));
+  aspect-ratio: var(--screen-ratio);
+  cursor: crosshair;
+  touch-action: none;
+  user-select: none;
+}
+
+.device-screen__surface:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+.device-screen__stream--fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .device-screen__shot {
   width: 100%;
   height: 100%;

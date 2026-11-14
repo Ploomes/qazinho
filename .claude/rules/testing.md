@@ -54,61 +54,67 @@ another origin'`, nunca `'isInternalNavigation() returns false'`.
 Suítes que precisam de algo real por trás. Elas têm a própria config (`tests/vitest.smoke.ts`), o
 próprio comando, e o CI nunca as roda.
 
-| Arquivo                | O que ele dirige                                                                        |
-| ---------------------- | --------------------------------------------------------------------------------------- |
-| `run.test.ts`          | o produto: Chrome real, o agente do próprio QA, um plano andado e julgado               |
-| `chat.test.ts`         | o agente do próprio QA planeja no schema, e fica sabendo de uma run ao retomar          |
-| `learn.test.ts`        | o agente do próprio QA anda uma loja no navegador do chat, entra e diz o que diverge    |
-| `visual.test.ts`       | o agente do próprio QA reprova uma página cujo texto está certo e a tela não            |
-| `page.test.ts`         | `out/renderer` num Chrome comum, sem bridge: a página não pode quebrar                  |
-| `electron.test.ts`     | a janela empacotada, onde `window.qazinho` é o preload real                             |
-| `stream.test.ts`       | Chrome sem janela como MJPEG em loopback, enquadrado na página, nítido em foco          |
-| `stop.test.ts`         | Stop termina uma run enquanto um agente fake ainda está pensando                        |
-| `resize.test.ts`       | o dispositivo redimensionado no meio da run: os casos que vêm recebem o tamanho         |
-| `cost.test.ts`         | o agente de cada caso, terminado com Ctrl+C, diz quanto custou antes da run             |
-| `finding.test.ts`      | um bug registrado ao lado de um passo: a tela dele, e o caso seguinte avisado           |
-| `agent.test.ts`        | um agente fake tenta de novo uma ação que falhou, deixa uma nota, ou dá erro            |
-| `codex.test.ts`        | um Codex fake conversa no schema estrito, retoma, roda um caso, sai da conta            |
-| `tools.test.ts`        | um cliente MCP chama toda ferramenta do dispositivo no Chrome real, as APIs             |
-| `design.test.ts`       | um agente e um explorador fakes recebem o Figma, medem a tela, registram                |
-| `locate.test.ts`       | controles parecidos numerados, campos com rótulo, um dropdown, uma data                 |
-| `dialog.test.ts`       | um confirm respondido OK ou Cancelar, um prompt digitado, e o look avisando             |
-| `tabs.test.ts`         | a nova aba de um link e uma janela de login: o dispositivo vai a elas e volta           |
-| `caught.test.ts`       | o app construído: o chat em pedaços, as linhas da run e o bug pego passando pela tela   |
-| `together.test.ts`     | o app construído: as etapas do plano, o QA falando no meio da run, duas telas e contas  |
-| `frames.test.ts`       | um iframe de outro site e um dentro dele: lidos, clicados, digitados, a rede vista      |
-| `peek.test.ts`         | um Chrome sem janela lê uma página para o chat, ou diz por que não abriu                |
-| `fresh.test.ts`        | um caso começa num navegador sem nada salvo, e o stream o acompanha                     |
-| `device-fresh.test.ts` | apps de fixture num AVD e num simulador reais: limpos, reabertos, segurados             |
-| `save.test.ts`         | o lightbox baixa um screenshot pela main, para onde o diálogo diz                       |
-| `setup.test.ts`        | o instalador roda um npm fake, transmite as linhas e falha com honestidade              |
-| `terminal.test.ts`     | um programa de tela cheia fora de vista: a tela lida, as teclas, a página               |
-| `mcp.test.ts`          | um `/mcp` e um Codex fakes: o MCP do Figma adicionado, logado, recusado, cancelado      |
-| `login.test.ts`        | um `claude` e um `codex` fakes: login num terminal, status lido, sem terminal, cancela  |
-| `record.test.ts`       | o app construído grava uma run web como um MP4 H.264 pela janela escondida              |
-| `github.test.ts`       | um gh fake: login por código de dispositivo e cancelar, repositórios, branches          |
-| `jira.test.ts`         | um site do Jira fake: histórias buscadas e lidas, os arquivos delas baixados            |
-| `confluence.test.ts`   | um site do Confluence fake: uma página buscada e lida, um plano publicado duas vezes    |
-| `filing.test.ts`       | um Jira e um gh fakes: um bug registrado com arquivos e história, recusas em palavras   |
-| `review.test.ts`       | um agente fake pesa um bug visto de novo contra a issue num Jira fake                   |
-| `assistant.test.ts`    | um agente fake age pelas ferramentas do app: uma página que responde, espera, ou não    |
-| `build.test.ts`        | um gh fake entrega uma branch e um agente fake a constrói: um APK guardado              |
-| `replay.test.ts`       | um caso gravado, andado de novo sem agente, consertado, ou retomado de onde parou       |
-| `explore.test.ts`      | um explorador fake no Chrome real: telas, um bug, um plano e o relógio                  |
-| `variables.test.ts`    | um agente fake entra com `${NAME}`: a página recebe o valor, o agente não               |
-| `ask.test.ts`          | um agente fake pergunta ao QA no meio da run: uma escolha, um código, silêncio, um stop |
-| `network.test.ts`      | Chrome real: cada pedido guardado com status, tempo e tamanho, segredos fora            |
-| `strip.test.ts`        | o app construído: os pedidos de uma run sob o vídeo, o detalhe de um, e o download      |
-| `island.test.ts`       | o app construído: a janela da ilha transparente, no Dock, sem corte, setas e teclado    |
-| `outside.test.ts`      | um cliente MCP real no app construído: token, navegador, rodar, esperar, parar, sugerir |
-| `memory.test.ts`       | o app construído: a resposta do QA vira memória, a próxima run a usa, o chat a esquece  |
-| `update.test.ts`       | o app construído num feed e numa API fakes: baixa sozinho, o botão, a tela de recusa    |
-| `attach.test.ts`       | o app construído: o navegador do chat, a pergunta na tela ampliada, arquivos do QA      |
-| `close.test.ts`        | o app construído: fechar esconde com a página viva, o Dock a traz, a tela cheia, sair   |
+| Arquivo                | O que ele dirige                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------ |
+| `run.test.ts`          | o produto: Chrome real, o agente do próprio QA, um plano andado e julgado                  |
+| `chat.test.ts`         | o agente do próprio QA planeja no schema, e fica sabendo de uma run ao retomar             |
+| `learn.test.ts`        | o agente do próprio QA anda uma loja no navegador do chat, entra e diz o que diverge       |
+| `visual.test.ts`       | o agente do próprio QA reprova uma página cujo texto está certo e a tela não               |
+| `page.test.ts`         | `out/renderer` num Chrome comum, sem bridge: a página não pode quebrar                     |
+| `electron.test.ts`     | a janela empacotada, onde `window.qazinho` é o preload real                                |
+| `stream.test.ts`       | Chrome sem janela como MJPEG em loopback, enquadrado na página, nítido em foco             |
+| `stop.test.ts`         | Stop termina uma run enquanto um agente fake ainda está pensando                           |
+| `resize.test.ts`       | o dispositivo redimensionado no meio da run: os casos que vêm recebem o tamanho            |
+| `cost.test.ts`         | o agente de cada caso, terminado com Ctrl+C, diz quanto custou antes da run                |
+| `finding.test.ts`      | um bug registrado ao lado de um passo: a tela dele, e o caso seguinte avisado              |
+| `agent.test.ts`        | um agente fake tenta de novo uma ação que falhou, deixa uma nota, ou dá erro               |
+| `codex.test.ts`        | um Codex fake conversa no schema estrito, retoma, roda um caso, sai da conta               |
+| `tools.test.ts`        | um cliente MCP chama toda ferramenta do dispositivo no Chrome real, as APIs                |
+| `design.test.ts`       | um agente e um explorador fakes recebem o Figma, medem a tela, registram                   |
+| `locate.test.ts`       | controles parecidos numerados, campos com rótulo, um dropdown, uma data                    |
+| `dialog.test.ts`       | um confirm respondido OK ou Cancelar, um prompt digitado, e o look avisando                |
+| `tabs.test.ts`         | a nova aba de um link e uma janela de login: o dispositivo vai a elas e volta              |
+| `caught.test.ts`       | o app construído: o chat em pedaços, as linhas da run e o bug pego passando pela tela      |
+| `together.test.ts`     | o app construído: as etapas do plano, o QA falando no meio da run, duas telas e contas     |
+| `frames.test.ts`       | um iframe de outro site e um dentro dele: lidos, clicados, digitados, a rede vista         |
+| `peek.test.ts`         | um Chrome sem janela lê uma página para o chat, ou diz por que não abriu                   |
+| `fresh.test.ts`        | um caso começa num navegador sem nada salvo, e o stream o acompanha                        |
+| `device-fresh.test.ts` | apps de fixture num AVD e num simulador reais: limpos, reabertos, segurados                |
+| `save.test.ts`         | o lightbox baixa um screenshot pela main, para onde o diálogo diz                          |
+| `setup.test.ts`        | o instalador roda um npm fake, transmite as linhas e falha com honestidade                 |
+| `terminal.test.ts`     | um programa de tela cheia fora de vista: a tela lida, as teclas, a página                  |
+| `mcp.test.ts`          | um `/mcp` e um Codex fakes: o MCP do Figma adicionado, logado, recusado, cancelado         |
+| `login.test.ts`        | um `claude` e um `codex` fakes: login num terminal, status lido, sem terminal, cancela     |
+| `record.test.ts`       | o app construído grava uma run web como um MP4 H.264 pela janela escondida                 |
+| `github.test.ts`       | um gh fake: login por código de dispositivo e cancelar, repositórios, branches             |
+| `jira.test.ts`         | um site do Jira fake: histórias buscadas e lidas, os arquivos baixados, a sprint aberta    |
+| `confluence.test.ts`   | um site do Confluence fake: uma página buscada e lida, um plano publicado duas vezes       |
+| `filing.test.ts`       | um Jira e um gh fakes: um bug registrado com arquivos e história, recusas em palavras      |
+| `review.test.ts`       | um agente fake pesa um bug visto de novo contra a issue num Jira fake                      |
+| `assistant.test.ts`    | um agente fake age pelas ferramentas do app: uma página que responde, espera, ou não       |
+| `build.test.ts`        | um gh fake entrega uma branch e um agente fake a constrói: um APK guardado                 |
+| `replay.test.ts`       | um caso gravado, andado de novo sem agente, consertado, ou retomado de onde parou          |
+| `explore.test.ts`      | um explorador fake no Chrome real: telas, um bug, um plano e o relógio                     |
+| `variables.test.ts`    | um agente fake entra com `${NAME}`: a página recebe o valor, o agente não                  |
+| `ask.test.ts`          | um agente fake pergunta ao QA no meio da run: uma escolha, um código, silêncio, um stop    |
+| `network.test.ts`      | Chrome real: cada pedido guardado com status, tempo e tamanho, segredos fora               |
+| `strip.test.ts`        | o app construído: os pedidos de uma run sob o vídeo, o detalhe de um, e o download         |
+| `island.test.ts`       | o app construído: a janela da ilha transparente, no Dock, sem corte, setas e teclado       |
+| `outside.test.ts`      | um cliente MCP real no app construído: token, navegador, rodar, esperar, parar, sugerir    |
+| `memory.test.ts`       | o app construído: a resposta do QA vira memória, a próxima run a usa, o chat a esquece     |
+| `update.test.ts`       | o app construído num feed e numa API fakes: baixa sozinho, o botão, a tela de recusa       |
+| `attach.test.ts`       | o app construído: o navegador do chat, a pergunta na tela ampliada, arquivos do QA         |
+| `close.test.ts`        | o app construído: fechar esconde com a página viva, o Dock a traz, a tela cheia, sair      |
+| `skills.test.ts`       | o agente do próprio QA segue uma skill ligada e uma chamada, e escreve uma de exemplos     |
+| `manual.test.ts`       | um caso à mão no Chrome real: o preparo, os gestos e as marcas do QA, uma variável         |
+| `ahead.test.ts`        | o agente do próprio QA planeja de uma história antes do app: critérios, dúvida, estratégia |
+| `watcher.test.ts`      | o agente do próprio QA lê uma história que mudou, e as decisões de uma reunião             |
+| `new-project.test.ts`  | o app construído: os cartões, só os campos marcados, o nome do app, a loja de exemplo      |
 
-O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts` e o `visual.test.ts` gastam os tokens do QA
-e precisam de um agente instalado. Rode-os à mão depois de mexer no pipeline da run ou no schema de
-uma resposta.
+O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts`, o `visual.test.ts`, o `skills.test.ts`, o
+`ahead.test.ts` e o `watcher.test.ts` gastam os tokens do QA e precisam de um agente instalado.
+Rode-os à mão, uma vez, depois de mexer no pipeline da run ou no schema de uma resposta; quando um
+falha, leia o que o agente escreveu em vez de rodá-lo de novo.
 
 **Um clique sintético não é um clique.** O Playwright dirige a página pelo CDP, que pula o hit
 test que o gerenciador de janelas faz — então um `-webkit-app-region: drag` engolindo um clique

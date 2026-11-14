@@ -1,9 +1,8 @@
-/**
- * Como o QA respondeu uma das perguntas do agente: as opções que escolheu, o que
- * escreveu, e as variáveis que uma opção o fez guardar.
- */
+/** Como o QA respondeu uma pergunta do agente, ou a dúvida que ela virou na história. */
 export interface IQuestionAnswer {
   picked: string[];
   text: string;
   kept?: string[];
+  toStory?: boolean;
+  doubtId?: string;
 }

@@ -9,7 +9,7 @@ import type {
   VariablesOutcome,
 } from '@/shared/types';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { usePlanViewModel } from '@/modules/Plan/screens/Plan/hooks/usePlanViewModel';
 import { startRun } from '@/modules/Workspace';
 import {
@@ -91,6 +91,18 @@ const PAGE = {
 };
 
 describe('usePlanViewModel', () => {
+  describe('the list of cases', () => {
+    /** A lista dos casos ganha um título, para não se misturar com as dúvidas acima dela. */
+    it('names the list with how many cases the plan has', () => {
+      useSettingsStore.setState({ language: 'en' });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.casesTitle).toBe('Cases');
+      expect(result.current.casesCount).toBe(String(CASES.length));
+    });
+  });
+
   describe('the variables a plan types', () => {
     const typing = () =>
       useWorkspaceStore.setState({
@@ -165,6 +177,69 @@ describe('usePlanViewModel', () => {
     });
   });
 
+  describe('the cases done by hand', () => {
+    /** Um plano de dois casos, o TC-02 à mão, que uma run do plano já rodou sem ele. */
+    const waiting = () => {
+      const walked = walkRun({
+        workspace: {
+          ...makeWorkspace(),
+          plan: CASES.map((one) =>
+            one.id === 'TC-02' ? { ...one, isManual: true } : one,
+          ),
+        },
+        verdicts: ['passed', 'passed', 'passed'],
+        isFinished: true,
+      });
+
+      useAppStore.setState({ projects: [PROJECT] });
+      useWorkspaceStore.setState({ workspaces: [walked] });
+    };
+
+    it('says which case waits for the QA once the plan ran, and starts it by hand', () => {
+      useSettingsStore.setState({ language: 'en' });
+      waiting();
+
+      const startRunCall: { mode?: string; caseIds?: string[] }[] = [];
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        startRun: (run) => {
+          startRunCall.push(run);
+
+          return Promise.resolve();
+        },
+      };
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.manualNotice).toEqual({
+        text: 'TC-02 waits for you, by hand.',
+        actionLabel: 'Walk it now',
+      });
+
+      act(() => {
+        result.current.onWalkWaiting();
+      });
+
+      expect(startRunCall).toEqual([
+        expect.objectContaining({ mode: 'manual', caseIds: ['TC-02'] }),
+      ]);
+    });
+
+    it('says nothing before the plan ever ran', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace(),
+            plan: CASES.map((one) => ({ ...one, isManual: true })),
+          },
+        ],
+      });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.manualNotice).toBeNull();
+    });
+  });
+
   describe('publishing in Confluence', () => {
     beforeEach(() => {
       useSettingsStore.setState({ language: 'en' });
@@ -179,6 +254,50 @@ describe('usePlanViewModel', () => {
           },
         ],
       });
+    });
+
+    it('puts the code, the .feature and the page in one Export menu', () => {
+      useAppStore.setState({ projects: [PROJECT] });
+
+      expect(
+        renderHook(() => usePlanViewModel()).result.current.exportItems.map(
+          ({ key, label }) => [key, label],
+        ),
+      ).toEqual([
+        ['code', 'Test code'],
+        ['feature', 'A .feature file'],
+        ['publish', 'Publish in Confluence'],
+      ]);
+    });
+
+    it('puts Gherkin and every export in More, for a narrow column', () => {
+      useAppStore.setState({ projects: [PROJECT] });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.moreItems.map(({ key }) => key)).toEqual([
+        'gherkin',
+        'code',
+        'feature',
+        'publish',
+      ]);
+
+      act(() => {
+        result.current.moreItems[0]?.onPick();
+      });
+
+      expect(result.current.isGherkin).toBe(true);
+    });
+
+    it('leaves out of the menu what this plan cannot do', () => {
+      useAppStore.setState({ projects: [] });
+      useSetupStore.setState({ integrations: [] });
+
+      expect(
+        renderHook(() => usePlanViewModel()).result.current.exportItems.map(
+          ({ key }) => key,
+        ),
+      ).toEqual(['feature']);
     });
 
     it('offers to publish only with Confluence on and a plan to publish', () => {
@@ -365,6 +484,45 @@ describe('usePlanViewModel', () => {
       useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
 
       expect(renderHook(() => usePlanViewModel()).result.current.canExport).toBe(false);
+    });
+
+    /** Exportar ficava no fim da lista, e o QA rolava o plano inteiro para achá-lo. */
+    it('puts the plan’s actions at the top, and none while a run walks it', () => {
+      expect(renderHook(() => usePlanViewModel()).result.current.hasTopActions).toBe(
+        true,
+      );
+
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.hasTopActions).toBe(
+        false,
+      );
+    });
+
+    it('shows the plan as Gherkin, and saves it as a .feature file', async () => {
+      const saveText = vi.fn(() => Promise.resolve('saved' as const));
+
+      window.qazinho = { ...window.qazinho, saveText };
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onToggleGherkin();
+      });
+
+      expect(result.current.isGherkin).toBe(true);
+      expect(result.current.gherkin).toContain('Feature: Checkout regression');
+
+      act(() => {
+        result.current.onExportFeature();
+      });
+
+      await waitFor(() => {
+        expect(result.current.featureNotice).toBe('The .feature file is saved.');
+      });
+      expect(saveText).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'Checkout regression', extension: 'feature' }),
+      );
     });
   });
 
@@ -1072,7 +1230,7 @@ describe('usePlanViewModel', () => {
           base: [],
           version: 4,
           cases: [],
-          editedBy: 'Bruno',
+          editedBy: 'Caio',
           editedAt: '2026-10-24T11:30:00.000Z',
         },
       ],
@@ -1087,7 +1245,7 @@ describe('usePlanViewModel', () => {
 
       const { result } = renderHook(() => usePlanViewModel());
 
-      expect(result.current.orgNotice).toBe('Bruno changed this plan in the org.');
+      expect(result.current.orgNotice).toBe('Caio changed this plan in the org.');
       expect(result.current.orgUpdateLabel).toBe('Update');
     });
 

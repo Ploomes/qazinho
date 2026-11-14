@@ -1,9 +1,16 @@
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button, EmptyState, Icon, IconButton } from '@/shared/components/atoms';
-import { ToTop, Tooltip } from '@/shared/components/molecules';
+import { MenuButton, ToTop, Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
-import { PlanCase, PublishModal, UndoToast } from './components';
+import {
+  PlanCase,
+  PlanChanges,
+  PlanDoubts,
+  PlanStrategy,
+  PublishModal,
+  UndoToast,
+} from './components';
 import { usePlanViewModel } from './hooks';
 import './styles.css';
 
@@ -13,6 +20,8 @@ export const Plan: React.FC = () => {
     isToTopShown,
     onToTop,
     secretNotice,
+    manualNotice,
+    onWalkWaiting,
     onKeepSecret,
     onPlainSecret,
     unread,
@@ -30,6 +39,16 @@ export const Plan: React.FC = () => {
     isLocked,
     lockedLabel,
     isEmpty,
+    casesTitle,
+    casesCount,
+    workspaceId,
+    strategy,
+    doubts,
+    changed,
+    review,
+    canCheck,
+    changeWhys,
+    issue,
     sources,
     onToggleCase,
     onReorder,
@@ -40,22 +59,24 @@ export const Plan: React.FC = () => {
     missingNotice,
     addMissingLabel,
     onAddMissing,
-    canPublish,
-    isPublishing,
-    publishLabel,
-    publishTip,
+    hasTopActions,
+    isGherkin,
+    gherkin,
+    gherkinLabel,
+    featureNotice,
+    onToggleGherkin,
+    onDismissFeature,
     publishNotice,
     isPublishOpen,
     publishTitle,
-    onPublish,
     onConfirmPublish,
     onCancelPublish,
     onDismissPublish,
-    exportLabel,
-    canExport,
     exportNotice,
     dismissExportLabel,
-    onExport,
+    exportMenuLabel,
+    exportItems,
+    moreItems,
     onDismissExport,
     onDraftInChat,
     onAddCase,
@@ -128,6 +149,38 @@ export const Plan: React.FC = () => {
         />
       ) : (
         <div className="plan">
+          <PlanChanges
+            workspaceId={workspaceId}
+            plan={plan}
+            doubts={doubts}
+            issue={issue}
+            changed={changed}
+            review={review}
+            canCheck={canCheck}
+            isLocked={isLocked}
+            more={moreItems}
+            actions={
+              hasTopActions ? (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    pressed={isGherkin}
+                    onClick={onToggleGherkin}
+                  >
+                    <Icon name="plan" />
+                    {gherkinLabel}
+                  </Button>
+                  <MenuButton
+                    label={exportMenuLabel}
+                    icon="download"
+                    items={exportItems}
+                  />
+                </>
+              ) : null
+            }
+          />
+
           {filesNotice !== null && (
             <Tooltip content={filesNotice.tip}>
               <p className="plan__files">
@@ -136,6 +189,90 @@ export const Plan: React.FC = () => {
               </p>
             </Tooltip>
           )}
+
+          <AnimatePresence initial={false}>
+            {featureNotice !== null && (
+              <motion.div
+                key="feature"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div className="plan__export-body">
+                  <span className="plan__export-text">{featureNotice}</span>
+                  <Tooltip content={dismissExportLabel}>
+                    <IconButton
+                      icon="close"
+                      label={dismissExportLabel}
+                      size="sm"
+                      onClick={onDismissFeature}
+                    />
+                  </Tooltip>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence initial={false}>
+            {exportNotice !== null && (
+              <motion.div
+                key="export"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div className="plan__export-body">
+                  <span className="plan__export-text">{exportNotice}</span>
+                  <Tooltip content={dismissExportLabel}>
+                    <IconButton
+                      icon="close"
+                      label={dismissExportLabel}
+                      size="sm"
+                      onClick={onDismissExport}
+                    />
+                  </Tooltip>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence initial={false}>
+            {publishNotice !== null && (
+              <motion.div
+                key="publish"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div
+                  className={
+                    publishNotice.isFailed
+                      ? 'plan__export-body plan__export-body--failed'
+                      : 'plan__export-body'
+                  }
+                >
+                  <span className="plan__export-text">{publishNotice.text}</span>
+                  <Tooltip content={dismissExportLabel}>
+                    <IconButton
+                      icon="close"
+                      label={dismissExportLabel}
+                      size="sm"
+                      onClick={onDismissPublish}
+                    />
+                  </Tooltip>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div ref={topRef} className="plan__head">
             {sources.length > 0 && (
@@ -166,9 +303,29 @@ export const Plan: React.FC = () => {
                 )}
               </div>
             )}
+            {strategy !== null && <PlanStrategy strategy={strategy} />}
           </div>
 
           <AnimatePresence initial={false}>
+            {manualNotice !== null && (
+              <motion.div
+                key="manual"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div className="plan__export-body">
+                  <span className="plan__export-text">{manualNotice.text}</span>
+                  <Button size="sm" onClick={onWalkWaiting}>
+                    <Icon name="manual" />
+                    {manualNotice.actionLabel}
+                  </Button>
+                </div>
+              </motion.div>
+            )}
             {secretNotice !== null && (
               <motion.div
                 key="secret"
@@ -241,6 +398,14 @@ export const Plan: React.FC = () => {
             )}
           </AnimatePresence>
 
+          <PlanDoubts
+            workspaceId={workspaceId}
+            doubts={doubts}
+            issue={issue}
+            plan={plan}
+            isLocked={isLocked}
+          />
+
           {isLocked && (
             <div className="plan__locked">
               <Icon name="lock" />
@@ -248,37 +413,48 @@ export const Plan: React.FC = () => {
             </div>
           )}
 
-          <Reorder.Group
-            axis="y"
-            values={plan}
-            onReorder={onReorder}
-            className="plan__cases"
-          >
-            <AnimatePresence initial={false}>
-              {plan.map((testCase) => (
-                <PlanCase
-                  key={testCase.id}
-                  testCase={testCase}
-                  lastRun={lastRuns[testCase.id]}
-                  liveStatus={liveStatuses[testCase.id]}
-                  isDeveloped={developedIds.includes(testCase.id)}
-                  design={design}
-                  isOpen={openCaseId === testCase.id}
-                  isFresh={freshCaseId === testCase.id}
-                  isLocked={isLocked}
-                  onToggle={onToggleCase}
-                  onRunCase={onRunCase}
-                  onEditCase={onEditCase}
-                  onRemoveCase={onRemoveCase}
-                  onOpenBug={onOpenBug}
-                  onMoveCase={onMoveCase}
-                  onAddStep={onAddStep}
-                  onRemoveStep={onRemoveStep}
-                  onEditStep={onEditStep}
-                />
-              ))}
-            </AnimatePresence>
-          </Reorder.Group>
+          {isGherkin && <pre className="plan__gherkin">{gherkin}</pre>}
+
+          {!isGherkin && (
+            <section className="plan__list" aria-label={casesTitle}>
+              <h2 className="plan__list-head">
+                <span className="plan__list-title">{casesTitle}</span>
+                <span className="plan__list-count">{casesCount}</span>
+              </h2>
+              <Reorder.Group
+                axis="y"
+                values={plan}
+                onReorder={onReorder}
+                className="plan__cases"
+              >
+                <AnimatePresence initial={false}>
+                  {plan.map((testCase) => (
+                    <PlanCase
+                      key={testCase.id}
+                      testCase={testCase}
+                      lastRun={lastRuns[testCase.id]}
+                      liveStatus={liveStatuses[testCase.id]}
+                      isDeveloped={developedIds.includes(testCase.id)}
+                      design={design}
+                      isOpen={openCaseId === testCase.id}
+                      isFresh={freshCaseId === testCase.id}
+                      changeWhy={changeWhys[testCase.id]}
+                      isLocked={isLocked}
+                      onToggle={onToggleCase}
+                      onRunCase={onRunCase}
+                      onEditCase={onEditCase}
+                      onRemoveCase={onRemoveCase}
+                      onOpenBug={onOpenBug}
+                      onMoveCase={onMoveCase}
+                      onAddStep={onAddStep}
+                      onRemoveStep={onRemoveStep}
+                      onEditStep={onEditStep}
+                    />
+                  ))}
+                </AnimatePresence>
+              </Reorder.Group>
+            </section>
+          )}
 
           {!isLocked && (
             <div className="plan__foot">
@@ -286,87 +462,8 @@ export const Plan: React.FC = () => {
                 <Icon name="plus" />
                 {t('PLAN.ADD_CASE')}
               </button>
-              <div className="plan__actions">
-                {canPublish && (
-                  <Tooltip content={publishTip}>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      disabled={isPublishing}
-                      onClick={onPublish}
-                    >
-                      {publishLabel}
-                    </Button>
-                  </Tooltip>
-                )}
-                {canExport && (
-                  <Tooltip content={t('PLAN.EXPORT_TIP')}>
-                    <Button variant="ghost" size="sm" onClick={onExport}>
-                      {exportLabel}
-                    </Button>
-                  </Tooltip>
-                )}
-              </div>
             </div>
           )}
-
-          <AnimatePresence initial={false}>
-            {exportNotice !== null && (
-              <motion.div
-                key="export"
-                className="plan__export"
-                role="status"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-              >
-                <div className="plan__export-body">
-                  <span className="plan__export-text">{exportNotice}</span>
-                  <Tooltip content={dismissExportLabel}>
-                    <IconButton
-                      icon="close"
-                      label={dismissExportLabel}
-                      size="sm"
-                      onClick={onDismissExport}
-                    />
-                  </Tooltip>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence initial={false}>
-            {publishNotice !== null && (
-              <motion.div
-                key="publish"
-                className="plan__export"
-                role="status"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-              >
-                <div
-                  className={
-                    publishNotice.isFailed
-                      ? 'plan__export-body plan__export-body--failed'
-                      : 'plan__export-body'
-                  }
-                >
-                  <span className="plan__export-text">{publishNotice.text}</span>
-                  <Tooltip content={dismissExportLabel}>
-                    <IconButton
-                      icon="close"
-                      label={dismissExportLabel}
-                      size="sm"
-                      onClick={onDismissPublish}
-                    />
-                  </Tooltip>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           <ToTop isShown={isToTopShown} onClick={onToTop} />
         </div>

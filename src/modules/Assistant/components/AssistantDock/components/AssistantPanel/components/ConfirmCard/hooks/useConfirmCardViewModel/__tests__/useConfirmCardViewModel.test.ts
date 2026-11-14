@@ -152,7 +152,7 @@ describe('useConfirmCardViewModel', () => {
     });
 
     expect(result.current).toMatchObject({
-      body: 'Its chat, plan, runs and bugs go with it.',
+      body: 'Its cases, chat, runs and bugs go with it.',
       result: 'No answer came, so nothing changed',
       className: 'confirm-card confirm-card--expired',
     });

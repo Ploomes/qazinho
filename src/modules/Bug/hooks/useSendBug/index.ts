@@ -5,6 +5,7 @@ import { BUG_REPORT } from '@/modules/Bug/constants';
 import { bugReportOf, filingPlanOf } from '@/modules/Bug/library';
 import { frameUrlOf } from '@/modules/Plan/library';
 import { bugVideoOf, failedRequestsNear, formatClock } from '@/modules/Run';
+import { useTemplateOf } from '@/modules/Template/hooks';
 import { Bugs, Run } from '@/services';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -12,6 +13,7 @@ export const useSendBug = () => {
   const { t } = useTranslation();
   const landFiled = useWorkspaceStore((state) => state.landFiled);
   const updateProject = useAppStore((state) => state.updateProject);
+  const templateOf = useTemplateOf();
 
   const words: IBugReportWords = {
     steps: t('FILING.REPORT_STEPS'),
@@ -131,6 +133,7 @@ export const useSendBug = () => {
               ]),
         ],
         words,
+        template: templateOf({ kind: 'bug', projectId: workspace.projectId }),
       });
 
       props.onReady();

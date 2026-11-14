@@ -162,10 +162,6 @@ export const useBugReviews = () => {
     reviewWorkspace: (workspaceId: string) => {
       void reviewWorkspace(workspaceId);
     },
-    reviewAll: () => {
-      for (const { id } of useWorkspaceStore.getState().workspaces)
-        void reviewWorkspace(id);
-    },
     post: async (props: { workspaceId: string; bugId: string; comment: string }) => {
       const workspace = workspaceOf(props.workspaceId);
       const bug = workspace?.bugs.find(({ id }) => id === props.bugId);
@@ -274,7 +270,7 @@ export const useBugReviews = () => {
       if (review !== undefined && review !== null)
         landReview({ ...props, review: { ...review, state: 'dismissed' } });
     },
-    retry: (props: { workspaceId: string; bugId: string }) => {
+    review: (props: { workspaceId: string; bugId: string }) => {
       void reviewBug(props);
     },
   };

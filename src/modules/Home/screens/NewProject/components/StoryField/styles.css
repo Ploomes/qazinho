@@ -1,0 +1,10 @@
+.story-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.story-field > :first-child {
+  flex: 1;
+  min-width: 0;
+}

@@ -4,10 +4,12 @@ import {
   answerRound,
   appendAgentError,
   appendMemoryNote,
+  appendNamedNote,
   appendAgentMessage,
   appendPlanCard,
   appendQuestions,
   appendRunNote,
+  appendSkillsNote,
   appendUserMessage,
   formatClock,
   withActivity,
@@ -49,6 +51,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   isPanelOpen: true,
   panelWidth: PANEL.defaultWidth,
   askingIds: [],
+  planQueue: [],
+  planning: [],
   liveTexts: {},
   activities: {},
   bugFlashes: {},
@@ -60,6 +64,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   readSteps: {},
   lookingAt: {},
   chatDevices: {},
+  storyReadAt: {},
+  changeHold: null,
   removingWorkspaceId: null,
 
   addWorkspace: (workspace) =>
@@ -73,6 +79,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
     set((state) => ({
       removingWorkspaceId: null,
       workspaces: state.workspaces.filter(({ id }) => id !== workspaceId),
+      planQueue: state.planQueue.filter((id) => id !== workspaceId),
+      planning: state.planning.filter((id) => id !== workspaceId),
     })),
 
   renameWorkspace: ({ workspaceId, name }) =>
@@ -163,6 +171,25 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
     })),
 
   selectTab: (tab) => set(tab === 'chat' ? { isPanelOpen: true } : { panelTab: tab }),
+
+  queuePlans: (workspaceIds) =>
+    set((state) => ({
+      planQueue: [
+        ...state.planQueue,
+        ...workspaceIds.filter((id) => !state.planQueue.includes(id)),
+      ],
+    })),
+
+  takeQueued: (workspaceId) =>
+    set((state) => ({
+      planQueue: state.planQueue.filter((id) => id !== workspaceId),
+      planning: [
+        ...state.planning.filter(
+          (id) => id !== workspaceId && state.askingIds.includes(id),
+        ),
+        workspaceId,
+      ],
+    })),
 
   noteActivity: ({ workspaceId, tool, target }) =>
     set((state) => ({
@@ -289,6 +316,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
     workspaceId,
     summary,
     plan,
+    strategy,
+    snapshots,
     source,
     story,
     page,
@@ -314,6 +343,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
           return {
             ...appendPlanCard({ workspace: said, plan, at: formatClock(new Date()) }),
+            strategy: strategy ?? workspace.strategy ?? null,
+            ...(snapshots === undefined || snapshots.length === 0 ? {} : { snapshots }),
             planSource: source,
             sourcePage: page ?? workspace.sourcePage,
             issue:
@@ -380,6 +411,26 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaceId,
         change: (workspace) =>
           appendMemoryNote({ workspace, changes, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  landFollowedSkills: ({ workspaceId, names }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          appendSkillsNote({ workspace, names, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  landProjectName: ({ workspaceId, named }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          appendNamedNote({ workspace, named, at: formatClock(new Date()) }),
       }),
     })),
 
@@ -675,6 +726,87 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
             : workspace,
       }),
     })),
+
+  markManual: ({ workspaceId, turn }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          workspace.live === null || workspace.live.isDone
+            ? workspace
+            : { ...workspace, live: { ...workspace.live, manual: turn, how: 'manual' } },
+      }),
+    })),
+
+  setDoubts: ({ workspaceId, doubts }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({ ...workspace, doubts }),
+      }),
+    })),
+
+  addTold: ({ workspaceId, url }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({ ...workspace, told: [...(workspace.told ?? []), url] }),
+      }),
+    })),
+
+  setStoryStage: ({ workspaceId, stage }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: ({ storyStage: _stage, ...workspace }) =>
+          stage === null ? workspace : { ...workspace, storyStage: stage },
+      }),
+    })),
+
+  setChanged: ({ workspaceId, changed }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: ({ changed: _changed, ...workspace }) =>
+          changed === null ? workspace : { ...workspace, changed },
+      }),
+    })),
+
+  setReview: ({ workspaceId, review }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: ({ review: _review, ...workspace }) =>
+          review === null ? workspace : { ...workspace, review },
+      }),
+    })),
+
+  resolveChanges: (workspaceId) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: ({ changed, review: _review, ...workspace }) =>
+          changed === undefined
+            ? workspace
+            : {
+                ...workspace,
+                snapshots: changed.snapshots,
+                planSource: changed.code ?? workspace.planSource,
+              },
+      }),
+    })),
+
+  holdForChanges: (changeHold) => set({ changeHold }),
+
+  markStoryRead: ({ workspaceId, at }) =>
+    set((state) => ({ storyReadAt: { ...state.storyReadAt, [workspaceId]: at } })),
 
   markScreens: ({ workspaceId, screens }) =>
     set((state) => ({

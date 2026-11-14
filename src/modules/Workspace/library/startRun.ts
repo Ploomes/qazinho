@@ -1,7 +1,10 @@
 import type { IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
 import type { RunMode } from '@/shared/types';
 
-/** Inicia uma run do plano, ou uma exploração, que não precisa de plano para ir. */
+/**
+ * Inicia uma run do plano, que encerra a espera da história, ou uma exploração, que não
+ * precisa de plano para ir.
+ */
 export function startRun(props: {
   workspace: IWorkspace;
   startedAt: string;
@@ -16,8 +19,10 @@ export function startRun(props: {
 
   if (workspace.plan.length === 0 && kind !== 'explore') return workspace;
 
+  const { storyStage: _stage, ...walked } = workspace;
+
   return {
-    ...workspace,
+    ...(kind === 'explore' || mode === 'manual' ? workspace : walked),
     status: 'running',
     bugs: workspace.bugs.map((bug) => ({ ...bug, isNew: false })),
     live: {

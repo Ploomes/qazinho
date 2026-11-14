@@ -349,4 +349,110 @@ describe('useQuestionRoundViewModel', () => {
       expect(view.result.current.canNext).toBe(false);
     });
   });
+
+  /**
+   * Uma pergunta que ninguém aqui sabe responder vai para a história, e o plano segue sem
+   * ela: o caso que depende dela fica marcado até o time responder no Jira.
+   */
+  describe('a question sent to the story', () => {
+    it('is offered only when the workspace plans from a Jira story', () => {
+      expect(
+        render({ message: round({ questions: [SCOPE] }) }).view.result.current
+          .canAskStory,
+      ).toBe(false);
+      expect(
+        render({ message: round({ questions: [SCOPE] }), canAskStory: true }).view.result
+          .current.canAskStory,
+      ).toBe(true);
+    });
+
+    it('answers the question and goes on, one click like an option', () => {
+      const { onAnswer, view } = render({
+        message: round({ questions: [SCOPE, FLOWS] }),
+        canAskStory: true,
+      });
+
+      act(() => {
+        view.result.current.onAskStory(0);
+      });
+
+      expect(view.result.current.questions.map(({ index }) => index)).toEqual([1]);
+
+      act(() => {
+        view.result.current.onPick({ index: 1, label: 'Premium' });
+      });
+      act(() => {
+        view.result.current.onNext();
+      });
+
+      expect(onAnswer).toHaveBeenCalledWith({
+        messageId: 'm-3',
+        answers: [
+          { picked: [], text: '', toStory: true },
+          { picked: ['Premium'], text: '' },
+        ],
+      });
+    });
+
+    it('marks the button when the QA comes back to it, and an option takes its place', () => {
+      const { onAnswer, view } = render({
+        message: round({ questions: [SCOPE, FLOWS] }),
+        canAskStory: true,
+      });
+
+      act(() => {
+        view.result.current.onAskStory(0);
+      });
+      act(() => {
+        view.result.current.onBack();
+      });
+
+      expect(view.result.current.questions[0]?.isOnStory).toBe(true);
+
+      act(() => {
+        view.result.current.onPick({ index: 0, label: 'The app' });
+      });
+      act(() => {
+        view.result.current.onPick({ index: 1, label: 'Premium' });
+      });
+      act(() => {
+        view.result.current.onNext();
+      });
+
+      expect(onAnswer).toHaveBeenCalledWith({
+        messageId: 'm-3',
+        answers: [
+          { picked: ['The app'], text: '' },
+          { picked: ['Premium'], text: '' },
+        ],
+      });
+    });
+
+    it('does NOT send a question to a story the workspace does not have', () => {
+      const { onAnswer, view } = render({ message: round({ questions: [SCOPE] }) });
+
+      act(() => {
+        view.result.current.onAskStory(0);
+      });
+
+      expect(onAnswer).not.toHaveBeenCalled();
+    });
+
+    it('shows, once answered, the doubt it became on the story', () => {
+      const { view } = render({
+        message: round({
+          questions: [SCOPE],
+          answers: [{ picked: [], text: '', toStory: true, doubtId: 'D2' }],
+        }),
+        isAnswerable: false,
+        canAskStory: true,
+      });
+
+      expect(view.result.current.canAskStory).toBe(false);
+      expect(view.result.current.questions[0]).toMatchObject({
+        said: 'Goes to the story as D2',
+        options: [],
+      });
+    });
+  });
 });

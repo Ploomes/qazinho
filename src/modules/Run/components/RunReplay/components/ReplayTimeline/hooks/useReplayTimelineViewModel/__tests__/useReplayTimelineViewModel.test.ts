@@ -131,8 +131,8 @@ describe('useReplayTimelineViewModel', () => {
         isShown: true,
         ms: 8_400,
         time: '0:08',
-        chapter: 'TC-02 · Checkout with a test card',
-        step: 'Step 2 · Leave the house number empty',
+        chapter: 'TC-02 Checkout with a test card',
+        step: 'Step 2: Leave the house number empty',
       });
     });
 

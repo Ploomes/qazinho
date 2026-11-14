@@ -41,6 +41,52 @@ describe('useNewWorkspaceModalViewModel', () => {
     );
   });
 
+  /** No teste de usabilidade, o QA só achava a história no chat, depois de criar o plano vazio. */
+  it('offers to plan from a Jira story once Jira is connected, and opens its picker', () => {
+    useSetupStore.setState({
+      integrations: [
+        {
+          id: 'jira',
+          account: 'Ana QA',
+          site: 'https://acme.atlassian.net',
+          connectedAt: '2026-11-14T10:00:00.000Z',
+        },
+      ],
+    });
+    useAppStore.setState({ pendingCommand: null });
+
+    const { result } = renderHook(() => useNewWorkspaceModalViewModel());
+
+    expect(result.current).toMatchObject({
+      canStory: true,
+      isStory: false,
+      storyLabel: 'Plan from a Jira story',
+    });
+
+    act(() => {
+      result.current.onStory();
+    });
+
+    expect(result.current).toMatchObject({ isStory: true, canImport: false });
+
+    act(() => {
+      result.current.onCreate();
+    });
+
+    const [made] = useWorkspaceStore.getState().workspaces;
+
+    expect(useAppStore.getState().pendingCommand).toEqual({
+      workspaceId: made?.id,
+      command: 'jira-plan',
+    });
+  });
+
+  it('does NOT offer a story without Jira', () => {
+    const { result } = renderHook(() => useNewWorkspaceModalViewModel());
+
+    expect(result.current.canStory).toBe(false);
+  });
+
   it('asks for no platform when the project has only one', () => {
     useAppStore.setState({ projects: [{ ...PROJECT, targets: [PROJECT.targets[0]!] }] });
 
@@ -50,10 +96,10 @@ describe('useNewWorkspaceModalViewModel', () => {
     expect(result.current.chosenTargetId).toBe('t1');
   });
 
-  it('cannot create a workspace with no name', () => {
+  it('creates a plan with no name, which the first ask then names', () => {
     const { result } = renderHook(() => useNewWorkspaceModalViewModel());
 
-    expect(result.current.canCreate).toBe(false);
+    expect(result.current.canCreate).toBe(true);
   });
 
   it('creates the workspace on the chosen target and opens it', () => {

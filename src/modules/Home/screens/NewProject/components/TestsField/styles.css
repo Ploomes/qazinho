@@ -1,0 +1,15 @@
+.tests-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.tests-field__path {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink2);
+  font: var(--font-code-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

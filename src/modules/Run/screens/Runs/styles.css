@@ -178,6 +178,10 @@
   color: var(--attn);
 }
 
+.runs__walk--qa {
+  color: var(--ink2);
+}
+
 .runs__take {
   opacity: 0;
   display: inline-flex;
@@ -374,7 +378,7 @@
 @container workspace (width < 480px) {
   .runs__case-head {
     gap: var(--space-3);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-3) var(--space-7) var(--space-3) var(--space-4);
   }
 
   .runs__case-open {

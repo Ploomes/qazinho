@@ -30,6 +30,32 @@ describe('planOfDraft', () => {
     expect(plan?.[0]?.lastVerdict).toBeNull();
   });
 
+  it('keeps a case the QA walks by hand that way when the agent keeps it, and no new one', () => {
+    const plan = planOfDraft({
+      cases: [
+        { ...CARD, id: 'TC-02', title: 'Search, with filters' },
+        { ...CARD, title: 'New' },
+      ],
+      plan: [{ ...kept('TC-02', 'Search'), isManual: true }],
+      used: [],
+    });
+
+    expect(plan?.map(({ id, isManual }) => [id, isManual === true])).toEqual([
+      ['TC-02', true],
+      ['TC-03', false],
+    ]);
+  });
+
+  it('keeps where each case comes from and the doubts it waits on, trimmed and once', () => {
+    const [plan] =
+      fresh([
+        { ...CARD, sources: [' C2 ', 'C2', 'frame 1:2', ' '], blockedBy: ['D1'] },
+      ]) ?? [];
+
+    expect(plan).toMatchObject({ sources: ['C2', 'frame 1:2'], blockedBy: ['D1'] });
+    expect(fresh([CARD])?.[0]).not.toHaveProperty('sources');
+  });
+
   it('refuses a plan with no case worth running', () => {
     expect(fresh([])).toBeNull();
   });

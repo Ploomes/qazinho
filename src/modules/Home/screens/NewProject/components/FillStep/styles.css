@@ -1,0 +1,18 @@
+.fill-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.fill-step__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fill-step__code {
+  padding: var(--space-5);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+}

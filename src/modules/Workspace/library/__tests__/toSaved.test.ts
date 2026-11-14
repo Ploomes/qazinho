@@ -62,6 +62,42 @@ describe('toSaved', () => {
     expect(after?.runs[0]?.counts).toEqual(before.runs[0]?.counts);
   });
 
+  it('keeps the strategy and the doubts in the plan yaml, and brings them back', () => {
+    const strategy = {
+      covers: 'Coupons in the checkout',
+      leavesOut: 'The phone app',
+      where: 'Staging',
+      data: 'A test account',
+      risks: 'A discount counted twice',
+    };
+    const doubts = [
+      { id: 'D1', question: 'Does an expired coupon vanish?', sent: null, answer: null },
+    ];
+    const workspace = {
+      ...makeWorkspace(),
+      strategy,
+      doubts,
+      plan: makeWorkspace().plan.map((one) => ({
+        ...one,
+        sources: ['C2'],
+        blockedBy: ['D1'],
+      })),
+    };
+    const saved = toSaved({ workspace, at: '09:44' });
+
+    expect(saved.planYaml).toContain('strategy:');
+    expect(saved.planYaml).toContain('doubts:');
+    expect(saved.json).not.toContain('Coupons in the checkout');
+    expect(fromSaved(saved)).toMatchObject({
+      strategy,
+      doubts,
+      plan: [
+        { sources: ['C2'], blockedBy: ['D1'] },
+        { sources: ['C2'], blockedBy: ['D1'] },
+      ],
+    });
+  });
+
   it('keeps where the prototype of a bug is, never the picture itself', () => {
     const workspace = walkRun({ verdicts: [...BROKE], isFinished: true });
     const [bug] = workspace.bugs;

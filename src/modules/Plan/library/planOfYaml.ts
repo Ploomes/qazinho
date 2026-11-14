@@ -10,8 +10,8 @@ const VERDICTS: StepVerdict[] = ['passed', 'failed', 'blocked', 'skipped'];
 type Loose = Record<string, unknown>;
 
 /**
- * Os casos que um plan.yaml guarda, cada um feito inteiro: um campo que um QA deixou de
- * fora à mão lê como vazio, e um caso sem id ganha um livre.
+ * Os casos que um plan.yaml guarda, cada um feito inteiro: um campo deixado de fora lê
+ * como vazio, um caso sem id ganha um livre, e `manual: true` vale como `isManual`.
  */
 export function planOfYaml(yaml: string): ITestCase[] {
   let read: unknown;
@@ -43,9 +43,25 @@ export function planOfYaml(yaml: string): ITestCase[] {
         preconditions: textOf(testCase.preconditions),
         steps: steps.map(stepOf),
         lastVerdict: VERDICTS.find((verdict) => verdict === testCase.lastVerdict) ?? null,
+        ...(testCase.isManual === true || testCase.manual === true
+          ? { isManual: true }
+          : {}),
+        ...textsOf({ value: testCase.sources, key: 'sources' }),
+        ...textsOf({ value: testCase.blockedBy, key: 'blockedBy' }),
       },
     ];
   }, []);
+}
+
+function textsOf(props: {
+  value: unknown;
+  key: 'sources' | 'blockedBy';
+}): Partial<Record<'sources' | 'blockedBy', string[]>> {
+  const texts = Array.isArray(props.value)
+    ? props.value.map(textOf).filter((text) => text.trim().length > 0)
+    : [];
+
+  return texts.length === 0 ? {} : { [props.key]: texts };
 }
 
 function textOf(value: unknown): string {

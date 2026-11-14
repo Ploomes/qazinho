@@ -9,4 +9,7 @@ export const SYNC_CASE_SCHEMA = z.object({
   steps: z.array(
     z.object({ action: z.string(), expected: z.string(), frame: z.string().optional() }),
   ),
+  isManual: z.boolean().optional(),
+  sources: z.array(z.string()).optional(),
+  blockedBy: z.array(z.string()).optional(),
 });

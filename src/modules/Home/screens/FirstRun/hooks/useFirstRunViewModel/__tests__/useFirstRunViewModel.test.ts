@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import type { IAskAgent } from '@/shared/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFirstRunViewModel } from '@/modules/Home/screens/FirstRun/hooks/useFirstRunViewModel';
@@ -7,6 +8,7 @@ import {
   useAppStore,
   useMachineStore,
   useSettingsStore,
+  useSetupStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -41,6 +43,7 @@ beforeEach(() => {
   useWorkspaceStore.setState({ workspaces: [] });
   useSettingsStore.setState({ agent: 'Claude Code' });
   useMachineStore.setState({ agents: [CLAUDE] });
+  useSetupStore.setState({ integrations: [] });
 });
 
 describe('useFirstRunViewModel', () => {
@@ -152,6 +155,7 @@ describe('useFirstRunViewModel', () => {
 
       expect(project).toMatchObject({
         name: 'Loja',
+        isNamePending: true,
         targets: [{ kind: 'web', value: 'http://staging.loja.test' }],
       });
       expect(workspace).toMatchObject({
@@ -256,6 +260,116 @@ describe('useFirstRunViewModel', () => {
       });
 
       expect(useAppStore.getState().screen).toBe('settings');
+    });
+  });
+
+  /**
+   * O QA pode começar pela história, antes de o app existir: o plano sai dela, e o app vem
+   * quando for desenvolver.
+   */
+  describe('starting from a Jira story', () => {
+    const STORY = {
+      key: 'SHOP-878',
+      summary: 'Coupons at checkout',
+      url: 'https://shop.atlassian.net/browse/SHOP-878',
+    };
+
+    function withJira(search: ReturnType<typeof vi.fn>) {
+      const ask = vi.fn((_: IAskAgent) => new Promise<never>(() => undefined));
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        searchJira: search,
+        askAgent: ask,
+      } as never;
+      useSetupStore.setState({
+        integrations: [
+          { id: 'jira', account: 'ana@shop.test', site: 'shop.atlassian.net' },
+        ],
+      } as never);
+
+      return ask;
+    }
+
+    it('takes a story link in place of the app, and plans from it with no app', async () => {
+      const ask = withJira(
+        vi.fn(() => Promise.resolve({ isListed: true, issues: [STORY] })),
+      );
+      const { result } = renderHook(() => useFirstRunViewModel());
+
+      expect(result.current.appLead).toBe(
+        'The address of a site, the file of a phone app, or a Jira story.',
+      );
+
+      act(() => {
+        result.current.onTypedChange('https://shop.atlassian.net/browse/SHOP-878');
+      });
+      act(() => {
+        result.current.onContinue();
+      });
+
+      await waitFor(() => {
+        expect(result.current.isAppStep).toBe(false);
+      });
+      expect(result.current).toMatchObject({
+        targetPlace: 'SHOP-878 · Coupons at checkout',
+        canStart: true,
+        canExplore: false,
+      });
+
+      act(() => {
+        result.current.onStart();
+      });
+
+      const [project] = useAppStore.getState().projects;
+      const [workspace] = useWorkspaceStore.getState().workspaces;
+
+      expect(project).toMatchObject({ name: 'SHOP', targets: [] });
+      expect(workspace).toMatchObject({
+        name: 'SHOP-878',
+        targetId: '',
+        issue: { key: 'SHOP-878', source: 'jira' },
+      });
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledOnce();
+      });
+      expect(ask.mock.calls[0]?.[0]).toMatchObject({
+        jira: { key: 'SHOP-878' },
+        target: null,
+      });
+    });
+
+    it('says so when the story is not in the Jira of the QA', async () => {
+      withJira(vi.fn(() => Promise.resolve({ isListed: true, issues: [] })));
+      const { result } = renderHook(() => useFirstRunViewModel());
+
+      act(() => {
+        result.current.onTypedChange('SHOP-9');
+      });
+      act(() => {
+        result.current.onContinue();
+      });
+
+      await waitFor(() => {
+        expect(result.current.problem).toBe(
+          'Your Jira has no story SHOP-9, or this account cannot see it.',
+        );
+      });
+      expect(result.current.isAppStep).toBe(true);
+    });
+
+    it('does NOT read a key as a story with Jira disconnected', () => {
+      const { result } = renderHook(() => useFirstRunViewModel());
+
+      act(() => {
+        result.current.onTypedChange('SHOP-9');
+      });
+      act(() => {
+        result.current.onContinue();
+      });
+
+      expect(result.current.isAppStep).toBe(false);
+      expect(result.current.targetPlace).toBe('shop-9');
     });
   });
 });

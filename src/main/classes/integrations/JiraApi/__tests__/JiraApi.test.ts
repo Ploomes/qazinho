@@ -394,4 +394,317 @@ describe('JiraApi', () => {
       });
     });
   });
+
+  /**
+   * As dúvidas que ninguém aqui sabe vão à história num comentário do QA, que menciona quem
+   * a escreveu e o põe para acompanhá-la; as respostas voltam pelos comentários seguintes.
+   */
+  describe('the doubts on a story', () => {
+    const STORY = '/rest/api/3/issue/SHOP-878';
+    const ME = { accountId: 'qa-1', displayName: 'Ana QA' };
+    const REPORTER = { accountId: 'po-7', displayName: 'Rui PO' };
+    const POST = {
+      key: 'SHOP-878',
+      intro: 'two doubts before we test this:',
+      doubts: [
+        { id: 'D1', question: 'Does a coupon stack with free shipping?' },
+        { id: 'D2', question: 'Which error shows for an expired coupon?' },
+      ],
+      closing: 'Answer naming the doubt, like D1.',
+      isWatching: true,
+    };
+
+    it('says who wrote the story and whether the QA already follows it', async () => {
+      const { jira } = api({
+        [`${STORY}?fields=reporter,watches`]: {
+          status: 200,
+          body: { fields: { reporter: REPORTER, watches: { isWatching: true } } },
+        },
+      });
+
+      expect(await jira.people('SHOP-878')).toEqual({
+        isRead: true,
+        reporter: 'Rui PO',
+        isWatching: true,
+      });
+      expect(await api({}, false).jira.people('SHOP-878')).toEqual({
+        isRead: false,
+        failure: 'not-connected',
+      });
+    });
+
+    it('posts the doubts mentioning who wrote the story, and follows it', async () => {
+      const { jira, asked } = api({
+        [`${STORY}?fields=reporter`]: {
+          status: 200,
+          body: { fields: { reporter: REPORTER } },
+        },
+        '/rest/api/3/myself': { status: 200, body: ME },
+        [`${STORY}/comment`]: {
+          status: 201,
+          body: { id: '10200', created: '2026-11-13T10:00:00.000-0300' },
+        },
+        [`${STORY}/watchers`]: { status: 204 },
+      });
+
+      expect(await jira.askStory(POST)).toEqual({
+        isPosted: true,
+        url: `${SITE}/browse/SHOP-878?focusedCommentId=10200`,
+        at: '2026-11-13T13:00:00.000Z',
+        mentioned: 'Rui PO',
+      });
+
+      const comment = asked.find(({ url }) => url.endsWith('/comment'));
+      const watch = asked.find(({ url }) => url.endsWith('/watchers'));
+
+      expect(JSON.stringify(comment?.body)).toContain('po-7');
+      expect(comment?.method).toBe('POST');
+      expect(watch).toMatchObject({ method: 'POST', body: '"qa-1"' });
+    });
+
+    it('does NOT mention the QA who wrote the story, nor follow it when not asked', async () => {
+      const { jira, asked } = api({
+        [`${STORY}?fields=reporter`]: { status: 200, body: { fields: { reporter: ME } } },
+        '/rest/api/3/myself': { status: 200, body: ME },
+        [`${STORY}/comment`]: { status: 201, body: { id: '10201' } },
+      });
+
+      expect(await jira.askStory({ ...POST, isWatching: false })).toMatchObject({
+        isPosted: true,
+        mentioned: null,
+      });
+      expect(
+        JSON.stringify(asked.find(({ url }) => url.endsWith('/comment'))?.body),
+      ).not.toContain('mention');
+      expect(asked.some(({ url }) => url.endsWith('/watchers'))).toBe(false);
+    });
+
+    it('says why the comment was refused, in the words of Jira', async () => {
+      const { jira } = api({
+        [`${STORY}/comment`]: {
+          status: 400,
+          body: { errorMessages: ['Comments are closed on this issue.'] },
+        },
+      });
+
+      expect(await jira.askStory(POST)).toEqual({
+        isPosted: false,
+        failure: 'rejected',
+        said: 'Comments are closed on this issue.',
+      });
+    });
+
+    it('reads the answers the team left after the QA asked', async () => {
+      const doc = (text: string) => ({
+        type: 'doc',
+        version: 1,
+        content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+      });
+      const { jira } = api({
+        [`${STORY}/comment?orderBy=-created&maxResults=100`]: {
+          status: 200,
+          body: {
+            comments: [
+              {
+                id: '10210',
+                author: REPORTER,
+                created: '2026-11-13T15:00:00.000Z',
+                body: doc('D2: "This coupon expired".'),
+              },
+              {
+                id: '10200',
+                author: ME,
+                created: '2026-11-13T13:00:00.000Z',
+                body: doc('D1 Does a coupon stack? D2 Which error?'),
+              },
+            ],
+          },
+        },
+        '/rest/api/3/myself': { status: 200, body: ME },
+      });
+      const sent = {
+        url: `${SITE}/browse/SHOP-878?focusedCommentId=10200`,
+        at: '2026-11-13T13:00:00.000Z',
+      };
+
+      expect(
+        await jira.answers({
+          key: 'SHOP-878',
+          doubts: [
+            { id: 'D1', sent },
+            { id: 'D2', sent },
+          ],
+        }),
+      ).toEqual({
+        isRead: true,
+        answers: [
+          {
+            doubtId: 'D2',
+            text: '"This coupon expired".',
+            by: 'Rui PO',
+            at: '2026-11-13T15:00:00.000Z',
+          },
+        ],
+      });
+    });
+  });
+
+  describe('sprintStories', () => {
+    it('reads the stories of the open sprint of a board', async () => {
+      const { jira } = api({
+        '/rest/agile/1.0/board/7/sprint?state=active': {
+          status: 200,
+          body: { values: [{ id: 42, name: 'Sprint 42', state: 'active' }] },
+        },
+        '/rest/agile/1.0/sprint/42/issue?fields=summary%2Cstatus%2Cissuetype&maxResults=100':
+          {
+            status: 200,
+            body: {
+              issues: [
+                {
+                  key: 'SHOP-892',
+                  fields: {
+                    summary: 'Frete grátis acima de R$ 200',
+                    status: { name: 'Pronto para dev' },
+                    issuetype: { hierarchyLevel: 0 },
+                  },
+                },
+              ],
+            },
+          },
+      });
+
+      expect(await jira.sprintStories(7)).toEqual({
+        isListed: true,
+        sprint: 'Sprint 42',
+        stories: [
+          {
+            key: 'SHOP-892',
+            title: 'Frete grátis acima de R$ 200',
+            status: 'Pronto para dev',
+            url: `${SITE}/browse/SHOP-892`,
+          },
+        ],
+      });
+    });
+
+    it('says a board with no open sprint has nothing to plan, without asking for issues', async () => {
+      const { jira, asked } = api({
+        '/rest/agile/1.0/board/7/sprint?state=active': {
+          status: 200,
+          body: { values: [] },
+        },
+      });
+
+      expect(await jira.sprintStories(7)).toEqual({
+        isListed: true,
+        sprint: null,
+        stories: [],
+      });
+      expect(asked).toHaveLength(1);
+    });
+
+    it('says Jira is not connected, or why it refused', async () => {
+      expect(await api({}, false).jira.sprintStories(7)).toEqual({
+        isListed: false,
+        failure: 'not-connected',
+      });
+      expect(
+        await api({
+          '/rest/agile/1.0/board/7/sprint?state=active': { status: 401, body: {} },
+        }).jira.sprintStories(7),
+      ).toMatchObject({ isListed: false });
+    });
+  });
+
+  describe('boards, their columns and a story status', () => {
+    it('lists the boards of the QA, filtered by the name typed', async () => {
+      const { jira } = api({
+        '/rest/agile/1.0/board?maxResults=50&name=Shop': {
+          status: 200,
+          body: { values: [{ id: 7, name: 'Shop', location: { projectKey: 'SHOP' } }] },
+        },
+      });
+
+      expect(await jira.boards(' Shop ')).toEqual({
+        isListed: true,
+        boards: [{ id: 7, name: 'Shop', project: 'SHOP' }],
+      });
+      expect(await api({}, false).jira.boards('')).toEqual({
+        isListed: false,
+        failure: 'not-connected',
+      });
+    });
+
+    it('reads the columns of a board, each with the statuses that fall in it', async () => {
+      const { jira } = api({
+        '/rest/agile/1.0/board/7/configuration': {
+          status: 200,
+          body: {
+            columnConfig: {
+              columns: [
+                { name: 'To do', statuses: [{ id: '1' }] },
+                { name: 'Ready for QA', statuses: [{ id: '10' }, { id: '11' }] },
+              ],
+            },
+          },
+        },
+        '/rest/api/3/status': {
+          status: 200,
+          body: [
+            { id: '1', name: 'To Do' },
+            { id: '10', name: 'Ready for QA' },
+            { id: '11', name: 'In QA' },
+          ],
+        },
+      });
+
+      expect(await jira.columns(7)).toEqual({
+        isListed: true,
+        columns: [
+          { name: 'To do', statuses: ['To Do'] },
+          { name: 'Ready for QA', statuses: ['Ready for QA', 'In QA'] },
+        ],
+      });
+      expect(await jira.columns(8)).toEqual({ isListed: false, failure: 'not-found' });
+    });
+
+    it('reads the status a story is in now', async () => {
+      const { jira } = api({
+        '/rest/api/3/issue/SHOP-878?fields=status': {
+          status: 200,
+          body: { fields: { status: { name: 'Ready for QA' } } },
+        },
+      });
+
+      expect(await jira.status('SHOP-878')).toEqual({
+        isRead: true,
+        status: 'Ready for QA',
+      });
+      expect(await jira.status('SHOP-1')).toEqual({
+        isRead: false,
+        failure: 'not-found',
+      });
+    });
+  });
+
+  describe('tell', () => {
+    it('posts what the QA wrote under the story, and points at the comment', async () => {
+      const { jira, asked } = api({
+        '/rest/api/3/issue/SHOP-878/comment': { status: 201, body: { id: '10300' } },
+      });
+
+      expect(await jira.tell({ key: 'SHOP-878', text: 'Atualizei o plano.' })).toEqual({
+        isPosted: true,
+        url: `${SITE}/browse/SHOP-878?focusedCommentId=10300`,
+        missed: [],
+      });
+      expect(JSON.stringify(asked[0]?.body)).toContain('Atualizei o plano.');
+      expect(await api({}, false).jira.tell({ key: 'SHOP-878', text: 'x' })).toEqual({
+        isPosted: false,
+        failure: 'not-connected',
+        said: '',
+      });
+    });
+  });
 });

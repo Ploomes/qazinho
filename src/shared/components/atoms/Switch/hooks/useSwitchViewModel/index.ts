@@ -7,7 +7,17 @@ export const useSwitchViewModel = (props: ISwitchProps) => {
   const { isOn, onChange } = props;
 
   return {
-    className: isOn ? 'switch switch--on' : 'switch',
+    className: [
+      'switch',
+      isOn ? 'switch--on' : '',
+      props.isLabelHidden === true ? 'switch--bare' : '',
+    ]
+      .filter((part) => part !== '')
+      .join(' '),
+    labelClassName:
+      props.isLabelHidden === true
+        ? 'switch__label switch__label--hidden'
+        : 'switch__label',
     style: {
       '--switch-width': `${String(SWITCH.widthPx)}px`,
       '--switch-height': `${String(SWITCH.heightPx)}px`,

@@ -157,6 +157,7 @@ describe('useProjectModalViewModel', () => {
         general: true,
         code: false,
         variables: false,
+        templates: false,
         memories: false,
         pro: false,
         delete: false,
@@ -174,6 +175,7 @@ describe('useProjectModalViewModel', () => {
         general: false,
         code: false,
         variables: true,
+        templates: false,
         memories: false,
         pro: false,
         delete: false,
@@ -187,6 +189,7 @@ describe('useProjectModalViewModel', () => {
         'general',
         'code',
         'variables',
+        'templates',
       ]);
     });
 
@@ -194,6 +197,7 @@ describe('useProjectModalViewModel', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
 
       expect(result.current.navItems.map(({ count }) => count)).toEqual([
+        null,
         null,
         null,
         null,
@@ -216,7 +220,12 @@ describe('useProjectModalViewModel', () => {
         ]);
       });
 
-      expect(result.current.navItems.map(({ count }) => count)).toEqual([null, 2, 1]);
+      expect(result.current.navItems.map(({ count }) => count)).toEqual([
+        null,
+        2,
+        1,
+        null,
+      ]);
     });
 
     /** Trocar de aba num projeto novo não pode marcar nada: o QA só não terminou ainda. */
@@ -242,6 +251,7 @@ describe('useProjectModalViewModel', () => {
 
       expect(result.current.navItems.map(({ isFlagged }) => isFlagged)).toEqual([
         true,
+        false,
         false,
         false,
       ]);
@@ -458,6 +468,64 @@ describe('useProjectModalViewModel', () => {
       ]);
     });
 
+    it('offers the column that means ready only with Jira connected, and saves it', () => {
+      const { result, rerender } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.hasReadyField).toBe(false);
+
+      act(() => {
+        useSetupStore.setState({
+          integrations: [
+            { id: 'jira', account: 'ana@shop.test', site: 'shop.atlassian.net' },
+          ],
+        } as never);
+      });
+      rerender();
+
+      expect(result.current.hasReadyField).toBe(true);
+
+      act(() => {
+        result.current.onReadyChange({
+          column: { boardId: 7, board: 'Shop board', column: 'Ready for QA' },
+          statuses: ['Ready for QA'],
+        });
+      });
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      expect(useAppStore.getState().projects[0]).toMatchObject({
+        readyColumn: { boardId: 7, board: 'Shop board', column: 'Ready for QA' },
+        readyStatuses: ['Ready for QA'],
+      });
+    });
+
+    it('lets go of the column once the QA drops it', () => {
+      useAppStore.setState({
+        projects: [
+          {
+            ...SAVED,
+            readyColumn: { boardId: 7, board: 'Shop board', column: 'In QA' },
+            readyStatuses: ['In QA'],
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.readyStatuses).toEqual(['In QA']);
+
+      act(() => {
+        result.current.onReadyChange(null);
+      });
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      expect(useAppStore.getState().projects[0]).not.toHaveProperty('readyColumn');
+      expect(useAppStore.getState().projects[0]).not.toHaveProperty('readyStatuses');
+    });
+
     /**
      * Os alvos eram salvos como "Android · Pixel 7" e "iOS · iPhone 16", celulares que
      * ninguém escolheu.
@@ -486,7 +554,7 @@ describe('useProjectModalViewModel', () => {
       });
 
       expect(result.current.footerHint).toBe(
-        'A workspace runs against Web, so it cannot go empty',
+        'A plan runs against Web, so it cannot go empty',
       );
     });
 
@@ -518,6 +586,39 @@ describe('useProjectModalViewModel', () => {
       expect(
         useAppStore.getState().projects[0]?.targets.map(({ label }) => label),
       ).toEqual(['Web', 'Android']);
+    });
+
+    it('renames a project born with no app, which stops waiting for its name', () => {
+      useAppStore.setState({
+        projects: [{ ...SAVED, name: 'New project', targets: [], isNamePending: true }],
+      });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onNameChange('Cupons');
+      });
+
+      expect(result.current.canConfirm).toBe(true);
+
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      expect(useAppStore.getState().projects).toEqual([
+        { ...SAVED, name: 'Cupons', targets: [] },
+      ]);
+    });
+
+    it('does NOT let a project that had an app lose every one', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onUrlChange('');
+      });
+
+      expect(result.current.footerHint).toBe('Keep one: a URL, an .apk or a .app');
+      expect(result.current.canConfirm).toBe(false);
     });
 
     it('does NOT let a target a workspace runs against go empty', () => {
@@ -562,7 +663,7 @@ describe('useProjectModalViewModel', () => {
         deleteTitle: 'Delete Shop · staging',
         deleteText: 'The project leaves this machine for good, and takes with it:',
         losses: [
-          'its workspace, with the plan, chat, runs and bugs',
+          'its plan, with the cases, chat, runs and bugs',
           'the 2 variables it keeps, values and all',
         ],
         hasLosses: true,
@@ -583,7 +684,7 @@ describe('useProjectModalViewModel', () => {
 
       expect(result.current).toMatchObject({
         deleteText:
-          'The project leaves this machine for good. It has no workspace or variable to take with it.',
+          'The project leaves this machine for good. It has no plan or variable to take with it.',
         losses: [],
         hasLosses: false,
       });
@@ -598,7 +699,7 @@ describe('useProjectModalViewModel', () => {
       });
 
       expect(renderHook(() => useProjectModalViewModel()).result.current.losses).toEqual([
-        'its 2 workspaces, with their plans, chats, runs and bugs',
+        'its 2 plans, with their cases, chats, runs and bugs',
       ]);
     });
 

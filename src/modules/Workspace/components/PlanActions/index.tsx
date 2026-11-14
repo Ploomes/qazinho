@@ -9,6 +9,7 @@ export const PlanActions: React.FC = () => {
   const {
     hasWorkspace,
     isLive,
+    canPause,
     pauseLabel,
     stopLabel,
     canRun,
@@ -16,6 +17,9 @@ export const PlanActions: React.FC = () => {
     developedCount,
     toDevelopCount,
     toContinueCount,
+    waitsFor,
+    needsApp,
+    onPickApp,
     canExplore,
     exploreLabel,
     exploreTip,
@@ -34,9 +38,11 @@ export const PlanActions: React.FC = () => {
     <div className="plan-actions">
       {isLive ? (
         <>
-          <Button size="sm" variant="ghost" onClick={onPause}>
-            {pauseLabel}
-          </Button>
+          {canPause && (
+            <Button size="sm" variant="ghost" onClick={onPause}>
+              {pauseLabel}
+            </Button>
+          )}
           <Button size="sm" variant="danger" onClick={onStop}>
             {stopLabel}
           </Button>
@@ -56,6 +62,9 @@ export const PlanActions: React.FC = () => {
             developed={developedCount}
             toDevelop={toDevelopCount}
             toContinue={toContinueCount}
+            waitsFor={waitsFor}
+            needsApp={needsApp}
+            onPickApp={onPickApp}
             onRun={onRun}
             onRunPlan={onRunPlan}
             onRunDeveloped={onRunDeveloped}

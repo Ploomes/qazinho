@@ -17,6 +17,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         code: null,
         story: null,
         page: null,
+        followed: [],
       }),
     stopAgent: () => Promise.resolve(),
     readAgentLimits: () => Promise.resolve(null),
@@ -45,6 +46,10 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     pauseRun: () => Promise.resolve(),
     stopRun: () => Promise.resolve(),
     answerRun: () => Promise.resolve(),
+    touchRun: () => Promise.resolve(),
+    markRun: () => Promise.resolve(),
+    typeRunVariable: () => Promise.resolve(false),
+    endManual: () => Promise.resolve(),
     runsInFlight: () => Promise.resolve([]),
     resizeDevice: () => Promise.resolve(),
     focusDevice: () => Promise.resolve(),
@@ -58,7 +63,28 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
       Promise.resolve({ videos: 0, screens: 0, builds: 0, other: 0, total: 0 }),
     sweepVideos: () => Promise.resolve({ removed: 0, freedBytes: 0 }),
     saveVideo: () => Promise.resolve('cancelled' as const),
+    saveText: () => Promise.resolve('cancelled' as const),
     pickImport: () => Promise.resolve({ kind: 'cancelled' as const }),
+    listSkills: () => Promise.resolve([]),
+    saveSkill: () =>
+      Promise.resolve({ isSaved: false as const, reason: 'no-name' as const }),
+    removeSkill: () => Promise.resolve(),
+    foundSkills: () => Promise.resolve([]),
+    foundSkillsIn: () =>
+      Promise.resolve({ isFound: false as const, reason: 'empty' as const, said: '' }),
+    importSkills: () => Promise.resolve([]),
+    importSkillFile: () => Promise.resolve([]),
+    refreshSkills: () => Promise.resolve([]),
+    exportSkill: () => Promise.resolve(null),
+    attachToSkill: () => Promise.resolve([]),
+    dropSkillDraft: () => Promise.resolve(),
+    writeSkill: () =>
+      Promise.resolve({
+        isAnswered: false as const,
+        reason: 'failed' as const,
+        said: '',
+      }),
+    stopSkill: () => Promise.resolve(),
     onOutsideToolCall: () => () => undefined,
     outsideServer: () => Promise.resolve({ isOn: false, isBusy: false }),
     outsideAgents: () => Promise.resolve([]),
@@ -74,6 +100,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     readState: () => Promise.resolve({ projects: '[]', workspaces: [] }),
     saveProjects: () => Promise.resolve(),
     siteIcon: () => Promise.resolve(null),
+    exampleShop: () => Promise.resolve(null),
+    appName: () => Promise.resolve(null),
     saveWorkspace: () => Promise.resolve(),
     removeWorkspace: () => Promise.resolve(),
     readUnreadPlan: () => Promise.resolve({ status: 'gone' as const }),
@@ -205,6 +233,33 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     searchJira: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
     listJiraProjects: () =>
       Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    listTemplates: () => Promise.resolve([]),
+    saveTemplate: () => Promise.resolve({ isSaved: false, reason: 'unwritable' }),
+    removeTemplate: () => Promise.resolve(false),
+    listOrgTemplates: () => Promise.resolve({ isListed: false, failure: 'signed-out' }),
+    saveOrgTemplate: () => Promise.resolve({ isSaved: false, failure: 'signed-out' }),
+    removeOrgTemplate: () => Promise.resolve({ isDone: false, failure: 'signed-out' }),
+    setOrgTemplateDefault: () =>
+      Promise.resolve({ isDone: false, failure: 'signed-out' }),
+    checkSources: (ask) =>
+      Promise.resolve({
+        changes: [],
+        snapshots: ask.snapshots,
+        code: ask.code,
+        missed: [],
+      }),
+    readChange: () => Promise.resolve({ isRead: false, reason: 'agent-missing' }),
+    listJiraBoards: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    sprintStories: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    listBoardColumns: () =>
+      Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    readStoryStatus: () => Promise.resolve({ isRead: false, failure: 'not-connected' }),
+    tellStory: () =>
+      Promise.resolve({ isPosted: false, failure: 'not-connected', said: '' }),
+    readStoryPeople: () => Promise.resolve({ isRead: false, failure: 'not-connected' }),
+    askStory: () =>
+      Promise.resolve({ isPosted: false, failure: 'not-connected', said: '' }),
+    readStoryAnswers: () => Promise.resolve({ isRead: false, failure: 'not-connected' }),
     switchConfluence: () =>
       Promise.resolve({ isSwitched: false, failure: 'not-connected', said: '' }),
     searchConfluence: () =>

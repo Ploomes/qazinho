@@ -25,4 +25,20 @@ describe('planBodyOf', () => {
     expect(body).not.toHaveProperty('workspaceId');
     expect(body).toMatchObject({ name: 'Checkout com Pix', targetKind: 'web' });
   });
+
+  it('sends the strategy and the doubts, none for a plan that has neither', () => {
+    const base = {
+      workspaceId: 'w1',
+      name: 'Cupom',
+      targetId: 't1',
+      targetKind: 'web' as const,
+      issue: null,
+      design: null,
+      cases: [],
+    };
+    const doubts = [{ id: 'D1', question: 'Some or error?', sent: null, answer: null }];
+
+    expect(planBodyOf(base)).toMatchObject({ strategy: null, doubts: [] });
+    expect(planBodyOf({ ...base, doubts })).toMatchObject({ doubts });
+  });
 });

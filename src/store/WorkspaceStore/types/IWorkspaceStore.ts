@@ -2,9 +2,22 @@ import type { BugFilter, IBugReview } from '@/modules/Bug';
 import type { IAgentActivity, IQuestionAnswer, UserCommand } from '@/modules/Chat';
 import type { IBugFlash, ViewportId } from '@/modules/Device';
 import type { IMemoryChange } from '@/modules/Memory/types';
-import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
-import type { IWalkedBy, IWorkspace, PanelTab, WorkspaceTab } from '@/modules/Workspace';
 import type {
+  IChangeReview,
+  IPendingChange,
+  IPublishedPlan,
+  ITestCase,
+} from '@/modules/Plan';
+import type { NameOrigin } from '@/modules/Project/types';
+import type {
+  IWalkedBy,
+  IWorkspace,
+  PanelTab,
+  StoryStage,
+  WorkspaceTab,
+} from '@/modules/Workspace';
+import type {
+  ISourceSnapshot,
   RunMode,
   CodeStep,
   IChatAttachment,
@@ -15,6 +28,9 @@ import type {
   IDraftedCase,
   IFiledIssue,
   IJiraIssueRef,
+  IManualTurn,
+  IPlanDoubt,
+  IPlanStrategy,
   IRunAsked,
   IRunFinding,
   IRunInFlight,
@@ -39,6 +55,8 @@ export interface IWorkspaceStore {
   isPanelOpen: boolean;
   panelWidth: number;
   askingIds: string[];
+  planQueue: string[];
+  planning: string[];
   liveTexts: Record<string, string>;
   activities: Record<string, IAgentActivity[]>;
   bugFlashes: Record<string, IBugFlash[]>;
@@ -50,12 +68,19 @@ export interface IWorkspaceStore {
   readSteps: Record<string, { step: CodeStep | JiraStep; bytes: number }>;
   lookingAt: Record<string, 'android' | 'ios'>;
   chatDevices: Record<string, { streamUrl: string; address: string | null }>;
+  storyReadAt: Record<string, number>;
+  changeHold: { workspaceId: string; mode: RunMode; caseIds?: string[] } | null;
   removingWorkspaceId: string | null;
   addWorkspace: (workspace: IWorkspace) => void;
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
   askRemoveWorkspace: (workspaceId: string | null) => void;
   removeWorkspace: (workspaceId: string) => void;
   landMemoryChanges: (props: { workspaceId: string; changes: IMemoryChange[] }) => void;
+  landFollowedSkills: (props: { workspaceId: string; names: string[] }) => void;
+  landProjectName: (props: {
+    workspaceId: string;
+    named: { projectId: string; name: string; from: NameOrigin };
+  }) => void;
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
   setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
   setUnreadPlan: (props: { workspaceId: string; unreadPlan: IUnreadPlan | null }) => void;
@@ -77,6 +102,8 @@ export interface IWorkspaceStore {
   }) => void;
   removeWorkspacesOf: (projectId: string) => void;
   selectTab: (tab: WorkspaceTab) => void;
+  queuePlans: (workspaceIds: string[]) => void;
+  takeQueued: (workspaceId: string) => void;
   sendMessage: (props: {
     workspaceId: string;
     text: string;
@@ -98,6 +125,8 @@ export interface IWorkspaceStore {
     plan: ITestCase[];
     source: ICodeSource | null;
     story: IJiraIssueRef | null;
+    strategy?: IPlanStrategy | null;
+    snapshots?: ISourceSnapshot[];
     page: IConfluencePageRef | null;
     who: string;
     agentId: string;
@@ -165,6 +194,17 @@ export interface IWorkspaceStore {
   startAskingUnheard: (workspaceId: string) => void;
   setContext: (props: { workspaceId: string; tokens: number; window: number }) => void;
   markStreaming: (props: { workspaceId: string; url: string }) => void;
+  markManual: (props: { workspaceId: string; turn: IManualTurn }) => void;
+  setDoubts: (props: { workspaceId: string; doubts: IPlanDoubt[] }) => void;
+  addTold: (props: { workspaceId: string; url: string }) => void;
+  markStoryRead: (props: { workspaceId: string; at: number }) => void;
+  setStoryStage: (props: { workspaceId: string; stage: StoryStage | null }) => void;
+  setChanged: (props: { workspaceId: string; changed: IPendingChange | null }) => void;
+  setReview: (props: { workspaceId: string; review: IChangeReview | null }) => void;
+  resolveChanges: (workspaceId: string) => void;
+  holdForChanges: (
+    hold: { workspaceId: string; mode: RunMode; caseIds?: string[] } | null,
+  ) => void;
   markScreens: (props: { workspaceId: string; screens: IRunScreen[] }) => void;
   markAddress: (props: { workspaceId: string; url: string }) => void;
   landNote: (props: { workspaceId: string; text: string; who: string }) => void;

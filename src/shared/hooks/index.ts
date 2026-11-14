@@ -13,6 +13,7 @@ export * from './useSelectedWorkspacePart';
 export * from './useShot';
 export * from './useSidebarFit';
 export * from './useSidebarWidth';
+export * from './useSourceCheck';
 export * from './useSystemTheme';
 export * from './useToTop';
 export * from './useVariables';

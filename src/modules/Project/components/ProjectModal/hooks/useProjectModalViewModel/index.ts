@@ -1,12 +1,13 @@
 import type { IProjectNavItem } from '@/modules/Project/components/ProjectModal/components/ProjectNav/types';
-import type { ITargetLock } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
+import type { ITargetLock } from '@/modules/Project/components/TargetCard/types';
 import type {
   IProjectRepository,
+  IReadyColumn,
   ITarget,
   IVariableDraft,
 } from '@/modules/Project/types';
-import type { BuildPlatform, ProRemoval, TargetKind } from '@/shared/types';
+import type { BuildPlatform, ProRemoval, TargetKind, TemplateKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -43,6 +44,9 @@ export const useProjectModalViewModel = () => {
   const tools = useMachineStore((state) => state.tools);
   const isGithubConnected = useSetupStore((state) =>
     state.integrations.some(({ id }) => id === 'github'),
+  );
+  const isJiraConnected = useSetupStore((state) =>
+    state.integrations.some(({ id }) => id === 'jira'),
   );
   const builds = useBuildStore((state) => state.builds);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
@@ -82,6 +86,17 @@ export const useProjectModalViewModel = () => {
   const [app, setApp] = useState(saved('ios')?.value ?? '');
   const [repositories, setRepositories] = useState<IProjectRepository[]>(
     editing?.repositories ?? [],
+  );
+  const [templates, setTemplates] = useState<Partial<Record<TemplateKind, string>>>(
+    editing?.templates ?? {},
+  );
+  const [ready, setReady] = useState<{
+    column: IReadyColumn;
+    statuses: string[];
+  } | null>(() =>
+    editing?.readyColumn === undefined
+      ? null
+      : { column: editing.readyColumn, statuses: editing.readyStatuses ?? [] },
   );
   const [section, setSection] = useState<ProjectSection>(projectSection ?? 'general');
   const [buildIds, setBuildIds] = useState<Record<BuildPlatform, string | null>>({
@@ -145,7 +160,7 @@ export const useProjectModalViewModel = () => {
       ? t('PROJECT.NEEDS_NAME_EDIT')
       : url.trim().length > 0 && address === null
         ? t('PROJECT.WEB_INVALID')
-        : !hasTarget
+        : !hasTarget && (editing === null || editing.targets.length > 0)
           ? isEditing
             ? t('PROJECT.NEEDS_TARGET_EDIT')
             : t('PROJECT.NEEDS_TARGET')
@@ -173,9 +188,37 @@ export const useProjectModalViewModel = () => {
     const projectId = editing?.id ?? newProjectId();
     const changes = variableChangesOf({ saved: savedVariables, drafts: variables });
     const save = () => {
-      if (editing)
-        updateProject({ ...editing, name: name.trim(), targets, repositories });
-      else addProject({ id: projectId, name: name.trim(), targets, repositories });
+      const readyOf =
+        ready === null
+          ? {}
+          : { readyColumn: ready.column, readyStatuses: ready.statuses };
+      const templatesOf = Object.keys(templates).length === 0 ? {} : { templates };
+
+      if (editing) {
+        const {
+          readyColumn: _column,
+          readyStatuses: _statuses,
+          templates: _templates,
+          ...kept
+        } = editing;
+
+        updateProject({
+          ...kept,
+          name: name.trim(),
+          targets,
+          repositories,
+          ...readyOf,
+          ...templatesOf,
+        });
+      } else
+        addProject({
+          id: projectId,
+          name: name.trim(),
+          targets,
+          repositories,
+          ...readyOf,
+          ...templatesOf,
+        });
     };
 
     if (changes.length === 0) {
@@ -342,6 +385,9 @@ export const useProjectModalViewModel = () => {
     apk: apkValue,
     app: appValue,
     repositories,
+    hasReadyField: isJiraConnected,
+    readyColumn: ready?.column ?? null,
+    readyStatuses: ready?.statuses ?? [],
     projectId: editing?.id ?? null,
     androidBuilder: builderOf({ platform: 'android', buildId: androidBuild.buildId }),
     iosBuilder: builderOf({ platform: 'ios', buildId: iosBuild.buildId }),
@@ -353,6 +399,7 @@ export const useProjectModalViewModel = () => {
       general: section === 'general',
       code: section === 'code',
       variables: section === 'variables',
+      templates: section === 'templates',
       memories: section === 'memories',
       pro: section === 'pro',
       delete: section === 'delete',
@@ -394,6 +441,10 @@ export const useProjectModalViewModel = () => {
       : ((isFirstName ? undefined : blocking) ?? variableFailure ?? undefined),
     onNameChange: setName,
     onRepositoriesChange: setRepositories,
+    onReadyChange: setReady,
+    templates,
+    templatesOrg: linkedOrg,
+    onTemplatesChange: setTemplates,
     variables,
     savedVariables,
     onVariablesChange: (changed: IVariableDraft[]) => {

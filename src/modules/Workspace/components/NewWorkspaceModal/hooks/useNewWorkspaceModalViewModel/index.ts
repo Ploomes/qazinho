@@ -3,18 +3,23 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toPlanKind } from '@/modules/Plan';
 import { PLATFORM_LABEL } from '@/modules/Workspace/constants';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSetupStore, useWorkspaceStore } from '@/store';
 
 export const useNewWorkspaceModalViewModel = () => {
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [targetId, setTargetId] = useState<string | null>(null);
   const [folder, setFolder] = useState<IImportSource | null>(null);
+  const [isStory, setStory] = useState(false);
 
   const projects = useAppStore((state) => state.projects);
   const selectedProjectId = useAppStore((state) => state.selectedProjectId);
   const closeModal = useAppStore((state) => state.closeModal);
   const requestImport = useAppStore((state) => state.requestImport);
+  const requestCommand = useAppStore((state) => state.requestCommand);
+  const hasJira = useSetupStore((state) =>
+    state.integrations.some(({ id }) => id === 'jira'),
+  );
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
   const addWorkspace = useWorkspaceStore((state) => state.addWorkspace);
 
@@ -56,12 +61,23 @@ export const useNewWorkspaceModalViewModel = () => {
 
     selectWorkspace(id);
     if (folder !== null) requestImport({ workspaceId: id, source: folder });
+    else if (isStory && hasJira)
+      requestCommand({ workspaceId: id, command: 'jira-plan' });
     closeModal();
   };
 
   return {
     name,
     folder,
+    canStory: hasJira && folder === null,
+    isStory,
+    canImport: !isStory,
+    storyLabel: t('NEW_WORKSPACE.FROM_STORY'),
+    storyOnLabel: t('NEW_WORKSPACE.FROM_STORY_ON'),
+    storyRemoveLabel: t('NEW_WORKSPACE.FROM_STORY_REMOVE'),
+    onStory: () => {
+      setStory(!isStory);
+    },
     onFolderChange: (picked: IImportSource | null) => {
       setFolder(picked);
       if (picked !== null && name.trim().length === 0) setName(picked.name);

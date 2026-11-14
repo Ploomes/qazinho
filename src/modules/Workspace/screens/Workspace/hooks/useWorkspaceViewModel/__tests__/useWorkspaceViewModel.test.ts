@@ -216,7 +216,7 @@ describe('useWorkspaceViewModel', () => {
     const { result } = renderHook(() => useWorkspaceViewModel());
 
     expect(result.current.isLive).toBe(true);
-    expect(result.current.statusLabel).toBe('running · step 1 of 6');
+    expect(result.current.statusLabel).toBe('Step 1 of 6, running');
   });
 
   it('says the run is paused, with its step, while it waits for the QA', () => {
@@ -234,7 +234,7 @@ describe('useWorkspaceViewModel', () => {
     const { result } = renderHook(() => useWorkspaceViewModel());
 
     expect(result.current.liveStatus).toBe('paused');
-    expect(result.current.statusLabel).toBe('paused · step 1 of 6');
+    expect(result.current.statusLabel).toBe('Paused at step 1 of 6');
   });
 
   it('says the run waits on the QA while its agent asks something, paused or not', () => {
@@ -255,7 +255,7 @@ describe('useWorkspaceViewModel', () => {
     const { result } = renderHook(() => useWorkspaceViewModel());
 
     expect(result.current.liveStatus).toBe('attention');
-    expect(result.current.statusLabel).toBe('step 1 of 6');
+    expect(result.current.statusLabel).toBe('Step 1 of 6');
   });
 
   it('says an exploration waits on the QA while its agent asks something', () => {
@@ -287,7 +287,7 @@ describe('useWorkspaceViewModel', () => {
     });
 
     expect(renderHook(() => useWorkspaceViewModel()).result.current.statusLabel).toBe(
-      'running · step 2 of 3',
+      'Step 2 of 3, running',
     );
   });
 
@@ -302,7 +302,7 @@ describe('useWorkspaceViewModel', () => {
     });
 
     expect(renderHook(() => useWorkspaceViewModel()).result.current.statusLabel).toBe(
-      'running · step 6 of 6',
+      'Step 6 of 6, running',
     );
   });
 
@@ -320,7 +320,7 @@ describe('useWorkspaceViewModel', () => {
     });
 
     expect(renderHook(() => useWorkspaceViewModel()).result.current.statusLabel).toBe(
-      'exploring · 0 screens',
+      'Exploring, 0 screens so far',
     );
   });
 });

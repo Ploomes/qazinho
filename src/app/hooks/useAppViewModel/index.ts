@@ -3,10 +3,14 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppActions, useAssistantEvents, useQuestionRoom } from '@/modules/Assistant';
 import { useBuildEvents } from '@/modules/Build';
+import { usePlanQueue } from '@/modules/Home';
 import { useIslandSync } from '@/modules/Island';
 import { useMemoryKeeping } from '@/modules/Memory/hooks/useMemoryKeeping';
 import { useOutsideCalls } from '@/modules/Outside';
 import { useProLinks, useProSync } from '@/modules/Pro';
+import { useProjectNaming } from '@/modules/Project';
+import { useSkills } from '@/modules/Skills';
+import { useTemplates } from '@/modules/Template';
 import { isRunGoing, useUpdateWatch } from '@/modules/Update';
 import { useChatOnly } from '@/modules/Workspace';
 import { AppWindow, Platform } from '@/services';
@@ -40,6 +44,7 @@ export const useAppViewModel = () => {
   const theme = useAppStore(shownThemeOf);
   const screen = useAppStore((state) => state.screen);
   const projects = useAppStore((state) => state.projects);
+  const isLoaded = useAppStore((state) => state.isLoaded);
   const modal = useAppStore((state) => state.modal);
   const editingProjectId = useAppStore((state) => state.editingProjectId);
   const media = useAppStore((state) => state.media);
@@ -56,9 +61,13 @@ export const useAppViewModel = () => {
   const hasHeldRun = useProStore(
     (state) => state.heldRun !== null && state.merging === null,
   );
+  const hasChangeHold = useWorkspaceStore((state) => state.changeHold !== null);
 
   useArchive();
   useVariables();
+  useSkills();
+  useTemplates();
+  usePlanQueue();
   useLanguage();
   useKeybinds();
   useRunTicker();
@@ -75,6 +84,7 @@ export const useAppViewModel = () => {
   useIslandSync();
   useOutsideCalls();
   useUpdateWatch();
+  useProjectNaming();
   useSidebarFit();
   useSystemTheme();
 
@@ -116,6 +126,7 @@ export const useAppViewModel = () => {
     hasProLink,
     hasProMerge,
     hasHeldRun,
+    hasChangeHold,
     replayKey:
       replay === null
         ? 'replay'
@@ -130,11 +141,12 @@ export const useAppViewModel = () => {
     isTitlebarBare: isUpdateBlocked || !hasOnboarded,
     isOnboarding: !hasOnboarded,
     hasSidebar: projects.length > 0 && screen !== 'settings',
-    isFirstRun: screen !== 'settings' && projects.length === 0,
+    isFirstRun: isLoaded && screen !== 'settings' && projects.length === 0,
     isHome: screen === 'welcome' && projects.length > 0,
     isWorkspace: screen === 'workspace',
     isChatOnly,
     isSettings: screen === 'settings',
+    isNewProject: screen === 'newProject',
     isBugs: screen === 'bugs',
   };
 };

@@ -47,6 +47,12 @@ principal nunca o importa, então o `src/services/index.ts` o deixa de fora.
 
 Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeIntegration: false`.
 
+- **O agente do QA só trabalha quando o QA pede.** Uma chamada ao agente nasce de uma mensagem, de um
+  clique ou de uma run do QA; nada a dispara num relógio, ao abrir o app ou ao conectar um tracker.
+  Os limites da conta são lidos pelo `/usage`, que não gasta o plano (`useMachineWatch`): de 15 em 15
+  minutos parado, de 5 em 5 enquanto um agente trabalha, e toda resposta que traz os limites
+  (`hasLimits`, de um `rate_limit_event`) zera a espera.
+
 - Um preload em sandbox só pode dar `require` no `electron` e em alguns polyfills. É por isso que
   ele fica fino, e por isso há um só: uma segunda entrada dividiria um chunk que ele não pode
   requerer. A janela do gravador abre com `RECORDER_ARGUMENT`, e o mesmo preload lhe entrega
@@ -129,6 +135,43 @@ ler o disco. O `homeOf` lê, de todos os projetos, o que pede o QA (uma pergunta
 pausada, uma a continuar, uma falha, casos sem gravação) e os planos abertos por último, que o
 `selectWorkspace` guarda (`recent`, com o tema). Cada item abre o workspace na aba em que a coisa
 está. Ele pergunta à main quais casos têm gravação em cada plano (`Run.developed`).
+
+A sprint também chega ao Início. Num projeto com a coluna de pronto num board (`readyColumn`), o
+`useSprintStories` lê a sprint aberta dele quando o Início abre (`JiraApi.sprintStories`,
+`activeSprintOf`, `sprintStoriesOf`, sem subtarefas nem épicos), e o `homeOf` lista as histórias
+que nenhum plano do projeto tem (`toPlan`). "Planejar" cria o plano com a história
+(`sprintWorkspaceOf`) e "Planejar as N" cria todos; os dois os põem na fila (`planQueue`), que o
+`usePlanQueue` passa ao agente com a mensagem do `/jira`, até `PLAN_QUEUE.atOnce` chats de uma vez
+(`planning`): o seguinte começa quando um deles termina, e um chat que o QA abriu por conta própria
+não ocupa vaga. O Início mostra o que está sendo escrito (`drafting`) e um chat que
+espera as respostas do QA (`toAnswer`, `openRoundOf`).
+
+Um projeto novo nasce de cartões (`NewProject`, a tela `newProject`), não de uma janela. O QA marca
+o que tem (`PROJECT_PICKS`, `withPick`, com o "nada" sozinho), e a tela seguinte pede um campo por
+cartão marcado (`WebField`, `BuildField`, `RepoField`, `TestsField`, `StoryField`, `DesignField`),
+cada um conferido na hora; o que falta diz o pé dela (`missingPicksOf`). O `newProjectOf` monta o
+projeto, sem nome ainda (`isNamePending`), e um plano por fonte (a história com o
+design dela, o design sozinho, os testes), ou um vazio que a primeira mensagem nomeia, e o que cada
+um começa: a mensagem do `/jira`, do `/confluence` ou do `/figma` ao agente, ou o `/import` quando o
+chat dos testes abre. Sem nada (`nothingProjectOf`), a `ExampleShop` da main serve uma loja pequena em
+loopback, numa porta que ela guarda e retoma ao abrir o app, com dois bugs de propósito (a busca vazia
+responde 500, o total ignora a quantidade), e o projeto dela começa explorando; ou o plano começa
+antes do app pelo que o QA escreveu. A janela do projeto fica para editar.
+
+O nome de um projeto que espera (`isNamePending`) vem do app, uma vez:
+
+- O `useProjectNaming` lê, na ordem de `nameSourcesOf`, o site, os builds e o primeiro repositório,
+  pelo `AppNames` da main: o `og:site_name` ou o título da página (`siteNameOf`), o rótulo do .apk
+  pelo `aapt2` (`labelOfBadging`), o nome de exibição do .app pelo `plutil` (`bundleNameOf`), e o
+  `app.json` da branch base pelo gh (`appNameOfManifest`). Nenhum chama o agente. Um alvo novo num
+  projeto que ainda espera é lido de novo.
+- Sem nome em nenhum, o chat leva `isProjectUnnamed`, o harness pede um nome curto na seção
+  `The project's name`, e a resposta o devolve em `projectName`, no mesmo turno.
+- O `nameProject` da store só nomeia um projeto que ainda espera, e o `withNameSettled` tira a espera
+  quando alguém o renomeia: o nome é decidido uma vez, e o do QA vale sobre o do app.
+- O `useNameProject` conta no chat (`INamedMessage`, `NamedNote`) o nome e de onde veio, no chat
+  aberto do projeto ou no primeiro dele (`namingWorkspaceOf`), com "Trocar". A sidebar escreve o nome
+  novo da esquerda para a direita (`SIDEBAR_NAME_MOTION`).
 
 Sem projeto, o app é a primeira execução (`FirstRun`), duas perguntas sem barra lateral: qual app
 o QA vai testar (um endereço, ou um .apk ou .app escolhido no disco) e o que ele quer testar
@@ -275,6 +318,41 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     o `CodeExport` transforma as receitas num arquivo de Playwright ou num fluxo de Maestro por
     caso. O agente do chat fica sabendo como as runs foram pelo histórico que a mensagem seguinte
     carrega (`runHistoryOf`): a última run passo a passo, as anteriores pelo que quebrou.
+- **O agente segue as skills do time** (`role/chat/team-skills.md`, `role/explorer/team-skills.md`,
+  `role/skill-writer/`). A `SkillLibrary` da main guarda cada skill num `SKILL.md` em
+  `PATHS.skills/<id>`, com o índice em `skills.json`: quando vale (`SkillUse`), os projetos, se está
+  ligada e de onde veio (`SkillSource`).
+  - A mensagem do chat leva as ligadas para escrever casos no projeto e a que o QA chamou pelo "/"
+    (`IAskAgent.skill`), descritas pelo harness (`describeSkills`, `describeCalledSkill`), com a pasta
+    de cada uma legível (`readDirs`). As ligadas vão quando chegam ou mudam (`changedSections`), a
+    chamada vai com a mensagem dela, e o turno devolve as que o agente recebeu (`followed`), que a
+    página conta numa linha (`SkillsNote`).
+  - A exploração recebe as ligadas para casos e para explorar. Uma run nunca recebe nenhuma.
+  - Importar lê a pasta de um repositório numa branch pelo gh (as árvores e os blobs do git), as
+    pastas de skills do agente neste computador, ou um arquivo; uma importada chega desligada. Uma de
+    repositório guarda o commit e é lida de novo quando a branch anda, no máximo a cada
+    `SKILL_LIBRARY.refreshMs` enquanto o QA conversa (`refreshIfDue`); o editor a mostra só para ler e
+    oferece uma cópia.
+  - O `SkillWriter` escreve uma skill com o QA: o agente dele lê os arquivos que o QA anexou ao
+    rascunho, pergunta o que os exemplos deixam em aberto e devolve a skill no schema `SKILL_DRAFT`,
+    que o QA revisa no editor antes de guardar. Nada guarda uma skill sem o QA confirmar.
+- **Um caso à mão é andado pelo QA** (`isManual` no caso, `mode: 'manual'` na run). Desenvolver e
+  rodar o plano o deixam de fora (`planStageOf`, `begin`, `walkSteps`), e os que o QA não fez
+  desde a última run do plano esperam por ele (`manualWaitingOf`), no Plano e no Início:
+  - O `walkManual` abre o caso do zero e grava. O preparo vem da gravação dele (`book.preps`, que
+    fica nesta máquina) ou do agente, num turno só com a mensagem do preparo (`Harness.prepare`),
+    que vira essa gravação (`agentPrep`, `bookWithPrep`). O evento `manual` abre a vez do QA.
+  - A página manda os gestos (`DeviceInput`, em frações da tela) por `touchRun`, um depois do
+    outro, e cada driver os faz (`touch`: o mouse e o teclado do Playwright, `adbInputOf`,
+    `idbInputOf`). Um celular não transmite sozinho: o `pumpFrames` manda o `snapshot` dele ao
+    stream enquanto o caso anda.
+  - `markRun` guarda a tela de agora como o passo, marcado pelo QA (`markedOutcomeOf`, `by: 'qa'`):
+    uma falha leva a nota dele como o que veio e vira um bug como qualquer outra. `typeRunVariable`
+    digita o valor de uma variável que só a main conhece, e `endManual` deixa sem marca o que
+    falta (`ended`).
+  - A `DeviceScreen` vira uma superfície (`role="application"`) que leva o ponteiro, a roda e o
+    teclado ao dispositivo, e o `ManualPanel` mostra o preparo, o passo, o esperado e as marcas.
+  - O CI nunca anda um caso à mão: o `PlanWalker` o deixa de fora com o porquê (`manual`).
 - **O agente guarda o que aprende sobre o app** (`role/keeper/`). As memórias ficam no projeto
   (`IProject.memories`), cada uma do projeto ou de um workspace, e numa lista só para sincronizar.
   - A página põe na fila o que pode mudar alguma coisa (`useMemoryStore`): a mensagem do QA, e no fim
@@ -434,6 +512,47 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   - Os arquivos são apagados assim que um plano volta, quando o workspace vai embora, e na próxima
     inicialização. O workspace guarda a história (`issue`), que o cabeçalho abre
     no Jira.
+- **Um plano sai da história antes do app** (`role/chat/ahead.md`):
+  - O projeto guarda a coluna do board que conta como pronta para teste e os status que caem
+    nela (`readyColumn`, `readyStatuses`, `ReadyField`, `JiraApi.boards`, `boardColumnsOf`). A mensagem do chat os leva (`IAskAgent.readyStatuses`), e a
+    cópia da história diz se ela chegou (`readinessOf`, `IJiraStoryCopy.readiness`). O turno a
+    devolve (`IChatTurn.readiness`), e um plano de uma história à frente espera (`storyStage`):
+    o `RunButton` diz "Esperando o app", e uma run do plano encerra a espera (`startRun`).
+  - Todo plano traz a estratégia, e todo caso as fontes do esperado (`CHAT_ANSWER`,
+    `PLANNED_CASE`); a leitura aceita um plano ou caso sem elas (`readChatAnswer`). O plano as
+    guarda no YAML (`planExtrasOfYaml`) e na org, e a página publicada as escreve (`planDocOf`).
+  - Uma pergunta mandada à história vira uma dúvida (`nextDoubtIdsOf`, `IPlanDoubt`), que o agente
+    ouve em toda mensagem (`describeDoubts`) e que segura casos (`blockedBy`). A aba Plano a manda
+    num comentário do QA (`DoubtsModal`, `JiraApi.askStory`, `adfOfDoubts`): o autor da história
+    mencionado e, se o QA quiser, ele como observador.
+  - O `useStoryCheck` lê no Jira, sem agente, as respostas (`storyAnswersOf`: um comentário que
+    nomeia a dúvida, ou o seguinte quando só uma espera) e o status da história, quando o QA abre o
+    plano ou o Início, no máximo a cada `STORY_READ.everyMs`, ou num clique. O Início mostra o que
+    chegou e o que foi respondido (`homeOf`), e "Atualizar o plano" pede ao chat que reescreva os
+    casos que esperavam (`heldDoubtsOf`).
+  - A primeira execução aceita uma história no lugar do app (`storyKeyOf`): o projeto nasce sem
+    alvo (`blankWorkspaceOf`), e o `RunButton` leva a escolher o app antes de desenvolver.
+- **Uma mudança nas fontes chega ao plano** (`role/watcher/`). Vigiar sozinho é da plataforma; o
+  desktop confere quando o QA pede ou vai rodar:
+  - O turno que escreve um plano devolve como a história e a página estavam (`snapshots`,
+    `storyTextOf`), e o plano guarda o commit da branch (`planSource`).
+  - O `SourceCheck` da main lê tudo de novo sem IA (`ISourcesChecked`): o texto da história contra
+    o retrato (`isSameText`), os comentários de outra pessoa depois dele (`commentsSince`), a página,
+    e o commit da branch pelo gh, com os patches (`filesOfCompare`). O workspace guarda o que achou
+    (`changed`) até o QA resolver; resolver faz de como as fontes estão agora o novo retrato
+    (`resolveChanges`).
+  - O `useSourceCheck` roda no "Conferir mudanças" e antes de uma run do QA (`runOwn`): uma
+    mudança por revisar segura a run (`changeHold`, `ChangeRunWarning`).
+  - O `ChangeReader` pergunta ao agente do QA só no clique, selado e no modelo mais barato
+    (`readChange`, `CHANGE_READ`), e confere a resposta contra os casos e as dúvidas
+    (`readChangeRead`). A revisão (`review`, `reviewOf`) guarda cada troca e como o QA a decidiu,
+    com o motivo de uma recusa; aplicar escreve o caso pelo `planWithItem`.
+  - Uma reunião é uma mudança também (`kind: 'meeting'`): o `MeetingModal` lê o arquivo na página
+    (`transcriptOf` tira os tempos de um VTT ou SRT), e o leitor só toma as decisões
+    (`role/watcher/reading-a-meeting.md`).
+  - "Contar na história" monta o comentário (`storyNoteOf`) que o QA edita e posta
+    (`JiraApi.tell`, `adfOfNote`). O envio de um bug avisa quando as fontes mudaram, e o Início
+    mostra os planos com mudanças (`homeOf`).
 - **Uma página do Confluence também é um requisito, e o lugar onde um plano é publicado**
   (`role/chat/confluence.md`). O Confluence é ligado ao lado do Jira (`setConfluence`), assim que o
   `ConfluenceApi.check` o alcança com a conta do Jira:
@@ -448,6 +567,21 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     formato da Atlassian. A primeira publicação pergunta o espaço, uma página pai se houver e um
     título (`PublishModal`); o workspace guarda a página (`published`), e a publicação seguinte
     escreve a próxima versão dela, ou a faz de novo quando ela sumiu.
+- **O time escreve do jeito dele, sem IA** (`src/modules/Template/`). Um modelo (`ITemplate`) é uma
+  lista de partes: uma seção que o QAzinho monta, com o título do time, ou um texto com campos como
+  `{{app}}` (`TemplatePart`). O `renderParts` troca cada seção pelos blocos dela e o `fillValues`
+  preenche os campos; sem modelo, o QAzinho monta do jeito dele:
+  - O `bugReportOf`, o `planDocOf`, o `doubtsTextsOf` e o `storyNoteOf` recebem o modelo que vale, e
+    o `gherkinOf` escreve os casos em Gherkin, que a aba Plano mostra e exporta como `.feature`.
+  - A `TemplateLibrary` da main guarda os do QA em `templates.json`. O `ProTemplates` lê os de cada
+    org da conta pela API, guarda o último de cada uma em `org-templates.json` para quando não há
+    rede, e publica, reescreve, tira e escolhe o padrão de um tipo. Um modelo de org leva o id
+    `org:<org>:<id>` (`orgTemplateIdOf`), que nunca se confunde com um local.
+  - O projeto guarda a escolha de cada tipo (`IProject.templates`). O `templateFor` dá o escolhido,
+    senão o padrão da org do projeto, senão nenhum, e `qazinho` escolhe o jeito do QAzinho sobre o
+    da org; o `useTemplateOf` o resolve pelo projeto.
+  - Publicar é de um editor para cima, o padrão é do dono ou do admin, e a API recusa o resto. O
+    editor oferece onde o modelo fica (`places`), e a um leitor, guardar uma cópia.
 - **Um design do Figma é conferido contra a tela pelo Figma do próprio QA** (`role/chat/design.md`,
   `role/runner/design.md`). O `/figma` no chat recebe o link de um frame ou página
   (`designLinkOf`), e o workspace o guarda (`design`), que o cabeçalho dele abre no Figma:
@@ -497,9 +631,11 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     espera antes um cartão de confirmação.
 - **Um bug registrado e visto de novo chega à issue dele como um comentário** (`role/reporter/`),
   pesado pelo agente do QA e postado só pelo QA:
-  - Quando uma run termina, na inicialização e quando um tracker conecta, o `useBugReviews` pega
-    cada bug registrado com vistas de runs ainda não pesadas (`unreviewedOf`), um por vez, e só
-    enquanto o tracker dele está conectado.
+  - Quando uma run do QA termina, o `useBugReviews` pega cada bug registrado com vistas de runs
+    ainda não pesadas (`unreviewedOf`), um por vez, e só enquanto o tracker dele está conectado.
+    Nada revisa sozinho ao abrir o app ou ao conectar um tracker: o agente do QA só trabalha
+    quando o QA pede. Um bug com vistas ainda não pesadas mostra "Revisar" no cartão
+    (`BugUpdate`), ou leva a conectar o tracker.
   - O `BugReviewer` da main lê a issue como está pelo `BugFiler.read` (status, texto,
     comentários) e pergunta ao agente com o bug e cada vista (`describeReview`), com as telas
     legíveis na pasta da run. Uma issue fechada é sempre uma regressão, e nunca é reaberta.
@@ -874,11 +1010,17 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `VariableVault`                       | guarda as variáveis de cada projeto lacradas pelo keychain; só uma run lê um valor                          |
 | `GitCli`                              | roda o git do próprio QA numa pasta, e nunca espera uma senha                                               |
 | `ImportScanner`                       | lê uma pasta de testes que o QA escolheu e reconhece o framework de cada um                                 |
+| `SkillLibrary`                        | guarda as skills do time em disco, importa as de um repositório, deste computador ou de um arquivo          |
+| `SkillWriter`                         | escreve uma skill com o QA pelo agente dele, a partir do que ele conta e dos casos que anexa                |
+| `TemplateLibrary`                     | guarda os modelos do QA neste computador: o bug, a página do plano e os comentários                         |
 | `ChatAttachments`                     | guarda as imagens e arquivos que o QA anexa ao chat, numa pasta do workspace que o agente lê                |
 | `ProAccount`                          | faz este computador entrar no QAzinho Pro, guarda o token lacrado dele, e conhece as orgs                   |
 | `ProApi`                              | fala com a API do QAzinho Pro: o login, a conta, a sincronização, as evidências, projetos de org            |
 | `ProSync`                             | publica um projeto numa org, manda os fatos dele quando acontecem e os planos quando mandado                |
 | `ProDownloads`                        | lista os projetos da org e baixa um, as gravações incluídas                                                 |
+| `ProTemplates`                        | lê, publica e escolhe o padrão dos modelos das orgs, e guarda o último de cada uma                          |
+| `ExampleShop`                         | serve em loopback a loja de exemplo de quem não tem app ainda, com dois bugs de propósito                   |
+| `AppNames`                            | lê o nome de um app sem IA: o do site, o do .apk ou .app, ou o do `app.json` no repositório                 |
 
 ## Dependências
 

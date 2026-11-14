@@ -42,6 +42,37 @@ describe('readProjects', () => {
     expect(readProjects(JSON.stringify([older]))[0]?.repositories).toEqual([]);
   });
 
+  it('keeps the column that means ready and its statuses, and drops a broken one', () => {
+    const column = { boardId: 7, board: 'Shop board', column: 'Ready for QA' };
+    const ready = { ...PROJECT, readyColumn: column, readyStatuses: ['Ready for QA'] };
+    const broken = {
+      ...PROJECT,
+      readyColumn: { board: 'x' },
+      readyStatuses: ['Ready', 7],
+    };
+
+    expect(readProjects(JSON.stringify([ready]))[0]).toMatchObject({
+      readyColumn: column,
+      readyStatuses: ['Ready for QA'],
+    });
+    expect(readProjects(JSON.stringify([broken]))[0]).not.toHaveProperty('readyColumn');
+    expect(readProjects(JSON.stringify([broken]))[0]).not.toHaveProperty('readyStatuses');
+  });
+
+  it('keeps a project waiting for its name, and drops a flag that is not true', () => {
+    expect(
+      readProjects(
+        JSON.stringify([
+          { ...PROJECT, isNamePending: true },
+          { ...PROJECT, id: 'p2', isNamePending: 'yes' },
+        ]),
+      ).map(({ id, isNamePending }) => [id, isNamePending]),
+    ).toEqual([
+      ['p1', true],
+      ['p2', undefined],
+    ]);
+  });
+
   it('an entry with no id is skipped, and the rest still load', () => {
     const json = JSON.stringify([{ name: 'no id' }, PROJECT]);
 

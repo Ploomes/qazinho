@@ -184,9 +184,9 @@ describe('useIntegrationCardViewModel', () => {
 
       await waitFor(() => {
         expect(result.current.rows).toEqual([
-          { label: 'account', value: 'octoqa' },
+          { label: 'Account', value: 'octoqa' },
           { label: 'through', value: 'GitHub CLI' },
-          { label: 'connected on', value: 'Sep 16, 2026' },
+          { label: 'Connected on', value: 'Sep 16, 2026' },
         ]);
       });
       expect(result.current.cliLine).toBeNull();
@@ -243,9 +243,9 @@ describe('useIntegrationCardViewModel', () => {
       });
       expect(result.current.isConnected).toBe(true);
       expect(result.current.rows).toEqual([
-        { label: 'account', value: 'Ana QA' },
-        { label: 'site', value: 'https://acme.atlassian.net' },
-        { label: 'connected on', value: 'Sep 16, 2026' },
+        { label: 'Account', value: 'Ana QA' },
+        { label: 'Site', value: 'https://acme.atlassian.net' },
+        { label: 'Connected on', value: 'Sep 16, 2026' },
       ]);
     });
 

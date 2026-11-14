@@ -9,6 +9,9 @@ import './styles.css';
 export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
   const {
     reason,
+    reasonClassName,
+    reasonTip,
+    sources,
     priority,
     expectedPrefix,
     gotPrefix,
@@ -28,6 +31,10 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
     canRemoveStep,
     onHeadClick,
     runCaseLabel,
+    runIcon,
+    manualLabel,
+    manualIcon,
+    onManualToggle,
     moveLabel,
     onHeadKeyDown,
     onFieldCommit,
@@ -103,7 +110,11 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
         />
 
         <span className="plan-case__aside">
-          {reason !== '' && <span className="plan-case__reason">{reason}</span>}
+          {reason !== '' && (
+            <span className={reasonClassName} title={reasonTip}>
+              {reason}
+            </span>
+          )}
           {priority !== null && <span className="plan-case__priority">{priority}</span>}
 
           {!props.isLocked && (
@@ -118,7 +129,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                     props.onRunCase?.(props.testCase.id);
                   }}
                 >
-                  <Icon name="play" />
+                  <Icon name={runIcon} />
                 </button>
               )}
             </span>
@@ -137,6 +148,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <div className="plan-case__body">
+              {sources !== null && <p className="plan-case__sources">{sources}</p>}
               {(isGoalShown || isBeforeShown) && (
                 <dl className="plan-case__facts">
                   {isGoalShown && (
@@ -300,6 +312,14 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                     >
                       <Icon name="plus" />
                       {t('PLAN.ADD_STEP')}
+                    </button>
+                    <button
+                      type="button"
+                      className="plan-case__ghost plan-case__manual"
+                      onClick={onManualToggle}
+                    >
+                      <Icon name={manualIcon} />
+                      {manualLabel}
                     </button>
                     <button
                       type="button"

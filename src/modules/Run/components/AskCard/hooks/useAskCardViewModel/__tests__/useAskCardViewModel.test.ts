@@ -47,7 +47,7 @@ describe('useAskCardViewModel', () => {
       const { result } = card();
 
       expect(result.current.eyebrow).toBe('The agent needs you');
-      expect(result.current.where).toBe('TC-02 · step 3');
+      expect(result.current.where).toBe('At step 3 of TC-02');
       expect(result.current.question).toBe('Which plan should I pick?');
       expect(result.current.options.map(({ label }) => label)).toEqual([
         'Premium',
@@ -59,7 +59,7 @@ describe('useAskCardViewModel', () => {
     it('says the screen an exploration was on, or only that it explores', () => {
       const exploring = { ...QUESTION, caseId: EXPLORATION.caseId, action: 'Cart' };
 
-      expect(card(exploring).result.current.where).toBe('Exploring · Cart');
+      expect(card(exploring).result.current.where).toBe('Exploring Cart');
       expect(card({ ...exploring, action: '' }).result.current.where).toBe('Exploring');
     });
 

@@ -16,7 +16,6 @@ import {
   useMachineStore,
   useMemoryStore,
   useSettingsStore,
-  useSetupStore,
   useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
@@ -29,6 +28,7 @@ export const useRunEvents = () => {
   const landTalkReply = useWorkspaceStore((state) => state.landTalkReply);
   const landUnheardTalks = useWorkspaceStore((state) => state.landUnheardTalks);
   const markStreaming = useWorkspaceStore((state) => state.markStreaming);
+  const markManual = useWorkspaceStore((state) => state.markManual);
   const markAddress = useWorkspaceStore((state) => state.markAddress);
   const markScreens = useWorkspaceStore((state) => state.markScreens);
   const landNote = useWorkspaceStore((state) => state.landNote);
@@ -45,9 +45,8 @@ export const useRunEvents = () => {
   const landRunFailed = useWorkspaceStore((state) => state.landRunFailed);
   const resumeRun = useWorkspaceStore((state) => state.resumeRun);
   const isLoaded = useWorkspaceStore((state) => state.isLoaded);
-  const trackers = useSetupStore((state) => state.integrations.length);
   const openRun = useOpenRun();
-  const { reviewWorkspace, reviewAll } = useBugReviews();
+  const { reviewWorkspace } = useBugReviews();
 
   const endingOf = (workspaceId: string) => {
     const live = useWorkspaceStore
@@ -153,6 +152,8 @@ export const useRunEvents = () => {
     else if (event.kind === 'learnings') keepWhatTheRunLearned(event);
     else if (event.kind === 'streaming')
       markStreaming({ workspaceId: event.workspaceId, url: event.url });
+    else if (event.kind === 'manual')
+      markManual({ workspaceId: event.workspaceId, turn: event.turn });
     else if (event.kind === 'address')
       markAddress({ workspaceId: event.workspaceId, url: event.url });
     else if (event.kind === 'screens')
@@ -209,14 +210,6 @@ export const useRunEvents = () => {
   useEffect(() => Run.onEvent(onRunEvent), []);
 
   useEffect(() => Run.onOpen(onOpenRun), []);
-
-  const reviewOnLoad = useEffectEvent(() => {
-    reviewAll();
-  });
-
-  useEffect(() => {
-    if (isLoaded) reviewOnLoad();
-  }, [isLoaded, trackers]);
 
   useEffect(() => {
     if (!isLoaded) return;

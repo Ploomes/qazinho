@@ -31,7 +31,7 @@ describe('useInstallProgressViewModel', () => {
         'current',
         'todo',
       ]);
-      expect(result.current.label).toBe('installing · step 3 of 4');
+      expect(result.current.label).toBe('installing, step 3 of 4');
       expect(result.current.line).toBe('==> Pouring');
     });
 

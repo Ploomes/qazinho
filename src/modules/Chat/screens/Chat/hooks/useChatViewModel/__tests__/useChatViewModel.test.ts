@@ -58,6 +58,7 @@ function answering(turn: Partial<IChatTurn>) {
       code: null,
       story: null,
       page: null,
+      followed: [],
       ...turn,
     }),
   );
@@ -814,6 +815,138 @@ describe('useChatViewModel', () => {
       });
     });
 
+    /**
+     * O QA não sabe e o agente também não: a pergunta vira a próxima dúvida do plano, que a
+     * história recebe num comentário, e o agente planeja sabendo dela.
+     */
+    it('turns a question sent to the story into the next doubt, which the agent hears', async () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace([]),
+            issue: {
+              key: 'SHOP-878',
+              title: 'Coupons at checkout',
+              source: 'jira',
+              url: 'https://shop.atlassian.net/browse/SHOP-878',
+            },
+            doubts: [
+              { id: 'D1', question: 'Does a coupon stack?', sent: null, answer: null },
+            ],
+          },
+        ],
+      });
+
+      const { ask, view } = await asked('Two things first.');
+      const round = useWorkspaceStore.getState().workspaces[0]?.chat.at(-1);
+
+      expect(view.result.current.canAskStory).toBe(true);
+
+      act(() => {
+        view.result.current.onAnswerQuestions({
+          messageId: round?.id ?? '',
+          answers: [{ picked: [], text: '', toStory: true }],
+        });
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledTimes(2);
+      });
+      expect(ask.mock.calls[1]?.[0].text).toBe(
+        'Scope (What should the plan cover?): sent to the story as D2, since no one here knows yet',
+      );
+      expect(ask.mock.calls[1]?.[0].doubts?.map(({ id }) => id)).toEqual(['D1', 'D2']);
+      expect(useWorkspaceStore.getState().workspaces[0]?.doubts?.at(-1)).toEqual({
+        id: 'D2',
+        question: 'What should the plan cover?',
+        sent: null,
+        answer: null,
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat[2]).toMatchObject({
+        answers: [{ toStory: true, doubtId: 'D2' }],
+      });
+    });
+
+    /**
+     * O projeto diz em quais status uma história chegou para teste. Um plano escrito de uma
+     * história ainda fora deles espera o app, e o botão de rodar diz isso.
+     */
+    it('tells the agent the statuses that mean ready, and keeps a plan ahead of the app', async () => {
+      useAppStore.setState({
+        projects: [{ ...PROJECT, readyStatuses: ['Ready for QA'] }],
+      });
+
+      const ask = answering({ answer: DRAFTED, readiness: 'ahead' });
+      const view = renderHook(() => useChatViewModel());
+
+      act(() => {
+        view.result.current.onDraftChange('Plan SHOP-878');
+      });
+      act(() => {
+        view.result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.storyStage).toBe('ahead');
+      });
+      expect(ask.mock.calls[0]?.[0].readyStatuses).toEqual(['Ready for QA']);
+    });
+
+    /** É contra esse retrato que "Conferir mudanças" acha, sem IA, o que mudou depois. */
+    it('keeps how the story read when the plan was written from it', async () => {
+      const snapshot = {
+        kind: 'story' as const,
+        key: 'SHOP-878',
+        url: 'https://shop.atlassian.net/browse/SHOP-878',
+        text: 'C3. Bloquear depois de 3 tentativas',
+        at: '2026-11-13T13:00:00.000Z',
+      };
+
+      answering({ answer: DRAFTED, snapshots: [snapshot] });
+
+      const view = renderHook(() => useChatViewModel());
+
+      act(() => {
+        view.result.current.onDraftChange('Plan SHOP-878');
+      });
+      act(() => {
+        view.result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.snapshots).toEqual([snapshot]);
+      });
+    });
+
+    it('lets go of the wait once a turn reads the story arrived for testing', async () => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace([]), storyStage: 'ahead' }],
+      });
+      answering({ answer: DRAFTED, readiness: 'ready' });
+
+      const view = renderHook(() => useChatViewModel());
+
+      act(() => {
+        view.result.current.onDraftChange('Plan SHOP-878 again');
+      });
+      act(() => {
+        view.result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.plan.length).toBeGreaterThan(
+          0,
+        );
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]).not.toHaveProperty('storyStage');
+    });
+
+    it('does NOT offer the story to a workspace with no Jira story', async () => {
+      const { view } = await asked('Two things first.');
+
+      expect(view.result.current.canAskStory).toBe(false);
+    });
+
     it('does NOT take answers while the agent is still working', async () => {
       const { ask, view } = await asked('Two things first.');
       const round = useWorkspaceStore.getState().workspaces[0]?.chat.at(-1);
@@ -876,7 +1009,10 @@ describe('useChatViewModel', () => {
     it('says the day a run started with its time, and only the time when no step kept it', () => {
       answering({});
 
-      const walked = walkRun({ verdicts: ['passed'], isFinished: true });
+      const walked = walkRun({
+        verdicts: ['passed', 'passed', 'passed', 'passed', 'passed', 'passed'],
+        isFinished: true,
+      });
       const at = (span: { from: number; to: number } | null) => ({
         ...walked,
         runs: walked.runs.map((run) => ({
@@ -1097,7 +1233,7 @@ describe('useChatViewModel', () => {
         expect(ask).toHaveBeenCalledOnce();
       });
       expect(ask.mock.calls[0]?.[0].runs).toMatchObject([
-        { kind: 'run', id: 'r-01', title: 'The whole plan · 09:41' },
+        { kind: 'run', id: 'r-01', title: 'The whole plan, 09:41' },
       ]);
     });
   });
@@ -1393,6 +1529,20 @@ describe('useChatViewModel', () => {
 
       expect(result.current.command).toBeNull();
       expect(useAppStore.getState().pendingImport).not.toBeNull();
+    });
+
+    it('opens the story picker a new plan asked for, once', () => {
+      useAppStore.setState({
+        pendingCommand: {
+          workspaceId: useAppStore.getState().selectedWorkspaceId ?? '',
+          command: 'jira-plan',
+        },
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.command).toMatchObject({ name: 'Plan from a Jira story' });
+      expect(useAppStore.getState().pendingCommand).toBeNull();
     });
   });
 

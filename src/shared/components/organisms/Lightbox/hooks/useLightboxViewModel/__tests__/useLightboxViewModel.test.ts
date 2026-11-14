@@ -94,7 +94,7 @@ describe('useLightboxViewModel', () => {
       expect(saveShot).toHaveBeenCalledWith({
         file: null,
         src: 'data:image/jpeg;base64,shot',
-        name: 'run r-01 · the step that broke',
+        name: 'run r-01: the step that broke',
       });
 
       await waitFor(() => {

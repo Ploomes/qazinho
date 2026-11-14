@@ -1,55 +1,74 @@
 import type { IUpdaterPort } from '@/main/classes';
 import type {
   AgentSignInProgress,
+  AppNameSource,
+  AppUpdate,
   ConfluenceSwitch,
+  DeviceInput,
   GithubSignInProgress,
-  ICommentBug,
-  IFileBug,
-  IFilingEvent,
-  IProLink,
-  IProShare,
-  IProSyncBatch,
-  IPublishPlan,
-  IKeepMemories,
-  IReviewBug,
   IAgentEvent,
   IAgentTurn,
-  IAppToolAnswer,
   IApplyVariables,
+  IAppToolAnswer,
   IAskAgent,
   IAssistantAsk,
   IBuildEvent,
   IChatTurn,
   ICodeCopy,
+  ICommentBug,
   IConfluencePage,
-  IImportSource,
-  IJiraStoryCopy,
   IConnectIntegration,
   IDevelopedAsk,
   IExportCode,
+  IFileBug,
+  IFilingEvent,
+  IImportSource,
+  IJiraStoryCopy,
+  IKeepMemories,
+  IManualMark,
+  IMcpServerTarget,
+  IMcpSignIn,
+  ImportPick,
   InstallableId,
   IntegrationId,
+  IProLink,
+  IProShare,
+  IProSyncBatch,
+  IPublishPlan,
+  IReadChange,
+  IRepositoryRef,
+  IReviewBug,
   IRunAlert,
   IRunEvent,
   IRunRef,
-  IRepositoryRef,
-  IMcpServerTarget,
-  IMcpSignIn,
   ISavedWorkspace,
+  ISaveSkill,
+  IOrgTemplateDefault,
+  IOrgTemplateRef,
+  ISaveOrgTemplate,
+  ISaveTemplate,
+  ISaveText,
   ISetupEvent,
-  AppUpdate,
+  ISkill,
+  ISkillDraftFile,
+  ISkillImport,
+  ISourcesCheckAsk,
+  ISourceSnapshot,
   IStartBuild,
   IStartRun,
+  IStoryAnswersAsk,
+  IStoryDoubtsPost,
+  ITellStory,
   ITrayWords,
   IViewport,
   IWindowControls,
+  IWriteSkill,
   McpSignInProgress,
   OutsideToolCall,
   PickKind,
   ProSignInProgress,
   QaReply,
   SaveOutcome,
-  ImportPick,
   WindowFit,
 } from '@/shared/types';
 import type {
@@ -57,6 +76,7 @@ import type {
   IAttachSources,
   SourceCall,
 } from '@salve-software/qazinho-harness';
+import { randomUUID } from 'node:crypto';
 import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { homedir, hostname, release, tmpdir } from 'node:os';
 import { delimiter, extname, join } from 'node:path';
@@ -77,23 +97,26 @@ import {
 import { autoUpdater } from 'electron-updater';
 import {
   AgentDetector,
-  AndroidDriver,
-  AppLog,
   AgentLogin,
   AgentMcp,
   AgentRunner,
+  AndroidDriver,
   AppBridge,
   AppBuilder,
+  AppLog,
+  AppNames,
   AppPeek,
   AppTray,
+  AppUpdater,
   Archive,
-  ChatDevices,
-  ChatAttachments,
   AssistantAgent,
-  OutsideServer,
   BugFiler,
   BugReviewer,
-  MemoryKeeper,
+  ChangeReader,
+  ExampleShop,
+  canUpdateOf,
+  ChatAttachments,
+  ChatDevices,
   CodeCopies,
   CodeExport,
   ConfluenceApi,
@@ -103,28 +126,34 @@ import {
   GithubRepos,
   ImportScanner,
   IntegrationVault,
-  Island,
   IosDriver,
+  Island,
   JiraApi,
   JiraStories,
   LiveStream,
+  MemoryKeeper,
+  OutsideServer,
   PhonePeek,
   ProAccount,
   ProApi,
-  AppUpdater,
-  canUpdateOf,
-  updateFeedOf,
   ProcessOwners,
   ProDownloads,
+  ProTemplates,
   ProSync,
-  ResourceCollector,
-  RunCoordinator,
   ReplayServer,
-  StorageKeeper,
+  ResourceCollector,
   RunAlerts,
+  RunCoordinator,
   RunRecorder,
   SetupInstaller,
   SiteIcons,
+  SkillLibrary,
+  SkillWriter,
+  SourceCheck,
+  StorageKeeper,
+  storyTextOf,
+  TemplateLibrary,
+  updateFeedOf,
   UsageReader,
   VariableVault,
 } from '@/main/classes';
@@ -133,6 +162,7 @@ import { MEMORY_KEEPER } from '@/main/classes/agents/MemoryKeeper/constants';
 import { buildIdOf, javaHomesOf } from '@/main/classes/builds/AppBuilder/library';
 import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
 import { downloaderOf, uploaderOf } from '@/main/classes/pro/ProSync/library';
+import { SKILL_WRITER } from '@/main/classes/skills/SkillWriter/constants';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import {
   ASSISTANT,
@@ -238,6 +268,7 @@ const chatDevices = new ChatDevices({
   },
 });
 const replays = new ReplayServer({ dataRoot: PATHS.data });
+const exampleShop = new ExampleShop({ file: PATHS.exampleShop });
 const siteIcons = new SiteIcons({
   fetcher: (url, init) => fetch(url, init),
   file: PATHS.siteIcons,
@@ -436,6 +467,26 @@ const github = new GithubCli({
   onProgress: (progress) =>
     broadcast({ channel: CHANNELS.githubSignInEvent, event: progress }),
 });
+const appNames = new AppNames({
+  fetcher: (url, init) => fetch(url, init),
+  run: async ({ command, args }) =>
+    execCommand({ command, args })
+      .then(({ stdout }) => stdout)
+      .catch(() => null),
+  aapt: async () => {
+    const sdkRoot = deviceTools.detect().androidSdk.path;
+    const tools =
+      sdkRoot === null
+        ? null
+        : newestBuildTools(await readdir(join(sdkRoot, 'build-tools')).catch(() => []));
+
+    return sdkRoot === null || tools === null
+      ? null
+      : join(sdkRoot, 'build-tools', tools, 'aapt2');
+  },
+  isMac: process.platform === 'darwin',
+  github,
+});
 const repos = new GithubRepos({ github });
 const codeCopies = new CodeCopies({ github, root: PATHS.code });
 const mcp = new AgentMcp({
@@ -533,6 +584,13 @@ const confluence = new ConfluenceApi({
   jira: () => vault.jira(),
   fetcher: (url, init) => fetch(url, init),
 });
+const sourceCheck = new SourceCheck({
+  readStory: (key) => jira.story(key),
+  readComments: (props) => jira.commentsSince(props),
+  readPage: (pageId) => confluence.page(pageId),
+  githubApi: (path) => github.api({ path }),
+  storyTextOf,
+});
 const bugFiler = new BugFiler({
   jira,
   github,
@@ -588,6 +646,11 @@ const proDownloads = new ProDownloads({
   archiveRoot: PATHS.data,
   sync: proSync,
 });
+const proTemplates = new ProTemplates({
+  api: proApi,
+  token: () => proAccount.token(),
+  file: PATHS.orgTemplates,
+});
 const git = new GitCli({ directories: commandDirectories });
 const importScanner = new ImportScanner({ git });
 const agentRunner = new AgentRunner({
@@ -609,7 +672,8 @@ const agentRunner = new AgentRunner({
 
     if (
       event.workspaceId.startsWith(BUG_REVIEW.scopePrefix) ||
-      event.workspaceId.startsWith(MEMORY_KEEPER.scopePrefix)
+      event.workspaceId.startsWith(MEMORY_KEEPER.scopePrefix) ||
+      event.workspaceId.startsWith(SKILL_WRITER.scopePrefix)
     )
       return;
 
@@ -631,10 +695,25 @@ const bugReviewer = new BugReviewer({
   runsRoot: join(PATHS.data, ARCHIVE.runs),
 });
 
+const skillLibrary = new SkillLibrary({ root: PATHS.skills, home: homedir(), github });
+
+const skillWriter = new SkillWriter({
+  runner: agentRunner,
+  harness,
+  library: skillLibrary,
+  findCommand,
+});
+
 const memoryKeeper = new MemoryKeeper({
   runner: agentRunner,
   harness,
   findCommand,
+});
+const changeReader = new ChangeReader({ runner: agentRunner, harness, findCommand });
+const templates = new TemplateLibrary({
+  file: PATHS.templates,
+  now: () => new Date().toISOString(),
+  newId: () => `tpl-${randomUUID()}`,
 });
 
 const builder = new AppBuilder({
@@ -793,6 +872,8 @@ const runs = new RunCoordinator({
         changes: [{ kind: 'save', ...variable, from: null }],
       })
     ).isSaved,
+  skillsOf: (projectId) =>
+    skillLibrary.forChat({ projectId, uses: ['cases', 'explore'], calledId: null }),
   shrink: ({ image, width, height, quality }) =>
     nativeImage
       .createFromBuffer(image)
@@ -849,6 +930,7 @@ const assistant = new AssistantAgent({
 });
 
 const toldChats = new Map<string, Record<string, string>>();
+const readyStatuses = new Map<string, string[]>();
 const confluencePages = new Map<string, IConfluencePage>();
 const importSources = new Map<string, IImportSource>();
 const askingChats = new Set<string>();
@@ -864,6 +946,7 @@ async function fetchSource(props: {
     const read = await jiraStories.prepare({
       workspaceId,
       key: call.key,
+      readyStatuses: readyStatuses.get(workspaceId) ?? [],
       onStep: ({ at, bytes }) => {
         broadcast({
           channel: CHANNELS.agentEvent,
@@ -944,12 +1027,18 @@ async function askOnce(props: {
   source: IImportSource | null;
   story: IJiraStoryCopy | null;
   page: IConfluencePage | null;
-}): Promise<{ turn: IAgentTurn; told: Record<string, string> }> {
+}): Promise<{ turn: IAgentTurn; told: Record<string, string>; followed: string[] }> {
   const { ask, command, sessionId, look, code, source, story, page } = props;
   const attachments = await chatAttachments.filesOf({
     workspaceId: ask.workspaceId,
     attachments: ask.attachments ?? [],
   });
+  const skills = await skillLibrary
+    .forChat({ projectId: ask.projectId, uses: ['cases'], calledId: ask.skill ?? null })
+    .catch(() => []);
+
+  void skillLibrary.refreshIfDue().catch(() => undefined);
+
   const chat = harness.chat({
     text: ask.text,
     told: (sessionId === null ? undefined : toldChats.get(sessionId)) ?? {},
@@ -968,6 +1057,9 @@ async function askOnce(props: {
     isFromAgent: ask.isFromAgent === true,
     attachments,
     memories: ask.memories ?? [],
+    skills,
+    doubts: ask.doubts ?? [],
+    isProjectUnnamed: ask.isProjectUnnamed === true,
   });
   const sources = sourcesFor(ask.workspaceId);
   const learning =
@@ -1011,7 +1103,7 @@ async function askOnce(props: {
       ...(mcpConfig === null ? {} : { mcpConfig }),
     });
 
-    return { turn, told: chat.told };
+    return { turn, told: chat.told, followed: chat.followed };
   } finally {
     tools.detachSources(sources.scope);
 
@@ -1034,6 +1126,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     code: null,
     story: null,
     page: null,
+    followed: [],
   };
 
   if (!command)
@@ -1043,6 +1136,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     };
 
   askingChats.add(ask.workspaceId);
+  readyStatuses.set(ask.workspaceId, ask.readyStatuses ?? []);
 
   const phone =
     ask.target !== null && ask.target.kind !== 'web' && ask.steps.length === 0
@@ -1082,6 +1176,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         : jiraStories.prepare({
             workspaceId: ask.workspaceId,
             key: ask.jira.key,
+            readyStatuses: ask.readyStatuses ?? [],
             onStep: ({ at, bytes }) => {
               broadcast({
                 channel: CHANNELS.agentEvent,
@@ -1149,7 +1244,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
       ask.sessionId !== null &&
       !stoppedChats.has(ask.workspaceId) &&
       isLostSession(first.turn.text);
-    const { turn, told } = isLost
+    const { turn, told, followed } = isLost
       ? await askOnce({ ask, command, sessionId: null, look, code, source, story, page })
       : first;
 
@@ -1162,6 +1257,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         code: null,
         story: null,
         page: null,
+        followed: [],
       };
 
     const storyRead = jiraStories.storyOf(ask.workspaceId);
@@ -1181,6 +1277,34 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
       );
 
     const answer = turn.isError ? null : harness.readChat(turn.text);
+    const writtenAt = new Date().toISOString();
+    const snapshots: ISourceSnapshot[] = answer?.plan
+      ? [
+          ...(storyRead === null
+            ? []
+            : [
+                {
+                  kind: 'story' as const,
+                  key: storyRead.story.key,
+                  url: storyRead.story.url,
+                  text: storyTextOf(storyRead.story),
+                  at: writtenAt,
+                },
+              ]),
+          ...(pageRead === null
+            ? []
+            : [
+                {
+                  kind: 'page' as const,
+                  pageId: pageRead.page.id,
+                  title: pageRead.page.title,
+                  url: pageRead.page.url,
+                  text: pageRead.text,
+                  at: writtenAt,
+                },
+              ]),
+        ]
+      : [];
 
     if (answer?.plan && code !== null) await codeCopies.release(ask.workspaceId);
     if (answer?.plan && storyRead !== null) await jiraStories.release(ask.workspaceId);
@@ -1208,7 +1332,10 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
               summary: storyRead.story.summary,
               url: storyRead.story.url,
             },
+      ...(storyRead?.readiness === undefined ? {} : { readiness: storyRead.readiness }),
+      ...(snapshots.length === 0 ? {} : { snapshots }),
       page: pageRead?.page ?? null,
+      followed: turn.isError ? [] : followed,
     };
   } finally {
     askingChats.delete(ask.workspaceId);
@@ -1319,6 +1446,25 @@ async function saveVideo(props: {
   );
 }
 
+async function saveText(props: ISaveText): Promise<SaveOutcome> {
+  const extension = props.extension.replace(/[^a-z0-9]/gi, '') || 'txt';
+  const options = {
+    defaultPath: join(app.getPath('downloads'), `${fileNameOf(props.name)}.${extension}`),
+    filters: [{ name: extension.toUpperCase(), extensions: [extension] }],
+  };
+  const [open] = appWindows();
+  const picked = open
+    ? await dialog.showSaveDialog(open, options)
+    : await dialog.showSaveDialog(options);
+
+  if (picked.canceled || picked.filePath === undefined) return 'cancelled';
+
+  return writeFile(picked.filePath, props.text).then(
+    () => 'saved' as const,
+    () => 'failed' as const,
+  );
+}
+
 async function saveShot(props: {
   file: string | null;
   src: string | null;
@@ -1385,6 +1531,47 @@ async function pickImport(): Promise<ImportPick> {
   if (picked.canceled || path === undefined) return { kind: 'cancelled' };
 
   return importScanner.pick(path);
+}
+
+async function importSkillFile(): Promise<ISkill[]> {
+  const [open] = appWindows();
+  const options: Electron.OpenDialogOptions = {
+    properties: ['openFile'],
+    filters: [{ name: 'Markdown', extensions: ['md'] }],
+  };
+  const picked = open
+    ? await dialog.showOpenDialog(open, options)
+    : await dialog.showOpenDialog(options);
+  const [path] = picked.filePaths;
+
+  return picked.canceled || path === undefined ? [] : skillLibrary.importFile(path);
+}
+
+async function exportSkill(id: string): Promise<string | null> {
+  const [open] = appWindows();
+  const options: Electron.OpenDialogOptions = {
+    properties: ['openDirectory', 'createDirectory'],
+  };
+  const picked = open
+    ? await dialog.showOpenDialog(open, options)
+    : await dialog.showOpenDialog(options);
+  const [dir] = picked.filePaths;
+
+  return picked.canceled || dir === undefined ? null : skillLibrary.export({ id, dir });
+}
+
+async function attachToSkill(draftId: string): Promise<ISkillDraftFile[]> {
+  const [open] = appWindows();
+  const options: Electron.OpenDialogOptions = {
+    properties: ['openFile', 'multiSelections'],
+  };
+  const picked = open
+    ? await dialog.showOpenDialog(open, options)
+    : await dialog.showOpenDialog(options);
+
+  return picked.canceled
+    ? skillLibrary.draftFiles(draftId)
+    : skillLibrary.attach({ draftId, paths: picked.filePaths });
 }
 
 async function pickFile(kind: PickKind) {
@@ -1528,6 +1715,7 @@ void app.whenReady().then(async () => {
   await replays.start();
   await tools.start();
   await outside.start();
+  void exampleShop.resume();
   void codeCopies.sweep();
   void jiraStories.sweep();
   void builder.sweep();
@@ -1599,6 +1787,7 @@ void app.whenReady().then(async () => {
     CHANNELS.saveVideo,
     (_event, props: { name: string; data: Uint8Array }) => saveVideo(props),
   );
+  ipcMain.handle(CHANNELS.saveText, (_event, props: ISaveText) => saveText(props));
   ipcMain.handle(CHANNELS.stopRun, (_event, workspaceId: string) => {
     runs.stop(workspaceId);
   });
@@ -1608,6 +1797,18 @@ void app.whenReady().then(async () => {
       runs.answer(props);
     },
   );
+  ipcMain.handle(
+    CHANNELS.touchRun,
+    (_event, props: { workspaceId: string; input: DeviceInput }) => runs.touch(props),
+  );
+  ipcMain.handle(CHANNELS.markRun, (_event, mark: IManualMark) => runs.mark(mark));
+  ipcMain.handle(
+    CHANNELS.typeRunVariable,
+    (_event, props: { workspaceId: string; name: string }) => runs.typeVariable(props),
+  );
+  ipcMain.handle(CHANNELS.endManual, (_event, workspaceId: string) => {
+    runs.endManual(workspaceId);
+  });
   ipcMain.handle(CHANNELS.runsInFlight, () => runs.inFlight());
   ipcMain.handle(
     CHANNELS.resizeDevice,
@@ -1629,6 +1830,12 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.siteIcon, (_event, address: unknown) =>
     typeof address === 'string' ? siteIcons.of(address) : null,
+  );
+  ipcMain.handle(CHANNELS.appName, (_event, source: AppNameSource) =>
+    appNames.of(source),
+  );
+  ipcMain.handle(CHANNELS.exampleShop, (_event, language: unknown) =>
+    exampleShop.address(typeof language === 'string' ? language : 'pt').catch(() => null),
   );
   ipcMain.handle(CHANNELS.saveWorkspace, (_event, saved: ISavedWorkspace) =>
     archive.saveWorkspace(saved),
@@ -1667,6 +1874,39 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
   ipcMain.handle(CHANNELS.pickImport, () => pickImport());
+  ipcMain.handle(CHANNELS.listSkills, () => skillLibrary.list());
+  ipcMain.handle(CHANNELS.saveSkill, (_event, skill: ISaveSkill) =>
+    skillLibrary.save(skill),
+  );
+  ipcMain.handle(CHANNELS.removeSkill, (_event, id: string) => skillLibrary.remove(id));
+  ipcMain.handle(CHANNELS.foundSkills, () => skillLibrary.found());
+  ipcMain.handle(
+    CHANNELS.foundSkillsIn,
+    (_event, props: { repository: string; branch: string; folder: string }) =>
+      skillLibrary.foundIn(props),
+  );
+  ipcMain.handle(CHANNELS.importSkills, (_event, request: ISkillImport) =>
+    skillLibrary.import(request),
+  );
+  ipcMain.handle(CHANNELS.importSkillFile, () => importSkillFile());
+  ipcMain.handle(CHANNELS.refreshSkills, async () => {
+    await skillLibrary.refresh();
+
+    return skillLibrary.list();
+  });
+  ipcMain.handle(CHANNELS.exportSkill, (_event, id: string) => exportSkill(id));
+  ipcMain.handle(CHANNELS.attachToSkill, (_event, draftId: string) =>
+    attachToSkill(draftId),
+  );
+  ipcMain.handle(CHANNELS.dropSkillDraft, (_event, draftId: string) =>
+    skillLibrary.dropDraft(draftId),
+  );
+  ipcMain.handle(CHANNELS.writeSkill, (_event, request: IWriteSkill) =>
+    skillWriter.ask(request),
+  );
+  ipcMain.handle(CHANNELS.stopSkill, (_event, draftId: string) => {
+    skillWriter.stop(draftId);
+  });
   ipcMain.handle(CHANNELS.outsideServer, () => outside.status());
   ipcMain.handle(CHANNELS.outsideAgents, () => outside.agentsHere());
   ipcMain.handle(CHANNELS.turnOutsideServer, (_event, isOn: boolean) =>
@@ -1847,6 +2087,45 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());
+  ipcMain.handle(CHANNELS.listTemplates, () => templates.list());
+  ipcMain.handle(CHANNELS.saveTemplate, (_event, template: ISaveTemplate) =>
+    templates.save(template),
+  );
+  ipcMain.handle(CHANNELS.removeTemplate, (_event, id: string) => templates.remove(id));
+  ipcMain.handle(CHANNELS.listOrgTemplates, (_event, orgSlug: string) =>
+    proTemplates.list(orgSlug),
+  );
+  ipcMain.handle(CHANNELS.saveOrgTemplate, (_event, save: ISaveOrgTemplate) =>
+    proTemplates.save(save),
+  );
+  ipcMain.handle(CHANNELS.removeOrgTemplate, (_event, template: IOrgTemplateRef) =>
+    proTemplates.remove(template),
+  );
+  ipcMain.handle(CHANNELS.setOrgTemplateDefault, (_event, choice: IOrgTemplateDefault) =>
+    proTemplates.setDefault(choice),
+  );
+  ipcMain.handle(CHANNELS.checkSources, (_event, ask: ISourcesCheckAsk) =>
+    sourceCheck.check(ask),
+  );
+  ipcMain.handle(CHANNELS.readChange, (_event, request: IReadChange) =>
+    changeReader.read(request),
+  );
+  ipcMain.handle(CHANNELS.listJiraBoards, (_event, query: string) => jira.boards(query));
+  ipcMain.handle(CHANNELS.sprintStories, (_event, boardId: number) =>
+    jira.sprintStories(boardId),
+  );
+  ipcMain.handle(CHANNELS.listBoardColumns, (_event, boardId: number) =>
+    jira.columns(boardId),
+  );
+  ipcMain.handle(CHANNELS.readStoryStatus, (_event, key: string) => jira.status(key));
+  ipcMain.handle(CHANNELS.tellStory, (_event, told: ITellStory) => jira.tell(told));
+  ipcMain.handle(CHANNELS.readStoryPeople, (_event, key: string) => jira.people(key));
+  ipcMain.handle(CHANNELS.askStory, (_event, post: IStoryDoubtsPost) =>
+    jira.askStory(post),
+  );
+  ipcMain.handle(CHANNELS.readStoryAnswers, (_event, ask: IStoryAnswersAsk) =>
+    jira.answers(ask),
+  );
   ipcMain.handle(CHANNELS.switchConfluence, (_event, isOn: boolean) =>
     switchConfluence(isOn),
   );
@@ -1939,6 +2218,7 @@ app.on('will-quit', (event) => {
   }
 
   appUpdater.stop();
+  exampleShop.stop();
   tray.close();
   void chatDevices.closeAll();
   live.close();

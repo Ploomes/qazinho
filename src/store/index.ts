@@ -7,6 +7,8 @@ export * from './MemoryStore';
 export * from './ProStore';
 export * from './SettingsStore';
 export * from './SetupStore';
+export * from './SkillStore';
+export * from './TemplateStore';
 export * from './UpdateStore';
 export * from './VariablesStore';
 export * from './WorkspaceStore';

@@ -1,5 +1,6 @@
 export type * from './IAskQa';
 export type * from './ICaseRecipe';
+export type * from './IManualWalk';
 export type * from './IOpenQuestion';
 export type * from './IRecipeBook';
 export type * from './IRunTalk';

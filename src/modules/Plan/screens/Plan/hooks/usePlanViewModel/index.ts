@@ -13,6 +13,7 @@ import {
   editCase,
   editStep,
   freeVariableName,
+  gherkinOf,
   liveCasesOf,
   missingVariablesOf,
   moveCase,
@@ -25,14 +26,15 @@ import {
 } from '@/modules/Plan/library';
 import {
   PLAN_NO_CASES,
+  PLAN_NO_DOUBTS,
   PLAN_NO_FILES,
   PLAN_SOURCE,
 } from '@/modules/Plan/screens/Plan/constants';
 import { bytesLabelOf, useProUpdate } from '@/modules/Pro';
 import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
-import { flattenPlanSteps, useRunActions } from '@/modules/Run';
+import { flattenPlanSteps, manualWaitingOf, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
-import { Archive, Confluence, Run } from '@/services';
+import { Archive, Confluence, Files, Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useToTop } from '@/shared/hooks/useToTop';
 import {
@@ -60,6 +62,11 @@ export const usePlanViewModel = () => {
     plainValues: opened.plainValues,
     issue: opened.issue,
     design: opened.design,
+    strategy: opened.strategy ?? null,
+    doubts: opened.doubts,
+    changed: opened.changed ?? null,
+    review: opened.review ?? null,
+    hasSnapshots: (opened.snapshots ?? []).length > 0,
     isLocked: opened.live !== null && !opened.live.isDone,
     liveOutcomes: opened.live?.outcomes ?? null,
     liveDoingIndex: opened.live?.doingIndex ?? -1,
@@ -88,7 +95,7 @@ export const usePlanViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const openBugId = useWorkspaceStore((state) => state.openBugId);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
-  const { onRunCase } = useRunActions();
+  const { onRunCase, onWalkByHand } = useRunActions();
   const { update: updateFromOrg } = useProUpdate();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
   const [freshCaseId, setFreshCaseId] = useState<string | null>(null);
@@ -97,6 +104,11 @@ export const usePlanViewModel = () => {
     outcome: ExportOutcome;
   } | null>(null);
   const [isPublishOpen, setIsPublishOpen] = useState(false);
+  const [isGherkin, setGherkin] = useState(false);
+  const [featureSaved, setFeatureSaved] = useState<{
+    workspaceId: string;
+    text: string;
+  } | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishing, setPublishing] = useState<{
     workspaceId: string;
@@ -131,6 +143,19 @@ export const usePlanViewModel = () => {
   } | null>(null);
 
   const workspaceId = workspace?.id ?? null;
+  const gherkinOfPlan = () =>
+    gherkinOf({
+      name: workspace?.name ?? '',
+      plan: workspace?.plan ?? [],
+      words: {
+        language: t('PLAN_DOC.GHERKIN_LANGUAGE'),
+        feature: t('PLAN_DOC.GHERKIN_FEATURE'),
+        scenario: t('PLAN_DOC.GHERKIN_SCENARIO'),
+        given: t('PLAN_DOC.GHERKIN_GIVEN'),
+        when: t('PLAN_DOC.GHERKIN_WHEN'),
+        then: t('PLAN_DOC.GHERKIN_THEN'),
+      },
+    });
   const exported = exportedIn?.workspaceId === workspaceId ? exportedIn.outcome : null;
   const plan = workspace?.plan ?? [];
   const isLocked = workspace?.isLocked === true;
@@ -255,11 +280,15 @@ export const usePlanViewModel = () => {
     const outcome = await Confluence.publish({
       ...props,
       blocks: documentOf({
+        name: workspace?.name ?? '',
+        projectId: workspace?.projectId ?? '',
         plan,
         runs: workspace?.runs ?? [],
         issue,
         sourcePage,
         design: workspace?.design ?? null,
+        strategy: workspace?.strategy ?? null,
+        doubts: workspace?.doubts ?? [],
       }),
     });
 
@@ -299,6 +328,93 @@ export const usePlanViewModel = () => {
   const liveRuns = Object.entries(liveCases).flatMap(([id, { run }]) =>
     run === null ? [] : [[id, run] as const],
   );
+
+  const waiting = manualWaitingOf({ plan, runs: workspace?.runs ?? [] });
+
+  const exportFeature = () => {
+    if (workspaceId === null) return;
+
+    void Files.saveText({
+      name: workspace?.name ?? '',
+      extension: 'feature',
+      text: gherkinOfPlan(),
+    }).then((outcome) => {
+      if (outcome !== 'cancelled')
+        setFeatureSaved({
+          workspaceId,
+          text: outcome === 'saved' ? t('PLAN.FEATURE_SAVED') : t('PLAN.FEATURE_FAILED'),
+        });
+    });
+  };
+  const publishPlan = () => {
+    if (published === null) {
+      setIsPublishOpen(true);
+
+      return;
+    }
+
+    void publish({
+      pageId: published.page.id,
+      spaceId: published.spaceId,
+      parentId: published.parentId,
+      title: published.page.title,
+    });
+  };
+  const exportCode = () => {
+    if (workspaceId === null || target === null) return;
+
+    const viewport = viewportOf(workspace?.viewportId);
+
+    void Run.exportCode({
+      workspaceId,
+      target: { kind: target.kind, value: target.value },
+      viewport: { width: viewport.width, height: viewport.height },
+      steps: flattenPlanSteps(plan),
+    }).then((outcome) => {
+      setExportedIn({ workspaceId, outcome });
+    });
+  };
+  const canPublish = isConfluenceOn && plan.length > 0 && !isLocked;
+  const canExport = plan.length > 0 && !isLocked && target !== null;
+  const publishLabel = isPublishing
+    ? t('PLAN.PUBLISHING')
+    : published === null
+      ? t('PLAN.PUBLISH')
+      : t('PLAN.PUBLISH_AGAIN');
+  const publishTip =
+    published === null ? t('PLAN.PUBLISH_TIP') : t('PLAN.PUBLISH_AGAIN_TIP');
+
+  const exportItems = [
+    ...(canExport
+      ? [
+          {
+            key: 'code',
+            label: t('PLAN.EXPORT_CODE'),
+            icon: 'download' as const,
+            tip: t('PLAN.EXPORT_TIP'),
+            onPick: exportCode,
+          },
+        ]
+      : []),
+    {
+      key: 'feature',
+      label: t('PLAN.EXPORT_FEATURE'),
+      icon: 'download' as const,
+      onPick: exportFeature,
+    },
+    ...(canPublish
+      ? [
+          {
+            key: 'publish',
+            label: publishLabel,
+            icon: 'up' as const,
+            tip: publishTip,
+            isDisabled: isPublishing,
+            onPick: publishPlan,
+          },
+        ]
+      : []),
+  ];
 
   return {
     topRef,
@@ -386,6 +502,20 @@ export const usePlanViewModel = () => {
     isLocked,
     lockedLabel: t('PLAN.LOCKED', { agent }),
     isEmpty: plan.length === 0,
+    casesTitle: t('PLAN.CASES_TITLE'),
+    casesCount: String(plan.length),
+    workspaceId: workspaceId ?? '',
+    strategy: workspace?.strategy ?? null,
+    doubts: workspace?.doubts ?? PLAN_NO_DOUBTS,
+    changed: workspace?.changed ?? null,
+    review: workspace?.review ?? null,
+    canCheck: workspace?.hasSnapshots === true || source !== null,
+    changeWhys: Object.fromEntries(
+      (workspace?.review?.items ?? []).flatMap((item) =>
+        item.kind === 'change' && item.state === 'open' ? [[item.caseId, item.why]] : [],
+      ),
+    ) as Record<string, string>,
+    issue,
     sources: [
       ...(sourcePage === null
         ? []
@@ -434,6 +564,21 @@ export const usePlanViewModel = () => {
     onToggleCase: toggleCase,
     onReorder: write,
     onRunCase,
+    manualNotice:
+      waiting.length === 0 || isLocked
+        ? null
+        : {
+            text:
+              waiting.length === 1
+                ? t('PLAN.MANUAL_WAITING_ONE', { id: waiting[0] })
+                : t('PLAN.MANUAL_WAITING_OTHER', { count: waiting.length }),
+            actionLabel: t('PLAN.MANUAL_NOW'),
+          },
+    onWalkWaiting: () => {
+      const [first] = waiting;
+
+      if (first !== undefined) onWalkByHand(first);
+    },
     missingNotice:
       missing.length === 0 || isLocked
         ? null
@@ -458,14 +603,22 @@ export const usePlanViewModel = () => {
         by: 'plan',
       });
     },
-    canPublish: isConfluenceOn && plan.length > 0 && !isLocked,
+    hasTopActions: plan.length > 0 && !isLocked,
+    isGherkin,
+    gherkin: isGherkin ? gherkinOfPlan() : '',
+    gherkinLabel: isGherkin ? t('PLAN.SHOW_CASES') : t('PLAN.SHOW_GHERKIN'),
+    featureNotice: featureSaved?.workspaceId === workspaceId ? featureSaved.text : null,
+    onToggleGherkin: () => {
+      setGherkin(!isGherkin);
+    },
+    onExportFeature: exportFeature,
+    onDismissFeature: () => {
+      setFeatureSaved(null);
+    },
+    canPublish,
     isPublishing,
-    publishLabel: isPublishing
-      ? t('PLAN.PUBLISHING')
-      : published === null
-        ? t('PLAN.PUBLISH')
-        : t('PLAN.PUBLISH_AGAIN'),
-    publishTip: published === null ? t('PLAN.PUBLISH_TIP') : t('PLAN.PUBLISH_AGAIN_TIP'),
+    publishLabel,
+    publishTip,
     publishNotice:
       shownPublishing === null
         ? null
@@ -487,20 +640,7 @@ export const usePlanViewModel = () => {
             },
     isPublishOpen,
     publishTitle: t('PLAN.PUBLISH_TITLE', { workspace: workspace?.name ?? '' }),
-    onPublish: () => {
-      if (published === null) {
-        setIsPublishOpen(true);
-
-        return;
-      }
-
-      void publish({
-        pageId: published.page.id,
-        spaceId: published.spaceId,
-        parentId: published.parentId,
-        title: published.page.title,
-      });
-    },
+    onPublish: publishPlan,
     onConfirmPublish: (choice: {
       spaceId: string;
       parentId: string | null;
@@ -515,8 +655,7 @@ export const usePlanViewModel = () => {
     onDismissPublish: () => {
       setPublishing(null);
     },
-    exportLabel: t('PLAN.EXPORT'),
-    canExport: plan.length > 0 && !isLocked && target !== null,
+    canExport,
     exportNotice:
       exported === null || exported.kind === 'cancelled'
         ? null
@@ -530,20 +669,24 @@ export const usePlanViewModel = () => {
                   : 'PLAN.EXPORT_FAILED',
               ),
     dismissExportLabel: t('COMMON.CLOSE'),
-    onExport: () => {
-      if (workspaceId === null || target === null) return;
-
-      const viewport = viewportOf(workspace?.viewportId);
-
-      void Run.exportCode({
-        workspaceId,
-        target: { kind: target.kind, value: target.value },
-        viewport: { width: viewport.width, height: viewport.height },
-        steps: flattenPlanSteps(plan),
-      }).then((outcome) => {
-        setExportedIn({ workspaceId, outcome });
-      });
-    },
+    onExport: exportCode,
+    exportMenuLabel: t('PLAN.EXPORT_MENU'),
+    exportItems,
+    moreItems: [
+      ...(plan.length > 0 && !isLocked
+        ? [
+            {
+              key: 'gherkin',
+              label: isGherkin ? t('PLAN.SHOW_CASES') : t('PLAN.SHOW_GHERKIN'),
+              icon: 'plan' as const,
+              onPick: () => {
+                setGherkin(!isGherkin);
+              },
+            },
+            ...exportItems,
+          ]
+        : []),
+    ],
     onDismissExport: () => {
       setExportedIn(null);
     },

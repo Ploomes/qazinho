@@ -28,10 +28,13 @@ export const BugUpdate: React.FC<IBugUpdateProps> = (props) => {
     viewLabel,
     isFailed,
     retryLabel,
+    isPending,
+    pendingLabel,
     onComment,
     onPost,
     onDismiss,
     onRetry,
+    onPending,
     onView,
   } = useBugUpdateViewModel(props);
 
@@ -76,6 +79,12 @@ export const BugUpdate: React.FC<IBugUpdateProps> = (props) => {
               {isFailed && (
                 <Button size="sm" onClick={onRetry}>
                   {retryLabel}
+                </Button>
+              )}
+
+              {isPending && (
+                <Button size="sm" onClick={onPending}>
+                  {pendingLabel}
                 </Button>
               )}
             </div>

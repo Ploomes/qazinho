@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRunActions } from '@/modules/Run/hooks/useRunActions';
 import { startRun } from '@/modules/Workspace';
@@ -43,7 +43,7 @@ const MOVED = {
       base: [],
       version: 4,
       cases: [],
-      editedBy: 'Bruno',
+      editedBy: 'Caio',
       editedAt: '2026-10-24T11:30:00.000Z',
     },
   ],
@@ -97,6 +97,69 @@ describe('useRunActions', () => {
       ]);
     });
 
+    it('walks a case the QA does by hand as theirs, with only its steps', () => {
+      const { startRunCall } = bridge();
+      const workspace = makeWorkspace();
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...workspace,
+            plan: workspace.plan.map((one) =>
+              one.id === 'TC-02' ? { ...one, isManual: true } : one,
+            ),
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRunCase('TC-02');
+      });
+
+      expect(startRunCall).toHaveBeenCalledWith(
+        expect.objectContaining({ caseIds: ['TC-02'], mode: 'manual' }),
+      );
+      expect(
+        (
+          startRunCall.mock.calls[0] as unknown as [{ steps: { caseId: string }[] }]
+        )[0].steps.every(({ caseId }) => caseId === 'TC-02'),
+      ).toBe(true);
+    });
+
+    it('leaves the cases done by hand out of a run of the plan', () => {
+      const { startRunCall } = bridge();
+      const workspace = makeWorkspace();
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...workspace,
+            plan: workspace.plan.map((one) =>
+              one.id === 'TC-02' ? { ...one, isManual: true } : one,
+            ),
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRun();
+      });
+
+      const [sent] = startRunCall.mock.calls[0] as unknown as [
+        { steps: { caseId: string }[]; caseIds?: string[] },
+      ];
+
+      expect(sent.steps.some(({ caseId }) => caseId === 'TC-02')).toBe(false);
+      expect(sent.caseIds).toEqual(['TC-01']);
+      expect(useWorkspaceStore.getState().workspaces[0]?.live?.caseIds).toEqual([
+        'TC-01',
+      ]);
+    });
+
     it('holds a single case for an org update, and keeps which case it was', () => {
       bridge();
       useProStore.setState({ shares: [MOVED] });
@@ -144,6 +207,104 @@ describe('useRunActions', () => {
 
       expect(startRunCall).toHaveBeenCalled();
       expect(useProStore.getState().heldRun).toBeNull();
+    });
+  });
+
+  /**
+   * Antes de desenvolver ou rodar, as fontes do plano são conferidas sem IA: uma mudança que
+   * ninguém revisou segura a run e pergunta, como uma atualização da org.
+   */
+  describe('the sources of the plan', () => {
+    const SNAP = {
+      kind: 'story' as const,
+      key: 'SHOP-878',
+      url: 'https://shop.atlassian.net/browse/SHOP-878',
+      text: 'C3. 3 tentativas',
+      at: '2026-11-13T13:00:00.000Z',
+    };
+    const FOUND = {
+      kind: 'story' as const,
+      key: 'SHOP-878',
+      url: SNAP.url,
+      at: '2026-11-13T15:00:00.000Z',
+      before: 'C3. 3 tentativas',
+      after: 'C3. 5 tentativas',
+      comments: [],
+    };
+
+    beforeEach(() => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), snapshots: [SNAP] }],
+        changeHold: null,
+      });
+    });
+
+    it('checks them first, and runs when nothing changed', async () => {
+      const { startRunCall } = bridge();
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRunWithAgent();
+      });
+
+      await waitFor(() => {
+        expect(startRunCall).toHaveBeenCalledOnce();
+      });
+      expect(useWorkspaceStore.getState().changeHold).toBeNull();
+    });
+
+    it('holds the run and asks when a source changed since the plan', async () => {
+      const { startRunCall } = bridge();
+
+      window.qazinho = {
+        ...window.qazinho,
+        checkSources: (ask) =>
+          Promise.resolve({
+            changes: [FOUND],
+            snapshots: ask.snapshots,
+            code: null,
+            missed: [],
+          }),
+      };
+
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRunWithAgent();
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().changeHold).toEqual({
+          workspaceId: 'w1',
+          mode: 'agent',
+        });
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.changed?.found).toEqual([FOUND]);
+      expect(startRunCall).not.toHaveBeenCalled();
+    });
+
+    it('holds at once a plan with a change still waiting for the QA', () => {
+      const { startRunCall } = bridge();
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace(),
+            changed: { found: [FOUND], snapshots: [SNAP], code: null, at: '' },
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRunWithAgent();
+      });
+
+      expect(useWorkspaceStore.getState().changeHold).toMatchObject({
+        workspaceId: 'w1',
+      });
+      expect(startRunCall).not.toHaveBeenCalled();
     });
   });
 

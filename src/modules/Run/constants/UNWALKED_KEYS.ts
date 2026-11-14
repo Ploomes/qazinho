@@ -8,4 +8,6 @@ export const UNWALKED_KEYS = {
   asked: 'RUN.UNWALKED_ASKED',
   noValue: 'RUN.UNWALKED_NO_VALUE',
   noData: 'RUN.UNWALKED_NO_DATA',
+  manual: 'RUN.UNWALKED_MANUAL',
+  ended: 'RUN.UNWALKED_ENDED',
 } as const satisfies Record<UnwalkedReason, string>;

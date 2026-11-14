@@ -463,7 +463,7 @@ describe('useRunsViewModel', () => {
       expect(renderHook(() => useRunsViewModel()).result.current.current).toMatchObject({
         id: 'r-01',
         isSelected: true,
-        facts: '0:00 · $0.25',
+        facts: '0:00, $0.25',
       });
     });
   });

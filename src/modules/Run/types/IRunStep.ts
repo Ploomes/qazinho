@@ -11,7 +11,7 @@ export interface IRunStep {
   shot: string | null;
   shotFile: string | null;
   span: IRunSpan | null;
-  by?: 'replay' | 'healed';
+  by?: 'replay' | 'healed' | 'qa';
   proof?: string;
   unwalked?: UnwalkedReason;
 }

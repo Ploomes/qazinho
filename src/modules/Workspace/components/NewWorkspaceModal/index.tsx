@@ -1,5 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { Eyebrow, Input, PlatformIcon } from '@/shared/components/atoms';
+import {
+  Button,
+  Eyebrow,
+  Icon,
+  IconButton,
+  Input,
+  PlatformIcon,
+} from '@/shared/components/atoms';
 import { ModalFrame } from '@/shared/components/templates';
 import { ImportField } from './components';
 import { useNewWorkspaceModalViewModel } from './hooks';
@@ -9,6 +16,13 @@ export const NewWorkspaceModal: React.FC = () => {
   const {
     name,
     folder,
+    canStory,
+    isStory,
+    canImport,
+    storyLabel,
+    storyOnLabel,
+    storyRemoveLabel,
+    onStory,
     onFolderChange,
     footerHint,
     hasPlatforms,
@@ -60,7 +74,27 @@ export const NewWorkspaceModal: React.FC = () => {
         </div>
       )}
 
-      <ImportField folder={folder} onChange={onFolderChange} />
+      {canStory &&
+        (isStory ? (
+          <div className="new-workspace__story">
+            <Icon name="story" />
+            <span className="new-workspace__story-text">{storyOnLabel}</span>
+            <IconButton
+              icon="close"
+              size="sm"
+              label={storyRemoveLabel}
+              onClick={onStory}
+            />
+          </div>
+        ) : (
+          <span className="new-workspace__story-pick">
+            <Button size="sm" variant="ghost" onClick={onStory}>
+              <Icon name="story" /> {storyLabel}
+            </Button>
+          </span>
+        ))}
+
+      {canImport && <ImportField folder={folder} onChange={onFolderChange} />}
     </ModalFrame>
   );
 };

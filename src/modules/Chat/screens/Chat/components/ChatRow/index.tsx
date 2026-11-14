@@ -7,7 +7,9 @@ import { ErrorBlock } from '@/modules/Chat/screens/Chat/components/ErrorBlock';
 import { FindingNote } from '@/modules/Chat/screens/Chat/components/FindingNote';
 import { HandoffCard } from '@/modules/Chat/screens/Chat/components/HandoffCard';
 import { MemoryNote } from '@/modules/Chat/screens/Chat/components/MemoryNote';
+import { NamedNote } from '@/modules/Chat/screens/Chat/components/NamedNote';
 import { QuestionRound } from '@/modules/Chat/screens/Chat/components/QuestionRound';
+import { SkillsNote } from '@/modules/Chat/screens/Chat/components/SkillsNote';
 import { SuggestionCard } from '@/modules/Chat/screens/Chat/components/SuggestionCard';
 import { UserMessage } from '@/modules/Chat/screens/Chat/components/UserMessage';
 import { VerdictNote } from '@/modules/Chat/screens/Chat/components/VerdictNote';
@@ -69,10 +71,13 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
         {message.kind === 'verdict' && <VerdictNote message={message} />}
         {message.kind === 'ask' && <AskNote message={message} />}
         {message.kind === 'memory' && <MemoryNote message={message} />}
+        {message.kind === 'skills' && <SkillsNote message={message} />}
+        {message.kind === 'named' && <NamedNote message={message} />}
         {message.kind === 'questions' && (
           <QuestionRound
             message={message}
             isAnswerable={props.isAnswerable}
+            canAskStory={props.canAskStory}
             onAnswer={props.onAnswerQuestions}
             onVariables={props.onVariables}
           />

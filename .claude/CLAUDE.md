@@ -37,6 +37,11 @@ olhos. Toda tela o segue.
    login próprio. Quando o agente está sem login, o QAzinho abre o login do próprio agente
    (`claude auth login`, `codex login`) num terminal que o QA vê, como o Zed faz: a página abre
    no navegador do QA, o agente guarda o que recebe, e o QAzinho só lê o status dele.
+   **O agente do QA só trabalha quando o QA pede**: uma mensagem, um clique ou uma run que ele
+   começou. Nada chama o agente sozinho num relógio ou ao abrir o app, porque o plano do QA conta
+   com "uso comum e individual" (a página legal do Claude Code). Vigiar sozinho é da plataforma,
+   com os créditos da org. Os limites da conta são a exceção, porque o `/usage` não gasta o plano:
+   de 15 em 15 minutos, e de 5 em 5 com a IA trabalhando.
 3. **Um produto da Salve Software, código fechado, em dois planos.** O Free é o app desktop
    inteiro, sem conta e sem limite artificial: baixe e use. O Pro é uma plataforma web paga para
    uma empresa: uma conta e uma org, onde o QA publica os projetos da máquina dele que escolhe,
@@ -208,11 +213,64 @@ como pré-condição, e logins e chaves como variáveis do projeto. O que não d
 em vez de inventar. Testes unitários e o prompt fixado do harness provam isso; nenhum agente real
 importou uma pasta ainda.
 
+**O agente segue as skills do time.** Em Configurações › Skills o QA guarda como o time
+trabalha, no formato SKILL.md das skills de agente: escreve uma à mão, ou com o próprio agente, que
+lê os casos que ele anexa, pergunta o que os exemplos deixam em aberto e devolve a skill para ele
+revisar; ou traz as que o time já tem, da pasta de um repositório numa branch (pelo gh do QA), das
+pastas de skills deste computador ou de um arquivo. Uma importada chega desligada. Cada skill diz
+quando vale (ao escrever casos, ao explorar, ou quando o QA a chama pelo "/" no chat) e em quais
+projetos. O chat e a exploração as seguem; uma run nunca, porque o veredito não depende de uma
+skill. Uma de repositório só se edita lá, e é lida de novo quando a branch anda, no máximo a cada
+dez minutos enquanto o QA conversa. Uma linha no chat diz quais o agente recebeu ("Seguindo a skill
+casos-gherkin"). Um Claude Code real (Haiku) escreveu os títulos de um plano com a prioridade que
+uma skill pedia, respondeu do jeito que a skill chamada mandava, e escreveu uma skill a partir de
+três casos anexados (`tests/smoke/skills.test.ts`); o app construído mostrou o "/" e a linha com
+uma bridge fake. Pelo Codex isso não foi tentado.
+
+**Um caso que não dá para automatizar é feito à mão.** "Marcar como à mão", no pé de um caso,
+o tira de desenvolver e de rodar: o plano diz "à mão" ao lado dele, e o CI o deixa de fora com esse
+porquê. Depois que o plano roda, o plano e o Início lembram dos casos à mão que esperam o QA, com
+"Fazer agora". O caso abre do zero e é gravado; o agente leva o app às pré-condições e grava esse
+preparo, que a vez seguinte anda sem IA. Aí é a vez do QA: a tela do dispositivo recebe o clique, a
+rolagem, o arrasto e o teclado dele (num celular, a main manda a tela em quadros enquanto ele
+dirige), e um painel mostra o passo e o esperado, com Passou, Falhou e Pular. Cada marca guarda a
+tela daquele momento como o passo, e uma falha vira um bug com a nota dele como o que veio. Uma
+variável é digitada pelo nome, sem o valor passar pela página. O `tests/smoke/manual.test.ts` prova
+isso no Chrome real com um agente fake: o preparo gravado e reusado, os cliques e o texto chegando à
+página, as marcas, e uma run do plano sem o caso à mão. O toque num emulador e num simulador só foi
+provado por testes unitários.
+
 **O app abre no Início.** Uma tela junta, de todos os projetos, o que pede o QA agora: uma pergunta
 de uma run, uma run andando ou pausada, uma que o app fechou no meio, um plano cuja última run
 falhou, casos ainda sem gravação, cada um numa linha com a ação que o leva lá; e os planos abertos
 por último. A sidebar abre nele pela linha Início, que conta o que espera o QA. Testes unitários
 provam os grupos; nenhum QA usou ainda.
+
+**Um projeto nasce do que o QA já tem.** "Novo projeto" troca o centro por cartões de marcar: um
+endereço, um build, o código, os testes do time, uma história, um design, ou "não tenho nada". A
+tela seguinte pede só o que ele marcou, um campo por cartão, cada um conferido na hora (o endereço,
+o build escolhido, a pasta de testes reconhecida, a história lida no Jira ou no Confluence, o link
+do Figma), e sem o Jira o cartão de conectá-lo aparece ali mesmo. Criar leva ao projeto com o
+primeiro plano começando: pela história, pelo design ou pelos testes. Sem nada, ele conhece o
+QAzinho numa loja de exemplo que o app serve neste computador, com dois bugs de propósito e uma
+exploração começando, ou planeja antes do app. O `tests/smoke/new-project.test.ts` anda os três
+caminhos no app construído com um agente fake; nenhum QA usou ainda.
+
+**O projeto se nomeia sozinho.** Ele nasce "Novo projeto", sem campo de nome, e o nome vem do app:
+o nome do site, o do app no build (o rótulo do .apk, o nome de exibição do .app), ou o do
+`app.json` no repositório, lidos sem IA. Sem nenhum deles, a primeira resposta do chat sugere um a
+partir do que o QA deu, sem chamada a mais. A sidebar o escreve com uma animação, e o chat diz de
+onde veio, com "Trocar". O nome é decidido uma vez, e um QA que já o renomeou não perde o dele.
+
+**A sprint chega ao Início.** Num projeto que escolheu a coluna de pronto num board do Jira, o
+Início lista as histórias da sprint aberta desse board que ainda não têm plano. "Planejar" cria o
+plano com a história e o abre no chat, que começa como o QA começaria; "Planejar as 5" cria um plano
+por história, cada um com o próprio chat, e o agente do QA escreve até três ao mesmo tempo: o
+seguinte começa quando um termina. Cada um para na rodada de perguntas, esperando o QA, que o
+Início também mostra. Nada lê a sprint sem o QA abrir o Início, e nada chama o agente sem um clique.
+O Figma só é lido quando o QA abre o plano. O `tests/smoke/jira.test.ts` lê uma sprint de um Jira
+fake, e testes unitários provam a fila; nenhum agente real andou uma fila, e um site real do Jira não
+foi tentado.
 
 **Uma run que o app fechou no meio continua.** Ao reabrir, o workspace aparece pausado e o botão principal vira Continuar, que anda só os casos que não terminaram; o caso cortado recomeça, e o que falta entra numa run nova. Testes unitários provam a escolha dos casos; nenhuma run real foi fechada e continuada.
 
@@ -330,6 +388,59 @@ história pela chave, contra um Jira e um Confluence fakes, e planejou a partir 
 `tests/smoke/jira.test.ts` lê uma de um site do Jira fake, e um Claude Code real (Haiku) planejou a
 partir de uma com uma tela anexada: leu a tela, perguntou sobre o que a história deixava em aberto,
 e nomeou o critério que cada caso cobre. Um site real do Jira não foi tentado.
+
+**Um plano sai da história antes do app.** O projeto escolhe a coluna do board do Jira que conta
+como pronta para teste, e o QAzinho guarda os status que caem nela; uma história fora deles é
+planejada antes do app, e o botão de rodar diz "Esperando o
+app", com "Desenvolver agora" no menu. Abrir o plano ou o Início confere no Jira do QA, sem agente,
+se a história chegou, e o Início a mostra em "Chegou para teste". Cada caso diz de onde vem o
+esperado (C2 para o critério 2, o frame, a página, o código, o app ou o QA), e todo plano traz a
+estratégia: o que cobre, o que deixa de fora, onde roda, com que dados e os riscos, dobrada no topo
+da aba Plano. Uma pergunta que ninguém aqui sabe vai para a história ("Perguntar na história") como
+uma dúvida numerada; a aba Plano a manda num comentário postado pelo QA, que menciona quem escreveu
+a história e, se ele quiser, o põe para acompanhá-la. As respostas são lidas ao abrir o plano ou o
+Início, o caso que esperava por uma diz "espera D1" até o chat o reescrever, e "Atualizar o plano"
+pede isso ao chat. A primeira execução aceita uma história no lugar do app: o projeto nasce sem
+app, e desenvolver começa por "Escolher o app". Um Claude Code real (Haiku) planejou uma história
+fora dos status de pronto com uma dúvida aberta: cada caso nomeou o critério, o do cupom vencido
+esperou a D1, e a estratégia veio escrita, em 4 de 5 vezes; as faltas (um caso sem fonte, um plano
+sem estratégia) viraram campos obrigatórios no schema, e essa última versão não rodou com um agente
+real. O comentário, as respostas e o status só rodaram contra um Jira fake; um site real não foi
+tentado. A plataforma guarda a estratégia, as dúvidas e as fontes, mas a web ainda não as mostra.
+
+**Quando uma fonte muda, o plano fica sabendo.** O plano guarda como a história e a página estavam
+quando foi escrito, e o commit da branch. "Conferir mudanças", na aba Plano, lê tudo de novo sem
+agente: o texto e os critérios da história, os comentários novos de outra pessoa, a página e a
+branch; a mesma conferência roda antes de desenvolver ou rodar, e uma mudança que ninguém revisou
+segura a run com uma pergunta. "Propor as trocas" chama o agente do QA só no clique, no modelo mais
+barato e sem ferramentas: cada caso tocado aparece com como está, como fica e o porquê, com Aplicar
+ou Recusar com o motivo, além dos casos novos, das dúvidas novas e das respondidas. Aplicar muda o
+caso, e a gravação dele deixa de valer. Depois, "Contar na história" abre um comentário pronto que
+o QA edita e posta. Mandar um bug de um plano cujas fontes mudaram avisa antes, e o Início mostra os
+planos com mudanças. Vigiar sozinho fica para a plataforma. Um Claude Code real (Haiku), numa
+rodada, trocou só o caso que citava o critério que mudou, reescreveu pelo comentário o que esperava
+uma dúvida, e propôs um caso novo. O design do Figma ainda não é conferido, e nada disso rodou
+contra um Jira, um Confluence ou um GitHub reais nem no app construído.
+
+**Uma reunião também muda o plano.** "Ler uma reunião", na aba Plano, recebe a transcrição solta ou
+colada (.txt, .md, .vtt ou .srt, sem os tempos). Ela entra no lugar do "depois" da leitura de uma
+mudança: só as decisões confirmadas, cada uma com a frase de onde veio, valendo sobre o que a
+história dizia; discussão e hipótese ficam de fora. O resultado é a mesma revisão, e o comentário
+da história diz o que a reunião decidiu. Um Claude Code real (Haiku) leu uma reunião com uma decisão,
+uma discussão e uma ideia: trocou só o caso da decisão, citando quem a disse. Antes, ele tomava a
+decisão por uma contradição com a história e perguntava; o corpus agora diz que a reunião vale.
+
+**O time escreve do jeito dele, sem IA.** Em Configurações › Modelos o QA monta como o time quer o
+relatório de um bug, a página de um plano, o comentário das dúvidas e o das decisões numa história:
+as seções do QAzinho na ordem do time e com os títulos dele, textos fixos com campos como `{{app}}`,
+o título de um bug, e os casos de um plano em passos ou em Gherkin, com a prévia ao lado. Nada disso
+chama o agente: o modelo só arruma o que o QAzinho já monta. A aba Plano também mostra o plano em
+Gherkin e o exporta como um `.feature`. Cada projeto escolhe o seu em cada tipo, na janela dele. Com
+a conta logada, um editor para cima publica um modelo numa org, e um dono ou admin o faz padrão nos
+projetos dela: um projeto da org usa o padrão até o QA escolher outro ou o jeito do QAzinho, e um
+leitor guarda uma cópia sua. Sem rede, vale o que a org tinha da última vez. Testes unitários provam a
+montagem, a escolha e o editor, e o qazinho-server prova as rotas com o Postgres; nenhum QA usou
+ainda, e a web ainda não mostra nem edita um modelo.
 
 **Uma página do Confluence vira o plano, e o plano uma página do Confluence.** Com o Jira
 conectado, o QA liga o Confluence no cartão do Jira: a mesma conta no mesmo site, conferida antes

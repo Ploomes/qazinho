@@ -1,7 +1,8 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
 import { AssistantDock } from '@/modules/Assistant';
 import { AllBugs } from '@/modules/Bug';
-import { FirstRun, Home } from '@/modules/Home';
+import { FirstRun, Home, NewProject } from '@/modules/Home';
+import { ChangeRunWarning } from '@/modules/Plan';
 import { ProLinkModal, ProMergeModal, ProRunWarning } from '@/modules/Pro';
 import { ProjectModal, VariablesModal } from '@/modules/Project';
 import { RunReplay } from '@/modules/Run';
@@ -27,6 +28,7 @@ export const App: React.FC = () => {
     isChatOnly,
     isWorkspace,
     isSettings,
+    isNewProject,
     isBugs,
     modal,
     projectModalKey,
@@ -37,6 +39,7 @@ export const App: React.FC = () => {
     hasProLink,
     hasProMerge,
     hasHeldRun,
+    hasChangeHold,
     hasSearch,
   } = useAppViewModel();
 
@@ -66,6 +69,7 @@ export const App: React.FC = () => {
                 {!isOnboarding && !isFirstRun && isWorkspace && <AgentPanel />}
                 {!isOnboarding && !isFirstRun && isSettings && <Settings />}
                 {!isOnboarding && !isFirstRun && isBugs && <AllBugs />}
+                {!isOnboarding && !isFirstRun && isNewProject && <NewProject />}
               </ErrorBarrier>
             </div>
 
@@ -78,6 +82,7 @@ export const App: React.FC = () => {
               {hasProLink && <ProLinkModal key="pro-link" />}
               {hasProMerge && <ProMergeModal key="pro-merge" />}
               {hasHeldRun && <ProRunWarning key="pro-run-warning" />}
+              {hasChangeHold && <ChangeRunWarning key="change-run-warning" />}
               {hasSearch && <SearchPalette key="search" />}
             </AnimatePresence>
 

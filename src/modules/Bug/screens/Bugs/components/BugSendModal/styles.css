@@ -132,3 +132,13 @@
   font: var(--font-ui-lg);
   text-wrap: pretty;
 }
+
+.bug-send__warning {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--attn-soft);
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+}

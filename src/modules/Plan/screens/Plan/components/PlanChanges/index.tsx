@@ -1,0 +1,357 @@
+import type { IPlanChangesProps } from './types';
+import { AnimatePresence } from 'motion/react';
+import { MeetingModal } from '@/modules/Plan/screens/Plan/components/MeetingModal';
+import { TellStoryModal } from '@/modules/Plan/screens/Plan/components/TellStoryModal';
+import { Button, Caret, Icon, IconButton, Input } from '@/shared/components/atoms';
+import { Fold, MenuButton } from '@/shared/components/molecules';
+import { usePlanChangesViewModel } from './hooks';
+import './styles.css';
+
+/**
+ * O que mudou nas fontes do plano depois que ele foi escrito, e as trocas que o agente
+ * propôs, cada uma com como está, como fica e o porquê.
+ */
+export const PlanChanges: React.FC<IPlanChangesProps> = (props) => {
+  const {
+    hasBar,
+    actions,
+    hasMore,
+    moreLabel,
+    moreItems,
+    canCheck,
+    isChecking,
+    checkLabel,
+    notice,
+    closeLabel,
+    changes,
+    hasDetail,
+    isShowingDetail,
+    detailLabel,
+    removedLabel,
+    addedLabel,
+    onDetail,
+    canPropose,
+    isProposing,
+    proposeLabel,
+    keepLabel,
+    hasReview,
+    summary,
+    nowLabel,
+    thenLabel,
+    items,
+    canApplyAll,
+    applyAllLabel,
+    isDone,
+    canTell,
+    tellLabel,
+    doneLabel,
+    doneVariant,
+    isTelling,
+    storyKey,
+    isMentioning,
+    note,
+    canMeet,
+    meetLabel,
+    isMeeting,
+    onMeet,
+    onCancelMeeting,
+    onMeeting,
+    onCheck,
+    onPropose,
+    onKeep,
+    onApply,
+    onRefuse,
+    onRefusal,
+    onOtherNote,
+    onOtherConfirm,
+    onApplyAll,
+    onTell,
+    onCancelTell,
+    onTold,
+    onDone,
+    onDismissNotice,
+  } = usePlanChangesViewModel(props);
+
+  return (
+    <>
+      {hasBar && (
+        <div className="plan-changes__bar">
+          {canCheck && (
+            <Button variant="ghost" size="sm" disabled={isChecking} onClick={onCheck}>
+              <Icon name="reload" />
+              {checkLabel}
+            </Button>
+          )}
+          {canMeet && (
+            <span className="plan-changes__wide">
+              <Button variant="ghost" size="sm" disabled={isProposing} onClick={onMeet}>
+                <Icon name="file" />
+                {meetLabel}
+              </Button>
+            </span>
+          )}
+          <div className="plan-changes__actions plan-changes__wide">{actions}</div>
+          {hasMore && (
+            <span className="plan-changes__narrow">
+              <MenuButton label={moreLabel} icon="more" items={moreItems} />
+            </span>
+          )}
+        </div>
+      )}
+
+      <AnimatePresence initial={false}>
+        {notice !== null && (
+          <Fold key="notice" className="plan-changes__fold">
+            <div className="plan-changes__notice" role="status">
+              {notice.url === null ? (
+                <span className="plan-changes__notice-text">{notice.text}</span>
+              ) : (
+                <a
+                  className="plan-changes__notice-text plan-changes__notice-link"
+                  href={notice.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {notice.text}
+                  <Icon name="external" />
+                </a>
+              )}
+              <IconButton
+                icon="close"
+                size="sm"
+                label={closeLabel}
+                onClick={onDismissNotice}
+              />
+            </div>
+          </Fold>
+        )}
+
+        {changes.length > 0 && (
+          <Fold key="changed" className="plan-changes__fold">
+            <div className="plan-changes__banner" role="status">
+              <div className="plan-changes__lines">
+                {changes.map((change) => (
+                  <span key={change.key} className="plan-changes__line">
+                    {change.line}
+                  </span>
+                ))}
+                {hasDetail && (
+                  <button
+                    type="button"
+                    className="plan-changes__detail-toggle"
+                    aria-expanded={isShowingDetail}
+                    onClick={onDetail}
+                  >
+                    <Caret isOpen={isShowingDetail} />
+                    {detailLabel}
+                  </button>
+                )}
+                <AnimatePresence initial={false}>
+                  {isShowingDetail && (
+                    <Fold key="detail" className="plan-changes__detail">
+                      {changes.map((change) => (
+                        <div key={change.key} className="plan-changes__diff">
+                          {change.removed.map((line) => (
+                            <span
+                              key={`removed-${line}`}
+                              className="plan-changes__diff-line plan-changes__diff-line--removed"
+                            >
+                              <span className="plan-changes__diff-mark">
+                                {removedLabel}
+                              </span>
+                              {line}
+                            </span>
+                          ))}
+                          {change.added.map((line) => (
+                            <span
+                              key={`added-${line}`}
+                              className="plan-changes__diff-line plan-changes__diff-line--added"
+                            >
+                              <span className="plan-changes__diff-mark">
+                                {addedLabel}
+                              </span>
+                              {line}
+                            </span>
+                          ))}
+                          {change.said.map((line) => (
+                            <span
+                              key={`said-${line}`}
+                              className="plan-changes__diff-said"
+                            >
+                              {line}
+                            </span>
+                          ))}
+                        </div>
+                      ))}
+                    </Fold>
+                  )}
+                </AnimatePresence>
+              </div>
+              {canPropose && (
+                <div className="plan-changes__actions">
+                  <Button size="sm" variant="ghost" onClick={onKeep}>
+                    {keepLabel}
+                  </Button>
+                  <Button size="sm" disabled={isProposing} onClick={onPropose}>
+                    <Icon name="sparkle" />
+                    {proposeLabel}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </Fold>
+        )}
+      </AnimatePresence>
+
+      {hasReview && (
+        <section className="plan-changes__review" aria-label={summary}>
+          <p className="plan-changes__summary">{summary}</p>
+
+          <ul className="plan-changes__items">
+            {items.map((item) => (
+              <li key={item.id} className={item.className}>
+                <div className="plan-changes__item-head">
+                  <span className="plan-changes__item-title">{item.title}</span>
+                  {item.state !== '' && (
+                    <span className="plan-changes__item-state">{item.state}</span>
+                  )}
+                </div>
+                <AnimatePresence initial={false}>
+                  {!item.isDecided && (
+                    <Fold key="body" className="plan-changes__body">
+                      <p className="plan-changes__item-text">{item.text}</p>
+
+                      {item.after.length > 0 && (
+                        <div className="plan-changes__compare">
+                          {item.before.length > 0 && (
+                            <div className="plan-changes__side">
+                              <span className="plan-changes__side-label">{nowLabel}</span>
+                              {item.before.map((line) => (
+                                <span key={line} className="plan-changes__step">
+                                  {line}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          <div className="plan-changes__side">
+                            <span className="plan-changes__side-label">{thenLabel}</span>
+                            {item.after.map((one) => (
+                              <span
+                                key={one.line}
+                                className={
+                                  one.isChanged
+                                    ? 'plan-changes__step plan-changes__step--changed'
+                                    : 'plan-changes__step'
+                                }
+                              >
+                                {one.line}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {item.isOpen && (
+                        <div className="plan-changes__item-actions">
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              onApply(item.id);
+                            }}
+                          >
+                            {item.applyLabel}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            expanded={item.isRefusing}
+                            onClick={() => {
+                              onRefuse(item.id);
+                            }}
+                          >
+                            {item.refuseLabel}
+                          </Button>
+                          {item.isRefusing &&
+                            !item.isOther &&
+                            item.refusals.map((refusal) => (
+                              <button
+                                key={refusal.reason}
+                                type="button"
+                                className="plan-changes__refusal"
+                                onClick={() => {
+                                  onRefusal({ id: item.id, reason: refusal.reason });
+                                }}
+                              >
+                                {refusal.label}
+                              </button>
+                            ))}
+                          {item.isOther && (
+                            <span className="plan-changes__other">
+                              <Input
+                                value={item.otherNote}
+                                label={item.otherLabel}
+                                placeholder={item.otherLabel}
+                                isCompact
+                                isAutoFocused
+                                onChange={onOtherNote}
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  onOtherConfirm(item.id);
+                                }}
+                              >
+                                {item.otherConfirmLabel}
+                              </Button>
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </Fold>
+                  )}
+                </AnimatePresence>
+              </li>
+            ))}
+          </ul>
+
+          <div className="plan-changes__footer">
+            {canApplyAll && (
+              <Button size="sm" onClick={onApplyAll}>
+                {applyAllLabel}
+              </Button>
+            )}
+            {isDone && (
+              <>
+                {canTell && (
+                  <Button size="sm" onClick={onTell}>
+                    <Icon name="send" />
+                    {tellLabel}
+                  </Button>
+                )}
+                <Button size="sm" variant={doneVariant} onClick={onDone}>
+                  {doneLabel}
+                </Button>
+              </>
+            )}
+          </div>
+        </section>
+      )}
+
+      <AnimatePresence>
+        {isMeeting && (
+          <MeetingModal key="meeting" onCancel={onCancelMeeting} onRead={onMeeting} />
+        )}
+        {isTelling && (
+          <TellStoryModal
+            key="tell"
+            storyKey={storyKey}
+            note={note}
+            isMentioning={isMentioning}
+            onCancel={onCancelTell}
+            onPosted={onTold}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+};

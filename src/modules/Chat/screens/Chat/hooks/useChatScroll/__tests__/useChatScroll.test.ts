@@ -170,6 +170,33 @@ describe('useChatScroll', () => {
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
+  /**
+   * Responder uma rodada é clicar dentro da lista, e a regra de quem clica para ler parava de
+   * seguir o fim: a resposta do agente chegava abaixo da tela.
+   */
+  it('goes back to the end when the QA answers a round of questions', () => {
+    const round = (answers: null | []): ChatMessage => ({
+      id: 'q-1',
+      kind: 'questions',
+      at: '09:42',
+      questions: [],
+      answers,
+    });
+    const { result, rerender } = renderHook(
+      (messages: ChatMessage[]) => useChatScroll({ workspaceId: 'w1', messages }),
+      { initialProps: [...chat(3), round(null)] },
+    );
+    const list = scrolledTo(10);
+
+    act(() => {
+      result.current.listRef.current = list;
+      result.current.onScroll();
+    });
+    rerender([...chat(3), round([])]);
+
+    expect(list.scrollTop).toBe(3_000);
+  });
+
   it('does NOT jump when only the agent answers', () => {
     const agent: ChatMessage = {
       id: 'a-1',

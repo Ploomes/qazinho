@@ -157,7 +157,7 @@ export class AgentRunner {
 
         if (heard.usage) {
           usage = heard.usage;
-          this.onEvent({ kind: 'usage', workspaceId, usage });
+          this.onEvent({ kind: 'usage', workspaceId, usage, hasLimits: false });
         }
 
         if (heard.message !== undefined && heard.message.length > 0) {
@@ -197,7 +197,12 @@ export class AgentRunner {
 
       if (event.type === 'rate_limit_event' || event.type === 'result') {
         usage = toUsage({ previous: usage, line: event });
-        this.onEvent({ kind: 'usage', workspaceId, usage });
+        this.onEvent({
+          kind: 'usage',
+          workspaceId,
+          usage,
+          hasLimits: event.type === 'rate_limit_event',
+        });
       }
 
       const answered = toStructured(event);
