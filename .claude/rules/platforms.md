@@ -73,6 +73,8 @@ O `electron-updater` atualiza os três, cada um do jeito dele:
 | Windows | o instalador NSIS | desde a primeira    | ainda nenhuma: sem `publisherName`, vale o sha512 do feed |
 | Linux   | o AppImage        | desde a primeira    | nenhuma; só atualiza quem roda o AppImage (`canUpdateOf`) |
 
+Uma cópia instalada pela Microsoft Store não usa o `electron-updater`: a loja a assina e a atualiza.
+
 No Mac a primeira atualização vem inteira, porque o `update.zip` de que o download parcial parte só
 existe depois dela. O Windows ganha um `publisherName` assim que houver um certificado, e uma versão
 sem assinatura ainda instala a primeira com assinatura.

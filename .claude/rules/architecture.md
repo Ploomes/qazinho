@@ -62,7 +62,9 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
 - O `window.open` nunca abre uma janela: um link vai para o navegador do sistema, todo o resto é
   negado. Tudo o que o app abre fora dele, o que um agente pede ao `$BROWSER` e a página que a API
   manda abrir incluídos, passa pelo `isOpenableUrl`: https, ou http só nesta máquina. Um outro
-  esquema entregaria o endereço a um programa qualquer do SO, como o `ms-msdt:` no Windows.
+  esquema entregaria o endereço a um programa qualquer do SO, como o `ms-msdt:` no Windows. A
+  exceção é o endereço fixo das atualizações da Microsoft Store (`APP_UPDATE.storeUpdates`), que
+  nenhuma página escolhe.
 - **O login de um MCP nunca passa pelo QAzinho.** O MCP do Figma vive no agente do próprio QA,
   Claude Code ou Codex: o QAzinho o adiciona lá e roda o login do próprio agente, e o token fica
   com o agente. Os comandos de cada agente são uma receita em `MCP_RECIPES`.
@@ -950,6 +952,9 @@ sem parar o QA.
 - A página lê o estado pelo `Updates` de `src/services/` (`useUpdateWatch`, `AppUpdate`). Com a
   versão pronta, o `UpdateButton` aparece na barra de título, desligado enquanto uma run anda.
 - **Não há rollback.** Uma versão ruim se desfaz publicando uma maior.
+- **Uma cópia da Microsoft Store se atualiza pela loja.** O `process.windowsStore` diz que o app veio
+  do pacote da loja: o `canUpdateOf` não liga o atualizador, e uma atualização obrigatória vira a fase
+  `store`, cujo `UpdateRequired` abre as atualizações da loja (`Updates.openStore`).
 - **Uma atualização obrigatória só trava quem tem conta logada.** O `ProApi` manda a versão em todo
   pedido (`x-qazinho-version`), e a API recusa com 426 uma abaixo do `MIN_DESKTOP_VERSION` dela
   ([035](https://github.com/Salve-Software/qazinho-server/blob/main/docs/adrs/035-the-minimum-desktop-rises-on-a-near-break.md)).

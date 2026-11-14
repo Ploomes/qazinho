@@ -65,7 +65,9 @@ olhos. Toda tela o segue.
    não precisa não sobe nada. O mínimo só recusa app velho, então a API vai primeiro, depois a
    release do app com o feed dos três sistemas, e por último o mínimo, na Railway, na versão que
    leva a mudança (a última tag mais o que os commits somam). Subir antes prende quem está logado
-   sem nada para baixar. Quem termina uma mudança dessas diz o valor e o momento. O `.env` local e
+   sem nada para baixar. A cópia da Microsoft Store só recebe a versão depois que a loja a aprova,
+   de um a três dias, e o mínimo espera também essa aprovação. Quem termina uma mudança dessas diz
+   o valor e o momento. O `.env` local e
    o `.env.example` ficam em `0.0.0`, ou o app de desenvolvimento cai na mesma tela.
 
 ## Estado

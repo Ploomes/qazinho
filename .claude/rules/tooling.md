@@ -129,6 +129,13 @@ um runner Windows faz o checkout dela e empacota o `QAzinho-Setup-<version>.exe`
 electron-builder, mais o `.blockmap` e o `latest.yml`. Ele sai sem assinatura até haver um
 certificado, então o SmartScreen pergunta uma vez. O input `tag` constrói os instaladores de uma
 release que já existe, e não lança nada.
+**A Microsoft Store recebe um pacote à parte**, que o mesmo job de Windows gera
+(`electron-builder --win appx`): o `QAzinho-<version>-x64.appx`. A loja o assina depois de
+aprová-lo, então ele sai sem assinatura e fica na release do próprio código, nunca no
+`qazinho-releases`, onde nada o instalaria. Ele é enviado à mão no Partner Center, na conta da Salve
+Software (`admin@salvesoftware.com`). A identidade do pacote (`appx.identityName`, `appx.publisher`)
+é a que o Partner Center dá ao app, e o `appx.publisherDisplayName` é "Salve Software", igual ao da
+conta. Só o Windows gera um, e a loja leva de um a três dias para aprovar cada versão.
 **O AppImage do Linux é construído do mesmo jeito**, num runner Linux: o
 `QAzinho-<version>.AppImage` e o `latest-linux.yml`.
 **Os instaladores do macOS são um workflow à parte**, o `macos-installer.yml`, já que um runner
