@@ -25,6 +25,19 @@ dmg:
   artifactName: ${productName}-${version}-${arch}.${ext}
 win:
   target: nsis
+appx:
+  applicationId: QAzinho
+  displayName: QAzinho
+  publisherDisplayName: Salve Software
+  backgroundColor: '#0A0906'
+  languages:
+    - pt-BR
+    - en-US
+  minVersion: 10.0.17763.0
+  capabilities:
+    - unvirtualizedResources
+  customManifestPath: appxmanifest.xml
+  artifactName: ${productName}-${version}-${arch}.${ext}
 nsis:
   artifactName: ${productName}-Setup-${version}.${ext}
 linux:
