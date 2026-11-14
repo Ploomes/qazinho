@@ -349,8 +349,13 @@
 
 .plan-case__foot {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-2) var(--space-4);
+}
+
+.plan-case__foot > button {
+  white-space: nowrap;
 }
 
 .plan-case__drop {
@@ -450,12 +455,12 @@
   .plan-case__head {
     grid-template-areas:
       'handle pill open . aside'
-      'title title title title title';
+      '. title title title title';
     grid-template-columns: auto auto auto minmax(0, 1fr) auto;
     row-gap: var(--space-2);
   }
 
   .plan-case {
-    --plan-case-indent: var(--space-3);
+    --plan-case-indent: var(--plan-case-gutter);
   }
 }
