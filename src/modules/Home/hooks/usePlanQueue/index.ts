@@ -1,20 +1,21 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat';
+import { PLAN_QUEUE } from '@/modules/Home/constants';
 import { useWorkspaceStore } from '@/store';
 
 export const usePlanQueue = () => {
   const { t } = useTranslation();
   const { askAgent } = useChatAgent();
   const next = useWorkspaceStore((state) => state.planQueue[0] ?? null);
-  const isBusy = useWorkspaceStore(
-    (state) => state.planning !== null && state.askingIds.includes(state.planning),
+  const working = useWorkspaceStore(
+    (state) => state.planning.filter((id) => state.askingIds.includes(id)).length,
   );
   const takeQueued = useWorkspaceStore((state) => state.takeQueued);
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
 
   useEffect(() => {
-    if (isBusy || next === null) return;
+    if (working >= PLAN_QUEUE.atOnce || next === null) return;
 
     const issue = useWorkspaceStore
       .getState()
@@ -41,5 +42,5 @@ export const usePlanQueue = () => {
       jira: { key: story.key },
       confluence: null,
     });
-  }, [isBusy, next, takeQueued, sendMessage, askAgent, t]);
+  }, [working, next, takeQueued, sendMessage, askAgent, t]);
 };

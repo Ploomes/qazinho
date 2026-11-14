@@ -32,7 +32,7 @@ beforeEach(() => {
     workspaces: [],
     developedCases: {},
     planQueue: [],
-    planning: null,
+    planning: [],
     askingIds: [],
   });
   useSetupStore.setState({ integrations: [] });

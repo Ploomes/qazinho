@@ -52,7 +52,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   panelWidth: PANEL.defaultWidth,
   askingIds: [],
   planQueue: [],
-  planning: null,
+  planning: [],
   liveTexts: {},
   activities: {},
   bugFlashes: {},
@@ -80,6 +80,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       removingWorkspaceId: null,
       workspaces: state.workspaces.filter(({ id }) => id !== workspaceId),
       planQueue: state.planQueue.filter((id) => id !== workspaceId),
+      planning: state.planning.filter((id) => id !== workspaceId),
     })),
 
   renameWorkspace: ({ workspaceId, name }) =>
@@ -182,7 +183,12 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   takeQueued: (workspaceId) =>
     set((state) => ({
       planQueue: state.planQueue.filter((id) => id !== workspaceId),
-      planning: workspaceId,
+      planning: [
+        ...state.planning.filter(
+          (id) => id !== workspaceId && state.askingIds.includes(id),
+        ),
+        workspaceId,
+      ],
     })),
 
   noteActivity: ({ workspaceId, tool, target }) =>

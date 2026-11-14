@@ -32,9 +32,14 @@ beforeEach(() => {
     projects: [{ id: 'p1', name: 'Loja', targets: [], repositories: [] }],
   });
   useWorkspaceStore.setState({
-    workspaces: [storyPlan('w1', 'SHOP-892'), storyPlan('w2', 'SHOP-893')],
-    planQueue: ['w1', 'w2'],
-    planning: null,
+    workspaces: [
+      storyPlan('w1', 'SHOP-892'),
+      storyPlan('w2', 'SHOP-893'),
+      storyPlan('w3', 'SHOP-894'),
+      storyPlan('w4', 'SHOP-895'),
+    ],
+    planQueue: ['w1', 'w2', 'w3', 'w4'],
+    planning: [],
     askingIds: [],
   });
 });
@@ -45,19 +50,19 @@ afterEach(() => {
 });
 
 describe('usePlanQueue', () => {
-  it('asks the agent for one plan at a time, from the story, as the QA would', () => {
+  it('asks the agent for three plans at once, each from its story, as the QA would', () => {
     const asked = thinkingAgent();
 
     renderHook(() => usePlanQueue());
 
-    expect(asked).toHaveBeenCalledOnce();
-    expect(asked.mock.calls[0]?.[0]).toMatchObject({
-      workspaceId: 'w1',
-      jira: { key: 'SHOP-892' },
-    });
+    expect(asked.mock.calls.map(([ask]) => [ask.workspaceId, ask.jira?.key])).toEqual([
+      ['w1', 'SHOP-892'],
+      ['w2', 'SHOP-893'],
+      ['w3', 'SHOP-894'],
+    ]);
     expect(useWorkspaceStore.getState()).toMatchObject({
-      planQueue: ['w2'],
-      planning: 'w1',
+      planQueue: ['w4'],
+      planning: ['w1', 'w2', 'w3'],
     });
     expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
       kind: 'user',
@@ -65,18 +70,34 @@ describe('usePlanQueue', () => {
     });
   });
 
-  it('asks for the next plan only once the chat before it is done', () => {
+  it('asks for the fourth plan only once one of the three is done', () => {
     const asked = thinkingAgent();
 
     renderHook(() => usePlanQueue());
 
+    expect(asked).toHaveBeenCalledTimes(3);
+
     act(() => {
-      useWorkspaceStore.setState({ askingIds: [] });
+      useWorkspaceStore.setState((state) => ({
+        askingIds: state.askingIds.filter((id) => id !== 'w2'),
+      }));
     });
 
-    expect(asked).toHaveBeenCalledTimes(2);
-    expect(asked.mock.calls[1]?.[0]).toMatchObject({ workspaceId: 'w2' });
-    expect(useWorkspaceStore.getState().planQueue).toEqual([]);
+    expect(asked).toHaveBeenCalledTimes(4);
+    expect(asked.mock.calls[3]?.[0]).toMatchObject({ workspaceId: 'w4' });
+    expect(useWorkspaceStore.getState()).toMatchObject({
+      planQueue: [],
+      planning: ['w1', 'w3', 'w4'],
+    });
+  });
+
+  it('does NOT count a chat the QA started on their own against the three', () => {
+    const asked = thinkingAgent();
+
+    useWorkspaceStore.setState({ askingIds: ['w-other'] });
+    renderHook(() => usePlanQueue());
+
+    expect(asked).toHaveBeenCalledTimes(3);
   });
 
   it('skips a queued plan that is gone, and goes on to the next', () => {
@@ -85,7 +106,6 @@ describe('usePlanQueue', () => {
     useWorkspaceStore.setState({ planQueue: ['w-gone', 'w2'] });
     renderHook(() => usePlanQueue());
 
-    expect(asked).toHaveBeenCalledOnce();
-    expect(asked.mock.calls[0]?.[0]).toMatchObject({ workspaceId: 'w2' });
+    expect(asked.mock.calls.map(([ask]) => ask.workspaceId)).toEqual(['w2']);
   });
 });

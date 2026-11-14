@@ -56,7 +56,7 @@ export interface IWorkspaceStore {
   panelWidth: number;
   askingIds: string[];
   planQueue: string[];
-  planning: string | null;
+  planning: string[];
   liveTexts: Record<string, string>;
   activities: Record<string, IAgentActivity[]>;
   bugFlashes: Record<string, IBugFlash[]>;
