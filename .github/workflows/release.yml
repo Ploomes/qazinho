@@ -76,7 +76,7 @@ jobs:
     if: ${{ !cancelled() && !failure() && (inputs.tag != '' || needs.release.outputs.tag != '') }}
     runs-on: windows-latest
     permissions:
-      contents: read
+      contents: write
     env:
       TAG: ${{ inputs.tag != '' && inputs.tag || needs.release.outputs.tag }}
       RELEASES_REPO: Salve-Software/qazinho-releases
@@ -129,6 +129,17 @@ jobs:
             true
           gh release upload "$TAG" release/*.exe release/*.exe.blockmap --clobber --repo "$RELEASES_REPO"
           gh release upload "$TAG" release/latest.yml --clobber --repo "$RELEASES_REPO"
+
+      # A Microsoft Store assina o pacote dela depois de aprová-lo, então ele sai sem assinatura e
+      # nunca vai ao repositório público, onde nada o instalaria: fica na release do código, de onde
+      # é enviado ao Partner Center.
+      - name: Package for the Microsoft Store
+        run: npx electron-builder --win appx --x64 --publish never
+
+      - name: Keep the Store package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" release/*.appx --clobber --repo "${{ github.repository }}"
 
   linux:
     name: Linux installer
