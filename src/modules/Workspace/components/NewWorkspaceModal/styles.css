@@ -30,3 +30,21 @@
     0 0 0 1px var(--ink2),
     var(--sticker-rest);
 }
+
+.new-workspace__story-pick {
+  animation: gc-in var(--dur-fast) var(--ease);
+}
+
+.new-workspace__story {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--ink2);
+  animation: gc-in var(--dur-fast) var(--ease);
+}
+
+.new-workspace__story-text {
+  flex: 1;
+  color: var(--ink);
+  font: var(--font-ui-md);
+}

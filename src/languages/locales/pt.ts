@@ -1190,6 +1190,9 @@ export const pt: typeof en = {
     FAILED_MISSING: 'O projeto não guarda mais {{name}}.',
   },
   NEW_WORKSPACE: {
+    FROM_STORY: 'Planejar a partir de uma história do Jira',
+    FROM_STORY_ON: 'O chat abre para escolher a história',
+    FROM_STORY_REMOVE: 'Não planejar de uma história',
     TITLE: 'Novo plano',
     NAME: 'O que você vai testar',
     NAME_PLACEHOLDER: 'Opcional',

@@ -20,6 +20,7 @@ export const useAppStore = create<IAppStore>()(
       recent: [],
       selectedProjectId: null,
       pendingImport: null,
+      pendingCommand: null,
       isResourcesOpen: false,
       isSearchOpen: false,
       modelMenuAt: null,
@@ -179,6 +180,10 @@ export const useAppStore = create<IAppStore>()(
       requestImport: (pendingImport) => set({ pendingImport }),
 
       clearImport: () => set({ pendingImport: null }),
+
+      requestCommand: (pendingCommand) => set({ pendingCommand }),
+
+      clearCommand: () => set({ pendingCommand: null }),
 
       openMedia: (media) => set({ media }),
 

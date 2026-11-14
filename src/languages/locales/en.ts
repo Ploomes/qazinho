@@ -1181,6 +1181,9 @@ export const en = {
     FAILED_MISSING: 'The project no longer keeps {{name}}.',
   },
   NEW_WORKSPACE: {
+    FROM_STORY: 'Plan from a Jira story',
+    FROM_STORY_ON: 'The chat opens to pick the story',
+    FROM_STORY_REMOVE: 'Do not plan from a story',
     TITLE: 'New plan',
     NAME: 'What are you testing',
     NAME_PLACEHOLDER: 'Optional',

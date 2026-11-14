@@ -5,6 +5,7 @@ import type { ModelMenuAt } from './ModelMenuAt';
 import type { Screen } from './Screen';
 import type { ShownTheme } from './ShownTheme';
 import type { Theme } from './Theme';
+import type { ChatCommandId } from '@/modules/Chat/types';
 import type { IProject } from '@/modules/Project';
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
 import type { IReplayOpen } from '@/modules/Run';
@@ -26,6 +27,7 @@ export interface IAppStore {
   recent: IRecentPlan[];
   selectedProjectId: string | null;
   pendingImport: { workspaceId: string; source: IImportSource } | null;
+  pendingCommand: { workspaceId: string; command: ChatCommandId } | null;
   isResourcesOpen: boolean;
   isSearchOpen: boolean;
   modelMenuAt: ModelMenuAt | null;
@@ -61,6 +63,8 @@ export interface IAppStore {
   closeModelMenu: () => void;
   requestImport: (props: { workspaceId: string; source: IImportSource }) => void;
   clearImport: () => void;
+  requestCommand: (props: { workspaceId: string; command: ChatCommandId }) => void;
+  clearCommand: () => void;
   openMedia: (media: IMedia) => void;
   closeMedia: () => void;
   openReplay: (replay: IReplayOpen) => void;

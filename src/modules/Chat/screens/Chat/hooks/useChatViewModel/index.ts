@@ -184,6 +184,17 @@ export const useChatViewModel = () => {
     clearImport();
   }, [pendingImport, openWorkspaceId, startImport, clearImport]);
 
+  const pendingCommand = useAppStore((state) => state.pendingCommand);
+  const clearCommand = useAppStore((state) => state.clearCommand);
+  const startCommand = chatCommand.start;
+
+  useEffect(() => {
+    if (pendingCommand === null || pendingCommand.workspaceId !== openWorkspaceId) return;
+
+    startCommand(pendingCommand.command);
+    clearCommand();
+  }, [pendingCommand, openWorkspaceId, startCommand, clearCommand]);
+
   const readStep = workspace === null ? undefined : readSteps[workspace.id];
   const sentCommand = (workspace?.chat ?? [])
     .flatMap((message) =>

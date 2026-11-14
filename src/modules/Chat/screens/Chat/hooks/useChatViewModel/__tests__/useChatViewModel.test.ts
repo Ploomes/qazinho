@@ -1530,6 +1530,20 @@ describe('useChatViewModel', () => {
       expect(result.current.command).toBeNull();
       expect(useAppStore.getState().pendingImport).not.toBeNull();
     });
+
+    it('opens the story picker a new plan asked for, once', () => {
+      useAppStore.setState({
+        pendingCommand: {
+          workspaceId: useAppStore.getState().selectedWorkspaceId ?? '',
+          command: 'jira-plan',
+        },
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.command).toMatchObject({ name: 'Plan from a Jira story' });
+      expect(useAppStore.getState().pendingCommand).toBeNull();
+    });
   });
 
   describe('a plan against a Figma design', () => {
