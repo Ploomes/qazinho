@@ -682,3 +682,77 @@ describe('usePlanCaseViewModel', () => {
     });
   });
 });
+
+describe('usePlanCaseViewModel, the account a case starts in', () => {
+  it('shows the account and offers the others and starting signed out', () => {
+    const onEditCase = vi.fn();
+    const { result } = renderHook(() =>
+      usePlanCaseViewModel({
+        ...PROPS,
+        testCase: { ...TEST_CASE, signedInAs: 'LOGIN_EMAIL' },
+        accounts: ['LOGIN_EMAIL', 'ADMIN_EMAIL'],
+        onEditCase,
+      }),
+    );
+
+    expect(result.current.isAccountShown).toBe(true);
+    expect(result.current.hasFacts).toBe(true);
+    expect(result.current.accountLabel).toBe('LOGIN_EMAIL');
+    expect(result.current.accountItems.map(({ key }) => key)).toEqual([
+      'LOGIN_EMAIL',
+      'ADMIN_EMAIL',
+      '~none',
+    ]);
+
+    act(() => {
+      result.current.accountItems[1]?.onPick();
+    });
+    expect(onEditCase).toHaveBeenLastCalledWith({
+      caseId: TEST_CASE.id,
+      fields: { signedInAs: 'ADMIN_EMAIL' },
+    });
+
+    act(() => {
+      result.current.accountItems[2]?.onPick();
+    });
+    expect(onEditCase).toHaveBeenLastCalledWith({
+      caseId: TEST_CASE.id,
+      fields: { signedInAs: undefined },
+    });
+  });
+
+  it('offers to start signed in only when the project keeps an account', () => {
+    const { result, rerender } = renderHook(
+      (accounts: string[]) => usePlanCaseViewModel({ ...PROPS, accounts }),
+      { initialProps: [] as string[] },
+    );
+
+    expect(result.current.canAddAccount).toBe(false);
+
+    rerender(['LOGIN_EMAIL']);
+    expect(result.current.canAddAccount).toBe(true);
+    expect(result.current.isAccountShown).toBe(false);
+
+    act(() => {
+      result.current.onFactAdd('account');
+    });
+    expect(result.current.isAccountShown).toBe(true);
+    expect(result.current.canAddAccount).toBe(false);
+    expect(result.current.accountItems.map(({ key }) => key)).toEqual(['LOGIN_EMAIL']);
+  });
+
+  it('keeps an account the project no longer lists, and does NOT let a locked plan pick', () => {
+    const { result } = renderHook(() =>
+      usePlanCaseViewModel({
+        ...PROPS,
+        isLocked: true,
+        testCase: { ...TEST_CASE, signedInAs: 'OLD_EMAIL' },
+        accounts: [],
+      }),
+    );
+
+    expect(result.current.canPickAccount).toBe(false);
+    expect(result.current.accountLabel).toBe('OLD_EMAIL');
+    expect(result.current.canAddAccount).toBe(false);
+  });
+});

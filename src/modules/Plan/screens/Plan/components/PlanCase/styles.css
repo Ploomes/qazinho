@@ -190,6 +190,18 @@
   background: var(--raise);
 }
 
+.plan-case__account {
+  display: flex;
+  align-items: center;
+  margin-left: calc(-1 * var(--space-3));
+}
+
+.plan-case__account-name {
+  margin-left: var(--space-3);
+  color: var(--ink2);
+  font: var(--font-code-sm);
+}
+
 .plan-case__ghosts {
   display: flex;
   flex-wrap: wrap;

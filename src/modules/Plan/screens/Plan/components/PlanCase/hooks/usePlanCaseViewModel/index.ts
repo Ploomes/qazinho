@@ -13,7 +13,11 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const caseId = testCase.id;
   const [isPickedUp, setIsPickedUp] = useState(false);
   const [freshStep, setFreshStep] = useState<number | null>(null);
-  const [openFacts, setOpenFacts] = useState({ goal: false, before: false });
+  const [openFacts, setOpenFacts] = useState({
+    goal: false,
+    before: false,
+    account: false,
+  });
 
   const stopped = props.lastRun?.steps.find(
     ({ verdict }) => verdict === 'failed' || verdict === 'blocked',
@@ -25,6 +29,9 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const isManual = testCase.isManual === true;
   const hasGoal = testCase.goal !== '';
   const hasBefore = testCase.preconditions !== '';
+  const account = testCase.signedInAs ?? null;
+  const accounts = props.accounts ?? [];
+  const isAccountShown = account !== null || openFacts.account;
   const verdict = props.liveStatus ?? testCase.lastVerdict ?? 'pending';
   const listOf = (items: string[]) =>
     new Intl.ListFormat(i18n.language, { style: 'long', type: 'conjunction' }).format(
@@ -82,12 +89,43 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     ]
       .filter((part) => part !== '')
       .join(' '),
+    hasFacts:
+      hasGoal || openFacts.goal || hasBefore || openFacts.before || isAccountShown,
     isGoalShown: hasGoal || openFacts.goal,
     isBeforeShown: hasBefore || openFacts.before,
+    isAccountShown,
+    canPickAccount: !isLocked,
+    accountLabel: account ?? t('PLAN.ACCOUNT_PICK'),
+    accountItems: [
+      ...[...new Set([...accounts, ...(account === null ? [] : [account])])].map(
+        (name) => ({
+          key: name,
+          label: name,
+          icon: 'account' as const,
+          onPick: () => {
+            props.onEditCase({ caseId, fields: { signedInAs: name } });
+          },
+        }),
+      ),
+      ...(account === null
+        ? []
+        : [
+            {
+              key: '~none',
+              label: t('PLAN.ACCOUNT_NONE'),
+              icon: 'close' as const,
+              onPick: () => {
+                setOpenFacts((current) => ({ ...current, account: false }));
+                props.onEditCase({ caseId, fields: { signedInAs: undefined } });
+              },
+            },
+          ]),
+    ],
     isGoalFocused: openFacts.goal && !hasGoal,
     isBeforeFocused: openFacts.before && !hasBefore,
     canAddGoal: !isLocked && !hasGoal && !openFacts.goal,
     canAddBefore: !isLocked && !hasBefore && !openFacts.before,
+    canAddAccount: !isLocked && !isAccountShown && accounts.length > 0,
     steps: testCase.steps.map((step, index) => {
       const ran = props.lastRun?.steps.find(({ number }) => number === index + 1);
       const stepVerdict = ran?.verdict ?? 'pending';
@@ -125,10 +163,10 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     isTitleFocused: props.isFresh === true,
     canRemoveStep: testCase.steps.length > 1 && !isLocked,
     onHeadClick: () => {
-      setOpenFacts({ goal: false, before: false });
+      setOpenFacts({ goal: false, before: false, account: false });
       onToggle(caseId);
     },
-    onFactAdd: (fact: 'goal' | 'before') => {
+    onFactAdd: (fact: 'goal' | 'before' | 'account') => {
       setOpenFacts((current) => ({ ...current, [fact]: true }));
     },
     runCaseLabel: t(

@@ -2,6 +2,7 @@ import type { IPlanCaseProps } from './types';
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Caret, EditableText, Icon, StatusPill } from '@/shared/components/atoms';
+import { MenuButton } from '@/shared/components/molecules';
 import { MOTION, STICKER } from '@/shared/constants';
 import { usePlanCaseViewModel } from './hooks';
 import './styles.css';
@@ -21,8 +22,14 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
     steps,
     verdict,
     hasStatus,
+    hasFacts,
     isGoalShown,
     isBeforeShown,
+    isAccountShown,
+    canPickAccount,
+    accountLabel,
+    accountItems,
+    canAddAccount,
     isGoalFocused,
     isBeforeFocused,
     canAddGoal,
@@ -149,7 +156,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
           >
             <div className="plan-case__body">
               {sources !== null && <p className="plan-case__sources">{sources}</p>}
-              {(isGoalShown || isBeforeShown) && (
+              {hasFacts && (
                 <dl className="plan-case__facts">
                   {isGoalShown && (
                     <div className="plan-case__fact">
@@ -183,10 +190,26 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                       </dd>
                     </div>
                   )}
+                  {isAccountShown && (
+                    <div className="plan-case__fact">
+                      <dt className="plan-case__label">{t('PLAN.ACCOUNT')}</dt>
+                      <dd className="plan-case__field plan-case__account">
+                        {canPickAccount ? (
+                          <MenuButton
+                            label={accountLabel}
+                            icon="account"
+                            items={accountItems}
+                          />
+                        ) : (
+                          <code className="plan-case__account-name">{accountLabel}</code>
+                        )}
+                      </dd>
+                    </div>
+                  )}
                 </dl>
               )}
 
-              {(canAddGoal || canAddBefore) && (
+              {(canAddGoal || canAddBefore || canAddAccount) && (
                 <div className="plan-case__ghosts">
                   {canAddGoal && (
                     <button
@@ -210,6 +233,18 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                     >
                       <Icon name="plus" />
                       {t('PLAN.ADD_BEFORE')}
+                    </button>
+                  )}
+                  {canAddAccount && (
+                    <button
+                      type="button"
+                      className="plan-case__ghost"
+                      onClick={() => {
+                        onFactAdd('account');
+                      }}
+                    >
+                      <Icon name="plus" />
+                      {t('PLAN.ADD_ACCOUNT')}
                     </button>
                   )}
                 </div>

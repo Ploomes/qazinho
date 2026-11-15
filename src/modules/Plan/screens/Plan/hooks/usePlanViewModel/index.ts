@@ -31,7 +31,11 @@ import {
   PLAN_SOURCE,
 } from '@/modules/Plan/screens/Plan/constants';
 import { bytesLabelOf, useProUpdate } from '@/modules/Pro';
-import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
+import {
+  isSecretName,
+  useVariableActions,
+  VARIABLE_FAILURE_KEYS,
+} from '@/modules/Project';
 import { flattenPlanSteps, manualWaitingOf, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { Archive, Confluence, Files, Run } from '@/services';
@@ -498,6 +502,9 @@ export const usePlanViewModel = () => {
       Object.entries(liveCases).map(([id, { status }]) => [id, status]),
     ),
     design: workspace?.design ?? null,
+    accounts: (kept ?? [])
+      .filter(({ name, isSecret }) => !(isSecret ?? isSecretName(name)))
+      .map(({ name }) => name),
     openCaseId,
     isLocked,
     lockedLabel: t('PLAN.LOCKED', { agent }),

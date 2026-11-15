@@ -11,6 +11,7 @@ export interface IPlanCaseProps {
   liveStatus?: PillStatus;
   isDeveloped?: boolean;
   design?: IDesignLink | null;
+  accounts?: string[];
   isOpen: boolean;
   isFresh?: boolean;
   changeWhy?: string;

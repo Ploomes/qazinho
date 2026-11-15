@@ -34,6 +34,7 @@ export const Plan: React.FC = () => {
     developedIds,
     filesNotice,
     design,
+    accounts,
     openCaseId,
     freshCaseId,
     isLocked,
@@ -436,6 +437,7 @@ export const Plan: React.FC = () => {
                       liveStatus={liveStatuses[testCase.id]}
                       isDeveloped={developedIds.includes(testCase.id)}
                       design={design}
+                      accounts={accounts}
                       isOpen={openCaseId === testCase.id}
                       isFresh={freshCaseId === testCase.id}
                       changeWhy={changeWhys[testCase.id]}
