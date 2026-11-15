@@ -352,8 +352,15 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     uma falha leva a nota dele como o que veio e vira um bug como qualquer outra. `typeRunVariable`
     digita o valor de uma variável que só a main conhece, e `endManual` deixa sem marca o que
     falta (`ended`).
-  - A `DeviceScreen` vira uma superfície (`role="application"`) que leva o ponteiro, a roda e o
-    teclado ao dispositivo, e o `ManualPanel` mostra o preparo, o passo, o esperado e as marcas.
+  - Na web, o QA anda o caso no próprio Chrome da run, com janela. O `WindowDock` da main divide a
+    tela (`dockOf`): o Chrome abre à esquerda (`window` do `WebDriver`, sem a barra de automação e
+    com a página do tamanho da janela) e o QAzinho vira uma coluna à direita, que a página mostra
+    no lugar do app (`dock`, `ManualDock`): o preparo, o passo, o esperado, as marcas e os atalhos
+    (⌘↵ passou, ⌘⇧↵ falhou; os atalhos do app ficam desligados). Fechar o Chrome termina a vez
+    (`onClosed`, `closedByQa`), e no fim da run a coluna mostra como foi por um instante
+    (`WINDOW_DOCK.endHoldMs`) e a janela volta ao tamanho e ao lugar de antes.
+  - Num celular, a `DeviceScreen` vira uma superfície (`role="application"`) que leva o ponteiro,
+    a roda e o teclado ao dispositivo, e o `ManualPanel` mostra o preparo, o passo e as marcas.
   - O CI nunca anda um caso à mão: o `PlanWalker` o deixa de fora com o porquê (`manual`).
 - **O agente guarda o que aprende sobre o app** (`role/keeper/`). As memórias ficam no projeto
   (`IProject.memories`), cada uma do projeto ou de um workspace, e numa lista só para sincronizar.
