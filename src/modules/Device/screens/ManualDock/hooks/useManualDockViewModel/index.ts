@@ -9,7 +9,10 @@ import { useTranslation } from 'react-i18next';
 import { activityLineOf } from '@/modules/Chat/library';
 import { useManualPanelViewModel } from '@/modules/Device/components/DeviceView/components/ManualPanel/hooks/useManualPanelViewModel';
 import { formatElapsed } from '@/modules/Device/library';
-import { MANUAL_DOCK } from '@/modules/Device/screens/ManualDock/constants';
+import {
+  MANUAL_DOCK,
+  MANUAL_DOCK_NOTES,
+} from '@/modules/Device/screens/ManualDock/constants';
 import { useRunActions } from '@/modules/Run';
 import { Platform } from '@/services';
 import { comboLabelOf } from '@/shared/hooks/useKeybinds/library';
@@ -24,13 +27,18 @@ export const useManualDockViewModel = () => {
     id: workspace.id,
     name: workspace.name,
     projectId: workspace.projectId,
+    targetId: workspace.targetId,
     plan: workspace.plan,
     hasDesign: workspace.design !== null,
     live: workspace.live,
   }));
-  const projectName = useAppStore(
-    (state) => state.projects.find(({ id }) => id === opened?.projectId)?.name ?? '',
+  const project = useAppStore((state) =>
+    state.projects.find(({ id }) => id === opened?.projectId),
   );
+  const projectName = project?.name ?? '';
+  const targetKind =
+    project?.targets.find(({ id }) => id === opened?.targetId)?.kind ?? 'web';
+  const notes = MANUAL_DOCK_NOTES[targetKind];
   const activities = useWorkspaceStore((state) =>
     opened === null ? undefined : state.activities[opened.id],
   );
@@ -91,7 +99,7 @@ export const useManualDockViewModel = () => {
           activity,
           hasDesign: opened?.hasDesign ?? false,
           say: (key, values) => t(key, values),
-        })?.text) ?? t('DOCK.PREPARING_NOTE');
+        })?.text) ?? t(notes.preparing);
   const isStopped = phase === 'done' && marked.size === 0;
   const isUnwalked = phase === 'done' && passed === 0 && failed === 0;
   const mood: InternMood =
@@ -175,7 +183,7 @@ export const useManualDockViewModel = () => {
       phase === 'preparing'
         ? doing
         : phase === 'turn'
-          ? (manual.prep ?? t('DOCK.CHROME_NOTE'))
+          ? (manual.prep ?? t(notes.use))
           : summary === ''
             ? t('DOCK.BACK')
             : summary,

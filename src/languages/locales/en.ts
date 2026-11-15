@@ -49,9 +49,16 @@ export const en = {
   },
   DOCK: {
     PREPARING: 'Setting up the case',
-    PREPARING_NOTE:
-      'The case is being set up in the Chrome on the left. Your turn comes next.',
-    CHROME_NOTE: 'Use the Chrome on the left like any browser, then mark the step.',
+    PREPARING_WEB:
+      'The case is being set up in the Chrome beside you. Your turn comes next.',
+    PREPARING_ANDROID:
+      'The case is being set up in the emulator beside you. Your turn comes next.',
+    PREPARING_IOS:
+      'The case is being set up in the simulator beside you. Your turn comes next.',
+    USE_WEB: 'Use the Chrome beside you like any browser, then mark the step.',
+    USE_ANDROID: 'Use the emulator beside you, then mark the step.',
+    USE_IOS:
+      'Use the simulator beside you, then mark the step. If it shows another device, pick the one that is on.',
     DONE: 'Case done',
     STOPPED: 'Run stopped',
     ENDED: 'Case ended',

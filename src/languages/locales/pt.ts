@@ -51,9 +51,16 @@ export const pt: typeof en = {
   },
   DOCK: {
     PREPARING: 'Preparando o caso',
-    PREPARING_NOTE:
+    PREPARING_WEB:
       'O caso está sendo preparado no Chrome ao lado. A sua vez vem em seguida.',
-    CHROME_NOTE: 'Use o Chrome ao lado como qualquer navegador, depois marque o passo.',
+    PREPARING_ANDROID:
+      'O caso está sendo preparado no emulador ao lado. A sua vez vem em seguida.',
+    PREPARING_IOS:
+      'O caso está sendo preparado no simulador ao lado. A sua vez vem em seguida.',
+    USE_WEB: 'Use o Chrome ao lado como qualquer navegador, depois marque o passo.',
+    USE_ANDROID: 'Use o emulador ao lado, depois marque o passo.',
+    USE_IOS:
+      'Use o simulador ao lado, depois marque o passo. Se ele mostrar outro aparelho, escolha o que está ligado.',
     DONE: 'Caso feito',
     STOPPED: 'Run parada',
     ENDED: 'Caso terminado',

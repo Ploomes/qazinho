@@ -126,7 +126,7 @@ describe('useManualDockViewModel', () => {
       mood: 'running',
       caseId: 'TC-01',
       projectName: 'Shop',
-      line: 'The case is being set up in the Chrome on the left. Your turn comes next.',
+      line: 'The case is being set up in the Chrome beside you. Your turn comes next.',
       progressLabel: '0 of 3',
     });
     expect(result.current.steps.map(({ status, isNow }) => [status, isNow])).toEqual([
@@ -134,6 +134,27 @@ describe('useManualDockViewModel', () => {
       ['pending', false],
       ['pending', false],
     ]);
+  });
+
+  /** Num celular o QA usa a janela do emulador ou do simulador, e a coluna diz qual. */
+  it('names the emulator, not the Chrome, for an Android plan', () => {
+    useAppStore.setState({
+      projects: [
+        {
+          id: 'p1',
+          name: 'Shop',
+          targets: [{ id: 't1', kind: 'android', label: 'Android', value: '/shop.apk' }],
+          repositories: [],
+        },
+      ],
+    });
+    manualRun({ phase: 'preparing' });
+
+    const { result } = renderHook(() => useManualDockViewModel());
+
+    expect(result.current.line).toBe(
+      'The case is being set up in the emulator beside you. Your turn comes next.',
+    );
   });
 
   it('stops the run while the agent is still setting it up', () => {
