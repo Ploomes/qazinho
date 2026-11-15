@@ -349,7 +349,8 @@ teste fala com o agente de uma run. O qazinho-server prova o fluxo com o cliente
 (`test/flow/mcp.test.ts`). Treze sessões reais do Claude Code (Haiku), com um token do login e numa
 cópia do banco, responderam se um PR passou, acharam o plano de um fluxo e recusaram o que o papel não
 deixa, por cerca de seis centavos. Ainda não rodou: o `/mcp` da CLI real com a `/connect` num navegador
-de verdade, e o `get_screenshot` com uma tela de verdade; essa rota também não foi publicada ainda.
+de verdade, e o `get_screenshot` com uma tela de verdade. A rota está publicada
+(`https://qazinho-api.salvesoftware.com/api/mcp`, que responde 401 com os metadados do OAuth).
 
 **Uma primeira execução anda pela máquina** (`Onboarding`): idioma, o agente, as ferramentas de
 dispositivo, os trackers. O GitHub e o Jira conectam de verdade. O token do Jira é conferido com o
