@@ -22,6 +22,7 @@ export const useKeybinds = () => {
   const togglePanel = useWorkspaceStore((state) => state.togglePanel);
   const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
+  const isDocked = useAppStore((state) => state.dock !== null);
   const toggleAssistant = useAssistantStore((state) => state.toggle);
   const { onRun, onStop } = useRunActions();
 
@@ -57,7 +58,7 @@ export const useKeybinds = () => {
     const onKeyDown = (event: KeyboardEvent) => {
       const combo = comboOf(event);
 
-      if (combo === null || event.defaultPrevented) return;
+      if (combo === null || event.defaultPrevented || isDocked) return;
 
       if (editingKeybindId !== null) {
         event.preventDefault();
@@ -96,6 +97,7 @@ export const useKeybinds = () => {
     togglePanel,
     toggleSidebar,
     hasOnboarded,
+    isDocked,
     toggleAssistant,
     onRun,
     onStop,
