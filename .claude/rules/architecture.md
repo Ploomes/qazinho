@@ -359,8 +359,13 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     (⌘↵ passou, ⌘⇧↵ falhou; os atalhos do app ficam desligados). Fechar o Chrome termina a vez
     (`onClosed`, `closedByQa`), e no fim da run a coluna mostra como foi por um instante
     (`WINDOW_DOCK.endHoldMs`) e a janela volta ao tamanho e ao lugar de antes.
-  - Num celular, a `DeviceScreen` vira uma superfície (`role="application"`) que leva o ponteiro,
-    a roda e o teclado ao dispositivo, e o `ManualPanel` mostra o preparo, o passo e as marcas.
+  - Num celular é igual, com a janela do próprio aparelho: o emulador liga com ela, no lugar que
+    o `emulator-user.ini` do AVD diz (`withWindowAt`), e o simulador abre no Simulator, ou no
+    Device Hub que o substituiu no Xcode 27 (`simulatorAppsOf`), que mostra o último aparelho
+    visto: a coluna pede ao QA que escolha o ligado. A run não manda quadros ao stream enquanto a
+    janela está encostada, e fechar o emulador ou o app do simulador termina a vez.
+  - Sem o encaixe, a `DeviceScreen` vira uma superfície (`role="application"`) que leva o
+    ponteiro, a roda e o teclado ao dispositivo, e o `ManualPanel` mostra o passo e as marcas.
   - O CI nunca anda um caso à mão: o `PlanWalker` o deixa de fora com o porquê (`manual`).
 - **O agente guarda o que aprende sobre o app** (`role/keeper/`). As memórias ficam no projeto
   (`IProject.memories`), cada uma do projeto ou de um workspace, e numa lista só para sincronizar.

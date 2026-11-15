@@ -236,15 +236,17 @@ porquê. Depois que o plano roda, o plano e o Início lembram dos casos à mão 
 preparo, que a vez seguinte anda sem IA. Aí é a vez do QA. Na web ele usa o próprio Chrome da run,
 com janela, como qualquer navegador: o QAzinho o abre à esquerda da tela e vira uma coluna à direita
 com o passo, o esperado e Passou, Falhou e Pular (⌘↵ e ⌘⇧↵), e volta ao tamanho de antes quando o
-caso acaba; fechar o Chrome termina a vez. Num celular, a tela do dispositivo recebe o clique, a
-rolagem e o teclado dele, e a main manda a tela em quadros enquanto ele dirige. Cada marca guarda a
+caso acaba; fechar o Chrome termina a vez. Num celular é igual, com a janela do emulador ou do
+simulador ao lado da coluna; no Xcode 27 o simulador abre no Device Hub, que mostra o último
+aparelho visto, e o QA escolhe o ligado na primeira vez. Cada marca guarda a
 tela daquele momento como o passo, e uma falha vira um bug com a nota dele como o que veio. Uma
 variável é digitada pelo nome, sem o valor passar pela página. O `tests/smoke/manual.test.ts` prova
 isso no Chrome real com um agente fake: o preparo gravado e reusado, os cliques e o texto chegando à
 página, as marcas, e uma run do plano sem o caso à mão. No app de teste, num Mac, o Chrome abriu
 encostado ao QAzinho, um Claude Code real (Haiku) preparou o caso nele, as marcas viraram passos e
-uma falha virou bug, e a janela voltou ao lugar ao terminar, parar ou fechar o Chrome; o Windows e
-o Linux ainda não foram vistos. O toque num emulador e num simulador só foi provado por testes
+uma falha virou bug, e a janela voltou ao lugar ao terminar, parar ou fechar o Chrome. O mesmo
+andou num AVD real (o emulador com janela ao lado, preparado pelo agente e desligado no fim) e num
+simulador do Xcode 27 pelo Device Hub; o Windows e o Linux ainda não foram vistos. O toque num emulador e num simulador só foi provado por testes
 unitários.
 
 **O app abre no Início.** Uma tela junta, de todos os projetos, o que pede o QA agora: uma pergunta
