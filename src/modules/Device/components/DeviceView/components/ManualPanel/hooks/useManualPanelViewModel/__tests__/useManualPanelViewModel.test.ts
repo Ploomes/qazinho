@@ -99,6 +99,20 @@ afterEach(() => {
 });
 
 describe('useManualPanelViewModel', () => {
+  /**
+   * Um projeto sem variável fazia o seletor devolver um [] novo a cada leitura, e o React
+   * renderizava o painel em laço até quebrar a aba Dispositivo.
+   */
+  it('shows the QA’s turn in a project with no variables saved', () => {
+    useVariablesStore.setState({ byProject: {} });
+    qaTurn();
+
+    const { result } = renderHook(() => useManualPanelViewModel());
+
+    expect(result.current.title).toBe('Your turn on TC-01');
+    expect(result.current.hasVariables).toBe(false);
+  });
+
   it('shows how the case was prepared and the step the QA is on, with what is expected', () => {
     qaTurn([marked(1)]);
 

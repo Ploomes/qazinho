@@ -13,11 +13,10 @@ export const useManualPanelViewModel = () => {
     projectId: opened.projectId,
     plan: opened.plan,
     turn: opened.live?.isDone === false ? (opened.live.manual ?? null) : null,
-    outcomes: opened.live?.outcomes ?? [],
+    outcomes: opened.live?.outcomes ?? null,
   }));
-  const variables = useVariablesStore(
-    (state) => state.byProject[workspace?.projectId ?? ''] ?? [],
-  );
+  const variables =
+    useVariablesStore((state) => state.byProject[workspace?.projectId ?? '']) ?? [];
   const [note, setNote] = useState('');
   const [isPicking, setPicking] = useState(false);
   const [marking, setMarking] = useState<number | null>(null);
