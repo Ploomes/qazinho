@@ -6,6 +6,7 @@ export const SYNC_CASE_SCHEMA = z.object({
   priority: z.enum(['P1', 'P2', 'P3']),
   goal: z.string(),
   preconditions: z.string(),
+  signedInAs: z.string().optional(),
   steps: z.array(
     z.object({ action: z.string(), expected: z.string(), frame: z.string().optional() }),
   ),

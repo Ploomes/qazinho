@@ -3,8 +3,8 @@ import type { Priority } from './Priority';
 import type { StepVerdict } from '@/shared/types';
 
 /**
- * Um caso no plano: o que cobre, os passos, se é à mão, de onde vem o esperado e as
- * dúvidas que o seguram.
+ * Um caso no plano: o que cobre, a conta em que começa logado, os passos, se é à mão, de
+ * onde vem o esperado e as dúvidas que o seguram.
  */
 export interface ITestCase {
   id: string;
@@ -12,6 +12,7 @@ export interface ITestCase {
   priority: Priority;
   goal: string;
   preconditions: string;
+  signedInAs?: string;
   steps: ITestStep[];
   lastVerdict: StepVerdict | null;
   isManual?: boolean;

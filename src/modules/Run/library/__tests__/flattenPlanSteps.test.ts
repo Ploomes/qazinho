@@ -102,3 +102,14 @@ describe('flattenPlanSteps', () => {
     ).toEqual([true, true, false, false]);
   });
 });
+
+describe('flattenPlanSteps, the account a case starts in', () => {
+  it('marks every step with the account its case starts signed in with', () => {
+    expect(
+      flattenPlanSteps([{ ...CASE, signedInAs: 'LOGIN_EMAIL' }]).map(
+        ({ caseSignedInAs }) => caseSignedInAs,
+      ),
+    ).toEqual(['LOGIN_EMAIL', 'LOGIN_EMAIL']);
+    expect(flattenPlanSteps([CASE])[0]).not.toHaveProperty('caseSignedInAs');
+  });
+});

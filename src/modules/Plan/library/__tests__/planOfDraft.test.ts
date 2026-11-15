@@ -143,3 +143,15 @@ describe('planOfDraft', () => {
     expect(plan?.map(({ id }) => id)).toEqual(['TC-02', 'TC-04', 'TC-05']);
   });
 });
+
+describe('planOfDraft, the account a case starts in', () => {
+  it('keeps the variable the agent named, and drops one that is not a variable name', () => {
+    const plan = fresh([
+      { ...CARD, signedInAs: 'LOGIN_EMAIL' },
+      { ...CARD, title: 'Other', signedInAs: 'ana@loja.test' },
+    ]);
+
+    expect(plan?.[0]?.signedInAs).toBe('LOGIN_EMAIL');
+    expect(plan?.[1]).not.toHaveProperty('signedInAs');
+  });
+});

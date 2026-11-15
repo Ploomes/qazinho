@@ -2,7 +2,7 @@ import type { ITestCase } from '@/modules/Plan/types';
 
 /**
  * O plano com todo ${NAME} de uma variável renomeada escrito com o nome novo, em todo
- * campo que um caso e os passos dele guardam.
+ * campo que um caso e os passos dele guardam, a conta em que ele começa incluída.
  */
 export function planWithVariableRenamed(props: {
   plan: ITestCase[];
@@ -18,6 +18,7 @@ export function planWithVariableRenamed(props: {
     title: renamed(testCase.title),
     goal: renamed(testCase.goal),
     preconditions: renamed(testCase.preconditions),
+    ...(testCase.signedInAs === props.from ? { signedInAs: props.to } : {}),
     steps: testCase.steps.map((step) => ({
       ...step,
       action: renamed(step.action),

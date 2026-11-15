@@ -76,6 +76,7 @@ function sameCase(
           testCase.priority,
           testCase.goal,
           testCase.preconditions,
+          testCase.signedInAs ?? null,
           testCase.steps.map(({ action, expected, frame }) => [
             action,
             expected,

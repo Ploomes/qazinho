@@ -10,8 +10,8 @@ const VERDICTS: StepVerdict[] = ['passed', 'failed', 'blocked', 'skipped'];
 type Loose = Record<string, unknown>;
 
 /**
- * Os casos que um plan.yaml guarda, cada um feito inteiro: um campo deixado de fora lê
- * como vazio, um caso sem id ganha um livre, e `manual: true` vale como `isManual`.
+ * Os casos que um plan.yaml guarda, cada um inteiro: um campo de fora lê como vazio, um
+ * caso sem id ganha um livre, `manual: true` vale como `isManual`, e a conta é um nome.
  */
 export function planOfYaml(yaml: string): ITestCase[] {
   let read: unknown;
@@ -41,6 +41,7 @@ export function planOfYaml(yaml: string): ITestCase[] {
         priority: PRIORITIES.find((priority) => priority === testCase.priority) ?? 'P2',
         goal: textOf(testCase.goal),
         preconditions: textOf(testCase.preconditions),
+        ...accountOf(testCase.signedInAs),
         steps: steps.map(stepOf),
         lastVerdict: VERDICTS.find((verdict) => verdict === testCase.lastVerdict) ?? null,
         ...(testCase.isManual === true || testCase.manual === true
@@ -51,6 +52,12 @@ export function planOfYaml(yaml: string): ITestCase[] {
       },
     ];
   }, []);
+}
+
+function accountOf(value: unknown): Pick<ITestCase, 'signedInAs'> {
+  const name = textOf(value).trim();
+
+  return /^[A-Z][A-Z0-9_]*$/.test(name) ? { signedInAs: name } : {};
 }
 
 function textsOf(props: {

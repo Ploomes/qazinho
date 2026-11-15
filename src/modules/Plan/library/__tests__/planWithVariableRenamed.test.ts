@@ -65,3 +65,25 @@ describe('planWithVariableRenamed', () => {
     });
   });
 });
+
+describe('planWithVariableRenamed, the account a case starts in', () => {
+  it('renames the account a case starts signed in with', () => {
+    const [renamed] = planWithVariableRenamed({
+      plan: [{ ...CASE, signedInAs: 'LOGIN_EMAIL' }],
+      from: 'LOGIN_EMAIL',
+      to: 'ADMIN_EMAIL',
+    });
+
+    expect(renamed?.signedInAs).toBe('ADMIN_EMAIL');
+  });
+
+  it('does NOT touch another account', () => {
+    const [renamed] = planWithVariableRenamed({
+      plan: [{ ...CASE, signedInAs: 'SELLER_EMAIL' }],
+      from: 'LOGIN_EMAIL',
+      to: 'ADMIN_EMAIL',
+    });
+
+    expect(renamed?.signedInAs).toBe('SELLER_EMAIL');
+  });
+});

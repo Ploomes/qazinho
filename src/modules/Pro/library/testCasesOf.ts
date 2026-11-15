@@ -15,6 +15,7 @@ export function testCasesOf(props: {
     priority: one.priority,
     goal: one.goal,
     preconditions: one.preconditions,
+    ...(one.signedInAs === undefined ? {} : { signedInAs: one.signedInAs }),
     steps: one.steps.map(({ action, expected, frame }) =>
       frame === undefined ? { action, expected } : { action, expected, frame },
     ),

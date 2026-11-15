@@ -46,6 +46,9 @@ export function planOfDraft(props: {
       priority: one.priority,
       goal: one.goal.trim(),
       preconditions: one.preconditions.trim(),
+      ...(one.signedInAs !== undefined && /^[A-Z][A-Z0-9_]*$/.test(one.signedInAs.trim())
+        ? { signedInAs: one.signedInAs.trim() }
+        : {}),
       steps: one.steps,
       lastVerdict: null,
       ...(props.plan.some((kept) => kept.id === id && kept.isManual === true)

@@ -53,3 +53,17 @@ describe('missingVariablesOf', () => {
     ).toEqual([]);
   });
 });
+
+describe('missingVariablesOf, the account a case starts in', () => {
+  it('names the account a case starts in when the project does not keep it', () => {
+    expect(
+      missingVariablesOf({ plan: [testCase({ signedInAs: 'LOGIN_EMAIL' })], kept: [] }),
+    ).toEqual(['LOGIN_EMAIL']);
+    expect(
+      missingVariablesOf({
+        plan: [testCase({ signedInAs: 'LOGIN_EMAIL' })],
+        kept: ['LOGIN_EMAIL'],
+      }),
+    ).toEqual([]);
+  });
+});

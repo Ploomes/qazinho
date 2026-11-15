@@ -71,3 +71,21 @@ describe('planOfYaml', () => {
     expect(planOfYaml('')).toEqual([]);
   });
 });
+
+describe('planOfYaml, the account a case starts in', () => {
+  it('reads the variable the case starts signed in with', () => {
+    const [read] = planOfYaml(
+      'cases:\n  - id: TC-01\n    title: Cart\n    signedInAs: LOGIN_EMAIL\n    steps: []\n',
+    );
+
+    expect(read?.signedInAs).toBe('LOGIN_EMAIL');
+  });
+
+  it('does NOT take something that is not a variable name', () => {
+    const [read] = planOfYaml(
+      'cases:\n  - id: TC-01\n    title: Cart\n    signedInAs: ana@loja.test\n    steps: []\n',
+    );
+
+    expect(read).not.toHaveProperty('signedInAs');
+  });
+});

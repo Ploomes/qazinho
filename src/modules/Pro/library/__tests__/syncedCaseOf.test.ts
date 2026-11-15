@@ -44,3 +44,12 @@ describe('syncedCaseOf', () => {
     expect(synced.steps[1]).not.toHaveProperty('frame');
   });
 });
+
+describe('syncedCaseOf, the account a case starts in', () => {
+  it('sends the account only when the case starts signed in', () => {
+    expect(syncedCaseOf({ ...CASES[0]!, signedInAs: 'LOGIN_EMAIL' }).signedInAs).toBe(
+      'LOGIN_EMAIL',
+    );
+    expect(syncedCaseOf(CASES[0]!)).not.toHaveProperty('signedInAs');
+  });
+});
