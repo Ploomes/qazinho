@@ -1,3 +1,13 @@
+# [0.17.0](https://github.com/Salve-Software/qazinho/compare/v0.16.0...v0.17.0) (2026-11-15)
+
+
+### Features
+
+* **export:** sign in once in the Playwright file ([990754a](https://github.com/Salve-Software/qazinho/commit/990754a88b4e3d0449920c7da566e3e703057bce))
+* **plan:** pick the account a case starts in ([00f75fc](https://github.com/Salve-Software/qazinho/commit/00f75fcbe68351ee570a75bce996e6cef0b48620))
+* **plan:** the account a case starts in ([c2ab389](https://github.com/Salve-Software/qazinho/commit/c2ab3899b44830c76b7ea7fc272ace021d2ff19d))
+* **run:** sign in once per account on the web ([63b1be9](https://github.com/Salve-Software/qazinho/commit/63b1be90430caab530d198196fd33b89888be30f))
+
 # [0.16.0](https://github.com/Salve-Software/qazinho/compare/v0.15.0...v0.16.0) (2026-11-15)
 
 
