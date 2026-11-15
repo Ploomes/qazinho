@@ -120,9 +120,8 @@ ainda não chegaram. O app só lê a release mais nova: uma sem o feed de um sis
 `mac` desligado, deixa esse sistema parado até a seguinte. Uma versão ruim não se desfaz, publique
 uma maior.
 
-O repositório nasceu privado. Enquanto for, o site não vê as releases e o app instalado só atualiza
-com `QAZINHO_UPDATE_TOKEN` no ambiente. Ele precisa ficar público antes de o primeiro QA instalar, e
-isso não pede uma versão nova.
+O repositório é público: o site lê os downloads dele e o app instalado se atualiza dele sem token. O
+`QAZINHO_UPDATE_TOKEN` só serve a um teste contra um repositório privado.
 
 **O instalador do Windows é construído pela release.** Assim que o semantic-release cria a tag,
 um runner Windows faz o checkout dela e empacota o `QAzinho-Setup-<version>.exe` com o

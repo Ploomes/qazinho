@@ -534,8 +534,9 @@ nada mudou aqui, como um pull request mergeado, entra a cada poucos minutos. O c
 conta e a org dela, sinaliza uma org bloqueada ou uma conta que só lê, e baixa os projetos da org
 com as gravações deles. O "Abrir no desktop" de um plano na web (`qazinho://open`) abre o
 workspace dele aqui, ou oferece baixar o projeto dele da org primeiro. Testes unitários o dirigem
-contra uma plataforma fake; a API da plataforma (qazinho-server) ainda está sendo construída,
-então nenhuma ida e volta real rodou, e nenhum app instalado abriu um link ainda.
+contra uma plataforma fake. A API roda em produção, e um teste de usabilidade publicou um projeto
+numa org de verdade e viu o CI comentar no pull request dele; nenhum app instalado abriu um link
+`qazinho://` ainda.
 
 **Fechar a janela não fecha o app, como no Discord.** A janela some e o QAzinho continua: uma run
 segue andando, a ilha e as notificações chamam o QA de volta, e o agente de fora ainda o alcança. No
@@ -554,9 +555,10 @@ app vira uma tela que atualiza, menos com uma run andando; sem login nada trava.
 `tests/smoke/update.test.ts` anda isso no app construído contra um feed e uma API fakes. Um Mac
 instalou de verdade com um certificado descartável: a 0.0.1 achou a 0.0.2 num feed local, baixou,
 mostrou o botão, e o app no disco virou a 0.0.2; uma assinatura recusada tirou o botão. O build real
-gerou neste Mac os feeds dos três sistemas. Ainda não rodou: uma release pelo CI, um Mac notarizado,
-uma instalação no Windows ou no Linux, e a recusa do servidor real com um app logado. O
-`qazinho-releases` nasceu privado e precisa ficar público antes de o primeiro QA instalar.
+gerou neste Mac os feeds dos três sistemas. As releases publicadas levam o Mac assinado e
+notarizado, e o Windows já foi instalado num PC de verdade. O `qazinho-releases` é público. Ainda
+não rodou: uma release pelo CI, uma instalação no Linux, e a recusa do servidor real com um app
+logado.
 
 **O Codex está meio verificado.** O QAzinho o dirige por `codex exec --json` e o servidor MCP
 próprio dele, conferido contra um Codex fake construído a partir dos eventos do real. O chat

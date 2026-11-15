@@ -959,8 +959,8 @@ sem parar o QA.
   só um AppImage.
 - O endereço vem do `app-update.yml`, que o build grava a partir do `publish` do
   `electron-builder.yml`; o `UPDATE_REPO` repete o repositório, e um teste os mantém iguais. O
-  `updateFeedOf` só o troca por um feed de teste (`QAZINHO_UPDATE_FEED`) ou por um token enquanto o
-  repositório é privado (`QAZINHO_UPDATE_TOKEN`), então torná-lo público não pede uma versão nova.
+  `updateFeedOf` só o troca por um feed de teste (`QAZINHO_UPDATE_FEED`) ou por um token, para um
+  teste contra um repositório privado (`QAZINHO_UPDATE_TOKEN`).
 - A página lê o estado pelo `Updates` de `src/services/` (`useUpdateWatch`, `AppUpdate`). Com a
   versão pronta, o `UpdateButton` aparece na barra de título, desligado enquanto uma run anda.
 - **Não há rollback.** Uma versão ruim se desfaz publicando uma maior.

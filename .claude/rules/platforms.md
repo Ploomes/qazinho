@@ -83,6 +83,6 @@ sem assinatura ainda instala a primeira com assinatura.
 
 - Uma library que difere por plataforma recebe `platform` como parâmetro, e o teste dela cobre
   `win32`, `linux` e `darwin`. Os caminhos do Windows são testados como strings: `C:\Users\…`.
-- O CI roda só no Linux, e nenhuma máquina Windows andou pelo app ainda. Até que uma ande, um
+- O CI roda só no Linux. O app já rodou num Windows de verdade, e nenhuma máquina Linux ainda. Um
   caminho do Windows é provado pelo teste unitário dele, e uma mudança que toca processos ou
   caminhos diz em quais plataformas raciocinou.
