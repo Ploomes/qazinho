@@ -1,6 +1,7 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
 import { AssistantDock } from '@/modules/Assistant';
 import { AllBugs } from '@/modules/Bug';
+import { ManualDock } from '@/modules/Device';
 import { FirstRun, Home, NewProject } from '@/modules/Home';
 import { ChangeRunWarning } from '@/modules/Plan';
 import { ProLinkModal, ProMergeModal, ProRunWarning } from '@/modules/Pro';
@@ -20,6 +21,7 @@ export const App: React.FC = () => {
   const {
     shellStyle,
     isUpdateBlocked,
+    isDocked,
     isTitlebarBare,
     isOnboarding,
     hasSidebar,
@@ -43,7 +45,11 @@ export const App: React.FC = () => {
     hasSearch,
   } = useAppViewModel();
 
-  return (
+  return isDocked ? (
+    <MotionConfig reducedMotion="user">
+      <ManualDock />
+    </MotionConfig>
+  ) : (
     <MotionConfig reducedMotion="user">
       <div className="app" style={shellStyle}>
         <Titlebar isBare={isTitlebarBare} />

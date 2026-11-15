@@ -27,6 +27,7 @@ import {
   useSystemTheme,
   useVariables,
   useVideoSweep,
+  useWindowDock,
 } from '@/shared/hooks';
 import {
   useAppStore,
@@ -50,6 +51,7 @@ export const useAppViewModel = () => {
   const media = useAppStore((state) => state.media);
   const replay = useAppStore((state) => state.replay);
   const isSearchOpen = useAppStore((state) => state.isSearchOpen);
+  const isDocked = useAppStore((state) => state.dock !== null);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
   const isUpdateRequired = useUpdateStore((state) => state.update.isRequired);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
@@ -87,6 +89,7 @@ export const useAppViewModel = () => {
   useProjectNaming();
   useSidebarFit();
   useSystemTheme();
+  useWindowDock();
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -138,6 +141,7 @@ export const useAppViewModel = () => {
                 : 'run'
           }`,
     isUpdateBlocked,
+    isDocked: isDocked && !isUpdateBlocked,
     isTitlebarBare: isUpdateBlocked || !hasOnboarded,
     isOnboarding: !hasOnboarded,
     hasSidebar: projects.length > 0 && screen !== 'settings',

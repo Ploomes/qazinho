@@ -18,4 +18,5 @@ export * from './useSystemTheme';
 export * from './useToTop';
 export * from './useVariables';
 export * from './useVideoSweep';
+export * from './useWindowDock';
 export * from './useWindowWidth';

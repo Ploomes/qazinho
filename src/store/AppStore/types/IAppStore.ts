@@ -9,7 +9,7 @@ import type { ChatCommandId } from '@/modules/Chat/types';
 import type { IProject } from '@/modules/Project';
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
 import type { IReplayOpen } from '@/modules/Run';
-import type { IImportSource } from '@/shared/types';
+import type { IImportSource, IWindowDock } from '@/shared/types';
 
 /**
  * O shell: qual tela está em cima, qual projeto está escolhido, e o que flutua sobre ela.
@@ -33,8 +33,10 @@ export interface IAppStore {
   modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
   replay: IReplayOpen | null;
+  dock: IWindowDock | null;
   toggleTheme: () => void;
   setTheme: (theme: Theme) => void;
+  setDock: (dock: IWindowDock | null) => void;
   setSystemTheme: (systemTheme: ShownTheme) => void;
   openSettings: () => void;
   closeSettings: () => void;

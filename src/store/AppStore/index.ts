@@ -26,11 +26,13 @@ export const useAppStore = create<IAppStore>()(
       modelMenuAt: null,
       media: null,
       replay: null,
+      dock: null,
 
       toggleTheme: () =>
         set((state) => ({ theme: shownThemeOf(state) === 'dark' ? 'light' : 'dark' })),
 
       setTheme: (theme) => set({ theme }),
+      setDock: (dock) => set({ dock }),
 
       setSystemTheme: (systemTheme) => set({ systemTheme }),
 
