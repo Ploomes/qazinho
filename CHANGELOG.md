@@ -1,3 +1,18 @@
+# [0.16.0](https://github.com/Salve-Software/qazinho/compare/v0.15.0...v0.16.0) (2026-11-15)
+
+
+### Bug Fixes
+
+* **keybinds:** no app shortcuts while docked ([cb9e385](https://github.com/Salve-Software/qazinho/commit/cb9e385a4fea338b7a97c95149597c40debfff9a))
+
+
+### Features
+
+* **device:** name the emulator or the simulator in the column ([5087f41](https://github.com/Salve-Software/qazinho/commit/5087f4159b70af5998d7f6d24b7e81ed5b1f3be2))
+* **device:** the manual case's column beside its Chrome ([e4e9395](https://github.com/Salve-Software/qazinho/commit/e4e9395e7bd973734c728fccf86979e1554bf5aa))
+* **run:** dock a manual case on a phone too ([a5f3400](https://github.com/Salve-Software/qazinho/commit/a5f3400535b1b8ff13cbaad3aa04d9b2ff907a57))
+* **window:** dock QAzinho beside the Chrome of a manual case ([d99f23f](https://github.com/Salve-Software/qazinho/commit/d99f23f7609ce18f7e4091a2b7b1d8dcd20641b2))
+
 # [0.15.0](https://github.com/Salve-Software/qazinho/compare/v0.14.0...v0.15.0) (2026-11-15)
 
 
