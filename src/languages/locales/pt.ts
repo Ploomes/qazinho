@@ -824,6 +824,7 @@ export const pt: typeof en = {
     UNWALKED_ASKED: 'O agente precisava de uma pessoa.',
     UNWALKED_NO_VALUE: 'Falta o valor de uma variável nesta run.',
     UNWALKED_NO_DATA: 'Os dados de teste que esta gravação espera não estão lá.',
+    UNWALKED_SIGN_IN: 'A run não conseguiu entrar na conta em que este caso começa.',
     UNWALKED_MANUAL: 'O QA faz este caso à mão.',
     UNWALKED_ENDED: 'Sem marca: você terminou o caso antes deste passo.',
     REPLAY_RUN: 'Run {{id}}, o plano inteiro',
