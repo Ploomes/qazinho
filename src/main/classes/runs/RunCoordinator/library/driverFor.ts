@@ -10,8 +10,8 @@ import {
 } from '@salve-software/qazinho-harness/engine';
 
 /**
- * Um plano, uma porta, seja o Chrome ou um celular; o Chrome entra num ambiente
- * protegido com as variáveis, e abre numa janela em `window` para o QA usar.
+ * Um plano, uma porta, seja o Chrome ou um celular, numa janela em `window` para o QA
+ * usar; o Chrome entra num ambiente protegido com as variáveis.
  */
 export function driverFor(props: {
   run: IWalkRun;
@@ -29,6 +29,8 @@ export function driverFor(props: {
       avd: run.avd,
       apk: run.target.value,
       ...(props.shrink === undefined ? {} : { shrink: props.shrink }),
+      ...(props.window === undefined ? {} : { window: props.window }),
+      ...(props.onClosed === undefined ? {} : { onClosed: props.onClosed }),
     });
 
   if (run.target.kind === 'ios')
@@ -37,6 +39,8 @@ export function driverFor(props: {
       udid: run.udid,
       app: run.target.value,
       ...(props.shrink === undefined ? {} : { shrink: props.shrink }),
+      ...(props.window === undefined ? {} : { window: props.window }),
+      ...(props.onClosed === undefined ? {} : { onClosed: props.onClosed }),
     });
 
   return new WebDriver({

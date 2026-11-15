@@ -144,6 +144,7 @@ export class RunCoordinator {
   private readonly heardMemories = new Map<string, Set<string>>();
   private readonly addresses = new Map<string, { url: string; at: number }>();
   private readonly manualTurns = new Map<string, IManualWalk>();
+  private readonly docked = new Set<string>();
   private readonly touches = new Map<string, Promise<void>>();
   private readonly framePumps = new Map<string, () => void>();
 
@@ -271,6 +272,7 @@ export class RunCoordinator {
       this.paused.delete(run.workspaceId);
       this.viewports.delete(run.workspaceId);
       this.designShots.delete(run.workspaceId);
+      this.docked.delete(run.workspaceId);
       this.dock?.end(run.workspaceId);
     }
   }
@@ -541,9 +543,11 @@ export class RunCoordinator {
 
     try {
       const window =
-        run.mode === 'manual' && run.target.kind === 'web'
+        run.mode === 'manual'
           ? ((await this.dock?.start(run.workspaceId)) ?? null)
           : null;
+
+      if (window !== null) this.docked.add(run.workspaceId);
 
       driver = driverFor({
         run,
@@ -852,7 +856,7 @@ export class RunCoordinator {
 
     if (steps === undefined || first === undefined) return null;
 
-    this.pumpFrames({ run, driver });
+    if (!this.docked.has(workspaceId)) this.pumpFrames({ run, driver });
 
     try {
       const prep = await this.prepareManual({ run, driver, steps });
