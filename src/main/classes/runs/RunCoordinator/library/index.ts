@@ -34,11 +34,13 @@ export {
   recordedAction,
   replayedOutcome,
   resolvedAction,
+  signedInAsOf,
   stepCarryOn,
   unwalkedOutcome,
   uploadRuleOf,
   fileRefsIn,
   variablePort,
+  withSignIn,
 } from '@salve-software/qazinho-harness/engine';
 export * from './markedBoxOf';
 export * from './markedOutcomeOf';

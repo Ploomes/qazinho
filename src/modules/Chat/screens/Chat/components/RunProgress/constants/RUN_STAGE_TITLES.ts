@@ -3,5 +3,6 @@ export const RUN_STAGE_TITLES = {
   replay: { one: 'RUN_STAGE.TITLE_REPLAY_ONE', other: 'RUN_STAGE.TITLE_REPLAY_OTHER' },
   adjust: { one: 'RUN_STAGE.TITLE_ADJUST_ONE', other: 'RUN_STAGE.TITLE_ADJUST_OTHER' },
   prepare: { one: 'RUN_STAGE.TITLE_PREPARE_ONE', other: 'RUN_STAGE.TITLE_PREPARE_OTHER' },
+  signIn: { one: 'RUN_STAGE.TITLE_SIGN_IN_ONE', other: 'RUN_STAGE.TITLE_SIGN_IN_OTHER' },
   manual: { one: 'RUN_STAGE.TITLE_MANUAL_ONE', other: 'RUN_STAGE.TITLE_MANUAL_OTHER' },
 } as const;

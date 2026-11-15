@@ -5,6 +5,7 @@ export const RUN_HOW_KEYS = {
   replay: 'RUN.HOW_REPLAY',
   adjust: 'RUN.HOW_ADJUST',
   prepare: 'RUN.HOW_PREPARE',
+  signIn: 'RUN.HOW_SIGN_IN',
   manual: 'RUN.HOW_MANUAL',
   check: 'RUN.HOW_CHECK',
 } as const satisfies Record<RunHow | 'check', string>;

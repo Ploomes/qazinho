@@ -53,6 +53,7 @@ import type {
   IStepReport,
   McpHost,
 } from '@salve-software/qazinho-harness';
+import type { ISignInRecipe } from '@salve-software/qazinho-harness/contract';
 import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
@@ -61,7 +62,7 @@ import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { agentFailure, writeAtomically } from '@/main/library';
 import { EXPLORATION } from '@/shared/constants';
 import { mcpConfigWith } from '@salve-software/qazinho-harness';
-import { WEB_DRIVER } from '@salve-software/qazinho-harness/engine';
+import { SessionKeeper, WEB_DRIVER } from '@salve-software/qazinho-harness/engine';
 import { EXPLORE_PUSHES, RUN_MANUAL, RUN_WALK, RUN_WATCH, UNWALKED } from './constants';
 import {
   answerWords,
@@ -100,6 +101,7 @@ import {
   recipeOf,
   recordedAction,
   replayedOutcome,
+  signedInAsOf,
   stepCarryOn,
   talkAside,
   unwalkedOutcome,
@@ -109,6 +111,7 @@ import {
   uploadRuleOf,
   variablePort,
   designFrameOf,
+  withSignIn,
 } from './library';
 
 /** Anda um plano num dispositivo real: o agente dirige, o requisito julga. */
@@ -741,6 +744,18 @@ export class RunCoordinator {
     const book = await this.readBook(run.workspaceId);
     const recorded: ICaseRecipe[] = [];
     const partial: ICaseRecipe[] = [];
+    let current: { step: IFlatStep; index: number } | undefined;
+    const keeper =
+      run.target.kind === 'web'
+        ? new SessionKeeper({
+            driver,
+            port: this.portOf({ run, driver }),
+            book,
+            appUrl: run.target.value,
+            signIn: (account) => this.signInTurn({ run, driver, account, at: current }),
+            isStopped: () => this.stopping.has(run.workspaceId),
+          })
+        : null;
 
     try {
       const wanted = run.caseIds === undefined ? null : new Set(run.caseIds);
@@ -756,11 +771,25 @@ export class RunCoordinator {
 
         if (this.stopping.has(run.workspaceId)) break;
 
-        if (position > 0) await driver.restart().catch(() => undefined);
+        const flat = steps.map(({ step }) => step);
+        const account = signedInAsOf({ steps: flat, targetKind: run.target.kind });
+
+        current = steps[0];
+
+        const isStarted = await this.startCase({
+          driver,
+          keeper,
+          account,
+          isFresh: position === 0,
+        });
 
         if (this.stopping.has(run.workspaceId)) break;
 
-        const flat = steps.map(({ step }) => step);
+        if (!isStarted) {
+          this.leaveUnsigned({ run, steps, account });
+          continue;
+        }
+
         const recipe =
           run.mode === 'agent'
             ? null
@@ -785,11 +814,17 @@ export class RunCoordinator {
 
         if (replayed === 'replayed' && begun === null) continue;
 
-        if (replayed === 'diverged') {
-          await driver.restart().catch(() => undefined);
-
+        if (
+          replayed === 'diverged' &&
+          !(await this.startCase({ driver, keeper, account, isFresh: false }))
+        ) {
           if (this.stopping.has(run.workspaceId)) break;
+
+          this.leaveUnsigned({ run, steps, account });
+          continue;
         }
+
+        if (this.stopping.has(run.workspaceId)) break;
 
         const from =
           replayed === 'replayed'
@@ -809,6 +844,8 @@ export class RunCoordinator {
           partial,
           isHealing: replayed === 'diverged' && begun === null,
           isUnderWay: typeof replayed === 'number' && from > 0,
+          signedInAs: account,
+          signInOf: () => (account === null ? null : (keeper?.signInOf(account) ?? null)),
         });
 
         if (recorded.length > 0 || partial.length > 0)
@@ -1091,6 +1128,189 @@ export class RunCoordinator {
   }
 
   /**
+   * Abre o app para um caso: do zero, ou já dentro da conta em que ele começa numa run
+   * web; false quando a run não conseguiu entrar nela.
+   */
+  private async startCase(props: {
+    driver: IDeviceDriver;
+    keeper: SessionKeeper | null;
+    account: string | null;
+    isFresh: boolean;
+  }): Promise<boolean> {
+    const { driver, keeper, account, isFresh } = props;
+
+    if (account === null || keeper === null) {
+      if (!isFresh) await driver.restart().catch(() => undefined);
+
+      return true;
+    }
+
+    return keeper.start({ account, isFresh });
+  }
+
+  /** Deixa de fora um caso em cuja conta a run não entrou: o primeiro passo bloqueado. */
+  private leaveUnsigned(props: {
+    run: IWalkRun;
+    steps: { step: IFlatStep; index: number }[];
+    account: string | null;
+  }): void {
+    const at = Date.now();
+
+    for (const [position, { step, index }] of props.steps.entries())
+      this.emit({
+        kind: 'step',
+        outcome: unwalkedOutcome({
+          step,
+          index,
+          workspaceId: props.run.workspaceId,
+          verdict: position === 0 ? 'blocked' : 'skipped',
+          why:
+            position === 0
+              ? `${UNWALKED.signIn} \${${props.account ?? ''}}`
+              : UNWALKED.skipped,
+          reason: position === 0 ? 'signIn' : 'skipped',
+          at,
+        }),
+      });
+  }
+
+  /**
+   * O agente entra numa conta num turno só, antes dos casos web que começam nela; o jeito
+   * de entrar vira a gravação deles, e uma pergunta vai ao QA como em qualquer caso.
+   */
+  private async signInTurn(props: {
+    run: IWalkRun;
+    driver: IDeviceDriver;
+    account: string;
+    at: { step: IFlatStep; index: number } | undefined;
+  }): Promise<ISignInRecipe | null> {
+    const { run, driver, account, at } = props;
+    const { workspaceId } = run;
+
+    if (run.mode === 'replay' || this.stopping.has(workspaceId)) return null;
+
+    const device = this.portOf({ run, driver });
+    const actions: IStepAction[] = [];
+    let signed: ISignInRecipe | null = null;
+    let over: () => void = () => undefined;
+    const isOver = new Promise<null>((resolve) => {
+      over = () => {
+        resolve(null);
+      };
+    });
+    const endTurn = (said: string) => {
+      over();
+      setImmediate(() => {
+        this.tools.detach(workspaceId);
+        this.runner.cancel(workspaceId);
+      });
+
+      return said;
+    };
+    const onReport = async (report: IStepReport): Promise<string> => {
+      if (report.verdict !== 'passed') return endTurn('Noted. End your turn now.');
+
+      const screen = await device.describe().catch(() => '');
+      const proof = provableProof({ proof: report.proof, screen, values: run.values });
+
+      if (proof.trim().length > 0) signed = { account, actions, proof };
+
+      return endTurn('Signed in: the cases take it from here. End your turn now.');
+    };
+    const onAsk = async (question: IQaQuestion): Promise<string> => {
+      if (at === undefined)
+        return 'Sign in without the QA: report step 1 blocked if you cannot.';
+
+      const { words } = await this.askQa({
+        run,
+        asked: question,
+        at: { caseId: at.step.caseId, stepNumber: 1, action: at.step.action },
+        carryOn: 'Carry on signing in.',
+        noAnswer:
+          'Sign in without it if you can, or report step 1 blocked and say what you needed.',
+      });
+
+      return words;
+    };
+    const mcpConfig = this.tools.mcpConfigFor(
+      workspaceId,
+      this.askWaitMs + RUN_WALK.toolMarginMs,
+    );
+
+    if (mcpConfig === null) return null;
+
+    if (at !== undefined)
+      this.emit({ kind: 'doing', workspaceId, index: at.index, how: 'signIn' });
+
+    this.tools.attach({
+      workspaceId,
+      driver: {
+        describe: () => device.describe(),
+        inspect: (target) => device.inspect(target),
+        failedCalls: () => device.failedCalls(),
+        calls: (ask) => device.calls(ask),
+        glance: () => device.glance(),
+        act: async (action) => {
+          await device.act(action);
+          actions.push(
+            recordedAction({
+              appUrl: run.target.value,
+              action,
+              found: driver.resolution?.() ?? null,
+              values: run.values,
+            }),
+          );
+        },
+      },
+      onReport,
+      onFinding: () => Promise.resolve('Not now: only sign in.'),
+      onAsk,
+      onSay: () => Promise.resolve('Noted.'),
+    });
+
+    const screen = await device.describe().catch(() => '');
+
+    if (this.stopping.has(workspaceId)) {
+      this.tools.detach(workspaceId);
+
+      return null;
+    }
+
+    const asking = this.runner.ask({
+      workspaceId,
+      agentId: run.agentId,
+      command: run.command,
+      model: run.model,
+      sessionId: null,
+      systemPrompt: this.harness.run({
+        target: run.target,
+        viewport: this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport,
+        language: run.language,
+      }),
+      mcpConfig,
+      allowedTools: this.harness.toolsFor('runner').allowedTools,
+      prompt: this.harness.signIn({
+        account,
+        screen,
+        language: run.language,
+        variables: run.values.map(({ name, description }) => ({ name, description })),
+        memories: run.memories ?? [],
+      }),
+    });
+
+    void asking.then(
+      ({ costUsd }) => {
+        if (costUsd !== null) this.emit({ kind: 'cost', workspaceId, costUsd });
+      },
+      () => undefined,
+    );
+    await Promise.race([asking.catch(() => null), isOver]);
+    this.tools.detach(workspaceId);
+
+    return signed;
+  }
+
+  /**
    * Manda ao stream a tela de um celular, que não transmite sozinho, enquanto o QA anda
    * um caso à mão nele.
    */
@@ -1137,6 +1357,8 @@ export class RunCoordinator {
     partial: ICaseRecipe[];
     isHealing: boolean;
     isUnderWay: boolean;
+    signedInAs: string | null;
+    signInOf: () => ISignInRecipe | null;
   }): Promise<boolean | RunFailure> {
     const { run, driver } = props;
     const { workspaceId } = run;
@@ -1305,7 +1527,7 @@ export class RunCoordinator {
         });
 
         if (recipe !== null && !isAnsweredForThisRun && !props.isUnderWay) {
-          props.recorded.push(recipe);
+          props.recorded.push(withSignIn({ recipe, signIn: props.signInOf() }));
           this.emit({ kind: 'recorded', workspaceId, caseId: walking.step.caseId });
         }
 
@@ -1534,6 +1756,7 @@ export class RunCoordinator {
         memories: run.memories ?? [],
         heardMemories: [...(this.heardMemories.get(workspaceId) ?? [])],
         uploads: run.uploads,
+        signedInAs: props.signedInAs,
       }),
     });
 
@@ -1559,7 +1782,8 @@ export class RunCoordinator {
             at: Date.now(),
           });
 
-    if (stoppedAt !== null) props.partial.push(stoppedAt);
+    if (stoppedAt !== null)
+      props.partial.push(withSignIn({ recipe: stoppedAt, signIn: props.signInOf() }));
 
     if (this.stopping.has(workspaceId)) return false;
 
