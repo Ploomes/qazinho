@@ -96,6 +96,7 @@ import type { ITrayWords } from './ITrayWords';
 import type { IVideoSweep } from './IVideoSweep';
 import type { IViewport } from './IViewport';
 import type { IWindowControls } from './IWindowControls';
+import type { IWindowDock } from './IWindowDock';
 import type { IWriteSkill } from './IWriteSkill';
 import type { JiraBoardList } from './JiraBoardList';
 import type { JiraIssueList } from './JiraIssueList';
@@ -218,6 +219,8 @@ export interface IQazinhoApi {
   fitWindow: (fit: WindowFit) => Promise<void>;
   paintWindowControls: (controls: IWindowControls) => Promise<void>;
   labelTray: (words: ITrayWords) => Promise<void>;
+  windowDock: () => Promise<IWindowDock | null>;
+  onWindowDock: (listener: (dock: IWindowDock | null) => void) => () => void;
   openLogs: () => Promise<void>;
   copyDiagnostics: () => Promise<boolean>;
   checkMachine: () => Promise<IMachineCheck>;

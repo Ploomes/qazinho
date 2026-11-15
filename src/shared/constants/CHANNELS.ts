@@ -75,6 +75,8 @@ export const CHANNELS = {
   fitWindow: 'window:fit',
   paintWindowControls: 'window:controls',
   labelTray: 'window:tray',
+  windowDock: 'window:dock',
+  windowDockEvent: 'window:dock-event',
   openLogs: 'logs:open',
   copyDiagnostics: 'logs:copy',
   checkMachine: 'machine:check',

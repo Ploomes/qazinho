@@ -107,6 +107,7 @@ import {
   AppNames,
   AppPeek,
   AppTray,
+  WindowDock,
   AppUpdater,
   Archive,
   AssistantAgent,
@@ -845,6 +846,13 @@ const codeExport = new CodeExport({
     return dumped === null ? null : packageOfApk(dumped.stdout) || null;
   },
 });
+const windowDock = new WindowDock({
+  windowOf: () => appWindows()[0] ?? null,
+  onChange: (dock) => {
+    for (const open of appWindows())
+      if (!open.isDestroyed()) open.webContents.send(CHANNELS.windowDockEvent, dock);
+  },
+});
 const runs = new RunCoordinator({
   runner: agentRunner,
   findCommand,
@@ -877,6 +885,7 @@ const runs = new RunCoordinator({
     ).isSaved,
   skillsOf: (projectId) =>
     skillLibrary.forChat({ projectId, uses: ['cases', 'explore'], calledId: null }),
+  dock: windowDock,
   shrink: ({ image, width, height, quality }) =>
     nativeImage
       .createFromBuffer(image)
@@ -1960,6 +1969,7 @@ void app.whenReady().then(async () => {
     if (window !== null && process.platform !== 'darwin')
       window.setTitleBarOverlay({ ...controls, height: WINDOW_CONTROLS.height });
   });
+  ipcMain.handle(CHANNELS.windowDock, () => windowDock.current());
   ipcMain.handle(CHANNELS.labelTray, (_event, words: ITrayWords) => {
     if (process.platform !== 'darwin') tray.label(words);
   });

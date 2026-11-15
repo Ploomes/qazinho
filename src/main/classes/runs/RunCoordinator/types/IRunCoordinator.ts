@@ -1,3 +1,4 @@
+import type { IRunDock } from './IRunDock';
 import type { IVideoRecorder } from './IVideoRecorder';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
@@ -30,4 +31,5 @@ export interface IRunCoordinator {
     store: string;
   }) => Promise<void>;
   skillsOf?: (projectId: string) => Promise<ITeamSkill[]>;
+  dock?: IRunDock;
 }

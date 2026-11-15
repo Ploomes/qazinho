@@ -113,6 +113,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     fitWindow: () => Promise.resolve(),
     paintWindowControls: () => Promise.resolve(),
     labelTray: () => Promise.resolve(),
+    windowDock: () => Promise.resolve(null),
+    onWindowDock: () => () => undefined,
     openLogs: () => Promise.resolve(),
     copyDiagnostics: () => Promise.resolve(true),
     checkMachine: () =>

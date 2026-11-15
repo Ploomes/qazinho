@@ -1,0 +1,7 @@
+import type { IWindowPlace } from '@salve-software/qazinho-harness/engine';
+
+/** Encosta o QAzinho ao lado do Chrome de um caso à mão, e o devolve no fim da run. */
+export interface IRunDock {
+  start: (workspaceId: string) => Promise<IWindowPlace | null>;
+  end: (workspaceId: string) => void;
+}

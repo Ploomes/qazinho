@@ -100,6 +100,7 @@ import type {
   IVideoSweep,
   IViewport,
   IWindowControls,
+  IWindowDock,
   IWriteSkill,
   JiraBoardList,
   JiraIssueList,
@@ -318,6 +319,19 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.paintWindowControls, controls) as Promise<void>,
   labelTray: (words: ITrayWords) =>
     ipcRenderer.invoke(CHANNELS.labelTray, words) as Promise<void>,
+  windowDock: () =>
+    ipcRenderer.invoke(CHANNELS.windowDock) as Promise<IWindowDock | null>,
+  onWindowDock: (listener: (dock: IWindowDock | null) => void) => {
+    const forward = (_: unknown, dock: IWindowDock | null) => {
+      listener(dock);
+    };
+
+    ipcRenderer.on(CHANNELS.windowDockEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.windowDockEvent, forward);
+    };
+  },
   openLogs: () => ipcRenderer.invoke(CHANNELS.openLogs) as Promise<void>,
   copyDiagnostics: () => ipcRenderer.invoke(CHANNELS.copyDiagnostics) as Promise<boolean>,
   checkMachine: () => ipcRenderer.invoke(CHANNELS.checkMachine) as Promise<IMachineCheck>,

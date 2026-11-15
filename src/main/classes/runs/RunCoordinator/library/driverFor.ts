@@ -1,7 +1,7 @@
 import type { IWalkRun } from '@/main/classes/runs/RunCoordinator/types';
 import type { ShrinkImage } from '@/main/types';
 import type { IDeviceScreen } from '@salve-software/qazinho-harness';
-import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
+import type { IDeviceDriver, IWindowPlace } from '@salve-software/qazinho-harness/engine';
 import {
   AndroidDriver,
   IosDriver,
@@ -10,14 +10,16 @@ import {
 } from '@salve-software/qazinho-harness/engine';
 
 /**
- * Um plano, uma porta: a run não se importa se está dirigindo o Chrome ou um celular; o
- * Chrome entra num ambiente protegido com as variáveis do projeto.
+ * Um plano, uma porta, seja o Chrome ou um celular; o Chrome entra num ambiente
+ * protegido com as variáveis, e abre numa janela em `window` para o QA usar.
  */
 export function driverFor(props: {
   run: IWalkRun;
   shrink?: ShrinkImage;
   onAddress?: (url: string) => void;
   onScreens?: (screens: IDeviceScreen[]) => void;
+  window?: IWindowPlace;
+  onClosed?: () => void;
 }): IDeviceDriver {
   const { run } = props;
 
@@ -46,5 +48,7 @@ export function driverFor(props: {
     ...(props.shrink === undefined ? {} : { shrink: props.shrink }),
     ...(props.onAddress === undefined ? {} : { onAddress: props.onAddress }),
     ...(props.onScreens === undefined ? {} : { onScreens: props.onScreens }),
+    ...(props.window === undefined ? {} : { window: props.window }),
+    ...(props.onClosed === undefined ? {} : { onClosed: props.onClosed }),
   });
 }

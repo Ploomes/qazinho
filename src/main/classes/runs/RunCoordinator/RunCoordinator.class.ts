@@ -5,6 +5,7 @@ import type {
   IOpenQuestion,
   IRecipeBook,
   IRunCoordinator,
+  IRunDock,
   IRunTalk,
   IStepWatch,
   IVideoRecorder,
@@ -121,6 +122,7 @@ export class RunCoordinator {
   private readonly tools: McpHost;
   private readonly harness: Harness;
   private readonly onEvent: (event: IRunEvent) => void;
+  private readonly dock: IRunDock | null;
   private readonly shrink: ShrinkImage | null;
   private readonly recorder: IVideoRecorder | null;
   private readonly variablesOf: (projectId: string) => Promise<IVariableValue[]>;
@@ -155,6 +157,7 @@ export class RunCoordinator {
     this.tools = props.tools;
     this.harness = props.harness;
     this.onEvent = props.onEvent;
+    this.dock = props.dock ?? null;
     this.shrink = props.shrink ?? null;
     this.recorder = props.recorder ?? null;
     this.variablesOf = props.variablesOf ?? (() => Promise.resolve([]));
@@ -268,6 +271,7 @@ export class RunCoordinator {
       this.paused.delete(run.workspaceId);
       this.viewports.delete(run.workspaceId);
       this.designShots.delete(run.workspaceId);
+      this.dock?.end(run.workspaceId);
     }
   }
 
@@ -536,9 +540,22 @@ export class RunCoordinator {
     let driver: IDeviceDriver | null = null;
 
     try {
+      const window =
+        run.mode === 'manual' && run.target.kind === 'web'
+          ? ((await this.dock?.start(run.workspaceId)) ?? null)
+          : null;
+
       driver = driverFor({
         run,
         ...(this.shrink === null ? {} : { shrink: this.shrink }),
+        ...(window === null
+          ? {}
+          : {
+              window,
+              onClosed: () => {
+                this.closedByQa(run.workspaceId);
+              },
+            }),
         onAddress: (url) => {
           const shown = privateUrlOf({ url, values: run.values });
 
@@ -569,6 +586,7 @@ export class RunCoordinator {
       const recorded = (await driver?.stopRecording().catch(() => null)) ?? null;
 
       await driver?.close();
+      this.dock?.end(run.workspaceId);
       await this.keepNetwork({ run, driver });
       this.drivers.delete(run.workspaceId);
       this.addresses.delete(run.workspaceId);
@@ -600,6 +618,7 @@ export class RunCoordinator {
     const recorded = await driver.stopRecording().catch(() => null);
 
     await driver.close();
+    this.dock?.end(run.workspaceId);
     await this.keepNetwork({ run, driver });
     this.drivers.delete(run.workspaceId);
     this.addresses.delete(run.workspaceId);
@@ -2198,6 +2217,11 @@ export class RunCoordinator {
 
     if (talk !== undefined && talk.waiting.length > 0)
       this.emit({ kind: 'unheard', workspaceId, texts: talk.waiting });
+  }
+
+  private closedByQa(workspaceId: string): void {
+    if (this.manualTurns.has(workspaceId)) this.endManual(workspaceId);
+    else this.stop(workspaceId);
   }
 
   private emit(event: IRunEvent): void {
