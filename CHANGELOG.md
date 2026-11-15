@@ -1,3 +1,15 @@
+# [0.15.0](https://github.com/Salve-Software/qazinho/compare/v0.14.0...v0.15.0) (2026-11-15)
+
+
+### Bug Fixes
+
+* **device:** keep the manual panel out of a render loop ([1c954ea](https://github.com/Salve-Software/qazinho/commit/1c954ea384a39a3b40fa765f29542841073d07a7))
+
+
+### Features
+
+* **update:** a Microsoft Store copy updates through the store ([51d1ea0](https://github.com/Salve-Software/qazinho/commit/51d1ea02a4141a7a67a689d4c3cc033499c7cd78))
+
 # [0.14.0](https://github.com/Salve-Software/qazinho/compare/v0.13.0...v0.14.0) (2026-11-14)
 
 
