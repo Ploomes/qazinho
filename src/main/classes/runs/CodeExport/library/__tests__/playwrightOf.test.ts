@@ -308,3 +308,64 @@ describe('playwrightOf', () => {
     expect(file).toContain('await tab.goto(new URL("/carrinho", APP).href);');
   });
 });
+
+describe('playwrightOf, cases that start signed in', () => {
+  const signedIn = {
+    ...RECIPE,
+    steps: [
+      {
+        number: 1,
+        actions: [{ kind: 'click' as const, target: 'Carrinho', value: '' }],
+        proof: 'Carrinho vazio',
+        signIn: {
+          account: 'LOGIN_EMAIL',
+          actions: [
+            { kind: 'fill' as const, target: 'E-mail', value: '${LOGIN_EMAIL}' },
+            { kind: 'fill' as const, target: 'Senha', value: '${LOGIN_PASSWORD}' },
+            { kind: 'press' as const, target: 'Enter', value: '' },
+          ],
+          proof: 'Sair',
+        },
+      },
+    ],
+  };
+  const code = playwrightOf({
+    url: 'https://loja.test/',
+    viewport: { width: 1280, height: 800 },
+    cases: [
+      { steps: STEPS.slice(0, 1), recipe: RECIPE },
+      {
+        steps: STEPS.slice(0, 1).map((step) => ({ ...step, caseId: 'TC-02' })),
+        recipe: { ...signedIn, caseId: 'TC-02' },
+      },
+    ],
+  });
+
+  it('signs in once per account and starts its tests in the saved storageState', () => {
+    expect(code).toContain('test.describe("Signed in as LOGIN_EMAIL", () => {');
+    expect(code).toContain('  test.use({ storageState: ".auth/LOGIN_EMAIL.json" });');
+    expect(code).toContain(
+      '    await signIn(browser, ".auth/LOGIN_EMAIL.json", async (tab) => {',
+    );
+    expect(code).toContain(
+      '      await field(tab, "Senha").fill(`${variable("LOGIN_PASSWORD")}`);',
+    );
+    expect(code).toContain('      await shows(tab, "Sair");');
+    expect(code).toContain(
+      '  test("TC-02 · Buy the second shirt", async ({ page }) => {',
+    );
+    expect(code).toContain(
+      "import { expect, test, type Browser, type Page } from '@playwright/test';",
+    );
+  });
+
+  it('keeps a case that starts signed out outside the block', () => {
+    expect(code.indexOf('test("TC-01 · Buy the second shirt"')).toBeLessThan(
+      code.indexOf('test.describe('),
+    );
+  });
+
+  it('reads the variables the sign-in types', () => {
+    expect(code).toContain('LOGIN_EMAIL, LOGIN_PASSWORD');
+  });
+});

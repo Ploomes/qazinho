@@ -89,6 +89,21 @@ async function closeScreen(screens: Page[], page: Page): Promise<Page> {
 }
 `;
 
+const SIGN_IN = `async function signIn(
+  browser: Browser,
+  file: string,
+  steps: (tab: Page) => Promise<void>,
+): Promise<void> {
+  const context = await browser.newContext();
+  const tab = prepare(await context.newPage());
+
+  await tab.goto(APP);
+  await steps(tab);
+  await context.storageState({ path: file });
+  await context.close();
+}
+`;
+
 const VARIABLE = `function variable(name: string): string {
   const value = process.env[name];
 
@@ -99,8 +114,8 @@ const VARIABLE = `function variable(name: string): string {
 `;
 
 /**
- * Um arquivo de teste Playwright para os casos que as runs de um app web gravaram, cada
- * um um teste que começa de novo e confere as provas; variável vem do ambiente.
+ * Um arquivo Playwright dos casos que as runs web gravaram, cada um um teste que confere
+ * as provas; os que começam logados entram uma vez por conta, pelo storageState.
  */
 export function playwrightOf(props: {
   url: string;
@@ -137,9 +152,55 @@ export function playwrightOf(props: {
 
   const variables = variablesIn(props.cases.map(({ recipe }) => recipe));
   const hasScreens = props.cases.some(({ recipe }) => usesScreens(recipe));
+  const accounts = [
+    ...new Map(
+      props.cases.flatMap(({ recipe }) => {
+        const signIn = recipe.steps[0]?.signIn;
+
+        return signIn === undefined ? [] : [[signIn.account, signIn] as const];
+      }),
+    ).values(),
+  ];
+  const signedIn = new Set(accounts.map(({ account }) => account));
+  const accountOf = (index: number) => {
+    const account = props.cases[index]?.recipe.steps[0]?.signIn?.account;
+
+    return account !== undefined && signedIn.has(account) ? account : null;
+  };
+  const blocks = [
+    ...tests.filter((_, index) => accountOf(index) === null),
+    ...accounts.map((signIn) => {
+      const file = `.auth/${signIn.account}.json`;
+
+      return [
+        `test.describe(${JSON.stringify(`Signed in as ${signIn.account}`)}, () => {`,
+        `  test.use({ storageState: ${quoted(file)} });`,
+        '',
+        '  test.beforeAll(async ({ browser }) => {',
+        `    await signIn(browser, ${quoted(file)}, async (tab) => {`,
+        ...signIn.actions.flatMap(lineOf).map((line) => `      ${line}`),
+        ...shownOf(signIn.proof).map(
+          (shown) => `      await shows(tab, ${quoted(shown)});`,
+        ),
+        '    });',
+        '  });',
+        '',
+        tests
+          .filter((_, index) => accountOf(index) === signIn.account)
+          .map((test) =>
+            test
+              .split('\n')
+              .map((line) => (line === '' ? line : `  ${line}`))
+              .join('\n'),
+          )
+          .join('\n\n'),
+        '});',
+      ].join('\n');
+    }),
+  ];
 
   return [
-    `import { expect, test, ${hasScreens ? 'type BrowserContext, ' : ''}type Page } from '@playwright/test';`,
+    `import { expect, test, ${accounts.length > 0 ? 'type Browser, ' : ''}${hasScreens ? 'type BrowserContext, ' : ''}type Page } from '@playwright/test';`,
     '',
     ...(variables.length === 0
       ? []
@@ -151,10 +212,11 @@ export function playwrightOf(props: {
     '',
     HELPERS,
     ...(hasScreens ? [SCREENS] : []),
+    ...(accounts.length === 0 ? [] : [SIGN_IN]),
     ...(variables.length === 0 ? [] : [VARIABLE]),
     `test.use({ viewport: { width: ${String(props.viewport.width)}, height: ${String(props.viewport.height)} } });`,
     '',
-    tests.join('\n\n'),
+    blocks.join('\n\n'),
     '',
   ].join('\n');
 }
