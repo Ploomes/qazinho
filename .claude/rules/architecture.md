@@ -315,6 +315,12 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     vai à org, que conta uma gravação como caso desenvolvido. A próxima run anda isso sem o agente
     (`partialFor`), e ele assume o passo seguinte de onde o app está. O caso continua por desenvolver
     até passar inteiro; aí vira receita e a parcial sai (`bookWith`).
+  - Um caso web que começa logado nomeia a conta (`signedInAs`) e abre já dentro dela
+    (`SessionKeeper`): o primeiro de cada conta entra pela gravação do login (`signInFor`) ou
+    pelo agente num turno só (`signInTurn`, `Harness.signIn`), e a run semeia o `sessionState` do
+    Chrome numa aba limpa nos seguintes (`restart(session)`). A gravação do caso leva o login no
+    primeiro passo (`withSignIn`), para o CI entrar sem IA. Uma sessão que não mostra a prova do
+    login faz a conta entrar de novo em cada caso; um celular ignora o campo.
   - "Rodar tudo com o agente", no menu do botão de rodar (`RunButton`), anda todo caso com o
     agente; cada jeito diz no menu o que faz. O relatório diz "sem IA" ou "curado" em cada caso, e
     o `CodeExport` transforma as receitas num arquivo de Playwright ou num fluxo de Maestro por

@@ -142,6 +142,17 @@ incluídos. Um Claude Code real gravou um plano web e um Android assim, os dois 
 sem agente, e o arquivo de Playwright exportado passou no Chrome; os fluxos do Maestro ainda não
 rodaram no Maestro. O `tests/smoke/replay.test.ts` prova isso com um agente fake.
 
+**Um caso web que começa logado entra uma vez por conta.** O caso nomeia a variável da conta, que
+o chat preenche e o QA troca na aba Plano ("Começa logado como"). O primeiro caso de cada conta
+entra pela gravação do login, ou pelo agente, que pode perguntar um código ao QA e grava o login;
+a run guarda os cookies e o localStorage da conta e começa os casos seguintes numa aba limpa já
+dentro dela. Uma sessão que não pega faz a run entrar de novo em cada caso, sem o agente. O login
+vai à org com a gravação do caso, então o CI entra do mesmo jeito sem IA, e o Playwright exportado
+entra uma vez por conta, pelo `storageState`. Num celular, todo caso entra de novo, como as
+pré-condições dizem. O `tests/smoke/session.test.ts` do harness prova a sessão num Chrome real,
+por cookie e por localStorage, e testes unitários provam o resto; um agente real ainda não andou
+um plano assim, e um app que guarda o login no IndexedDB entra de novo em cada caso.
+
 **Uma exploração não precisa de plano.** Do chat vazio, do botão Explorar do workspace ou do
 Estagiário, o agente do QA percorre o app sozinho por dez minutos: anota cada tela que alcança,
 registra o que está quebrado como bugs, e termina com um plano sugerido que espera num cartão no
