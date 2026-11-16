@@ -62,9 +62,10 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
 - O `window.open` nunca abre uma janela: um link vai para o navegador do sistema, todo o resto é
   negado. Tudo o que o app abre fora dele, o que um agente pede ao `$BROWSER` e a página que a API
   manda abrir incluídos, passa pelo `isOpenableUrl`: https, ou http só nesta máquina. Um outro
-  esquema entregaria o endereço a um programa qualquer do SO, como o `ms-msdt:` no Windows. A
-  exceção é o endereço fixo das atualizações da Microsoft Store (`APP_UPDATE.storeUpdates`), que
-  nenhuma página escolhe.
+  esquema entregaria o endereço a um programa qualquer do SO, como o `ms-msdt:` no Windows. As
+  exceções são o endereço fixo das atualizações da Microsoft Store (`APP_UPDATE.storeUpdates`) e o
+  e-mail para a Salve Software do botão de ajuda (`salveMailOf`, `SALVE_CONTACT`): a página manda
+  só o assunto e o texto, e nenhuma escolhe o destinatário.
 - **O login de um MCP nunca passa pelo QAzinho.** O MCP do Figma vive no agente do próprio QA,
   Claude Code ou Codex: o QAzinho o adiciona lá e roda o login do próprio agente, e o token fica
   com o agente. Os comandos de cada agente são uma receita em `MCP_RECIPES`.
@@ -180,6 +181,15 @@ o QA vai testar (um endereço, ou um .apk ou .app escolhido no disco) e o que el
 primeiro. Só a segunda cria alguma coisa: o projeto, com o nome do site ou do build
 (`projectNameOf`), e o primeiro plano, com o nome do que o QA escreveu (`planNameOf`), cujo chat
 recebe o texto como a primeira mensagem; ou uma exploração, se ele preferir.
+
+## O botão de ajuda
+
+O `HelpMenu`, no pé da sidebar e no trilho, lista a manchete das três versões mais novas que o app
+traz (`newsLinesOf`), abre todas elas numa janela (`NewsModal`, o modal `news`), os guias do site
+e o Discord da Salve Software (`HELP_LINKS`), e um e-mail para relatar um problema ou mandar um
+comentário, com a versão e o sistema (`Contact.write`). As notas de cada versão são chaves do
+i18n no `RELEASE_NOTES`, a primeira sendo a manchete, e só aparecem num app dessa versão em
+diante (`shippedNotesOf`): uma versão nova ganha a entrada dela antes de sair.
 
 ## O workspace
 

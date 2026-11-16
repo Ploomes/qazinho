@@ -549,6 +549,11 @@ contra uma plataforma fake. A API roda em produção, e um teste de usabilidade 
 numa org de verdade e viu o CI comentar no pull request dele; nenhum app instalado abriu um link
 `qazinho://` ainda.
 
+**O botão de ajuda conta o que há de novo.** No pé da sidebar, ele lista a manchete das últimas
+versões, abre todas numa janela, e leva aos guias, ao Discord da Salve Software e a um e-mail
+para relatar um problema ou mandar um comentário, já com a versão e o sistema. Testes unitários
+provam o menu e o e-mail; nenhum QA usou ainda.
+
 **Fechar a janela não fecha o app, como no Discord.** A janela some e o QAzinho continua: uma run
 segue andando, a ilha e as notificações chamam o QA de volta, e o agente de fora ainda o alcança. No
 Mac o Dock a traz de volta e o ⌘Q sai; no Windows e no Linux um ícone na bandeja a abre ou sai do
