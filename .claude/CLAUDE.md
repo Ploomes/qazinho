@@ -549,6 +549,13 @@ contra uma plataforma fake. A API roda em produção, e um teste de usabilidade 
 numa org de verdade e viu o CI comentar no pull request dele; nenhum app instalado abriu um link
 `qazinho://` ainda.
 
+**A tela Uso diz o que as chamadas ao agente gastaram.** Cada chamada do QAzinho guarda neste
+computador os tokens de cada modelo e o custo estimado pelo preço da API, que o Claude Code diz e
+o Codex não, com o trabalho que pagou e o projeto. A tela, na sidebar, mostra o total de 7, 30
+ou 90 dias, uma coluna por dia e a divisão por trabalho, projeto, modelo ou dia. Testes
+unitários provam o registro e a tela; o formato do custo foi conferido contra um Claude Code
+real, e o Codex só contra o formato dos eventos dele.
+
 **O botão de ajuda conta o que há de novo.** No pé da sidebar, ele lista a manchete das últimas
 versões, abre todas numa janela, e leva aos guias, ao Discord da Salve Software e a um e-mail
 para relatar um problema ou mandar um comentário, já com a versão e o sistema. Testes unitários

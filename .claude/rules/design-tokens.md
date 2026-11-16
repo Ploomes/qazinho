@@ -38,24 +38,24 @@ font: var(--font-ui-md);
 
 ## As escalas
 
-| Grupo       | Tokens                                                                                              |
-| ----------- | --------------------------------------------------------------------------------------------------- |
-| Superfícies | `--bg --win --panel --center --raise --raise2 --screen`, `--bubble` para a fala do QA no chat       |
-| Linhas      | `--line --line2 --sel --stripe`, `--line-field` para a borda de um campo de digitar                 |
-| Tinta       | `--ink --ink2 --ink3`                                                                               |
-| Destaque    | `--accent --accent-ink --accent-soft --accent-fill --on-accent --on-accent-fill`, e `--brand-sinal` |
-| Vereditos   | `--pass --fail --block --skip --attn`, cada um com um par `-soft`                                   |
-| Espaço      | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`                        |
-| Ícone       | `--icon-min` 12px, o menor que um ícone dimensionado pelo texto desenha                             |
-| Raio        | `--radius-xs 6` · `sm 8` · `md 12` · `lg 14` · `xl 18` · `2xl 22` · `pill 999`                      |
-| Fonte       | `--font-ui-*`, `--font-meta-*`, `--font-display-sm/md/lg/xl`, `--font-code-*`, `--font-brand-*`     |
-| Tipo        | `--display-tracking` para títulos, `--brand-tracking` na marca, `--font-mono-tag --tag-tracking`    |
-| Movimento   | `--ease --ease-in --dur-press --dur-fast --dur --dur-slow`                                          |
-| Linha       | `--edge` (o `--line` do tema), `--edge-width` · `-lg` · `-xl`, todos 1px                            |
-| Elevação    | `--sticker-rest` nenhuma · `--sticker-lift` fina · `--sticker-press` nenhuma · `--sticker-hero`     |
-| Hover       | `--lift` 0px, `--press` 1px: quanto um controle se move sob o cursor e o clique                     |
-| Inclinação  | `--tilt-xs` · `--tilt-sm` · `--tilt-md`, todos 0°: nada gira                                        |
-| Marca       | `--brand-ink --brand-paper --brand-sinal --on-brand-sinal --brand-dot --brand-dot-glow`             |
+| Grupo       | Tokens                                                                                                           |
+| ----------- | ---------------------------------------------------------------------------------------------------------------- |
+| Superfícies | `--bg --win --panel --center --raise --raise2 --screen`, `--bubble` para a fala do QA no chat                    |
+| Linhas      | `--line --line2 --sel --stripe`, `--line-field` para a borda de um campo de digitar                              |
+| Tinta       | `--ink --ink2 --ink3`                                                                                            |
+| Destaque    | `--accent --accent-ink --accent-soft --accent-fill --on-accent --on-accent-fill`, e `--brand-sinal`              |
+| Vereditos   | `--pass --fail --block --skip --attn`, cada um com um par `-soft`                                                |
+| Espaço      | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`                                     |
+| Ícone       | `--icon-min` 12px, o menor que um ícone dimensionado pelo texto desenha                                          |
+| Raio        | `--radius-xs 6` · `sm 8` · `md 12` · `lg 14` · `xl 18` · `2xl 22` · `pill 999`                                   |
+| Fonte       | `--font-ui-*`, `--font-meta-*`, `--font-display-sm/md/lg/xl`, `--font-figure`, `--font-code-*`, `--font-brand-*` |
+| Tipo        | `--display-tracking` para títulos, `--brand-tracking` na marca, `--font-mono-tag --tag-tracking`                 |
+| Movimento   | `--ease --ease-in --dur-press --dur-fast --dur --dur-slow`                                                       |
+| Linha       | `--edge` (o `--line` do tema), `--edge-width` · `-lg` · `-xl`, todos 1px                                         |
+| Elevação    | `--sticker-rest` nenhuma · `--sticker-lift` fina · `--sticker-press` nenhuma · `--sticker-hero`                  |
+| Hover       | `--lift` 0px, `--press` 1px: quanto um controle se move sob o cursor e o clique                                  |
+| Inclinação  | `--tilt-xs` · `--tilt-sm` · `--tilt-md`, todos 0°: nada gira                                                     |
+| Marca       | `--brand-ink --brand-paper --brand-sinal --on-brand-sinal --brand-dot --brand-dot-glow`                          |
 
 Um campo de código, o input de URL ou um campo de arquivo ao lado dele, lê `--font-code-field`, para
 dois campos numa linha ficarem da mesma altura.

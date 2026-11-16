@@ -182,6 +182,19 @@ primeiro. Só a segunda cria alguma coisa: o projeto, com o nome do site ou do b
 (`projectNameOf`), e o primeiro plano, com o nome do que o QA escreveu (`planNameOf`), cujo chat
 recebe o texto como a primeira mensagem; ou uma exploração, se ele preferir.
 
+## O uso dos agentes
+
+Cada chamada ao agente do QA diz o trabalho que paga (`UsageKind`: o chat, um caso, uma
+exploração, o preparo e o login de uma run, o Estagiário, as memórias, a leitura de mudanças, um
+build, a revisão de um bug, uma skill), e o workspace e o projeto dele (`IUsageMeter`). O
+`AgentRunner` lê o que o turno gastou em cada modelo, pela linha final do Claude Code
+(`spentOf`, o `modelUsage` com o custo ao preço de tabela) ou pelo fim do turno do Codex
+(`codexSpentOf`, só tokens), e o `UsageLedger` o guarda em `usage.jsonl`, uma linha por chamada e
+modelo, por um ano. A tela Uso (`Usage`, a tela `usage`) lê um período e o divide na página
+(`usageTotalsOf`, `usageDaysOf`, `usageRowsOf`): o total, uma coluna por dia, os tokens de cada
+tipo e a divisão por trabalho, projeto, modelo ou dia. O custo é a estimativa do próprio agente,
+nunca o que o plano dele cobra.
+
 ## O botão de ajuda
 
 O `HelpMenu`, no pé da sidebar e no trilho, lista a manchete das três versões mais novas que o app
