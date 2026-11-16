@@ -1,1 +1,2 @@
-export type Screen = 'welcome' | 'workspace' | 'settings' | 'bugs' | 'newProject';
+export type Screen =
+  'welcome' | 'workspace' | 'settings' | 'bugs' | 'usage' | 'newProject';

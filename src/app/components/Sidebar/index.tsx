@@ -33,6 +33,9 @@ export const Sidebar: React.FC = () => {
     isBugs,
     bugsCount,
     onBugs,
+    usageLabel,
+    isUsage,
+    onUsage,
     onNewProject,
     onSettings,
     onAskRemove,
@@ -145,6 +148,21 @@ export const Sidebar: React.FC = () => {
                   {bugsCount !== null && (
                     <span className="sidebar__rail-count">{bugsCount}</span>
                   )}
+                </button>
+              </Tooltip>
+              <Tooltip side="right" content={usageLabel}>
+                <button
+                  type="button"
+                  className={
+                    isUsage
+                      ? 'sidebar__rail-tile sidebar__rail-tile--selected'
+                      : 'sidebar__rail-tile'
+                  }
+                  aria-label={usageLabel}
+                  aria-current={isUsage ? 'page' : undefined}
+                  onClick={onUsage}
+                >
+                  <Icon name="usage" />
                 </button>
               </Tooltip>
             </div>
@@ -274,6 +292,16 @@ export const Sidebar: React.FC = () => {
             <Icon name="bug" />
             <span className="sidebar__label">{bugsLabel}</span>
             {bugsCount !== null && <span className="sidebar__count">{bugsCount}</span>}
+          </button>
+
+          <button
+            type="button"
+            className={isUsage ? 'sidebar__nav sidebar__nav--selected' : 'sidebar__nav'}
+            aria-current={isUsage ? 'page' : undefined}
+            onClick={onUsage}
+          >
+            <Icon name="usage" />
+            <span className="sidebar__label">{usageLabel}</span>
           </button>
 
           <div className="sidebar__section">

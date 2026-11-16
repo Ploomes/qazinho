@@ -86,6 +86,20 @@ describe('useTitlebarViewModel', () => {
       ).toEqual(['Settings']);
     });
 
+    it('names the Usage screen', () => {
+      useAppStore.setState({
+        projects: [LOJA],
+        screen: 'usage',
+        selectedWorkspaceId: null,
+      });
+
+      expect(
+        renderHook(() => useTitlebarViewModel()).result.current.crumbs.map(
+          ({ label }) => label,
+        ),
+      ).toEqual(['Usage']);
+    });
+
     it('marks the plan as the crumb the QA renames', () => {
       useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
       useAppStore.setState({

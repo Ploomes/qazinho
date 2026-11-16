@@ -1,0 +1,129 @@
+.usage-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.usage-chart__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.usage-chart__title {
+  margin: 0;
+  color: var(--ink);
+  font: var(--font-display-sm);
+  letter-spacing: var(--display-tracking);
+}
+
+.usage-chart__action {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.usage-chart__action:hover {
+  color: var(--ink);
+}
+
+.usage-chart__frame {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--space-4);
+  row-gap: var(--space-3);
+}
+
+.usage-chart__axis {
+  position: relative;
+  min-width: var(--space-8);
+  height: var(--usage-chart-height);
+}
+
+.usage-chart__tick {
+  position: absolute;
+  right: 0;
+  bottom: var(--usage-tick);
+  color: var(--ink3);
+  font: var(--font-meta-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  translate: 0 50%;
+}
+
+.usage-chart__plot {
+  position: relative;
+  height: var(--usage-chart-height);
+}
+
+.usage-chart__grid {
+  position: absolute;
+  right: 0;
+  bottom: var(--usage-tick);
+  left: 0;
+  height: 1px;
+  background: var(--line2);
+}
+
+.usage-chart__bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+}
+
+.usage-chart__day {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 0;
+  cursor: default;
+}
+
+.usage-chart__bar {
+  width: 100%;
+  max-width: var(--usage-bar-max);
+  height: var(--usage-bar);
+  border-radius: 4px 4px 0 0;
+  background: var(--accent);
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.usage-chart__bar--spent {
+  min-height: 2px;
+}
+
+.usage-chart__bars:hover .usage-chart__day:not(:hover) .usage-chart__bar {
+  opacity: 0.45;
+}
+
+.usage-chart__days {
+  position: relative;
+  height: var(--space-5);
+}
+
+.usage-chart__date {
+  position: absolute;
+  top: 0;
+  left: var(--usage-day);
+  color: var(--ink3);
+  font: var(--font-meta-xs);
+  white-space: nowrap;
+  translate: -50% 0;
+}
+
+.usage-chart__date:first-child {
+  translate: 0 0;
+}
+
+.usage-chart__date:last-child {
+  translate: -100% 0;
+}

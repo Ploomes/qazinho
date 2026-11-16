@@ -156,5 +156,6 @@ export const useAppViewModel = () => {
     isSettings: screen === 'settings',
     isNewProject: screen === 'newProject',
     isBugs: screen === 'bugs',
+    isUsage: screen === 'usage',
   };
 };

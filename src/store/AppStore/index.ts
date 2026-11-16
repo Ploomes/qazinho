@@ -81,6 +81,8 @@ export const useAppStore = create<IAppStore>()(
 
       openBugs: () => set({ screen: 'bugs', selectedWorkspaceId: null }),
 
+      openUsage: () => set({ screen: 'usage', selectedWorkspaceId: null }),
+
       addProject: (project) =>
         set((state) => ({
           projects: [...state.projects, project],

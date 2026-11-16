@@ -40,17 +40,20 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
         ? [{ key: 'settings', label: t('COMMON.SETTINGS'), isPlan: false }]
         : screen === 'bugs'
           ? [{ key: 'bugs', label: t('BUG.TITLE'), isPlan: false }]
-          : screen === 'workspace' && workspace !== null
-            ? [
-                { key: 'project', label: project?.name ?? '', isPlan: false },
-                {
-                  key: 'plan',
-                  label: workspace.name === '' ? t('WORKSPACE.UNNAMED') : workspace.name,
-                  isPlan: true,
-                },
-              ].filter(({ label }) => label !== '')
-            : projects.length > 0
-              ? [{ key: 'home', label: t('HOME.TITLE'), isPlan: false }]
-              : [],
+          : screen === 'usage'
+            ? [{ key: 'usage', label: t('USAGE_SCREEN.TITLE'), isPlan: false }]
+            : screen === 'workspace' && workspace !== null
+              ? [
+                  { key: 'project', label: project?.name ?? '', isPlan: false },
+                  {
+                    key: 'plan',
+                    label:
+                      workspace.name === '' ? t('WORKSPACE.UNNAMED') : workspace.name,
+                    isPlan: true,
+                  },
+                ].filter(({ label }) => label !== '')
+              : projects.length > 0
+                ? [{ key: 'home', label: t('HOME.TITLE'), isPlan: false }]
+                : [],
   };
 };

@@ -11,6 +11,7 @@ import { RunReplay } from '@/modules/Run';
 import { Settings } from '@/modules/Settings';
 import { Onboarding } from '@/modules/Setup';
 import { UpdateRequired } from '@/modules/Update';
+import { Usage } from '@/modules/Usage';
 import { AgentPanel, NewWorkspaceModal, Workspace } from '@/modules/Workspace';
 import {
   ErrorBarrier,
@@ -39,6 +40,7 @@ export const App: React.FC = () => {
     isSettings,
     isNewProject,
     isBugs,
+    isUsage,
     modal,
     projectModalKey,
     variablesKey,
@@ -88,6 +90,7 @@ export const App: React.FC = () => {
                     )}
                     {!isOnboarding && !isFirstRun && isWorkspace && <AgentPanel />}
                     {!isOnboarding && !isFirstRun && isBugs && <AllBugs />}
+                    {!isOnboarding && !isFirstRun && isUsage && <Usage />}
                     {!isOnboarding && !isFirstRun && isNewProject && <NewProject />}
                   </main>
                 )}

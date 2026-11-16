@@ -108,6 +108,23 @@ describe('useSidebarViewModel', () => {
     });
   });
 
+  describe('the Usage row', () => {
+    it('opens the Usage screen, and is marked while it is on screen', () => {
+      useAppStore.setState({ screen: 'welcome', selectedWorkspaceId: null });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.isUsage).toBe(false);
+
+      act(() => {
+        result.current.onUsage();
+      });
+
+      expect(useAppStore.getState().screen).toBe('usage');
+      expect(renderHook(() => useSidebarViewModel()).result.current.isUsage).toBe(true);
+    });
+  });
+
   describe('rows', () => {
     it('lists the plans without an add row, which the project row offers on hover', () => {
       useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });

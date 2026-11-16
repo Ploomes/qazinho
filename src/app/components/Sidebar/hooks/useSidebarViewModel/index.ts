@@ -39,6 +39,7 @@ export const useSidebarViewModel = () => {
   const openSettings = useAppStore((state) => state.openSettings);
   const goHome = useAppStore((state) => state.goHome);
   const openBugs = useAppStore((state) => state.openBugs);
+  const openUsage = useAppStore((state) => state.openUsage);
   const screen = useAppStore((state) => state.screen);
   const forgetPlanMemories = useAppStore((state) => state.forgetPlanMemories);
   const openProjectSettings = useAppStore((state) => state.openProjectSettings);
@@ -372,6 +373,9 @@ export const useSidebarViewModel = () => {
     isBugs: screen === 'bugs',
     bugsCount: bugsCount === 0 ? null : String(bugsCount),
     onBugs: openBugs,
+    usageLabel: t('USAGE_SCREEN.TITLE'),
+    isUsage: screen === 'usage',
+    onUsage: openUsage,
     onNewProject,
     onSettings: openSettings,
     onAskRemove: askRemoveWorkspace,

@@ -51,6 +51,7 @@ export interface IAppStore {
   selectWorkspace: (workspaceId: string) => void;
   goHome: () => void;
   openBugs: () => void;
+  openUsage: () => void;
   addProject: (project: IProject) => void;
   loadProjects: (projects: IProject[]) => void;
   putProject: (project: IProject) => void;
