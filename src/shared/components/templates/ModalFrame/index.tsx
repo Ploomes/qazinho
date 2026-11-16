@@ -12,6 +12,7 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
     titleId,
     backdrop,
     isBeside,
+    hasCancel,
     hasBody,
     panelStyle,
     onPanelKeyDown,
@@ -79,7 +80,7 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
           </AnimatePresence>
           {props.aside}
           <div className="modal-frame__actions">
-            <Button onClick={props.onCancel}>{t('COMMON.CANCEL')}</Button>
+            {hasCancel && <Button onClick={props.onCancel}>{t('COMMON.CANCEL')}</Button>}
             <Button
               variant={props.isConfirmQuiet === true ? 'secondary' : 'primary'}
               disabled={!props.canConfirm}

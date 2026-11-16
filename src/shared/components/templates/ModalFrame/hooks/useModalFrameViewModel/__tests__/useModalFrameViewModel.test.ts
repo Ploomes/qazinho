@@ -55,6 +55,16 @@ describe('useModalFrameViewModel', () => {
     expect(result.current.panelStyle).toMatchObject({ width: 740, height: undefined });
   });
 
+  it('offers Cancel beside the confirm, and only the confirm in a window that is read', () => {
+    const asking = renderHook(() => useModalFrameViewModel(PROPS));
+    const reading = renderHook(() =>
+      useModalFrameViewModel({ ...PROPS, hasCancel: false }),
+    );
+
+    expect(asking.result.current.hasCancel).toBe(true);
+    expect(reading.result.current.hasCancel).toBe(false);
+  });
+
   it('leaves the body out of a window that only asks, its words in the subtitle', () => {
     const { children: _children, ...asking } = PROPS;
     const { result } = renderHook(() => useModalFrameViewModel(asking));

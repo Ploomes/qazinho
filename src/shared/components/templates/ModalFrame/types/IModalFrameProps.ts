@@ -15,6 +15,7 @@ export interface IModalFrameProps {
   nav?: ReactNode;
   hint?: string;
   isConfirmQuiet?: boolean;
+  hasCancel?: boolean;
   aside?: ReactNode;
   onCancel: () => void;
   onConfirm: () => void;

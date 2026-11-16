@@ -51,6 +51,7 @@ export const useModalFrameViewModel = (props: IModalFrameProps) => {
     titleId,
     backdrop,
     isBeside: props.nav !== undefined,
+    hasCancel: props.hasCancel !== false,
     hasBody: props.nav === undefined && props.children !== undefined,
     panelStyle: {
       width: props.width,
