@@ -22,6 +22,11 @@ formas, tempos e poses paradas: quando a designer o mudar, porte de novo. O `bui
 
 ## Elevado ou chapado
 
+**A janela é uma moldura com um cartão dentro.** A barra de título e a sidebar, ou o menu das
+Configurações no lugar dela, dividem o `--panel`, e as telas ficam num cartão arredondado
+(`app__card`, `settings__content`) no `--center`, com uma linha de 1px e 4px de folga da borda
+direita e da de baixo. Nada desenha uma linha entre a moldura e o cartão além da dele.
+
 A maior parte das coisas é chapada: impressa na superfície, separada por espaço e por uma linha de
 1px. Umas poucas ficam um pouco elevadas acima dela.
 
