@@ -6,12 +6,12 @@ import { useSidebarWidth } from '@/shared/hooks/useSidebarWidth';
 import { useSettingsStore } from '@/store';
 
 describe('useSidebarWidth', () => {
-  it('stands as wide as the sidebar while open, and as its rail once folded', () => {
+  it('stands as wide as the rail and the list while open, and as the rail once folded', () => {
     useSettingsStore.setState({ isSidebarShut: false });
 
     const { result } = renderHook(() => useSidebarWidth());
 
-    expect(result.current).toBe(SHELL.sidebarWidth);
+    expect(result.current).toBe(SHELL.sidebarRail + SHELL.sidebarWidth);
 
     act(() => {
       useSettingsStore.getState().toggleSidebar();

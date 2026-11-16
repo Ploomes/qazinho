@@ -18,7 +18,11 @@ import {
   SIDEBAR_STATUS,
   SIDEBAR_UNDO,
 } from '@/app/components/Sidebar/constants';
-import { planSignalOf, projectSignalOf } from '@/app/components/Sidebar/library';
+import {
+  planSignalOf,
+  projectSignalOf,
+  sentenceOf,
+} from '@/app/components/Sidebar/library';
 import { homeCountOf, homeOf } from '@/modules/Home';
 import { projectAppOf, projectMarkOf, useSiteIcons } from '@/modules/Project';
 import { RUN_HOW_KEYS } from '@/modules/Run/constants';
@@ -26,6 +30,7 @@ import { currentStepOf, runToContinueOf } from '@/modules/Run/library';
 import { workspaceMeta } from '@/modules/Workspace';
 import { Agent, Archive, Platform, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
+import { SHELL } from '@/shared/constants';
 import { comboLabelOf } from '@/shared/hooks/useKeybinds/library';
 import { useAppStore, useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
@@ -69,6 +74,10 @@ export const useSidebarViewModel = () => {
   const searchCombo = useSettingsStore(
     (state) => state.keybinds.find(({ id }) => id === 'search')?.combo ?? '',
   );
+
+  const isListShown =
+    !isShut &&
+    (screen === 'welcome' || screen === 'workspace' || screen === 'newProject');
 
   const isProjectExpanded = (projectId: string) =>
     expansions[projectId] ?? (!isShut || projectId === selectedProjectId);
@@ -162,6 +171,7 @@ export const useSidebarViewModel = () => {
           platform:
             project.targets.find(({ id }) => id === workspace.targetId)?.kind ?? null,
           meta,
+          subtitle: sentenceOf({ text: said ?? meta, language: i18n.language }),
           icon: SIDEBAR_STATUS[shown].icon,
           statusLabel,
           tone: SIDEBAR_STATUS[shown].tone,
@@ -306,7 +316,7 @@ export const useSidebarViewModel = () => {
   );
 
   const flyoutGroup =
-    flyoutAt === null || !isShut
+    flyoutAt === null || isListShown
       ? null
       : (groups.find(({ projectId }) => projectId === flyoutAt.projectId) ?? null);
   const flyout: ISidebarFlyout | null =
@@ -340,8 +350,11 @@ export const useSidebarViewModel = () => {
   );
 
   return {
-    className: isShut ? 'sidebar sidebar--shut' : 'sidebar',
+    className: isListShown ? 'sidebar sidebar--listed' : 'sidebar',
     style: {
+      '--rail-width': `${String(SHELL.sidebarRail)}px`,
+      '--rail-tile': `${String(SIDEBAR_SIZE.railTile)}px`,
+      '--sidebar-row-mark': `${String(SIDEBAR_SIZE.rowMark)}px`,
       '--sidebar-tile': `${String(SIDEBAR_SIZE.tile)}px`,
       '--sidebar-field': `${String(SIDEBAR_SIZE.field)}px`,
       '--sidebar-avatar': `${String(SIDEBAR_SIZE.avatar)}px`,
@@ -349,9 +362,13 @@ export const useSidebarViewModel = () => {
       '--sidebar-mark': `${String(SIDEBAR_SIZE.mark)}px`,
     } as CSSProperties,
     isShut,
+    isListShown,
+    hasRailProjects:
+      isShut &&
+      (screen === 'welcome' || screen === 'workspace' || screen === 'newProject'),
     toggleLabel: t(isShut ? 'SIDEBAR.OPEN' : 'SIDEBAR.SHUT'),
     onToggle: toggleSidebar,
-    hasTips: isShut,
+    hasTips: !isListShown,
     searchLabel: t('SEARCH.LABEL'),
     searchCombo:
       searchCombo === ''

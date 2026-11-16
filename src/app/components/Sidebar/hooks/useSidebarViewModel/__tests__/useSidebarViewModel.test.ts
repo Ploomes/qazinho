@@ -602,10 +602,13 @@ describe('useSidebarViewModel', () => {
   });
 
   describe('style', () => {
-    it('hands the stylesheet the sizes of the rail tile, the search row, the avatar and the mark', () => {
+    it('hands the stylesheet the sizes of the rail, its tiles, the rows, the avatar and the mark', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(result.current.style).toEqual({
+        '--rail-width': '64px',
+        '--rail-tile': '44px',
+        '--sidebar-row-mark': '36px',
         '--sidebar-tile': '36px',
         '--sidebar-field': '28px',
         '--sidebar-avatar': '22px',
@@ -615,20 +618,45 @@ describe('useSidebarViewModel', () => {
     });
   });
 
-  describe('onToggle', () => {
-    it('folds the sidebar to its rail, with a tip naming each row, and opens it back', () => {
+  describe('the list beside the rail', () => {
+    it('stays out of the screens of all bugs and of usage, and keeps the projects off the rail', () => {
       useSettingsStore.setState({ isSidebarShut: false });
+      useAppStore.setState({ screen: 'bugs' });
 
       const { result } = renderHook(() => useSidebarViewModel());
 
-      expect(result.current.className).toBe('sidebar');
+      expect(result.current.isListShown).toBe(false);
+      expect(result.current.hasRailProjects).toBe(false);
+    });
+
+    it('says under each plan what it is doing, as a sentence', () => {
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const [row] =
+        renderHook(() => useSidebarViewModel()).result.current.groups[0]?.plans ?? [];
+
+      expect(row?.subtitle).toMatch(/^[A-Z0-9]/);
+    });
+  });
+
+  describe('onToggle', () => {
+    it('folds the list into the rail, with a tip naming each project, and opens it back', () => {
+      useSettingsStore.setState({ isSidebarShut: false });
+      useAppStore.setState({ screen: 'welcome' });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.className).toBe('sidebar sidebar--listed');
+      expect(result.current.isListShown).toBe(true);
+      expect(result.current.hasRailProjects).toBe(false);
       expect(result.current.toggleLabel).toBe('Fold the sidebar');
 
       act(() => {
         result.current.onToggle();
       });
 
-      expect(result.current.className).toBe('sidebar sidebar--shut');
+      expect(result.current.className).toBe('sidebar');
+      expect(result.current.hasRailProjects).toBe(true);
       expect(result.current.toggleLabel).toBe('Unfold the sidebar');
       expect(result.current.hasTips).toBe(true);
 

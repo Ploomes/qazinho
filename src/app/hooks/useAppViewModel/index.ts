@@ -53,6 +53,7 @@ export const useAppViewModel = () => {
   const isSearchOpen = useAppStore((state) => state.isSearchOpen);
   const isDocked = useAppStore((state) => state.dock !== null);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
+  const isSidebarShut = useSettingsStore((state) => state.isSidebarShut);
   const isUpdateRequired = useUpdateStore((state) => state.update.isRequired);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const isUpdateBlocked = isUpdateRequired && !isRunGoing(workspaces);
@@ -147,7 +148,10 @@ export const useAppViewModel = () => {
     hasSidebar: projects.length > 0 && screen !== 'settings',
     cardClassName:
       hasOnboarded && !isUpdateBlocked && projects.length > 0 && screen !== 'settings'
-        ? 'app__card'
+        ? !isSidebarShut &&
+          (screen === 'welcome' || screen === 'workspace' || screen === 'newProject')
+          ? 'app__card app__card--joined'
+          : 'app__card'
         : 'app__card app__card--alone',
     isFirstRun: isLoaded && screen !== 'settings' && projects.length === 0,
     isHome: screen === 'welcome' && projects.length > 0,

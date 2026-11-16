@@ -8,6 +8,7 @@ export interface ISidebarWorkspaceRow {
   name: string;
   platform: TargetKind | null;
   meta: string;
+  subtitle: string;
   icon: IconName;
   statusLabel: string;
   tone: string;

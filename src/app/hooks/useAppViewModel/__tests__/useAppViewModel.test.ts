@@ -240,25 +240,41 @@ describe('useAppViewModel', () => {
 
     expect(result.current.shellStyle).toMatchObject({
       '--sidebar-width': '268px',
-      '--sidebar-shown': '56px',
+      '--sidebar-shown': '64px',
     });
 
     act(() => {
       useSettingsStore.setState({ isSidebarShut: false });
     });
 
-    expect(result.current.shellStyle).toMatchObject({ '--sidebar-shown': '268px' });
+    expect(result.current.shellStyle).toMatchObject({ '--sidebar-shown': '332px' });
   });
 
   describe('the card the screens sit in', () => {
     const project = { id: 'p1', name: 'Shop · staging', targets: [], repositories: [] };
 
-    it('sits right of the sidebar, on the frame the sidebar shares with the title bar', () => {
+    /** Abaixo de uma largura, o app recolhe a lista sozinho; esta janela cabe a lista. */
+    it('joins the list of projects beside the rail, and stands alone on a screen without it', () => {
+      window.innerWidth = 1440;
+      useSettingsStore.setState({ isSidebarShut: false });
       useAppStore.setState({ screen: 'welcome', projects: [project] });
 
-      const { result } = renderHook(() => useAppViewModel());
+      expect(renderHook(() => useAppViewModel()).result.current.cardClassName).toBe(
+        'app__card app__card--joined',
+      );
 
-      expect(result.current.cardClassName).toBe('app__card');
+      useAppStore.setState({ screen: 'bugs' });
+
+      expect(renderHook(() => useAppViewModel()).result.current.cardClassName).toBe(
+        'app__card',
+      );
+
+      useAppStore.setState({ screen: 'welcome' });
+      useSettingsStore.setState({ isSidebarShut: true });
+
+      expect(renderHook(() => useAppViewModel()).result.current.cardClassName).toBe(
+        'app__card',
+      );
     });
 
     it('keeps a gap on its left too when no sidebar is beside it', () => {

@@ -12,13 +12,16 @@ import { SIDEBAR_NAME_MOTION } from './constants';
 import { useSidebarViewModel } from './hooks';
 import './styles.css';
 
+/**
+ * O trilho na moldura, com o Início, os bugs, o uso, a ajuda e a conta, e ao lado dele a
+ * lista dos projetos e dos planos de cada um, colada ao cartão das telas.
+ */
 export const Sidebar: React.FC = () => {
   const {
     className,
     style,
-    isShut,
-    toggleLabel,
-    onToggle,
+    isListShown,
+    hasRailProjects,
     hasTips,
     searchLabel,
     searchCombo,
@@ -65,256 +68,216 @@ export const Sidebar: React.FC = () => {
 
   return (
     <nav className={className} style={style}>
-      <AnimatePresence>
-        {waitingName !== null && (
-          <motion.button
-            type="button"
-            className="sidebar__banner"
-            initial={STICKER.panel.initial}
-            animate={STICKER.panel.animate}
-            exit={STICKER.panel.exit}
-            onClick={onOpenWaiting}
-          >
-            <Tooltip
-              side="right"
-              isOff={!hasTips}
-              content={
-                <span className="sidebar__tip">
-                  <span className="sidebar__tip-name">{waitingName}</span>
-                  <span className="sidebar__tip-detail">{t('SIDEBAR.ASKED_YOU')}</span>
-                </span>
+      <div className="sidebar__rail" data-tooltip-group>
+        <div className="sidebar__rail-nav">
+          <Tooltip side="right" content={homeTip ?? homeLabel}>
+            <button
+              type="button"
+              className={
+                isHome
+                  ? 'sidebar__rail-tile sidebar__rail-tile--selected'
+                  : 'sidebar__rail-tile'
               }
+              aria-label={homeLabel}
+              aria-current={isHome ? 'page' : undefined}
+              onClick={onHome}
             >
-              <span className="sidebar__banner-icon">
-                <Icon name="ask" />
-              </span>
-            </Tooltip>
-            <span className="sidebar__banner-text">
-              <span className="sidebar__banner-name">{waitingName}</span>
-              <span className="sidebar__banner-said">{t('SIDEBAR.ASKED_YOU')}</span>
-            </span>
-            <span className="sidebar__banner-go">
-              <Icon name="arrow" />
-            </span>
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {isShut ? (
-        <>
-          <div className="sidebar__rail" data-tooltip-group>
-            <div className="sidebar__rail-nav">
-              <Tooltip side="right" content={homeLabel}>
-                <button
-                  type="button"
-                  className={
-                    isHome
-                      ? 'sidebar__rail-tile sidebar__rail-tile--selected'
-                      : 'sidebar__rail-tile'
-                  }
-                  aria-label={homeLabel}
-                  aria-current={isHome ? 'page' : undefined}
-                  onClick={onHome}
-                >
-                  <Icon name="home" />
-                  {homeCount !== null && (
-                    <span className="sidebar__rail-count">{homeCount}</span>
-                  )}
-                </button>
-              </Tooltip>
-              <Tooltip side="right" content={searchLabel}>
-                <button
-                  type="button"
-                  className="sidebar__rail-tile"
-                  aria-label={searchLabel}
-                  onClick={onSearch}
-                >
-                  <Icon name="search" />
-                </button>
-              </Tooltip>
-              <Tooltip side="right" content={bugsLabel}>
-                <button
-                  type="button"
-                  className={
-                    isBugs
-                      ? 'sidebar__rail-tile sidebar__rail-tile--selected'
-                      : 'sidebar__rail-tile'
-                  }
-                  aria-label={bugsLabel}
-                  aria-current={isBugs ? 'page' : undefined}
-                  onClick={onBugs}
-                >
-                  <Icon name="bug" />
-                  {bugsCount !== null && (
-                    <span className="sidebar__rail-count">{bugsCount}</span>
-                  )}
-                </button>
-              </Tooltip>
-              <Tooltip side="right" content={usageLabel}>
-                <button
-                  type="button"
-                  className={
-                    isUsage
-                      ? 'sidebar__rail-tile sidebar__rail-tile--selected'
-                      : 'sidebar__rail-tile'
-                  }
-                  aria-label={usageLabel}
-                  aria-current={isUsage ? 'page' : undefined}
-                  onClick={onUsage}
-                >
-                  <Icon name="usage" />
-                </button>
-              </Tooltip>
-            </div>
-            <div className="sidebar__rail-projects">
-              {groups.map((group) => (
-                <button
-                  key={group.id}
-                  type="button"
-                  className={
-                    group.isSelected
-                      ? 'sidebar__rail-avatar sidebar__rail-avatar--selected'
-                      : 'sidebar__rail-avatar'
-                  }
-                  aria-label={group.railLabel}
-                  aria-haspopup="menu"
-                  aria-expanded={flyout?.projectId === group.projectId}
-                  onPointerEnter={(event) => {
-                    const box = event.currentTarget.getBoundingClientRect();
-
-                    onFlyoutOpen({
-                      projectId: group.projectId,
-                      top: box.top,
-                      right: box.right,
-                    });
-                  }}
-                  onPointerLeave={onFlyoutLeave}
-                  onClick={(event) => {
-                    const box = event.currentTarget.getBoundingClientRect();
-
-                    onFlyoutOpen({
-                      projectId: group.projectId,
-                      top: box.top,
-                      right: box.right,
-                    });
-                  }}
-                >
-                  <ProjectMark mark={group.mark} size={railMarkSize} />
-                  {group.signal !== null && (
-                    <span
-                      className="sidebar__badge"
-                      title={group.signal.label}
-                      style={{
-                        color: group.signal.tone,
-                        animation: group.signal.animation,
-                      }}
-                    >
-                      <Icon name={group.signal.icon} />
-                    </span>
-                  )}
-                </button>
-              ))}
-
-              <Tooltip side="right" content={t('SIDEBAR.NEW_PROJECT')}>
-                <button
-                  type="button"
-                  className="sidebar__rail-tile"
-                  aria-label={t('SIDEBAR.NEW_PROJECT')}
-                  onClick={onNewProject}
-                >
-                  <Icon name="plus" />
-                </button>
-              </Tooltip>
-            </div>
-          </div>
-
-          {createPortal(
-            <AnimatePresence>
-              {flyout !== null && (
-                <RailFlyout
-                  key={flyout.projectId}
-                  flyout={flyout}
-                  markSize={markSize}
-                  newLabel={newWorkspaceLabel}
-                  settingsLabel={projectSettingsLabel}
-                  onKeep={onFlyoutKeep}
-                  onLeave={onFlyoutLeave}
-                  onPlan={onFlyoutPlan}
-                  onNew={onFlyoutNew}
-                  onSettings={onFlyoutSettings}
-                />
+              <Icon name="home" size={20} />
+              {homeCount !== null && (
+                <span className="sidebar__rail-count">{homeCount}</span>
               )}
-            </AnimatePresence>,
-            document.body,
-          )}
+            </button>
+          </Tooltip>
+          <Tooltip side="right" content={bugsLabel}>
+            <button
+              type="button"
+              className={
+                isBugs
+                  ? 'sidebar__rail-tile sidebar__rail-tile--selected'
+                  : 'sidebar__rail-tile'
+              }
+              aria-label={bugsLabel}
+              aria-current={isBugs ? 'page' : undefined}
+              onClick={onBugs}
+            >
+              <Icon name="bug" size={20} />
+              {bugsCount !== null && (
+                <span className="sidebar__rail-count">{bugsCount}</span>
+              )}
+            </button>
+          </Tooltip>
+          <Tooltip side="right" content={usageLabel}>
+            <button
+              type="button"
+              className={
+                isUsage
+                  ? 'sidebar__rail-tile sidebar__rail-tile--selected'
+                  : 'sidebar__rail-tile'
+              }
+              aria-label={usageLabel}
+              aria-current={isUsage ? 'page' : undefined}
+              onClick={onUsage}
+            >
+              <Icon name="usage" size={20} />
+            </button>
+          </Tooltip>
+        </div>
 
-          <div className="sidebar__rail-foot" data-tooltip-group>
-            <ProAccountCard />
-            <HelpMenu side="right" />
-            <Tooltip side="right" content={t('COMMON.SETTINGS')}>
-              <IconButton
-                icon="settings"
-                label={t('COMMON.SETTINGS')}
-                onClick={onSettings}
-              />
-            </Tooltip>
-            <Tooltip side="right" content={toggleLabel}>
-              <IconButton icon="sidebar" label={toggleLabel} onClick={onToggle} />
+        {hasRailProjects && (
+          <div className="sidebar__rail-projects">
+            {groups.map((group) => (
+              <button
+                key={group.id}
+                type="button"
+                className={
+                  group.isSelected
+                    ? 'sidebar__rail-avatar sidebar__rail-avatar--selected'
+                    : 'sidebar__rail-avatar'
+                }
+                aria-label={group.railLabel}
+                aria-haspopup="menu"
+                aria-expanded={flyout?.projectId === group.projectId}
+                onPointerEnter={(event) => {
+                  const box = event.currentTarget.getBoundingClientRect();
+
+                  onFlyoutOpen({
+                    projectId: group.projectId,
+                    top: box.top,
+                    right: box.right,
+                  });
+                }}
+                onPointerLeave={onFlyoutLeave}
+                onClick={(event) => {
+                  const box = event.currentTarget.getBoundingClientRect();
+
+                  onFlyoutOpen({
+                    projectId: group.projectId,
+                    top: box.top,
+                    right: box.right,
+                  });
+                }}
+              >
+                <ProjectMark mark={group.mark} size={railMarkSize} />
+                {group.signal !== null && (
+                  <span
+                    className="sidebar__badge"
+                    title={group.signal.label}
+                    style={{
+                      color: group.signal.tone,
+                      animation: group.signal.animation,
+                    }}
+                  >
+                    <Icon name={group.signal.icon} />
+                  </span>
+                )}
+              </button>
+            ))}
+
+            <Tooltip side="right" content={t('SIDEBAR.NEW_PROJECT')}>
+              <button
+                type="button"
+                className="sidebar__rail-tile"
+                aria-label={t('SIDEBAR.NEW_PROJECT')}
+                onClick={onNewProject}
+              >
+                <Icon name="plus" size={18} />
+              </button>
             </Tooltip>
           </div>
-        </>
-      ) : (
-        <>
-          <button
-            type="button"
-            className={isHome ? 'sidebar__nav sidebar__nav--selected' : 'sidebar__nav'}
-            aria-current={isHome ? 'page' : undefined}
-            title={homeTip}
-            onClick={onHome}
-          >
-            <Icon name="home" />
-            <span className="sidebar__label">{homeLabel}</span>
-            {homeCount !== null && <span className="sidebar__count">{homeCount}</span>}
-          </button>
+        )}
 
-          <button type="button" className="sidebar__nav" onClick={onSearch}>
-            <Icon name="search" />
-            <span className="sidebar__label">{searchLabel}</span>
-            <span className="sidebar__combo">{searchCombo}</span>
-          </button>
+        <div className="sidebar__rail-foot">
+          <HelpMenu side="right" />
+          <Tooltip side="right" content={t('COMMON.SETTINGS')}>
+            <button
+              type="button"
+              className="sidebar__rail-tile"
+              aria-label={t('COMMON.SETTINGS')}
+              onClick={onSettings}
+            >
+              <Icon name="settings" size={20} />
+            </button>
+          </Tooltip>
+          <span className="sidebar__rail-line" aria-hidden="true" />
+          <ProAccountCard />
+        </div>
+      </div>
 
-          <button
-            type="button"
-            className={isBugs ? 'sidebar__nav sidebar__nav--selected' : 'sidebar__nav'}
-            aria-current={isBugs ? 'page' : undefined}
-            onClick={onBugs}
-          >
-            <Icon name="bug" />
-            <span className="sidebar__label">{bugsLabel}</span>
-            {bugsCount !== null && <span className="sidebar__count">{bugsCount}</span>}
-          </button>
+      {createPortal(
+        <AnimatePresence>
+          {flyout !== null && (
+            <RailFlyout
+              key={flyout.projectId}
+              flyout={flyout}
+              markSize={markSize}
+              newLabel={newWorkspaceLabel}
+              settingsLabel={projectSettingsLabel}
+              onKeep={onFlyoutKeep}
+              onLeave={onFlyoutLeave}
+              onPlan={onFlyoutPlan}
+              onNew={onFlyoutNew}
+              onSettings={onFlyoutSettings}
+            />
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
 
-          <button
-            type="button"
-            className={isUsage ? 'sidebar__nav sidebar__nav--selected' : 'sidebar__nav'}
-            aria-current={isUsage ? 'page' : undefined}
-            onClick={onUsage}
-          >
-            <Icon name="usage" />
-            <span className="sidebar__label">{usageLabel}</span>
-          </button>
-
-          <div className="sidebar__section">
-            <span className="sidebar__heading">{t('SIDEBAR.PROJECTS')}</span>
-            <Tooltip side="right" content={t('SIDEBAR.NEW_PROJECT')}>
+      {isListShown && (
+        <div className="sidebar__list">
+          <div className="sidebar__top">
+            <button type="button" className="sidebar__search" onClick={onSearch}>
+              <Icon name="search" size={16} />
+              <span className="sidebar__search-label">{searchLabel}</span>
+              {searchCombo !== '' && (
+                <span className="sidebar__combo">{searchCombo}</span>
+              )}
+            </button>
+            <Tooltip content={t('SIDEBAR.NEW_PROJECT')}>
               <IconButton
                 icon="plus"
-                size="sm"
                 label={t('SIDEBAR.NEW_PROJECT')}
                 onClick={onNewProject}
               />
             </Tooltip>
           </div>
+
+          <AnimatePresence>
+            {waitingName !== null && (
+              <motion.button
+                type="button"
+                className="sidebar__banner"
+                initial={STICKER.panel.initial}
+                animate={STICKER.panel.animate}
+                exit={STICKER.panel.exit}
+                onClick={onOpenWaiting}
+              >
+                <Tooltip
+                  side="right"
+                  isOff={!hasTips}
+                  content={
+                    <span className="sidebar__tip">
+                      <span className="sidebar__tip-name">{waitingName}</span>
+                      <span className="sidebar__tip-detail">
+                        {t('SIDEBAR.ASKED_YOU')}
+                      </span>
+                    </span>
+                  }
+                >
+                  <span className="sidebar__banner-icon">
+                    <Icon name="ask" />
+                  </span>
+                </Tooltip>
+                <span className="sidebar__banner-text">
+                  <span className="sidebar__banner-name">{waitingName}</span>
+                  <span className="sidebar__banner-said">{t('SIDEBAR.ASKED_YOU')}</span>
+                </span>
+                <span className="sidebar__banner-go">
+                  <Icon name="arrow" />
+                </span>
+              </motion.button>
+            )}
+          </AnimatePresence>
 
           <div className="sidebar__groups">
             <AnimatePresence initial={false}>
@@ -424,7 +387,7 @@ export const Sidebar: React.FC = () => {
                                     }}
                                   >
                                     <span className="sidebar__add-icon">
-                                      <Icon name="plus" />
+                                      <Icon name="plus" size={16} />
                                     </span>
                                     <span className="sidebar__label">
                                       {t('SIDEBAR.NEW_WORKSPACE')}
@@ -451,23 +414,33 @@ export const Sidebar: React.FC = () => {
                                       onSelectWorkspace(row.id);
                                     }}
                                   >
-                                    <span className="sidebar__name">{row.name}</span>
-                                    {row.signal !== null && (
-                                      <span
-                                        className={
-                                          row.isRemoving
-                                            ? 'sidebar__signal sidebar__signal--hidden'
-                                            : 'sidebar__signal'
-                                        }
-                                        title={row.signal.label}
-                                        style={{
-                                          color: row.signal.tone,
-                                          animation: row.signal.animation,
-                                        }}
-                                      >
-                                        <Icon name={row.signal.icon} />
+                                    <span
+                                      className="sidebar__plan-mark"
+                                      aria-hidden="true"
+                                    >
+                                      <Icon name="plan" size={18} />
+                                      {row.signal !== null && (
+                                        <span
+                                          className={
+                                            row.isRemoving
+                                              ? 'sidebar__signal sidebar__signal--hidden'
+                                              : 'sidebar__signal'
+                                          }
+                                          style={{
+                                            color: row.signal.tone,
+                                            animation: row.signal.animation,
+                                          }}
+                                        >
+                                          <Icon name={row.signal.icon} size={14} />
+                                        </span>
+                                      )}
+                                    </span>
+                                    <span className="sidebar__plan-text">
+                                      <span className="sidebar__name">{row.name}</span>
+                                      <span className="sidebar__subtitle">
+                                        {row.subtitle}
                                       </span>
-                                    )}
+                                    </span>
                                   </button>
 
                                   {row.isRemoving ? (
@@ -507,28 +480,7 @@ export const Sidebar: React.FC = () => {
               ))}
             </AnimatePresence>
           </div>
-
-          <div className="sidebar__foot" data-tooltip-group>
-            <ProAccountCard />
-            <HelpMenu side="above" />
-            <Tooltip content={t('COMMON.SETTINGS')}>
-              <IconButton
-                icon="settings"
-                size="sm"
-                label={t('COMMON.SETTINGS')}
-                onClick={onSettings}
-              />
-            </Tooltip>
-            <Tooltip content={toggleLabel}>
-              <IconButton
-                icon="sidebar"
-                size="sm"
-                label={toggleLabel}
-                onClick={onToggle}
-              />
-            </Tooltip>
-          </div>
-        </>
+        </div>
       )}
     </nav>
   );
