@@ -28,4 +28,5 @@ export * from './Sources';
 export * from './Storage';
 export * from './Templates';
 export * from './Updates';
+export * from './Usage';
 export * from './Variables';
