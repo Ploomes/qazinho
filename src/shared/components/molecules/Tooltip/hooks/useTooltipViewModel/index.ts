@@ -66,6 +66,7 @@ export const useTooltipViewModel = (props: ITooltipProps) => {
 
   return {
     anchorRef,
+    className: props.isFill === true ? 'tooltip tooltip--fill' : 'tooltip',
     onPointerEnter: () => {
       if (isOff) return;
 

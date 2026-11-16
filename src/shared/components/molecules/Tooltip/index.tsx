@@ -7,13 +7,13 @@ import './styles.css';
  * que desliza entre vizinhos em vez de fechar e abrir.
  */
 export const Tooltip: React.FC<ITooltipProps> = (props) => {
-  const { anchorRef, onPointerEnter, onPointerLeave, onFocus, onBlur } =
+  const { anchorRef, className, onPointerEnter, onPointerLeave, onFocus, onBlur } =
     useTooltipViewModel(props);
 
   return (
     <span
       ref={anchorRef}
-      className="tooltip"
+      className={className}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       onFocus={onFocus}

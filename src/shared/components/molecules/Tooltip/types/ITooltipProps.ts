@@ -6,4 +6,5 @@ export interface ITooltipProps {
   side?: 'below' | 'right';
   isOff?: boolean;
   isWide?: boolean;
+  isFill?: boolean;
 }

@@ -258,4 +258,19 @@ describe('useTooltipViewModel', () => {
 
     expect(useTooltipStore.getState().tip).toBeNull();
   });
+
+  it('fills its slot when it names a whole column, and hugs what it names otherwise', () => {
+    const plain = mounted(anchorIn(document.createElement('div')), {
+      content: 'a',
+      children: null,
+    });
+    const filling = mounted(anchorIn(document.createElement('div')), {
+      content: 'b',
+      isFill: true,
+      children: null,
+    });
+
+    expect(plain.result.current.className).toBe('tooltip');
+    expect(filling.result.current.className).toBe('tooltip tooltip--fill');
+  });
 });
