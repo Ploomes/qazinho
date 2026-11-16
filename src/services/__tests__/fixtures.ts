@@ -135,6 +135,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     installUpdate: () => Promise.resolve(),
     openStoreUpdates: () => Promise.resolve(),
     writeToSalve: () => Promise.resolve(),
+    readUsage: () => Promise.resolve([]),
     onAppUpdate: () => () => undefined,
     onSetupEvent: () => () => undefined,
     listIntegrations: () => Promise.resolve([]),

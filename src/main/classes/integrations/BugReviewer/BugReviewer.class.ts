@@ -58,6 +58,7 @@ export class BugReviewer {
     });
     const turn = await this.runner.ask({
       workspaceId: `${BUG_REVIEW.scopePrefix}${request.workspaceId}/${request.bugId}`,
+      meter: { kind: 'review', workspaceId: request.workspaceId, projectId: null },
       agentId: request.agentId,
       command,
       model: request.model,

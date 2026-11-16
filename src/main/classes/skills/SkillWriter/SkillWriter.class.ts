@@ -53,6 +53,7 @@ export class SkillWriter {
 
     const turn = await this.runner.ask({
       workspaceId: `${SKILL_WRITER.scopePrefix}${request.draftId}`,
+      meter: { kind: 'skill', workspaceId: null, projectId: null },
       agentId: request.agentId,
       command,
       model: request.model,

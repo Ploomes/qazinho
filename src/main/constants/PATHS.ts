@@ -26,4 +26,5 @@ export const PATHS = {
   orgTemplates: join(app.getPath('userData'), 'org-templates.json'),
   exampleShop: join(app.getPath('userData'), 'example-shop.json'),
   logs: join(app.getPath('userData'), 'logs'),
+  usage: join(app.getPath('userData'), 'usage.jsonl'),
 } as const;

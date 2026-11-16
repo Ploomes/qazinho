@@ -56,6 +56,7 @@ describe('a real chat', () => {
       });
       const turn = await runner.ask({
         workspaceId: 'w-chat',
+        meter: { kind: 'chat', workspaceId: null, projectId: null },
         agentId: 'claude-code',
         command: command ?? 'claude',
         model: 'haiku',
@@ -137,6 +138,7 @@ describe('a real chat', () => {
     }) =>
       runner.ask({
         workspaceId: 'w-chat-runs',
+        meter: { kind: 'chat', workspaceId: null, projectId: null },
         agentId: 'claude-code',
         command: command ?? 'claude',
         model: 'haiku',

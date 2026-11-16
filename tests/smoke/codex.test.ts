@@ -137,6 +137,7 @@ describe('Codex in the chat', () => {
     const ask = (sessionId: string | null) =>
       runner().ask({
         workspaceId: 'w-codex',
+        meter: { kind: 'chat', workspaceId: null, projectId: null },
         agentId: 'codex',
         command: codex,
         model: '',
@@ -168,6 +169,7 @@ describe('Codex in the chat', () => {
 
     const turn = await runner().ask({
       workspaceId: 'w-codex',
+      meter: { kind: 'chat', workspaceId: null, projectId: null },
       agentId: 'codex',
       command: codex,
       model: '',

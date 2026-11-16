@@ -28,6 +28,7 @@ export class ChangeReader {
     const asked = this.harness.readChange(request.brief);
     const turn = await this.runner.ask({
       workspaceId: `${CHANGE_READER.scopePrefix}${request.workspaceId}`,
+      meter: { kind: 'change', workspaceId: request.workspaceId, projectId: null },
       agentId: request.agentId,
       command,
       model: CHANGE_READER.cheapestModel[request.agentId] ?? request.model,

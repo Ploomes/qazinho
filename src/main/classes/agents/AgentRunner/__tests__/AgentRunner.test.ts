@@ -34,6 +34,7 @@ function runnerEndingTurnsAfter(timeoutMs: number): AgentRunner {
 const ask = (props: { runner: AgentRunner; command: string }) =>
   props.runner.ask({
     workspaceId: 'w1',
+    meter: { kind: 'chat', workspaceId: null, projectId: null },
     agentId: 'claude-code',
     command: props.command,
     model: '',
@@ -64,6 +65,7 @@ describe.skipIf(process.platform === 'win32')('AgentRunner', () => {
         },
       }).ask({
         workspaceId: 'w1',
+        meter: { kind: 'chat', workspaceId: null, projectId: null },
         agentId: 'claude-code',
         command,
         model: '',
@@ -86,6 +88,66 @@ describe.skipIf(process.platform === 'win32')('AgentRunner', () => {
     it('lets them into any other call', async () => {
       expect(await argsOf(false)).toContain('--permission-prompt-tool');
     });
+  });
+
+  /** O QAzinho não tinha como dizer ao QA o que as chamadas dele gastaram. */
+  it('tells what a turn spent, per model, for the work and the workspace it paid', async () => {
+    const folder = mkdtempSync(join(tmpdir(), 'qazinho-runner-'));
+    const command = join(folder, 'agent');
+    const result = {
+      type: 'result',
+      result: 'ok',
+      is_error: false,
+      session_id: 's',
+      total_cost_usd: 0.01,
+      modelUsage: {
+        'claude-haiku-5-5': {
+          inputTokens: 1200,
+          outputTokens: 18,
+          cacheReadInputTokens: 10835,
+          cacheCreationInputTokens: 20725,
+          costUSD: 0.01,
+        },
+      },
+    };
+
+    writeFileSync(
+      command,
+      `#!/bin/sh\ncat > /dev/null\necho '${JSON.stringify(result)}'\n`,
+    );
+    chmodSync(command, 0o755);
+
+    const spent: unknown[] = [];
+
+    await new AgentRunner({
+      owners: new ProcessOwners(),
+      folder: mkdtempSync(join(tmpdir(), 'qazinho-agent-home-')),
+      onEvent: () => undefined,
+      onSpent: (records) => spent.push(...records),
+    }).ask({
+      workspaceId: 'w1',
+      meter: { kind: 'case', workspaceId: 'w1', projectId: 'p1' },
+      agentId: 'claude-code',
+      command,
+      model: 'haiku',
+      sessionId: null,
+      prompt: 'Walk the case.',
+    });
+
+    expect(spent).toEqual([
+      expect.objectContaining({
+        agentId: 'claude-code',
+        kind: 'case',
+        workspaceId: 'w1',
+        projectId: 'p1',
+        model: 'claude-haiku-5-5',
+        input: 1200,
+        output: 18,
+        cacheRead: 10835,
+        cacheWrite: 20725,
+        costUsd: 0.01,
+      }),
+    ]);
   });
 
   describe('the clock on a turn', () => {

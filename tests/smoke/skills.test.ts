@@ -171,6 +171,7 @@ describe('the team skills, with a real agent', () => {
 
       const turn = await runner.ask({
         workspaceId: 'w-skills',
+        meter: { kind: 'skill', workspaceId: null, projectId: null },
         agentId: 'claude-code',
         command,
         model: 'haiku',
@@ -229,6 +230,7 @@ describe('the team skills, with a real agent', () => {
     });
     const turn = await runner.ask({
       workspaceId: 'w-skills-called',
+      meter: { kind: 'skill', workspaceId: null, projectId: null },
       agentId: 'claude-code',
       command,
       model: 'haiku',

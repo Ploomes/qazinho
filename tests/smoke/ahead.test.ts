@@ -118,6 +118,7 @@ describe('a plan written ahead of the app, with a real agent', () => {
       });
       const turn = await runner.ask({
         workspaceId: 'w-ahead',
+        meter: { kind: 'chat', workspaceId: null, projectId: null },
         agentId: 'claude-code',
         command,
         model: 'haiku',

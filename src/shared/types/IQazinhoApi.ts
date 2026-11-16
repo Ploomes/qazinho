@@ -93,6 +93,7 @@ import type { IStoryDoubtsPost } from './IStoryDoubtsPost';
 import type { ITellStory } from './ITellStory';
 import type { ITemplate } from './ITemplate';
 import type { ITrayWords } from './ITrayWords';
+import type { IUsageRecord } from './IUsageRecord';
 import type { IVideoSweep } from './IVideoSweep';
 import type { IViewport } from './IViewport';
 import type { IWindowControls } from './IWindowControls';
@@ -230,6 +231,7 @@ export interface IQazinhoApi {
   installUpdate: () => Promise<void>;
   openStoreUpdates: () => Promise<void>;
   writeToSalve: (letter: { subject: string; body: string }) => Promise<void>;
+  readUsage: (sinceMs: number) => Promise<IUsageRecord[]>;
   onAppUpdate: (listener: (update: AppUpdate) => void) => () => void;
   listIntegrations: () => Promise<IIntegrationStatus[]>;
   connectIntegration: (connecting: IConnectIntegration) => Promise<IConnectResult>;

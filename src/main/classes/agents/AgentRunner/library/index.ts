@@ -1,6 +1,7 @@
 export * from './buildAskArgs';
 export * from './buildCodexArgs';
 export * from './codexConfigFileOf';
+export * from './codexSpentOf';
 export * from './codexServersOf';
 export * from './costOf';
 export * from './followPartial';
@@ -9,6 +10,7 @@ export * from './isCompaction';
 export * from './readAgentLine';
 export * from './replyInPartial';
 export * from './retryOf';
+export * from './spentOf';
 export * from './strictSchemaOf';
 export * from './toActions';
 export * from './toStructured';

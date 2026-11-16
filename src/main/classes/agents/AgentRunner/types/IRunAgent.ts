@@ -1,3 +1,4 @@
+import type { IUsageMeter } from './IUsageMeter';
 import type { IToolImage } from '@/main/types';
 
 /**
@@ -7,6 +8,7 @@ import type { IToolImage } from '@/main/types';
 export interface IRunAgent {
   onToolImage?: (image: IToolImage) => void;
   workspaceId: string;
+  meter: IUsageMeter;
   agentId: string;
   command: string;
   model: string;

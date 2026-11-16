@@ -1,6 +1,6 @@
 import type { IAgentClock, IAgentRunner, ILiveBlock, IRunAgent } from './types';
 import type { ICodexLine } from '@/main/types';
-import type { IAgentEvent, IAgentTurn, IAgentUsage } from '@/shared/types';
+import type { IAgentEvent, IAgentTurn, IAgentUsage, IUsageRecord } from '@/shared/types';
 import type { ChildProcess } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
@@ -14,6 +14,7 @@ import {
   buildCodexArgs,
   codexConfigFileOf,
   codexServersOf,
+  codexSpentOf,
   costOf,
   followPartial,
   isCompaction,
@@ -21,6 +22,7 @@ import {
   killTree,
   readAgentLine,
   retryOf,
+  spentOf,
   strictSchemaOf,
   toActions,
   toStructured,
@@ -37,6 +39,7 @@ import {
  */
 export class AgentRunner {
   private readonly onEvent: (event: IAgentEvent) => void;
+  private readonly onSpent: (records: IUsageRecord[]) => void;
   private readonly owners: IAgentRunner['owners'];
   private readonly folder: string;
   private readonly timeoutMs: number;
@@ -47,6 +50,11 @@ export class AgentRunner {
 
   public constructor(props: IAgentRunner) {
     this.onEvent = props.onEvent;
+    this.onSpent =
+      props.onSpent ??
+      (() => {
+        return undefined;
+      });
     this.owners = props.owners;
     this.folder = props.folder;
     this.timeoutMs = props.timeoutMs ?? AGENT_RUN.timeoutMs;
@@ -132,6 +140,12 @@ export class AgentRunner {
     let costUsd: number | null = null;
     let wasCompacted = false;
     let stderr = '';
+    const spent: IUsageRecord[] = [];
+    const metered = {
+      meter: props.meter,
+      agentId: props.agentId,
+      model: props.model,
+    };
 
     child.stderr.on('data', (chunk: Buffer) => {
       stderr += chunk.toString();
@@ -145,7 +159,10 @@ export class AgentRunner {
       if (!event) return;
 
       if (isCodex) {
-        const heard = hearCodex({ line: event as unknown as ICodexLine, usage });
+        const codexLine = event as unknown as ICodexLine;
+        const heard = hearCodex({ line: codexLine, usage });
+
+        spent.push(...codexSpentOf({ ...metered, line: codexLine, at: Date.now() }));
 
         sessionId = heard.sessionId ?? sessionId;
 
@@ -238,6 +255,7 @@ export class AgentRunner {
         result = event.result ?? '';
         isError = event.is_error === true;
         costUsd = costOf(event);
+        spent.push(...spentOf({ ...metered, line: event, at: Date.now() }));
       }
     });
 
@@ -255,6 +273,8 @@ export class AgentRunner {
         resolve(status ?? 1);
       });
     });
+
+    if (spent.length > 0) this.onSpent(spent);
 
     const spokenOrError = spoken.length > 0 ? spoken : stderr.trim();
     const said = result.length > 0 ? result : spokenOrError;

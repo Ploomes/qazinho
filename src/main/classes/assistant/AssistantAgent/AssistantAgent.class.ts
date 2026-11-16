@@ -129,6 +129,7 @@ export class AssistantAgent {
     });
     const turn = await this.runner.ask({
       workspaceId: ASSISTANT.scope,
+      meter: { kind: 'assistant', workspaceId: null, projectId: null },
       agentId: ask.agentId,
       command,
       model: ask.model,

@@ -1095,6 +1095,7 @@ export class RunCoordinator {
 
     const asking = this.runner.ask({
       workspaceId,
+      meter: { kind: 'prepare', workspaceId, projectId: run.projectId ?? null },
       agentId: run.agentId,
       command: run.command,
       model: run.model,
@@ -1278,6 +1279,7 @@ export class RunCoordinator {
 
     const asking = this.runner.ask({
       workspaceId,
+      meter: { kind: 'sign-in', workspaceId, projectId: run.projectId ?? null },
       agentId: run.agentId,
       command: run.command,
       model: run.model,
@@ -1722,6 +1724,7 @@ export class RunCoordinator {
 
     const asking = this.runner.ask({
       workspaceId,
+      meter: { kind: 'case', workspaceId, projectId: run.projectId ?? null },
       agentId: run.agentId,
       command: run.command,
       model: run.model,
@@ -2025,6 +2028,7 @@ export class RunCoordinator {
 
     const asking = this.runner.ask({
       workspaceId,
+      meter: { kind: 'explore', workspaceId, projectId: run.projectId ?? null },
       agentId: run.agentId,
       command: run.command,
       model: run.model,

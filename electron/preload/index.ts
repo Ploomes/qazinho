@@ -97,6 +97,7 @@ import type {
   IOrgTemplateRef,
   ITemplate,
   ITrayWords,
+  IUsageRecord,
   IVideoSweep,
   IViewport,
   IWindowControls,
@@ -342,6 +343,8 @@ const api: IQazinhoApi = {
   openStoreUpdates: () => ipcRenderer.invoke(CHANNELS.openStoreUpdates) as Promise<void>,
   writeToSalve: (letter: { subject: string; body: string }) =>
     ipcRenderer.invoke(CHANNELS.writeToSalve, letter) as Promise<void>,
+  readUsage: (sinceMs: number) =>
+    ipcRenderer.invoke(CHANNELS.readUsage, sinceMs) as Promise<IUsageRecord[]>,
   onAppUpdate: (listener: (update: AppUpdate) => void) => {
     const forward = (_: unknown, update: AppUpdate) => {
       listener(update);

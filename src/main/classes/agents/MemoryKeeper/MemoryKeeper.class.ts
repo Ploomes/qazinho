@@ -29,6 +29,7 @@ export class MemoryKeeper {
     const asked = this.harness.keep({ memories, events, language });
     const turn = await this.runner.ask({
       workspaceId: `${MEMORY_KEEPER.scopePrefix}${request.projectId}`,
+      meter: { kind: 'memory', workspaceId: null, projectId: request.projectId },
       agentId: request.agentId,
       command,
       model: MEMORY_KEEPER.cheapestModel[request.agentId] ?? request.model,

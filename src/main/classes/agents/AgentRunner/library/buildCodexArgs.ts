@@ -6,7 +6,7 @@ import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
  * ou uma pasta gravável.
  */
 export function buildCodexArgs(
-  props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'> & {
+  props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId' | 'meter'> & {
     schemaFile: string | null;
     ownServers: string[];
   },

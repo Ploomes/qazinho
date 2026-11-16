@@ -7,6 +7,7 @@ const BARE =
   '{"mcpServers":{"qazinho":{"type":"http","url":"http://127.0.0.1:9/t/~permissions"}}}';
 const CALL: IRunAgent = {
   workspaceId: 'w-1',
+  meter: { kind: 'chat', workspaceId: null, projectId: null },
   agentId: 'claude-code',
   command: 'claude',
   model: '',

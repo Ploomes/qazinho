@@ -157,6 +157,7 @@ describe('a real chat learning the app before it plans', () => {
     });
     const turn = await runner.ask({
       workspaceId: 'w-learn',
+      meter: { kind: 'chat', workspaceId: null, projectId: null },
       agentId: 'claude-code',
       command: command ?? 'claude',
       model: 'haiku',

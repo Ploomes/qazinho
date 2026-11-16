@@ -163,6 +163,7 @@ export class AppBuilder {
     });
     const turn = await this.runner.ask({
       workspaceId: `${APP_BUILDER.scopePrefix}${buildId}`,
+      meter: { kind: 'build', workspaceId: null, projectId: build.projectId ?? null },
       agentId: build.agentId,
       command,
       model: build.model,

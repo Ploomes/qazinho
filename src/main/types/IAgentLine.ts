@@ -30,8 +30,23 @@ export interface IAgentLine {
       seven_day?: { utilization?: number };
     };
   };
-  usage?: { input_tokens?: number; cache_read_input_tokens?: number };
-  modelUsage?: Record<string, { contextWindow?: number }>;
+  usage?: {
+    input_tokens?: number;
+    output_tokens?: number;
+    cache_read_input_tokens?: number;
+    cache_creation_input_tokens?: number;
+  };
+  modelUsage?: Record<
+    string,
+    {
+      contextWindow?: number;
+      inputTokens?: number;
+      outputTokens?: number;
+      cacheReadInputTokens?: number;
+      cacheCreationInputTokens?: number;
+      costUSD?: number;
+    }
+  >;
   total_cost_usd?: number;
   attempt?: number;
   max_retries?: number;

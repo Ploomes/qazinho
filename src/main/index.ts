@@ -155,6 +155,7 @@ import {
   storyTextOf,
   TemplateLibrary,
   updateFeedOf,
+  UsageLedger,
   UsageReader,
   VariableVault,
 } from '@/main/classes';
@@ -658,9 +659,13 @@ const proTemplates = new ProTemplates({
 });
 const git = new GitCli({ directories: commandDirectories });
 const importScanner = new ImportScanner({ git });
+const usageLedger = new UsageLedger({ file: PATHS.usage });
 const agentRunner = new AgentRunner({
   owners,
   folder: PATHS.agentHome,
+  onSpent: (records) => {
+    void usageLedger.add(records);
+  },
   permissions: {
     tool: PERMISSION_TOOL.granted,
     mcpConfig: () => tools.mcpConfigFor(MCP_HOST.permissionsScope),
@@ -1101,6 +1106,7 @@ async function askOnce(props: {
   try {
     const turn = await agentRunner.ask({
       workspaceId: ask.workspaceId,
+      meter: { kind: 'chat', workspaceId: ask.workspaceId, projectId: ask.projectId },
       agentId: ask.agentId,
       command,
       model: ask.model,
@@ -1709,6 +1715,7 @@ app.on('second-instance', (_event, argv) => {
 
 void app.whenReady().then(async () => {
   appUpdater.start();
+  void usageLedger.prune(Date.now());
   appLog.write({
     level: 'info',
     scope: 'app',
@@ -2091,6 +2098,9 @@ void app.whenReady().then(async () => {
   });
   ipcMain.handle(CHANNELS.openStoreUpdates, () =>
     shell.openExternal(APP_UPDATE.storeUpdates),
+  );
+  ipcMain.handle(CHANNELS.readUsage, (_event, sinceMs: unknown) =>
+    usageLedger.read(typeof sinceMs === 'number' ? sinceMs : 0),
   );
   ipcMain.handle(
     CHANNELS.writeToSalve,

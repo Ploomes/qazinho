@@ -5,4 +5,5 @@ export * from './AgentTerminal';
 export * from './ChangeReader';
 export * from './LinkCatcher';
 export * from './MemoryKeeper';
+export * from './UsageLedger';
 export * from './UsageReader';

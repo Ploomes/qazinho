@@ -6,7 +6,7 @@ import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
  * que recebeu.
  */
 export function buildAskArgs(
-  props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'>,
+  props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId' | 'meter'>,
 ): string[] {
   const { model, sessionId, schema, systemPrompt, mcpConfig, allowedTools, tools } =
     props;
