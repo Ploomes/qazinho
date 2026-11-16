@@ -2,7 +2,6 @@
   display: flex;
   flex: 1;
   min-height: 0;
-  background: var(--center);
 }
 
 .settings__nav {
@@ -12,8 +11,6 @@
   gap: 3px;
   width: var(--sidebar-width);
   padding: var(--space-4) var(--space-4);
-  border-right: 1px solid var(--line2);
-  background: var(--panel);
 }
 
 .settings__back {
@@ -53,6 +50,10 @@
 .settings__content {
   flex: 1;
   min-width: 0;
+  margin: 0 var(--space-2) var(--space-2) 0;
+  border: var(--edge-width) solid var(--line2);
+  border-radius: var(--radius-lg);
+  background: var(--center);
   padding: var(--space-8) 36px;
   overflow-y: auto;
   scrollbar-gutter: stable;

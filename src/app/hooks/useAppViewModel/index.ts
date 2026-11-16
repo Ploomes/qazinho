@@ -145,6 +145,10 @@ export const useAppViewModel = () => {
     isTitlebarBare: isUpdateBlocked || !hasOnboarded,
     isOnboarding: !hasOnboarded,
     hasSidebar: projects.length > 0 && screen !== 'settings',
+    cardClassName:
+      hasOnboarded && !isUpdateBlocked && projects.length > 0 && screen !== 'settings'
+        ? 'app__card'
+        : 'app__card app__card--alone',
     isFirstRun: isLoaded && screen !== 'settings' && projects.length === 0,
     isHome: screen === 'welcome' && projects.length > 0,
     isWorkspace: screen === 'workspace',

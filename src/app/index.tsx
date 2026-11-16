@@ -30,6 +30,7 @@ export const App: React.FC = () => {
     isTitlebarBare,
     isOnboarding,
     hasSidebar,
+    cardClassName,
     isFirstRun,
     isHome,
     isChatOnly,
@@ -61,27 +62,34 @@ export const App: React.FC = () => {
         <Titlebar isBare={isTitlebarBare} />
         {isUpdateBlocked ? (
           <div className="app__body">
-            <UpdateRequired />
+            <main className={cardClassName}>
+              <UpdateRequired />
+            </main>
           </div>
         ) : (
           <>
             <div className="app__body">
               <ErrorBarrier region="screen">
-                {isOnboarding && <Onboarding />}
                 {!isOnboarding && hasSidebar && (
                   <ErrorBarrier region="sidebar">
                     <Sidebar />
                   </ErrorBarrier>
                 )}
-                {!isOnboarding && isFirstRun && <FirstRun />}
-                {!isOnboarding && isHome && <Home />}
-                {!isOnboarding && !isFirstRun && isWorkspace && !isChatOnly && (
-                  <Workspace />
+                {!isOnboarding && isSettings ? (
+                  <Settings />
+                ) : (
+                  <main className={cardClassName}>
+                    {isOnboarding && <Onboarding />}
+                    {!isOnboarding && isFirstRun && <FirstRun />}
+                    {!isOnboarding && isHome && <Home />}
+                    {!isOnboarding && !isFirstRun && isWorkspace && !isChatOnly && (
+                      <Workspace />
+                    )}
+                    {!isOnboarding && !isFirstRun && isWorkspace && <AgentPanel />}
+                    {!isOnboarding && !isFirstRun && isBugs && <AllBugs />}
+                    {!isOnboarding && !isFirstRun && isNewProject && <NewProject />}
+                  </main>
                 )}
-                {!isOnboarding && !isFirstRun && isWorkspace && <AgentPanel />}
-                {!isOnboarding && !isFirstRun && isSettings && <Settings />}
-                {!isOnboarding && !isFirstRun && isBugs && <AllBugs />}
-                {!isOnboarding && !isFirstRun && isNewProject && <NewProject />}
               </ErrorBarrier>
             </div>
 

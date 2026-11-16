@@ -250,6 +250,33 @@ describe('useAppViewModel', () => {
     expect(result.current.shellStyle).toMatchObject({ '--sidebar-shown': '268px' });
   });
 
+  describe('the card the screens sit in', () => {
+    const project = { id: 'p1', name: 'Shop · staging', targets: [], repositories: [] };
+
+    it('sits right of the sidebar, on the frame the sidebar shares with the title bar', () => {
+      useAppStore.setState({ screen: 'welcome', projects: [project] });
+
+      const { result } = renderHook(() => useAppViewModel());
+
+      expect(result.current.cardClassName).toBe('app__card');
+    });
+
+    it('keeps a gap on its left too when no sidebar is beside it', () => {
+      const { result } = renderHook(() => useAppViewModel());
+
+      expect(result.current.cardClassName).toBe('app__card app__card--alone');
+    });
+
+    it('stands alone while the QA is welcomed, before any sidebar exists', () => {
+      useAppStore.setState({ screen: 'welcome', projects: [project] });
+      useSettingsStore.setState({ hasOnboarded: false });
+
+      const { result } = renderHook(() => useAppViewModel());
+
+      expect(result.current.cardClassName).toBe('app__card app__card--alone');
+    });
+  });
+
   it('hides the app sidebar while settings take the whole window', () => {
     useAppStore.setState({
       screen: 'settings',

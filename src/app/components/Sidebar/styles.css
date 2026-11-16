@@ -6,7 +6,6 @@
   flex-direction: column;
   width: var(--sidebar-shown);
   overflow: hidden;
-  border-right: 1px solid var(--line2);
   background: var(--panel);
   transition: width var(--dur-slow) var(--ease);
 }
