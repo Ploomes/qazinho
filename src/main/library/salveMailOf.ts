@@ -1,4 +1,4 @@
-import { SALVE_CONTACT } from '@/main/constants';
+import { SALVE_CONTACT } from '@/main/constants/SALVE_CONTACT';
 
 /** O e-mail para a Salve Software, com o assunto e o texto da página, cortados. */
 export function salveMailOf(letter: { subject: unknown; body: unknown }): string {
