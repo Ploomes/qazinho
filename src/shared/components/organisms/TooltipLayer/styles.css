@@ -1,0 +1,79 @@
+.tooltip-layer__measure,
+.tooltip-layer__panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  box-sizing: border-box;
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font: var(--font-ui-xs);
+  text-align: left;
+  text-wrap: pretty;
+  pointer-events: none;
+}
+
+.tooltip-layer__measure {
+  display: block;
+  width: max-content;
+  max-width: var(--tooltip-max);
+  padding: var(--space-2) var(--space-3);
+  visibility: hidden;
+}
+
+.tooltip-layer__measure--wide {
+  max-width: var(--tooltip-max-wide);
+}
+
+.tooltip-layer__inner {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+}
+
+.tooltip-layer__panel {
+  background: var(--raise2);
+  box-shadow: var(--sticker-lift);
+}
+
+.tooltip-layer__clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.tooltip-layer__label {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-3);
+  display: block;
+  width: var(--tip-width);
+}
+
+.tooltip-layer__tail {
+  position: absolute;
+  top: calc(var(--edge-width) * -1);
+  left: calc(var(--edge-width) * -1);
+  width: var(--tooltip-tail-size);
+  height: var(--tooltip-tail-size);
+  margin: calc(var(--tooltip-tail-size) / -2) 0 0 calc(var(--tooltip-tail-size) / -2);
+  border: var(--edge-width) solid transparent;
+  background: var(--raise2);
+}
+
+.tooltip-layer__panel--below .tooltip-layer__tail {
+  border-top-color: var(--edge);
+  border-left-color: var(--edge);
+}
+
+.tooltip-layer__panel--above .tooltip-layer__tail {
+  border-right-color: var(--edge);
+  border-bottom-color: var(--edge);
+}
+
+.tooltip-layer__panel--right .tooltip-layer__tail {
+  border-bottom-color: var(--edge);
+  border-left-color: var(--edge);
+}

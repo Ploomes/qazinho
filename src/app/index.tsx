@@ -11,7 +11,12 @@ import { Settings } from '@/modules/Settings';
 import { Onboarding } from '@/modules/Setup';
 import { UpdateRequired } from '@/modules/Update';
 import { AgentPanel, NewWorkspaceModal, Workspace } from '@/modules/Workspace';
-import { ErrorBarrier, Lightbox, Titlebar } from '@/shared/components/organisms';
+import {
+  ErrorBarrier,
+  Lightbox,
+  Titlebar,
+  TooltipLayer,
+} from '@/shared/components/organisms';
 import { SearchPalette } from './components/SearchPalette';
 import { Sidebar } from './components/Sidebar';
 import { useAppViewModel } from './hooks';
@@ -48,6 +53,7 @@ export const App: React.FC = () => {
   return isDocked ? (
     <MotionConfig reducedMotion="user">
       <ManualDock />
+      <TooltipLayer />
     </MotionConfig>
   ) : (
     <MotionConfig reducedMotion="user">
@@ -95,6 +101,7 @@ export const App: React.FC = () => {
             {!isOnboarding && <AssistantDock />}
           </>
         )}
+        <TooltipLayer />
       </div>
     </MotionConfig>
   );

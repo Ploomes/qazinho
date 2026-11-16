@@ -9,6 +9,7 @@ export * from './SettingsStore';
 export * from './SetupStore';
 export * from './SkillStore';
 export * from './TemplateStore';
+export * from './TooltipStore';
 export * from './UpdateStore';
 export * from './VariablesStore';
 export * from './WorkspaceStore';

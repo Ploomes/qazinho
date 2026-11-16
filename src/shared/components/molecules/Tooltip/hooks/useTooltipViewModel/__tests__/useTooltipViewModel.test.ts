@@ -1,163 +1,261 @@
 // @vitest-environment jsdom
+import type { FocusEvent } from 'react';
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useTooltipViewModel } from '@/shared/components/molecules/Tooltip/hooks/useTooltipViewModel';
+import { useTooltipStore } from '@/store';
+
+/** Um botão com a âncora da dica dentro de um pai, que é o grupo de vizinhos dela. */
+function anchorIn(parent: HTMLElement, left = 10): HTMLSpanElement {
+  const anchor = document.createElement('span');
+
+  anchor.getBoundingClientRect = () =>
+    ({ top: 10, bottom: 42, left, right: left + 32, width: 32, height: 32 }) as DOMRect;
+  parent.appendChild(anchor);
+
+  return anchor;
+}
+
+function mounted(
+  anchor: HTMLSpanElement,
+  props: Parameters<typeof useTooltipViewModel>[0],
+) {
+  const hook = renderHook((given: typeof props) => useTooltipViewModel(given), {
+    initialProps: props,
+  });
+
+  (hook.result.current.anchorRef as { current: HTMLSpanElement | null }).current = anchor;
+
+  return hook;
+}
+
+const focusOf = (isVisible: boolean) =>
+  ({ target: { matches: () => isVisible } }) as unknown as FocusEvent<HTMLSpanElement>;
+
+beforeEach(() => {
+  vi.useFakeTimers();
+  useTooltipStore.setState({ tip: null, session: 0, closedAt: 0, lingerTimer: null });
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('useTooltipViewModel', () => {
   it('stays hidden until the pointer or the focus arrives', () => {
-    const { result } = renderHook(() => useTooltipViewModel({}));
-
-    expect(result.current.isOpen).toBe(false);
-  });
-
-  it('wraps a long tip at a width it never grows past', () => {
-    const { result } = renderHook(() => useTooltipViewModel({}));
-
-    expect(result.current.style).toEqual({
-      '--tooltip-max': '240px',
-      '--tooltip-tail-size': '8px',
+    mounted(anchorIn(document.createElement('div')), {
+      content: 'Início',
+      children: null,
     });
+
+    expect(useTooltipStore.getState().tip).toBeNull();
   });
 
-  /** Um conteúdo de largura fixa, como o uso da sessão, vazava pela borda do balão. */
-  it('grows wider for a tip whose content holds its own width', () => {
-    const { result } = renderHook(() => useTooltipViewModel({ isWide: true }));
-
-    expect(result.current.style).toMatchObject({ '--tooltip-max': '288px' });
-  });
-
-  it('opens on arrival and closes on leaving', () => {
-    const { result } = renderHook(() => useTooltipViewModel({}));
+  /** Passar o mouse por cima de uma fileira de botões abria uma dica em cada um. */
+  it('waits a moment before the first tip opens', () => {
+    const { result } = mounted(anchorIn(document.createElement('div')), {
+      content: 'Início',
+      children: null,
+    });
 
     act(() => {
-      result.current.onOpen();
+      result.current.onPointerEnter();
     });
 
-    expect(result.current.isOpen).toBe(true);
+    expect(useTooltipStore.getState().tip).toBeNull();
 
     act(() => {
-      result.current.onClose();
+      vi.advanceTimersByTime(150);
     });
 
-    expect(result.current.isOpen).toBe(false);
+    expect(useTooltipStore.getState().tip?.content).toBe('Início');
   });
 
-  /** Alinhada pela direita, a dica de algo perto da esquerda saía da janela. */
-  it('hangs from the left of what it names when the right would leave the window', () => {
-    const { result } = renderHook(() => useTooltipViewModel({}));
-    const anchor = document.createElement('span');
-
-    anchor.getBoundingClientRect = () =>
-      ({ top: 10, bottom: 30, left: 120, right: 220, height: 20 }) as DOMRect;
-    result.current.anchorRef.current = anchor;
+  it('does NOT open when the pointer leaves before the wait ends', () => {
+    const { result } = mounted(anchorIn(document.createElement('div')), {
+      content: 'Início',
+      children: null,
+    });
 
     act(() => {
-      result.current.onOpen();
+      result.current.onPointerEnter();
+      vi.advanceTimersByTime(100);
+      result.current.onPointerLeave();
+      vi.advanceTimersByTime(200);
     });
 
-    expect(result.current.style).toMatchObject({ '--tooltip-left': '120px' });
-    expect(result.current.style).not.toHaveProperty('--tooltip-right');
+    expect(useTooltipStore.getState().tip).toBeNull();
   });
 
-  it('does NOT open while it is off', () => {
-    const { result } = renderHook(() => useTooltipViewModel({ isOff: true }));
+  it('moves the open panel to the next button of the same row, with no new wait', () => {
+    const row = document.createElement('div');
+    const home = mounted(anchorIn(row, 10), {
+      content: 'Início',
+      side: 'right',
+      children: null,
+    });
+    const bugs = mounted(anchorIn(row, 60), {
+      content: 'Bugs',
+      side: 'right',
+      children: null,
+    });
 
     act(() => {
-      result.current.onOpen();
+      home.result.current.onPointerEnter();
+      vi.advanceTimersByTime(150);
     });
 
-    expect(result.current.isOpen).toBe(false);
-  });
-
-  /**
-   * Na sidebar dobrada, uma dica sob a linha dela era cortada pela própria borda do
-   * trilho.
-   */
-  it('opens beside what it names, centred on it, a little gap away', () => {
-    const { result } = renderHook(() => useTooltipViewModel({ side: 'right' }));
-
-    (result.current.anchorRef as { current: unknown }).current = {
-      getBoundingClientRect: () => ({ top: 100, height: 40, right: 56 }),
-    };
+    const opened = useTooltipStore.getState().session;
 
     act(() => {
-      result.current.onOpen();
+      bugs.result.current.onPointerEnter();
     });
 
-    expect(result.current.isOpen).toBe(true);
-    expect(result.current.isBeside).toBe(true);
-    expect(result.current.panelClassName).toBe('tooltip__panel tooltip__panel--beside');
-    expect(result.current.style).toMatchObject({
-      '--tooltip-top': '120px',
-      '--tooltip-left': '62px',
-    });
+    expect(useTooltipStore.getState().tip?.content).toBe('Bugs');
+    expect(useTooltipStore.getState().tip?.box.left).toBe(60);
+    expect(useTooltipStore.getState().session).toBe(opened);
   });
 
-  /**
-   * O botão de dobrar fica no pé da janela, e a dica dele, centrada nele, ficava metade
-   * para fora da borda.
-   */
-  it('keeps a tip beside something at the window foot inside the window', () => {
-    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 900 });
-
-    const { result } = renderHook(() => useTooltipViewModel({ side: 'right' }));
-
-    (result.current.anchorRef as { current: unknown }).current = {
-      getBoundingClientRect: () => ({ top: 870, height: 28, right: 56 }),
-    };
+  it('opens fresh, not sliding, at a button in another part of the screen', () => {
+    const home = mounted(anchorIn(document.createElement('div')), {
+      content: 'Início',
+      children: null,
+    });
+    const send = mounted(anchorIn(document.createElement('div')), {
+      content: 'Enviar',
+      children: null,
+    });
 
     act(() => {
-      result.current.onOpen();
+      home.result.current.onPointerEnter();
+      vi.advanceTimersByTime(150);
     });
 
-    expect(result.current.style).toMatchObject({ '--tooltip-top': '868px' });
-  });
-
-  it('opens under what it names unless asked to sit beside it', () => {
-    const { result } = renderHook(() => useTooltipViewModel({}));
-
-    expect(result.current.isBeside).toBe(false);
-    expect(result.current.panelClassName).toBe('tooltip__panel');
-  });
-
-  /**
-   * Uma dica sob o X de um aviso que abre e fecha era cortada pela caixa dele, que esconde
-   * o que passa da borda enquanto anima: a dica agora fica fixa na janela, fora da caixa.
-   */
-  it('pins a tip under what it names to the window, right edges lined up', () => {
-    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1200 });
-
-    const { result } = renderHook(() => useTooltipViewModel({}));
-
-    (result.current.anchorRef as { current: unknown }).current = {
-      getBoundingClientRect: () => ({ top: 300, bottom: 328, height: 28, right: 1150 }),
-    };
+    const opened = useTooltipStore.getState().session;
 
     act(() => {
-      result.current.onOpen();
+      send.result.current.onPointerEnter();
     });
 
-    expect(result.current.style).toMatchObject({
-      '--tooltip-top': '334px',
-      '--tooltip-right': '50px',
-    });
+    expect(useTooltipStore.getState().session).toBe(opened + 1);
   });
 
-  /**
-   * O botão de Recursos abre um popover com o próprio nome: o tooltip aberto pelo hover
-   * continuava em cima dele depois do clique.
-   */
-  it('closes an open tip once it is turned off, as a popover opens', () => {
-    const { result, rerender } = renderHook(
-      (props: { isOff: boolean }) => useTooltipViewModel(props),
-      { initialProps: { isOff: false } },
-    );
+  it('opens at once a little after the last tip closed', () => {
+    const row = document.createElement('div');
+    const home = mounted(anchorIn(row), { content: 'Início', children: null });
+    const bugs = mounted(anchorIn(row), { content: 'Bugs', children: null });
 
     act(() => {
-      result.current.onOpen();
+      home.result.current.onPointerEnter();
+      vi.advanceTimersByTime(150);
+      home.result.current.onPointerLeave();
     });
-    rerender({ isOff: true });
 
-    expect(result.current.isOpen).toBe(false);
+    expect(useTooltipStore.getState().tip).toBeNull();
+
+    act(() => {
+      vi.advanceTimersByTime(100);
+      bugs.result.current.onPointerEnter();
+    });
+
+    expect(useTooltipStore.getState().tip?.content).toBe('Bugs');
+  });
+
+  it('opens on keyboard focus, and not on the focus a click gives', () => {
+    const anchor = anchorIn(document.createElement('div'));
+    const { result } = mounted(anchor, { content: 'Início', children: null });
+
+    act(() => {
+      result.current.onFocus(focusOf(false));
+    });
+
+    expect(useTooltipStore.getState().tip).toBeNull();
+
+    act(() => {
+      result.current.onFocus(focusOf(true));
+    });
+
+    expect(useTooltipStore.getState().tip?.content).toBe('Início');
+
+    act(() => {
+      result.current.onBlur();
+    });
+
+    expect(useTooltipStore.getState().tip).toBeNull();
+  });
+
+  it('does NOT open while it is off, and closes when it turns off', () => {
+    const anchor = anchorIn(document.createElement('div'));
+    const { result, rerender } = mounted(anchor, {
+      content: 'Conta',
+      isOff: true,
+      children: null,
+    });
+
+    act(() => {
+      result.current.onPointerEnter();
+      vi.advanceTimersByTime(150);
+    });
+
+    expect(useTooltipStore.getState().tip).toBeNull();
+
+    rerender({ content: 'Conta', isOff: false, children: null });
+
+    act(() => {
+      result.current.onPointerEnter();
+      vi.advanceTimersByTime(150);
+    });
+
+    expect(useTooltipStore.getState().tip).not.toBeNull();
+
+    rerender({ content: 'Conta', isOff: true, children: null });
+
+    expect(useTooltipStore.getState().tip).toBeNull();
+  });
+
+  /** O uso da sessão muda enquanto a dica está aberta, e a dica mostrava o número velho. */
+  it('keeps the open tip saying what its button says now', () => {
+    const anchor = anchorIn(document.createElement('div'));
+    const { result, rerender } = mounted(anchor, { content: '40%', children: null });
+
+    act(() => {
+      result.current.onPointerEnter();
+      vi.advanceTimersByTime(150);
+    });
+
+    rerender({ content: '42%', children: null });
+
+    expect(useTooltipStore.getState().tip?.content).toBe('42%');
+  });
+
+  it('says on which side it opens and whether it is wide', () => {
+    const anchor = anchorIn(document.createElement('div'));
+    const { result } = mounted(anchor, {
+      content: 'Uso',
+      side: 'right',
+      isWide: true,
+      children: null,
+    });
+
+    act(() => {
+      result.current.onPointerEnter();
+      vi.advanceTimersByTime(150);
+    });
+
+    expect(useTooltipStore.getState().tip).toMatchObject({ side: 'right', isWide: true });
+  });
+
+  it('closes its tip when its button leaves the screen', () => {
+    const anchor = anchorIn(document.createElement('div'));
+    const { result, unmount } = mounted(anchor, { content: 'Início', children: null });
+
+    act(() => {
+      result.current.onPointerEnter();
+      vi.advanceTimersByTime(150);
+    });
+
+    unmount();
+
+    expect(useTooltipStore.getState().tip).toBeNull();
   });
 });

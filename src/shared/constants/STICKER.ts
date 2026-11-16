@@ -44,6 +44,7 @@ export const STICKER = {
     },
     exit: { opacity: 0, scale: 0.8, y: -6, transition: OUT },
   },
+  glide: { duration: 0.2, ease: [0.32, 0.72, 0, 1] },
   drag: { scale: 1.02, zIndex: 6 },
   wobble: {
     scale: [1, 1.05, 1],

@@ -98,7 +98,7 @@ export const Sidebar: React.FC = () => {
 
       {isShut ? (
         <>
-          <div className="sidebar__rail">
+          <div className="sidebar__rail" data-tooltip-group>
             <div className="sidebar__rail-nav">
               <Tooltip side="right" content={homeLabel}>
                 <button
@@ -229,7 +229,7 @@ export const Sidebar: React.FC = () => {
             document.body,
           )}
 
-          <div className="sidebar__rail-foot">
+          <div className="sidebar__rail-foot" data-tooltip-group>
             <ProAccountCard />
             <Tooltip side="right" content={t('COMMON.SETTINGS')}>
               <IconButton
@@ -478,7 +478,7 @@ export const Sidebar: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          <div className="sidebar__foot">
+          <div className="sidebar__foot" data-tooltip-group>
             <ProAccountCard />
             <Tooltip content={t('COMMON.SETTINGS')}>
               <IconButton

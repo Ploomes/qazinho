@@ -1,96 +1,94 @@
 import type { ITooltipProps } from '@/shared/components/molecules/Tooltip/types';
-import type { CSSProperties } from 'react';
-import { useRef, useState } from 'react';
-import { TOOLTIP } from '@/shared/components/molecules/Tooltip/constants';
+import type { FocusEvent } from 'react';
+import { useEffect, useId, useRef } from 'react';
+import { useTooltipStore } from '@/store';
+import { TIP_TIMING } from '@/store/TooltipStore/constants';
 
-export const useTooltipViewModel = (
-  props: Pick<ITooltipProps, 'side' | 'isOff' | 'isWide'>,
-) => {
-  const isBeside = props.side === 'right';
-  const maxWidth = props.isWide === true ? TOOLTIP.wideMaxWidthPx : TOOLTIP.maxWidthPx;
+export const useTooltipViewModel = (props: ITooltipProps) => {
+  const { content, isOff = false } = props;
+  const id = useId();
   const anchorRef = useRef<HTMLSpanElement>(null);
-  const [isOpen, setOpen] = useState(false);
-  const [place, setPlace] = useState<{
-    top: number;
-    side: number;
-    edge: '--tooltip-left' | '--tooltip-right';
-    tail: number;
-    isAbove: boolean;
-  } | null>(null);
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const groupOf = (anchor: HTMLElement) =>
+    anchor.closest('[data-tooltip-group]') ?? anchor.parentElement;
+
+  const cancelOpen = () => {
+    if (openTimer.current !== null) clearTimeout(openTimer.current);
+    openTimer.current = null;
+  };
+
+  const show = () => {
+    const anchor = anchorRef.current;
+
+    if (anchor === null || isOff) return;
+
+    const box = anchor.getBoundingClientRect();
+
+    useTooltipStore.getState().show({
+      id,
+      group: groupOf(anchor),
+      box: {
+        top: box.top,
+        left: box.left,
+        right: box.right,
+        bottom: box.bottom,
+        width: box.width,
+        height: box.height,
+      },
+      content,
+      side: props.side ?? 'below',
+      isWide: props.isWide === true,
+    });
+  };
+
+  const hide = (isGroupHovered: boolean) => {
+    cancelOpen();
+    useTooltipStore.getState().hide({ id, isGroupHovered });
+  };
+
+  useEffect(() => {
+    if (isOff) {
+      hide(false);
+      return;
+    }
+
+    useTooltipStore.getState().update({ id, content });
+  });
+
+  useEffect(
+    () => () => {
+      if (openTimer.current !== null) clearTimeout(openTimer.current);
+      useTooltipStore.getState().hide({ id, isGroupHovered: false });
+    },
+    [id],
+  );
 
   return {
     anchorRef,
-    isOpen: isOpen && props.isOff !== true,
-    isBeside,
-    panelClassName: [
-      'tooltip__panel',
-      ...(isBeside ? ['tooltip__panel--beside'] : []),
-      ...(!isBeside && place?.edge === '--tooltip-right'
-        ? ['tooltip__panel--from-right']
-        : []),
-      ...(!isBeside && place?.isAbove === true ? ['tooltip__panel--above'] : []),
-    ].join(' '),
-    hidden: isBeside
-      ? { opacity: 0, x: -4 }
-      : { opacity: 0, y: place?.isAbove === true ? 4 : -4 },
-    shown: isBeside ? { opacity: 1, x: 0 } : { opacity: 1, y: 0 },
-    style: {
-      '--tooltip-max': `${String(maxWidth)}px`,
-      '--tooltip-tail-size': `${String(TOOLTIP.tailPx)}px`,
-      ...(place === null
-        ? {}
-        : {
-            '--tooltip-top': `${String(place.top)}px`,
-            [place.edge]: `${String(place.side)}px`,
-            '--tooltip-tail': `${String(Math.max(place.tail, TOOLTIP.tailMinPx))}px`,
-          }),
-    } as CSSProperties,
-    onOpen: () => {
-      if (props.isOff === true) return;
+    onPointerEnter: () => {
+      if (isOff) return;
 
-      const anchor = anchorRef.current;
+      cancelOpen();
 
-      if (anchor !== null) {
-        const box = anchor.getBoundingClientRect();
-        const isAbove = box.bottom + TOOLTIP.roomBelowPx > window.innerHeight;
-        const top = isAbove
-          ? box.top - TOOLTIP.belowGapPx
-          : box.bottom + TOOLTIP.belowGapPx;
-
-        setPlace(
-          isBeside
-            ? {
-                top: Math.min(
-                  Math.max(box.top + box.height / 2, TOOLTIP.edgePx),
-                  window.innerHeight - TOOLTIP.edgePx,
-                ),
-                side: box.right + TOOLTIP.gapPx,
-                edge: '--tooltip-left',
-                tail: 0,
-                isAbove: false,
-              }
-            : box.right < maxWidth + TOOLTIP.edgePx
-              ? {
-                  top,
-                  side: Math.max(box.left, TOOLTIP.edgePx),
-                  edge: '--tooltip-left',
-                  tail: box.left + box.width / 2 - Math.max(box.left, TOOLTIP.edgePx),
-                  isAbove,
-                }
-              : {
-                  top,
-                  side: Math.max(window.innerWidth - box.right, 0),
-                  edge: '--tooltip-right',
-                  tail: box.width / 2,
-                  isAbove,
-                },
-        );
+      if (useTooltipStore.getState().isWarm(Date.now())) {
+        show();
+        return;
       }
 
-      setOpen(true);
+      openTimer.current = setTimeout(show, TIP_TIMING.openDelayMs);
     },
-    onClose: () => {
-      setOpen(false);
+    onPointerLeave: () => {
+      const anchor = anchorRef.current;
+      const group = anchor === null ? null : groupOf(anchor);
+
+      hide(group?.matches(':hover') === true);
+    },
+    onFocus: (event: FocusEvent<HTMLSpanElement>) => {
+      if (event.target.matches(':focus-visible')) show();
+    },
+    onBlur: () => {
+      hide(false);
     },
   };
 };

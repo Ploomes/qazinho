@@ -1,48 +1,25 @@
 import type { ITooltipProps } from './types';
-import { AnimatePresence, motion } from 'motion/react';
-import { createPortal } from 'react-dom';
-import { MOTION } from '@/shared/constants';
 import { useTooltipViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Algumas palavras sobre o que o ponteiro ou o foco toca, embaixo ou ao lado, por cima de
- * tudo, para nenhuma borda cortá-la.
+ * Algumas palavras sobre o que o ponteiro ou o foco toca, no painel de dica do app,
+ * que desliza entre vizinhos em vez de fechar e abrir.
  */
 export const Tooltip: React.FC<ITooltipProps> = (props) => {
-  const { anchorRef, isOpen, panelClassName, hidden, shown, style, onOpen, onClose } =
+  const { anchorRef, onPointerEnter, onPointerLeave, onFocus, onBlur } =
     useTooltipViewModel(props);
-
-  const panel = (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.span
-          key="tip"
-          className={panelClassName}
-          style={style}
-          role="tooltip"
-          initial={hidden}
-          animate={shown}
-          exit={hidden}
-          transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-        >
-          {props.content}
-        </motion.span>
-      )}
-    </AnimatePresence>
-  );
 
   return (
     <span
       ref={anchorRef}
       className="tooltip"
-      onPointerEnter={onOpen}
-      onPointerLeave={onClose}
-      onFocus={onOpen}
-      onBlur={onClose}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+      onFocus={onFocus}
+      onBlur={onBlur}
     >
       {props.children}
-      {createPortal(panel, document.body)}
     </span>
   );
 };

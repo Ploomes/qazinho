@@ -4,3 +4,4 @@ export * from './ResourcePopover';
 export * from './StepsPopup';
 export * from './Titlebar';
 export * from './ErrorBarrier';
+export * from './TooltipLayer';
