@@ -203,6 +203,7 @@ import {
   proLinkAddressIn,
   proLinkOf,
   proPageUrlOf,
+  salveMailOf,
   spawnCommand,
   sweepDaysOf,
   toldAfterTurn,
@@ -2090,6 +2091,11 @@ void app.whenReady().then(async () => {
   });
   ipcMain.handle(CHANNELS.openStoreUpdates, () =>
     shell.openExternal(APP_UPDATE.storeUpdates),
+  );
+  ipcMain.handle(
+    CHANNELS.writeToSalve,
+    (_event, letter: { subject: unknown; body: unknown }) =>
+      shell.openExternal(salveMailOf(letter)),
   );
   ipcMain.handle(CHANNELS.openProPage, async (_event, path: string) => {
     const url = proPageUrlOf({ base: PRO_API.web, path });

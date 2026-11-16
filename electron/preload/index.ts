@@ -340,6 +340,8 @@ const api: IQazinhoApi = {
   appUpdate: () => ipcRenderer.invoke(CHANNELS.appUpdate) as Promise<AppUpdate>,
   installUpdate: () => ipcRenderer.invoke(CHANNELS.installUpdate) as Promise<void>,
   openStoreUpdates: () => ipcRenderer.invoke(CHANNELS.openStoreUpdates) as Promise<void>,
+  writeToSalve: (letter: { subject: string; body: string }) =>
+    ipcRenderer.invoke(CHANNELS.writeToSalve, letter) as Promise<void>,
   onAppUpdate: (listener: (update: AppUpdate) => void) => {
     const forward = (_: unknown, update: AppUpdate) => {
       listener(update);

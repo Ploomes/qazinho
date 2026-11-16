@@ -22,6 +22,7 @@ export * from './parseProcessSweep';
 export * from './proLinkAddressIn';
 export * from './proLinkOf';
 export * from './proPageUrlOf';
+export * from './salveMailOf';
 export * from './searchDirectories';
 export * from './stripAnsi';
 export * from './sweepDaysOf';
