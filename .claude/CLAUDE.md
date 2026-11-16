@@ -340,8 +340,10 @@ um segredo), leva ao plano a sugestão de uma exploração, exporta o código da
 plano no Confluence, espera o resultado, lê o que quebrou (as
 telas como arquivos, as chamadas de API que falharam e o que responderam), fecha ou manda um bug ao
 tracker, e conversa com o chat do workspace como o QA. A
-mensagem dele aparece no chat marcada com as estrelinhas, "Seu agente", e o agente do QAzinho sabe
-que não foi o QA quem escreveu. Antes de mudar ou apagar, a descrição da ferramenta manda o agente perguntar ao usuário no chat dele, com a ferramenta de perguntar que ele já tem, e só chamar depois do sim; o QAzinho não abre cartão. Ele também lista as variáveis de um projeto pelo nome e pela descrição, cadastra uma abrindo a janela onde o QA digita o valor, renomeia ou apaga uma, lê e muda as configurações, e conecta ou desconecta o GitHub e o Jira; nenhum valor ou token passa por ele, e o app não vem à frente. O QAzinho adiciona o servidor ao Claude
+conversa dele com o agente do QAzinho fica numa seção própria do chat, com o nome dele (Claude Code
+ou Codex, pelo nome que ele manda a cada pedido), as respostas assinadas pelo QAzinho e a hora em
+que ele leu a última; a mais recente fica aberta. O agente do QAzinho sabe que não foi o QA quem
+escreveu. Antes de mudar ou apagar, a descrição da ferramenta manda o agente perguntar ao usuário no chat dele, com a ferramenta de perguntar que ele já tem, e só chamar depois do sim; o QAzinho não abre cartão. Ele também lista as variáveis de um projeto pelo nome e pela descrição, cadastra uma abrindo a janela onde o QA digita o valor, renomeia ou apaga uma, lê e muda as configurações, e conecta ou desconecta o GitHub e o Jira; nenhum valor ou token passa por ele, e o app não vem à frente. O QAzinho adiciona o servidor ao Claude
 Code ou ao Codex em um clique, ou copia o endereço para outro agente. Um Claude Code real (Haiku),
 de fora, achou um 500 plantado numa loja em 20 segundos e menos de dois centavos: rodou o plano,
 leu o bug, abriu a tela e nomeou a chamada que falhou. O `tests/smoke/outside.test.ts` dirige o

@@ -871,10 +871,18 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
   clientes de MCP; a janela segue aberta depois disso. O `read_settings` lê o tema, o idioma, o aviso de
   run e as integrações (`describeSettings`), sem token.
 - O `ask_workspace_chat` escreve no chat de um workspace como o QA, e o `read_workspace_chat` lê o que o
-  agente respondeu, segurando como o `run_status`. A mensagem guarda `from: 'agent'`, a linha dela mostra
-  as estrelinhas e "Seu agente", e o agente do chat a lê com a seção `Who wrote this message`
-  (`describeSender`). Uma rodada de perguntas aberta é fechada sem resposta antes, como uma mensagem do
-  QA faria.
+  agente respondeu, segurando como o `run_status`. A mensagem guarda `from: 'agent'` e o agente que a
+  mandou (`caller`, que o `OutsideHost` lê do User-Agent e a main passa com a chamada, `IOutsideCall`),
+  e o agente do chat a lê com a seção `Who wrote this message` (`describeSender`). Uma rodada de
+  perguntas aberta é fechada sem resposta antes, como uma mensagem do QA faria.
+- **O chat mostra a conversa entre os dois agentes** (`groupOutsideTalks`, `TalkSection`): o que o
+  agente de código escreveu e o que o agente do chat respondeu, até o QA escrever ou uma run começar,
+  numa linha com o nome dele (`outsideAgentNameOf`) que abre as mensagens; a última conversa abre
+  sozinha. Dentro dela o lado do QAzinho assina "QAzinho" (`TALK_QAZINHO`), porque o agente do chat
+  leva o nome do agente do QA, quase sempre o mesmo Claude Code, e cada fala de um lado nomeia quem
+  fala. Quando um `read_workspace_chat` ou a espera do `ask_workspace_chat` traz a resposta pronta
+  (`isChatAnswered`), a mensagem guarda a hora (`readAt`, `markOutsideRead`), e a conversa diz que
+  ele leu.
 - **O que o QA faz à mão tem uma ferramenta, e o que só a IA faz vai pela conversa com o chat.** Por
   isso não há `suggest_cases`: o agente escreve casos com `add_cases`, depois de perguntar, ou pede o
   plano ao chat. Pausar e retomar seguem o botão da run (`pauseRun`), uma pergunta da run é
