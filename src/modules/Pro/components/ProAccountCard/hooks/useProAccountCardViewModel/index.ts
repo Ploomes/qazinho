@@ -1,21 +1,23 @@
+import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PRO_ATTENTION } from '@/modules/Pro/components/ProAccountCard/constants';
+import {
+  PRO_ACCOUNT_CARD,
+  PRO_ATTENTION,
+} from '@/modules/Pro/components/ProAccountCard/constants';
 import { PRO_BILLING, PRO_ROLES } from '@/modules/Pro/constants';
 import { useProSignIn } from '@/modules/Pro/hooks/useProSignIn';
 import { attentionOf, initialsOf } from '@/modules/Pro/library';
 import { Pro } from '@/services';
 import { ICON_BUTTON } from '@/shared/components/atoms/IconButton/constants';
 import { useDismiss } from '@/shared/hooks';
-import { useProStore, useSettingsStore } from '@/store';
+import { useProStore } from '@/store';
 
 export const useProAccountCardViewModel = () => {
   const { t } = useTranslation();
   const status = useProStore((state) => state.status);
   const setStatus = useProStore((state) => state.setStatus);
   const shares = useProStore((state) => state.shares);
-  const isShut = useSettingsStore((state) => state.isSidebarShut);
-  const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
   const [isOpen, setOpen] = useState(false);
   const [isCloning, setCloning] = useState(false);
   const [isSigningOut, setSigningOut] = useState(false);
@@ -43,10 +45,14 @@ export const useProAccountCardViewModel = () => {
     ref,
     isShown: status !== null,
     isSignedIn: signedIn !== null,
-    className: isShut ? 'pro-account pro-account--shut' : 'pro-account',
-    markSize: isShut ? ICON_BUTTON.iconSize.md : ICON_BUTTON.iconSize.sm,
-    isOpen: isOpen && signedIn !== null && !isShut,
-    hasTip: isShut,
+    className: 'pro-account',
+    style: {
+      '--pro-account-popover': `${String(PRO_ACCOUNT_CARD.popoverPx)}px`,
+      '--pro-account-avatar': `${String(PRO_ACCOUNT_CARD.avatarPx)}px`,
+    } as CSSProperties,
+    markSize: ICON_BUTTON.iconSize.md,
+    isOpen: isOpen && signedIn !== null,
+    hasTip: !isOpen,
     title,
     hasSubtitle: signedIn !== null,
     subtitle:
@@ -83,13 +89,6 @@ export const useProAccountCardViewModel = () => {
     onToggle: () => {
       if (signedIn === null) {
         onBegin();
-
-        return;
-      }
-
-      if (isShut) {
-        toggleSidebar();
-        setOpen(true);
 
         return;
       }

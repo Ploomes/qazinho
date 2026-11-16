@@ -19,6 +19,7 @@ export const ProAccountCard: React.FC = () => {
     isShown,
     isSignedIn,
     className,
+    style,
     markSize,
     isOpen,
     hasTip,
@@ -53,7 +54,7 @@ export const ProAccountCard: React.FC = () => {
   if (!isShown) return null;
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={className} style={style}>
       <AnimatePresence>
         {isOpen && (
           <motion.div

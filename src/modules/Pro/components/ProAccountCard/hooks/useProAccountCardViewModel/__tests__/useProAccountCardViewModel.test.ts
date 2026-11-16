@@ -65,12 +65,8 @@ afterEach(() => {
 const view = () => renderHook(() => useProAccountCardViewModel());
 
 describe('the account icon', () => {
-  /** O ícone herdava o tamanho da letra e ficava menor que a engrenagem e o botão de dobrar. */
-  it('is drawn the size of the icon buttons beside it, folded or not', () => {
-    expect(view().result.current.markSize).toBe(14);
-
-    useSettingsStore.setState({ isSidebarShut: true });
-
+  /** O ícone herdava o tamanho da letra e ficava menor que a engrenagem do trilho. */
+  it('is drawn the size of the rail icons beside it', () => {
     expect(view().result.current.markSize).toBe(16);
   });
 });
@@ -199,7 +195,7 @@ describe('useProAccountCardViewModel', () => {
       expect(result.current.isOpen).toBe(false);
     });
 
-    it('opens the sidebar first when it is folded to a rail', () => {
+    it('opens beside the rail, the list folded or not', () => {
       useSettingsStore.setState({ isSidebarShut: true });
 
       const { result } = view();
@@ -208,7 +204,7 @@ describe('useProAccountCardViewModel', () => {
         result.current.onToggle();
       });
 
-      expect(useSettingsStore.getState().isSidebarShut).toBe(false);
+      expect(useSettingsStore.getState().isSidebarShut).toBe(true);
       expect(result.current.isOpen).toBe(true);
     });
   });
