@@ -13,6 +13,7 @@ import {
   appendUserMessage,
   formatClock,
   withActivity,
+  withOutsideRead,
 } from '@/modules/Chat/library';
 import { RUN_CLOCK } from '@/modules/Run/constants';
 import { PANEL } from '@/modules/Workspace/constants';
@@ -270,7 +271,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       retries: { ...state.retries, [workspaceId]: { attempt, maxRetries } },
     })),
 
-  sendMessage: ({ workspaceId, text, mentions, command, from, attachments }) =>
+  sendMessage: ({ workspaceId, text, mentions, command, from, caller, attachments }) =>
     set((state) => ({
       askingIds: [...state.askingIds.filter((id) => id !== workspaceId), workspaceId],
       retries: withoutKey({ record: state.retries, key: workspaceId }),
@@ -288,9 +289,19 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
             mentions,
             command,
             ...(from === undefined ? {} : { from }),
+            ...(caller === undefined ? {} : { caller }),
             ...(attachments === undefined ? {} : { attachments }),
             at: formatClock(new Date()),
           }),
+      }),
+    })),
+  markOutsideRead: (workspaceId) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          withOutsideRead({ workspace, at: formatClock(new Date()) }),
       }),
     })),
 

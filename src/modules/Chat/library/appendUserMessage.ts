@@ -1,6 +1,6 @@
 import type { UserCommand } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace';
-import type { IChatAttachment } from '@/shared/types';
+import type { IChatAttachment, OutsideCaller } from '@/shared/types';
 import { planNameOf } from '@/modules/Home/library/planNameOf';
 
 /**
@@ -14,6 +14,7 @@ export function appendUserMessage(props: {
   mentions?: string[];
   command?: UserCommand;
   from?: 'agent';
+  caller?: OutsideCaller;
   attachments?: IChatAttachment[];
   duringRun?: string;
 }): IWorkspace {
@@ -36,6 +37,7 @@ export function appendUserMessage(props: {
         ...(mentions.length > 0 ? { mentions } : {}),
         ...(command === undefined ? {} : { command }),
         ...(from === undefined ? {} : { from }),
+        ...(props.caller === undefined ? {} : { caller: props.caller }),
         ...(attachments.length === 0 ? {} : { attachments }),
         ...(props.duringRun === undefined ? {} : { duringRun: props.duringRun }),
       },

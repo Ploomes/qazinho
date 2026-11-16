@@ -14,6 +14,7 @@ export * from './RunProgress';
 export * from './RunSection';
 export * from './SkillsNote';
 export * from './SuggestionCard';
+export * from './TalkSection';
 export * from './TypingDots';
 export * from './UserMessage';
 export * from './VerdictNote';

@@ -53,7 +53,10 @@ describe('useOutsideCalls', () => {
     });
 
     act(() => {
-      call({ id: 'c-1', call: { name: 'list_workspaces', args: {} } });
+      call({
+        id: 'c-1',
+        call: { name: 'list_workspaces', caller: 'claude-code', args: {} },
+      });
     });
 
     await waitFor(() => {
@@ -97,7 +100,14 @@ describe('useOutsideCalls', () => {
     });
 
     act(() => {
-      call({ id: 'c-2', call: { name: 'take_suggestion', args: { workspace: 'w1' } } });
+      call({
+        id: 'c-2',
+        call: {
+          name: 'take_suggestion',
+          caller: 'claude-code',
+          args: { workspace: 'w1' },
+        },
+      });
     });
 
     await waitFor(() => {
@@ -118,7 +128,11 @@ describe('useOutsideCalls', () => {
     act(() => {
       call({
         id: 'c-3',
-        call: { name: 'run_status', args: { workspace: 'w1', waitSeconds: 50 } },
+        call: {
+          name: 'run_status',
+          caller: 'claude-code',
+          args: { workspace: 'w1', waitSeconds: 50 },
+        },
       });
     });
 
@@ -146,7 +160,11 @@ describe('useOutsideCalls', () => {
     act(() => {
       call({
         id: 'c-4',
-        call: { name: 'run_status', args: { workspace: 'w1', waitSeconds: 5 } },
+        call: {
+          name: 'run_status',
+          caller: 'claude-code',
+          args: { workspace: 'w1', waitSeconds: 5 },
+        },
       });
     });
 

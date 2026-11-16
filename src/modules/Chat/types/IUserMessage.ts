@@ -1,5 +1,5 @@
 import type { UserCommand } from './UserCommand';
-import type { IChatAttachment } from '@/shared/types';
+import type { IChatAttachment, OutsideCaller } from '@/shared/types';
 
 export interface IUserMessage {
   id: string;
@@ -10,5 +10,7 @@ export interface IUserMessage {
   mentions?: string[];
   command?: UserCommand;
   from?: 'agent';
+  caller?: OutsideCaller;
+  readAt?: string;
   attachments?: IChatAttachment[];
 }

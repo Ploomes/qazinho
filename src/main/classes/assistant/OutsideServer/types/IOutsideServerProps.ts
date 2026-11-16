@@ -1,5 +1,5 @@
 import type { AgentMcp } from '@/main/classes/integrations/AgentMcp';
-import type { IDetectedAgent, OutsideToolCall } from '@/shared/types';
+import type { IDetectedAgent, OutsideCaller, OutsideToolCall } from '@/shared/types';
 import type { OutsideHost } from '@salve-software/qazinho-harness';
 
 export interface IOutsideServerProps {
@@ -7,5 +7,8 @@ export interface IOutsideServerProps {
   host: Pick<OutsideHost, 'start' | 'stop' | 'address'>;
   mcp: Pick<AgentMcp, 'holds' | 'addAddress' | 'removeName'>;
   agents: () => Promise<IDetectedAgent[]>;
-  perform: (call: OutsideToolCall) => Promise<{ text: string; isError: boolean }>;
+  perform: (
+    call: OutsideToolCall,
+    caller: OutsideCaller,
+  ) => Promise<{ text: string; isError: boolean }>;
 }

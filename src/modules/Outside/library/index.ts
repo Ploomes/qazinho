@@ -4,6 +4,7 @@ export * from './describeSettings';
 export * from './describeVariables';
 export * from './describeWorkspaces';
 export * from './failedCallsOf';
+export * from './isChatAnswered';
 export * from './performOutsideTool';
 export * from './isOutsideChange';
 export * from './performOutsideChange';

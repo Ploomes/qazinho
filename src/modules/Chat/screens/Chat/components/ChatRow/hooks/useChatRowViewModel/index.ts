@@ -1,5 +1,6 @@
 import type { IChatRowProps } from '@/modules/Chat/screens/Chat/components/ChatRow/types';
 import { useTranslation } from 'react-i18next';
+import { outsideAgentNameOf } from '@/modules/Chat/library';
 import { MOTION } from '@/shared/constants';
 
 export const useChatRowViewModel = (props: IChatRowProps) => {
@@ -40,9 +41,11 @@ export const useChatRowViewModel = (props: IChatRowProps) => {
     hasFace: isAgent,
     who:
       message.kind === 'user'
-        ? t(isFromAgent ? 'CHAT.YOUR_AGENT' : 'CHAT.YOU')
+        ? isFromAgent
+          ? (outsideAgentNameOf(message.caller) ?? t('CHAT.YOUR_AGENT'))
+          : t('CHAT.YOU')
         : isAgent
-          ? message.who
+          ? (props.who ?? message.who)
           : '',
     whoClassName:
       side === 'agent'

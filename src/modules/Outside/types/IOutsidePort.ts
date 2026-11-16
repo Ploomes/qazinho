@@ -10,6 +10,7 @@ import type {
   IIntegrationStatus,
   INetworkEntry,
   IRunRef,
+  OutsideCaller,
   IVariableBrief,
   PlanPublished,
   RunMode,
@@ -45,7 +46,8 @@ export interface IOutsidePort {
   stopWorkspace: (workspaceId: string) => void;
   waitForRun: (props: { workspaceId: string; ms: number }) => Promise<void>;
   networkOf: (run: IRunRef) => Promise<INetworkEntry[] | null>;
-  askChat: (props: { workspaceId: string; text: string }) => void;
+  askChat: (props: { workspaceId: string; text: string; caller: OutsideCaller }) => void;
+  markChatRead: (workspaceId: string) => void;
   waitForChat: (props: { workspaceId: string; ms: number }) => Promise<void>;
   perform: (call: AppToolCall) => Promise<IToolDone>;
   changePlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;

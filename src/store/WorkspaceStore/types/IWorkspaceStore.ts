@@ -28,6 +28,7 @@ import type {
   IDraftedCase,
   IFiledIssue,
   IJiraIssueRef,
+  OutsideCaller,
   IManualTurn,
   IPlanDoubt,
   IPlanStrategy,
@@ -110,8 +111,10 @@ export interface IWorkspaceStore {
     mentions: string[];
     command?: UserCommand;
     from?: 'agent';
+    caller?: OutsideCaller;
     attachments?: IChatAttachment[];
   }) => void;
+  markOutsideRead: (workspaceId: string) => void;
   landAgentText: (props: {
     workspaceId: string;
     text: string;

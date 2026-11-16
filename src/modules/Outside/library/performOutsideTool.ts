@@ -2,7 +2,7 @@ import type { IToolDone } from '@/modules/Assistant/types';
 import type { IOutsidePort } from '@/modules/Outside/types';
 import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
-import type { OutsideToolCall } from '@/shared/types';
+import type { OutsideCaller, OutsideToolCall } from '@/shared/types';
 import {
   countOf,
   describeBug,
@@ -20,6 +20,7 @@ import { describeRunStatus } from './describeRunStatus';
 import { describeSettings } from './describeSettings';
 import { describeVariables } from './describeVariables';
 import { describeWorkspaces } from './describeWorkspaces';
+import { isChatAnswered } from './isChatAnswered';
 import { isOutsideChange } from './isOutsideChange';
 import { performOutsideChange } from './performOutsideChange';
 import { withinWait } from './withinWait';
@@ -30,9 +31,11 @@ import { withinWait } from './withinWait';
  */
 export async function performOutsideTool(props: {
   call: OutsideToolCall;
+  caller?: OutsideCaller;
   port: IOutsidePort;
 }): Promise<IToolDone> {
   const { call, port } = props;
+  const caller = props.caller ?? 'other';
   const state = port.read();
 
   if (!state.isLoaded)
@@ -144,7 +147,7 @@ export async function performOutsideTool(props: {
     case 'run_status':
       return statusOf({ workspaceId: workspace.id, call, port });
     case 'ask_workspace_chat':
-      return askChatOf({ workspace, call, port });
+      return askChatOf({ workspace, call, caller, port });
     case 'read_workspace_chat':
       return chatTurnOf({
         workspaceId: workspace.id,
@@ -552,9 +555,10 @@ function createWorkspace(props: {
 async function askChatOf(props: {
   workspace: IWorkspace;
   call: Extract<OutsideToolCall, { name: 'ask_workspace_chat' }>;
+  caller: OutsideCaller;
   port: IOutsidePort;
 }): Promise<IToolDone> {
-  const { workspace, call, port } = props;
+  const { workspace, call, caller, port } = props;
   const named = `${workspace.id} "${workspace.name}"`;
 
   if (workspace.live !== null && !workspace.live.isDone)
@@ -569,7 +573,7 @@ async function askChatOf(props: {
       isError: true,
     };
 
-  port.askChat({ workspaceId: workspace.id, text: call.args.text });
+  port.askChat({ workspaceId: workspace.id, text: call.args.text, caller });
 
   return chatTurnOf({
     workspaceId: workspace.id,
@@ -593,8 +597,9 @@ async function chatTurnOf(props: {
   if (workspace === undefined)
     return { text: `The workspace ${workspaceId} is gone.`, isError: true };
 
-  return describeChatTurn({
-    workspace,
-    isAnswering: state.askingIds.includes(workspaceId),
-  });
+  const isAnswering = state.askingIds.includes(workspaceId);
+
+  if (isChatAnswered({ workspace, isAnswering })) port.markChatRead(workspaceId);
+
+  return describeChatTurn({ workspace, isAnswering });
 }

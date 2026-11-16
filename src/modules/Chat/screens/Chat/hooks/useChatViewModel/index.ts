@@ -26,6 +26,7 @@ import {
   closedMarkdown,
   formatAnswers,
   formatSize,
+  groupOutsideTalks,
   groupRunMessages,
   insertMention,
   isFollowUp,
@@ -34,10 +35,15 @@ import {
   mentionQueryOf,
   mentionsIn,
   nextDoubtIdsOf,
+  outsideAgentNameOf,
   referencesOf,
   withLiveRun,
 } from '@/modules/Chat/library';
-import { ATTACH_FAILURE_KEYS, CHAT } from '@/modules/Chat/screens/Chat/constants';
+import {
+  ATTACH_FAILURE_KEYS,
+  CHAT,
+  TALK_QAZINHO,
+} from '@/modules/Chat/screens/Chat/constants';
 import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed } from '@/modules/Device';
@@ -78,6 +84,7 @@ export const useChatViewModel = () => {
   const [isAttaching, setAttaching] = useState(false);
   const [isSecretSent, setSecretSent] = useState(false);
   const [expandedRuns, setExpandedRuns] = useState<string[]>([]);
+  const [toggledTalks, setToggledTalks] = useState<string[]>([]);
   const { t, i18n } = useTranslation();
   const chatAgent = useChatAgent();
 
@@ -555,50 +562,106 @@ export const useChatViewModel = () => {
     };
   };
 
-  const chatItems = withLiveRun({
-    items: groupRunMessages({
-      messages: visible,
-      runIds: [
-        ...(workspace?.runs.map(({ id }) => id) ?? []),
-        ...(liveId === null ? [] : [liveId]),
-      ],
+  const chatItems = groupOutsideTalks(
+    withLiveRun({
+      items: groupRunMessages({
+        messages: visible,
+        runIds: [
+          ...(workspace?.runs.map(({ id }) => id) ?? []),
+          ...(liveId === null ? [] : [liveId]),
+        ],
+      }),
+      liveId,
+      at: workspace?.liveStartedAt ?? '',
     }),
-    liveId,
-    at: workspace?.liveStartedAt ?? '',
-  });
+  );
   const messagesBefore = (index: number): ChatMessage[] =>
     chatItems
       .slice(0, index)
-      .flatMap((before) => (before.kind === 'message' ? [before.message] : []));
+      .flatMap((before) =>
+        before.kind === 'message'
+          ? [before.message]
+          : before.kind === 'talk'
+            ? before.messages.map(({ message }) => message)
+            : [],
+      );
+  const lastTalkId = chatItems.findLast((item) => item.kind === 'talk')?.id ?? null;
+
+  const messageRowOf = (shown: {
+    message: ChatMessage;
+    isNew: boolean;
+    earlier: ChatMessage[];
+  }) => ({
+    key: shown.message.id,
+    message: shown.message,
+    isFollowUp: isFollowUp({ message: shown.message, earlier: shown.earlier }),
+    isNew: shown.isNew && !(hasPreview && shown.message.id === lastAgentId),
+    isRetryable:
+      shown.message.kind === 'error' &&
+      shown.message.runId === null &&
+      shown.message.id === lastId &&
+      lastSaid !== undefined &&
+      !isAgentTyping &&
+      !isWalking,
+    isAnswerable:
+      shown.message.kind === 'questions' &&
+      shown.message.answers === null &&
+      shown.message.id === lastId &&
+      !isAgentTyping &&
+      !isWalking,
+  });
+
+  const talkOf = (item: Extract<ChatItem, { kind: 'talk' }>) => {
+    const name = outsideAgentNameOf(item.caller);
+    const count = item.messages.filter(
+      ({ message }) => message.kind === 'user' && message.from === 'agent',
+    ).length;
+    const isLast = item.id === lastTalkId;
+    const isOpenAtFirst = isLast;
+
+    return {
+      kind: 'talk' as const,
+      key: `talk-${item.id}`,
+      talkId: item.id,
+      title: t('CHAT.TALK_WITH', { agent: name ?? t('CHAT.TALK_UNNAMED') }),
+      facts: t(count === 1 ? 'CHAT.TALK_FACTS_ONE' : 'CHAT.TALK_FACTS_OTHER', {
+        count,
+        at: item.at,
+      }),
+      receipt:
+        item.readAt === null
+          ? null
+          : name === null
+            ? t('CHAT.TALK_READ_UNNAMED', { at: item.readAt })
+            : t('CHAT.TALK_READ', { agent: name, at: item.readAt }),
+      isLive: isLast && isAgentTyping,
+      isExpanded: toggledTalks.includes(item.id) ? !isOpenAtFirst : isOpenAtFirst,
+      rows: item.messages.map(({ message, isNew }, at) => ({
+        ...messageRowOf({
+          message,
+          isNew,
+          earlier: item.messages.slice(at - 1, at).map((shown) => shown.message),
+        }),
+        who: TALK_QAZINHO,
+      })),
+    };
+  };
 
   return {
     chatStyle: { '--chat-bubble': `${String(CHAT.bubbleShare)}%` } as CSSProperties,
     items: chatItems.map((item, index) =>
       item.kind === 'run'
         ? sectionOf(item)
-        : {
-            kind: 'message' as const,
-            key: item.message.id,
-            message: item.message,
-            isFollowUp: isFollowUp({
-              message: item.message,
-              earlier: messagesBefore(index),
-            }),
-            isNew: item.isNew && !(hasPreview && item.message.id === lastAgentId),
-            isRetryable:
-              item.message.kind === 'error' &&
-              item.message.runId === null &&
-              item.message.id === lastId &&
-              lastSaid !== undefined &&
-              !isAgentTyping &&
-              !isWalking,
-            isAnswerable:
-              item.message.kind === 'questions' &&
-              item.message.answers === null &&
-              item.message.id === lastId &&
-              !isAgentTyping &&
-              !isWalking,
-          },
+        : item.kind === 'talk'
+          ? talkOf(item)
+          : {
+              kind: 'message' as const,
+              ...messageRowOf({
+                message: item.message,
+                isNew: item.isNew,
+                earlier: messagesBefore(index),
+              }),
+            },
     ),
     canAskStory: workspace?.canAskStory ?? false,
     lockedText: question !== null ? '' : null,
@@ -624,6 +687,13 @@ export const useChatViewModel = () => {
     },
     onStop: () => {
       if (workspace !== null && isAgentTyping) void Agent.stop(workspace.id);
+    },
+    onToggleTalk: (talkId: string) => {
+      setToggledTalks((toggled) =>
+        toggled.includes(talkId)
+          ? toggled.filter((id) => id !== talkId)
+          : [...toggled, talkId],
+      );
     },
     onToggleRun: (runId: string) => {
       setExpandedRuns(

@@ -10,6 +10,7 @@ import {
   RunActivity,
   RunProgress,
   RunSection,
+  TalkSection,
   TypingDots,
 } from './components';
 import { useChatViewModel } from './hooks';
@@ -71,6 +72,7 @@ export const Chat: React.FC = () => {
     onTakeSuggestion,
     onVariables,
     onToggleRun,
+    onToggleTalk,
     onOpenRun,
     onOpenBug,
     onRetry,
@@ -113,6 +115,37 @@ export const Chat: React.FC = () => {
                   onVariables={onVariables}
                   onOpenBug={onOpenBug}
                 />
+              ) : item.kind === 'talk' ? (
+                <TalkSection
+                  key={item.key}
+                  title={item.title}
+                  facts={item.facts}
+                  receipt={item.receipt}
+                  isLive={item.isLive}
+                  isExpanded={item.isExpanded}
+                  onToggle={() => {
+                    onToggleTalk(item.talkId);
+                  }}
+                >
+                  {item.rows.map((row) => (
+                    <ChatRow
+                      key={row.key}
+                      message={row.message}
+                      isNew={row.isNew}
+                      isFollowUp={row.isFollowUp}
+                      who={row.who}
+                      isAnswerable={row.isAnswerable}
+                      canAskStory={canAskStory}
+                      isRetryable={row.isRetryable}
+                      onRetry={onRetry}
+                      onAnswerQuestions={onAnswerQuestions}
+                      onOpenPlan={onOpenPlan}
+                      onTakeSuggestion={onTakeSuggestion}
+                      onVariables={onVariables}
+                      onOpenBug={onOpenBug}
+                    />
+                  ))}
+                </TalkSection>
               ) : (
                 <RunSection
                   key={item.key}

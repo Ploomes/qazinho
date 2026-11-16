@@ -62,6 +62,7 @@ function appWith(props: {
   const projects: IProject[] = [];
   const added: IWorkspace[] = [];
   const chatted: unknown[] = [];
+  const reads: string[] = [];
   const performed: AppToolCall[] = [];
   const plans: { workspaceId: string; plan: ITestCase[] }[] = [];
   let askingIds = props.askingIds ?? [];
@@ -118,6 +119,9 @@ function appWith(props: {
     askChat: (message) => {
       chatted.push(message);
       askingIds = [...askingIds, message.workspaceId];
+    },
+    markChatRead: (workspaceId) => {
+      reads.push(workspaceId);
     },
     waitForChat: () => {
       if (props.onChat !== undefined) ({ workspaces, askingIds } = props.onChat());
@@ -185,13 +189,14 @@ function appWith(props: {
     projects,
     added,
     chatted,
+    reads,
     performed,
     plans,
   };
 }
 
 const call = (one: OutsideToolCall, app: ReturnType<typeof appWith>) =>
-  performOutsideTool({ call: one, port: app.port });
+  performOutsideTool({ call: one, caller: 'claude-code', port: app.port });
 
 const going = () =>
   startRun({
@@ -852,7 +857,10 @@ describe('performOutsideTool', () => {
         app,
       );
 
-      expect(app.chatted).toEqual([{ workspaceId: 'w1', text: 'Plan the checkout' }]);
+      expect(app.chatted).toEqual([
+        { workspaceId: 'w1', text: 'Plan the checkout', caller: 'claude-code' },
+      ]);
+      expect(app.reads).toEqual(['w1']);
       expect(done.text).toContain('It answered: Which cards?');
       expect(done.text).toContain('1. Which cards does it take? Options: Visa · All.');
     });
@@ -866,6 +874,7 @@ describe('performOutsideTool', () => {
       );
 
       expect(done.text).toContain('still working on it');
+      expect(app.reads).toEqual([]);
     });
 
     it('does NOT write while the agent is still answering', async () => {

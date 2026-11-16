@@ -7,3 +7,4 @@ export * from './COMMAND_BLOCKERS';
 export * from './COMMAND_SEARCH';
 export * from './IMPORT_FAILURE_KEYS';
 export * from './SKILL_ROW_PREFIX';
+export * from './TALK_QAZINHO';

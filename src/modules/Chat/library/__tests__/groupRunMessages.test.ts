@@ -79,7 +79,11 @@ describe('groupRunMessages', () => {
         messages: [NOTE, reply, FAILED].map(shown),
         runIds: ['r-01'],
       }).map((item) =>
-        item.kind === 'run' ? `run ${String(item.messages.length)}` : item.message.id,
+        item.kind === 'run'
+          ? `run ${String(item.messages.length)}`
+          : item.kind === 'message'
+            ? item.message.id
+            : '',
       ),
     ).toEqual(['run 2', 'm-4']);
   });
@@ -126,7 +130,12 @@ describe('groupRunMessages', () => {
 
     expect(
       groupRunMessages({ messages: [USER, asked].map(shown), runIds: ['r-01'] }).map(
-        (item) => (item.kind === 'run' ? item.messages.length : item.message.id),
+        (item) =>
+          item.kind === 'run'
+            ? item.messages.length
+            : item.kind === 'message'
+              ? item.message.id
+              : '',
       ),
     ).toEqual(['m-1', 1]);
   });
@@ -146,7 +155,9 @@ describe('groupRunMessages', () => {
       groupRunMessages({
         messages: [NOTE, CARD, broke].map(shown),
         runIds: ['r-01'],
-      }).map((item) => (item.kind === 'run' ? item.runId : item.message.id)),
+      }).map((item) =>
+        item.kind === 'run' ? item.runId : item.kind === 'message' ? item.message.id : '',
+      ),
     ).toEqual(['r-01', 'm-7']);
   });
 });

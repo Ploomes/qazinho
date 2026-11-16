@@ -983,6 +983,115 @@ describe('useChatViewModel', () => {
     });
   });
 
+  describe('a talk with the coding agent of the QA', () => {
+    type Talk = ReturnType<typeof useChatViewModel>['items'][number] & { kind: 'talk' };
+
+    const talksOf = (view: { items: { kind: string }[] }) =>
+      view.items.filter((item) => item.kind === 'talk') as Talk[];
+
+    const chatWith = () =>
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace([]),
+            chat: [
+              {
+                id: 'm-1',
+                kind: 'user',
+                at: '10:00',
+                text: 'Plan the cart',
+                from: 'agent',
+                caller: 'claude-code',
+                readAt: '10:02',
+              },
+              {
+                id: 'm-2',
+                kind: 'agent',
+                at: '10:01',
+                who: 'Estagiário',
+                text: 'Planned.',
+              },
+              { id: 'm-3', kind: 'user', at: '10:05', text: 'Nice' },
+              {
+                id: 'm-4',
+                kind: 'user',
+                at: '10:06',
+                text: 'Plan the coupon',
+                from: 'agent',
+              },
+              {
+                id: 'm-5',
+                kind: 'agent',
+                at: '10:07',
+                who: 'Estagiário',
+                text: 'Planned too.',
+              },
+            ],
+          },
+        ],
+      });
+
+    it('names who the QA’s agent talked with, how much and when it read the answer', async () => {
+      await i18n.changeLanguage('pt');
+      chatWith();
+
+      const [first, last] = talksOf(renderHook(() => useChatViewModel()).result.current);
+
+      expect(first).toMatchObject({
+        title: 'Conversa com o Claude Code',
+        facts: '1 mensagem dele · 10:00',
+        receipt: 'O Claude Code leu a resposta às 10:02',
+      });
+      expect(first?.rows.map((row) => [row.key, row.isFollowUp, row.who])).toEqual([
+        ['m-1', false, 'QAzinho'],
+        ['m-2', false, 'QAzinho'],
+      ]);
+      expect(last).toMatchObject({
+        title: 'Conversa com o seu agente de código',
+        receipt: null,
+      });
+
+      await i18n.changeLanguage('en');
+    });
+
+    it('names QAzinho again after each message of the coding agent, as in a dialogue', () => {
+      chatWith();
+
+      const [, last] = talksOf(renderHook(() => useChatViewModel()).result.current);
+
+      expect(last?.rows.map((row) => row.isFollowUp)).toEqual([false, false]);
+    });
+
+    it('opens only the last talk, and lets the QA open or fold any', () => {
+      chatWith();
+
+      const view = renderHook(() => useChatViewModel());
+
+      expect(talksOf(view.result.current).map((talk) => talk.isExpanded)).toEqual([
+        false,
+        true,
+      ]);
+
+      act(() => {
+        view.result.current.onToggleTalk('m-1');
+        view.result.current.onToggleTalk('m-4');
+      });
+
+      expect(talksOf(view.result.current).map((talk) => talk.isExpanded)).toEqual([
+        true,
+        false,
+      ]);
+    });
+
+    it('keeps what the QA wrote outside the talk', () => {
+      chatWith();
+
+      const { items } = renderHook(() => useChatViewModel()).result.current;
+
+      expect(items.map((item) => item.kind)).toEqual(['talk', 'message', 'talk']);
+    });
+  });
+
   describe('a run in the chat', () => {
     const sectionOf = (view: { items: { kind: string }[] }) =>
       view.items.find((item) => item.kind === 'run') as

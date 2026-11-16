@@ -45,6 +45,7 @@ import type {
   ISaveSkill,
   IOrgTemplateDefault,
   IOrgTemplateRef,
+  IOutsideCall,
   ISaveOrgTemplate,
   ISaveTemplate,
   ISaveText,
@@ -64,6 +65,7 @@ import type {
   IWindowControls,
   IWriteSkill,
   McpSignInProgress,
+  OutsideCaller,
   OutsideToolCall,
   PickKind,
   ProSignInProgress,
@@ -912,7 +914,7 @@ const bridge = new AppBridge({
   },
 });
 
-const outsideBridge = new AppBridge<OutsideToolCall>({
+const outsideBridge = new AppBridge<IOutsideCall>({
   timeoutMs: OUTSIDE_WAIT.toolMs,
   send: (request) => {
     const [open] = appWindows();
@@ -1529,6 +1531,7 @@ function fitWindow(props: { window: BrowserWindow; fit: WindowFit }): void {
 
 async function performOutside(
   call: OutsideToolCall,
+  caller: OutsideCaller,
 ): Promise<{ text: string; isError: boolean }> {
   const [open] = appWindows();
 
@@ -1537,7 +1540,7 @@ async function performOutside(
   if (!open || open.webContents.isLoading())
     return { text: OUTSIDE_WAIT.opening, isError: true };
 
-  return outsideBridge.act(call);
+  return outsideBridge.act({ ...call, caller });
 }
 
 async function pickImport(): Promise<ImportPick> {

@@ -39,10 +39,20 @@ describe('useChatRowViewModel', () => {
     expect(
       row({ id: 'm-1', kind: 'user', at: '09:41', text: 'Plan it', from: 'agent' }),
     ).toMatchObject({
-      who: 'Your agent',
+      who: 'Your coding agent',
       isFromAgent: true,
       fromAgentTitle: 'Sent by the coding agent in your editor',
     });
+    expect(
+      row({
+        id: 'm-1',
+        kind: 'user',
+        at: '09:41',
+        text: 'Plan it',
+        from: 'agent',
+        caller: 'claude-code',
+      }).who,
+    ).toBe('Claude Code');
     expect(row({ id: 'm-1', kind: 'user', at: '09:41', text: 'hi' }).isFromAgent).toBe(
       false,
     );

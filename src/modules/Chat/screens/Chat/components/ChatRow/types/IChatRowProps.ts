@@ -11,6 +11,7 @@ export interface IChatRowProps {
   isAnswerable: boolean;
   canAskStory?: boolean;
   isFollowUp?: boolean;
+  who?: string;
   onAnswerQuestions: (props: { messageId: string; answers: IQuestionAnswer[] }) => void;
   onOpenPlan: () => void;
   onTakeSuggestion: (props: { messageId: string; only: number[] }) => void;

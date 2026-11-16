@@ -78,7 +78,7 @@ export const useOutsideCalls = () => {
           });
         }),
       networkOf: (run) => Run.network(run),
-      askChat: ({ workspaceId, text }) => {
+      askChat: ({ workspaceId, text, caller }) => {
         const store = useWorkspaceStore.getState();
         const workspace = store.workspaces.find(({ id }) => id === workspaceId);
 
@@ -92,7 +92,7 @@ export const useOutsideCalls = () => {
           });
         }
 
-        store.sendMessage({ workspaceId, text, mentions: [], from: 'agent' });
+        store.sendMessage({ workspaceId, text, mentions: [], from: 'agent', caller });
         askAgent({
           workspaceId,
           text,
@@ -102,6 +102,9 @@ export const useOutsideCalls = () => {
           confluence: null,
           isFromAgent: true,
         });
+      },
+      markChatRead: (workspaceId) => {
+        useWorkspaceStore.getState().markOutsideRead(workspaceId);
       },
       waitForChat: ({ workspaceId, ms }) =>
         new Promise((done) => {
@@ -184,7 +187,7 @@ export const useOutsideCalls = () => {
     };
 
     return Outside.onCall(({ id, call }) => {
-      void performOutsideTool({ call, port })
+      void performOutsideTool({ call, caller: call.caller, port })
         .catch((reason: unknown) => ({
           text: `QAzinho could not do it: ${reason instanceof Error ? reason.message : String(reason)}`,
           isError: true,
