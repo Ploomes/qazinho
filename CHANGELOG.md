@@ -1,3 +1,31 @@
+# [0.18.0](https://github.com/Salve-Software/qazinho/compare/v0.17.0...v0.18.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* **main:** read the contact address without electron ([0d7b09d](https://github.com/Salve-Software/qazinho/commit/0d7b09d46351573dfefe6c5f4b9d81308f75b8cc))
+* **ui:** a help icon as heavy as its neighbours ([61bd29d](https://github.com/Salve-Software/qazinho/commit/61bd29d4b1fadd25e343eed46f44296f057aa4a2))
+* **ui:** give the help icon a shape of its own ([83a4937](https://github.com/Salve-Software/qazinho/commit/83a4937d06a741bc82570b8247b398901f2b629c))
+
+
+### Features
+
+* **agents:** keep what each call to the agent spent ([7e6dc80](https://github.com/Salve-Software/qazinho/commit/7e6dc805e0c36cedc71a0cd42aaf6e44a7921b81))
+* **chat:** the talk between the coding agent and QAzinho ([dc024cd](https://github.com/Salve-Software/qazinho/commit/dc024cd35ce538f926c673c41da1c0188e20172a))
+* **help:** the help button and what's new ([74dc4ff](https://github.com/Salve-Software/qazinho/commit/74dc4ff045394337dc3463bcd1e83b19cb5b9159))
+* **main:** open an e-mail to Salve Software ([44225f0](https://github.com/Salve-Software/qazinho/commit/44225f05ecc931d59333fe33b706633ddad78cd6))
+* **pro:** the account card as a rail tile ([c952316](https://github.com/Salve-Software/qazinho/commit/c952316bed9919b80156abd4ad508002cab2cadb))
+* **sidebar:** a rail of icons and a list of projects ([cd935fd](https://github.com/Salve-Software/qazinho/commit/cd935fd6d68f074492b124a39646dcbf06e397a1))
+* **ui:** a figure font step for a headline number ([a056fa3](https://github.com/Salve-Software/qazinho/commit/a056fa3f37d90a4e7047a5b76077a31ccfedda28))
+* **ui:** a modal with only its confirm ([d827c29](https://github.com/Salve-Software/qazinho/commit/d827c29e9efd470417d7936e002933d4affc0c35))
+* **ui:** a tooltip that fills its slot ([bbcb522](https://github.com/Salve-Software/qazinho/commit/bbcb522f8c75c5e57e3e3faf5aef47a4d0e9ab15))
+* **ui:** fold the project list from the title bar ([370fbcf](https://github.com/Salve-Software/qazinho/commit/370fbcf1828912ebfdcae93a21a7e249788602f0))
+* **ui:** help, news, guides, Discord and usage icons ([9228702](https://github.com/Salve-Software/qazinho/commit/9228702ca72b30f6ac319fbd7221618856484235))
+* **ui:** set the screens in a rounded card ([01a8873](https://github.com/Salve-Software/qazinho/commit/01a88732f301f9ea3a62ba613ea107ecffb3b134))
+* **ui:** slide the tooltip between neighbours ([a56fe29](https://github.com/Salve-Software/qazinho/commit/a56fe29e111f3db19aa3af661603df02f43e73e1))
+* **usage:** read what the agent spent ([31c21c4](https://github.com/Salve-Software/qazinho/commit/31c21c4d43ad877a400fdd761b412cc7e29f78dd))
+* **usage:** the Usage screen ([020d550](https://github.com/Salve-Software/qazinho/commit/020d550039fa58220ff1c359aab8f189d677ad4b))
+
 # [0.17.0](https://github.com/Salve-Software/qazinho/compare/v0.16.0...v0.17.0) (2026-11-15)
 
 
