@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import { HelpMenu } from '@/modules/Help';
 import { ProAccountCard } from '@/modules/Pro';
 import { ProjectMark } from '@/modules/Project';
 import { Caret, Icon, IconButton } from '@/shared/components/atoms';
@@ -231,6 +232,7 @@ export const Sidebar: React.FC = () => {
 
           <div className="sidebar__rail-foot" data-tooltip-group>
             <ProAccountCard />
+            <HelpMenu side="right" />
             <Tooltip side="right" content={t('COMMON.SETTINGS')}>
               <IconButton
                 icon="settings"
@@ -480,6 +482,7 @@ export const Sidebar: React.FC = () => {
 
           <div className="sidebar__foot" data-tooltip-group>
             <ProAccountCard />
+            <HelpMenu side="above" />
             <Tooltip content={t('COMMON.SETTINGS')}>
               <IconButton
                 icon="settings"

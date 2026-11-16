@@ -1,1 +1,1 @@
-export type Modal = 'project' | 'workspace';
+export type Modal = 'project' | 'workspace' | 'news';

@@ -2,6 +2,7 @@ import { AnimatePresence, MotionConfig } from 'motion/react';
 import { AssistantDock } from '@/modules/Assistant';
 import { AllBugs } from '@/modules/Bug';
 import { ManualDock } from '@/modules/Device';
+import { NewsModal } from '@/modules/Help';
 import { FirstRun, Home, NewProject } from '@/modules/Home';
 import { ChangeRunWarning } from '@/modules/Plan';
 import { ProLinkModal, ProMergeModal, ProRunWarning } from '@/modules/Pro';
@@ -98,6 +99,7 @@ export const App: React.FC = () => {
               {hasReplay && <RunReplay key={replayKey} />}
               {modal === 'project' && <ProjectModal key={projectModalKey} />}
               {modal === 'workspace' && <NewWorkspaceModal key="workspace" />}
+              {modal === 'news' && <NewsModal key="news" />}
               {variablesKey !== null && <VariablesModal key={variablesKey} />}
               {hasProLink && <ProLinkModal key="pro-link" />}
               {hasProMerge && <ProMergeModal key="pro-merge" />}
