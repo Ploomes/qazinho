@@ -87,6 +87,7 @@ hover e o press, e o Motion faz toda entrada e saída (`animation.md`).
 | lift      | hover: `translate: 0 var(--lift)` (0 hoje) e `--sticker-lift`      | CSS, `:hover`           |
 | press     | desce `var(--press)`, um pouco menor                               | CSS, `:active`          |
 | wobble    | um pulso pequeno para um evento que importa, nunca em loop         | `STICKER.wobble`        |
+| glide     | a dica desliza até o vizinho seguinte e troca as palavras          | `STICKER.glide`         |
 
 - Nada gira enquanto se move.
 - A mola é quase crítica: sem ultrapassagem que se note.

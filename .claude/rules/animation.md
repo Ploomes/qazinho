@@ -40,6 +40,10 @@ As coisas entram e saem com um fade suave (`sticker-design.md`), e nada gira.
     `rise` para um acima dela, `hero` para o Estagiário, `speak` para o balão dele, que nasce do
     rosto dele depois de a tela trocar.
   - `drag` pega uma coisa arrastada, e `wobble` marca um evento uma vez com um pulso pequeno.
+  - `glide` leva a dica de um botão ao vizinho. O app tem um painel de dica só (`TooltipLayer`,
+    montado uma vez no `App`): cada `Tooltip` só avisa a `useTooltipStore`, e entre botões do
+    mesmo pai, ou do mesmo `data-tooltip-group`, o painel desliza e troca as palavras em vez de
+    fechar e abrir. A primeira dica espera um instante; as seguintes abrem na hora.
   - Espalhe o movimento: `initial={STICKER.panel.initial} animate={STICKER.panel.animate}
 exit={STICKER.panel.exit}`.
 - **Uma coisa que só pousa ao montar** usa um keyframe no lugar: `gc-slap` para uma pequena,
