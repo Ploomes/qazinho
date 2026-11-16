@@ -1,7 +1,7 @@
 import type { ITitlebarProps } from '@/shared/components/organisms/Titlebar/types';
 import { useTranslation } from 'react-i18next';
 import { Platform } from '@/services';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
   const { isBare = false } = props;
@@ -14,6 +14,8 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
     (state) => state.workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null,
   );
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
+  const isShut = useSettingsStore((state) => state.isSidebarShut);
+  const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
 
   const project =
     workspace === null
@@ -30,6 +32,12 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
       .filter((part) => part.length > 0)
       .join(' '),
     isResourcesOpen,
+    hasSidebarToggle:
+      !isBare &&
+      projects.length > 0 &&
+      (screen === 'welcome' || screen === 'workspace' || screen === 'newProject'),
+    sidebarToggleLabel: t(isShut ? 'SIDEBAR.OPEN' : 'SIDEBAR.SHUT'),
+    onToggleSidebar: toggleSidebar,
     crumbsLabel: t('COMMON.WHERE'),
     hasPlanActions: screen === 'workspace' && workspace !== null,
     onRename: (name: string) => {

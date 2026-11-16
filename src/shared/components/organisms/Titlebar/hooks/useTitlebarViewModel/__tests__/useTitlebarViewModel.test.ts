@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useTitlebarViewModel } from '@/shared/components/organisms/Titlebar/hooks/useTitlebarViewModel';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 beforeEach(() => {
   useAppStore.setState({
@@ -49,6 +49,40 @@ describe('useTitlebarViewModel', () => {
 
     expect(result.current.isBare).toBe(false);
     expect(result.current.className).not.toContain('titlebar--bare');
+  });
+
+  describe('the button that folds the list of projects', () => {
+    const LOJA = { id: 'p1', name: 'Loja Web', targets: [], repositories: [] };
+
+    it('sits on the screens that show the list, and folds and unfolds it', () => {
+      useSettingsStore.setState({ isSidebarShut: false });
+      useAppStore.setState({ projects: [LOJA], screen: 'welcome' });
+
+      const { result } = renderHook(() => useTitlebarViewModel());
+
+      expect(result.current.hasSidebarToggle).toBe(true);
+      expect(result.current.sidebarToggleLabel).toBe('Fold the sidebar');
+
+      act(() => {
+        result.current.onToggleSidebar();
+      });
+
+      expect(useSettingsStore.getState().isSidebarShut).toBe(true);
+    });
+
+    it('is NOT offered on the screens without the list, nor before the first project', () => {
+      useAppStore.setState({ projects: [LOJA], screen: 'usage' });
+
+      expect(
+        renderHook(() => useTitlebarViewModel()).result.current.hasSidebarToggle,
+      ).toBe(false);
+
+      useAppStore.setState({ projects: [], screen: 'welcome' });
+
+      expect(
+        renderHook(() => useTitlebarViewModel()).result.current.hasSidebarToggle,
+      ).toBe(false);
+    });
   });
 
   describe('crumbs', () => {

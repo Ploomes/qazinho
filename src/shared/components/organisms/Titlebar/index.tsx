@@ -3,6 +3,8 @@ import { AnimatePresence } from 'motion/react';
 import { AssistantButton } from '@/modules/Assistant';
 import { UpdateButton } from '@/modules/Update';
 import { PlanActions, PlanName } from '@/modules/Workspace';
+import { IconButton } from '@/shared/components/atoms';
+import { Tooltip } from '@/shared/components/molecules';
 import { ResourcePopover } from '@/shared/components/organisms/ResourcePopover';
 import { useTitlebarViewModel } from './hooks';
 import './styles.css';
@@ -13,6 +15,9 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
     isBare,
     className,
     isResourcesOpen,
+    hasSidebarToggle,
+    sidebarToggleLabel,
+    onToggleSidebar,
     crumbs,
     crumbsLabel,
     hasPlanActions,
@@ -24,6 +29,16 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
       {!isBare && (
         <>
           <div className="titlebar__place">
+            {hasSidebarToggle && (
+              <Tooltip content={sidebarToggleLabel}>
+                <IconButton
+                  icon="sidebar"
+                  size="sm"
+                  label={sidebarToggleLabel}
+                  onClick={onToggleSidebar}
+                />
+              </Tooltip>
+            )}
             <nav className="titlebar__crumbs" aria-label={crumbsLabel}>
               {crumbs.map((crumb) => (
                 <span key={crumb.key} className="titlebar__crumb">

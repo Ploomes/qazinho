@@ -75,3 +75,12 @@
   background: var(--raise);
   color: var(--ink);
 }
+
+.titlebar__place > .tooltip .icon-button {
+  border-color: transparent;
+  color: var(--ink3);
+}
+
+.titlebar__place > .tooltip .icon-button:hover {
+  color: var(--ink);
+}
