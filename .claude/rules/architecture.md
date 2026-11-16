@@ -224,15 +224,18 @@ dispositivo (`DeviceView`), do plano, das runs e dos bugs, e o painel Agente à 
   `SHELL.centerMinWidth` (`panelWidthOf`). Ele se dobra num trilho com o nome da aba dele, ou se
   alarga sobre o chat, que continua montado, escondido e inerte, então um rascunho nunca se perde.
 - O Estagiário ouve a aba ao lado do chat, ou que o painel está escondido (`describeScreen`).
-- A sidebar mostra cada projeto pelo app que ele testa: o ícone do site (`SiteIcons`, que a main
-  busca na página e guarda por origem em `site-icons.json`), senão a plataforma, e embaixo do nome
-  onde cada alvo roda (`projectAppOf`). Um workspace é uma linha só, e mostra apenas o que pede o QA:
-  uma pergunta, uma run andando ou pausada, os bugs abertos ou uma run que falhou (`planSignalOf`).
-  A conta, as Configurações e o botão de dobrar ficam numa linha no pé.
-- A sidebar se dobra num trilho com a plataforma e o estado de cada workspace (⌘B), guardado nas
-  configurações entre reinícios, e sozinha numa janela mais estreita que `SHELL.sidebarFoldBelow`
-  (`useSidebarFit`), voltando quando ela alarga; o chat e o painel medem o espaço deles pela largura dela
-  (`useSidebarWidth`).
+- A sidebar é um trilho de ícones na moldura (`SHELL.sidebarRail`): o Início, os Bugs e o Uso em cima,
+  e a ajuda, as Configurações e a conta no pé. Ao lado dele, no Início e num plano, a lista dos
+  projetos fica colada ao cartão das telas, como o pedaço esquerdo dele (`isListShown`,
+  `app__card--joined`): a busca e o "+" em cima, cada projeto pelo app que ele testa, o ícone do site
+  (`SiteIcons`, que a main busca na página e guarda por origem em `site-icons.json`), senão a
+  plataforma, e onde cada alvo roda (`projectAppOf`). Cada plano é uma linha de duas camadas: a marca
+  com o sinal do que pede o QA (`planSignalOf`) e, embaixo do nome, o que ele está fazendo
+  (`subtitle`). Os Bugs e o Uso ocupam o cartão sem a lista.
+- A lista se dobra pelo botão da barra de título ou pelo ⌘B, guardado nas configurações entre
+  reinícios, e sozinha numa janela mais estreita que `SHELL.sidebarFoldBelow` (`useSidebarFit`),
+  voltando quando ela alarga; dobrada, os projetos viram ícones no trilho, cada um com o painel dele.
+  O chat e o painel medem o espaço deles pela largura do trilho e da lista (`useSidebarWidth`).
 
 ## IPC
 

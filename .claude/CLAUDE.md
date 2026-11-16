@@ -537,7 +537,7 @@ fica" foram de 5 em 6 runs para 0 em 6, e uma memória envenenada nunca aprovou 
 `tests/smoke/memory.test.ts` prova o ciclo com um agente fake; o guardião acerta 152 de 162 cenários
 e barrou 36 de 36 perigosos no Haiku. O Codex e uma ida e volta real à org ainda não foram tentados.
 
-**O QAzinho Pro é a conta no pé da sidebar, e nada mais.** Ela fala da conta do QA e nunca
+**O QAzinho Pro é a conta no pé do trilho, e nada mais.** Ela fala da conta do QA e nunca
 nomeia um plano, já que o Pro não será o único. Sem login, ele faz este computador entrar por um
 código que o QA confirma no navegador, o token lacrado pelo keychain do SO. Com login, todo projeto
 vai à org para a qual a conta aponta, em segundo plano: o que mudou desde a última vez, as telas e
@@ -558,7 +558,7 @@ ou 90 dias, uma coluna por dia e a divisão por trabalho, projeto, modelo ou dia
 unitários provam o registro e a tela; o formato do custo foi conferido contra um Claude Code
 real, e o Codex só contra o formato dos eventos dele.
 
-**O botão de ajuda conta o que há de novo.** No pé da sidebar, ele lista a manchete das últimas
+**O botão de ajuda conta o que há de novo.** No pé do trilho, ele lista a manchete das últimas
 versões, abre todas numa janela, e leva aos guias, ao Discord da Salve Software e a um e-mail
 para relatar um problema ou mandar um comentário, já com a versão e o sistema. Testes unitários
 provam o menu e o e-mail; nenhum QA usou ainda.
