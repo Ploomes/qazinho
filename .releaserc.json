@@ -25,7 +25,7 @@
     [
       "@semantic-release/github",
       {
-        "releaseBodyTemplate": "<% if (nextRelease.notes.length > 120000) { %>The notes of ${nextRelease.version} are longer than a GitHub release takes: read them whole in [CHANGELOG.md](https://github.com/Salve-Software/qazinho/blob/${nextRelease.gitTag}/CHANGELOG.md).<% } else { %><%= nextRelease.notes %><% } %>"
+        "releaseBodyTemplate": "<% if (nextRelease.notes.length > 120000) { %>The notes of ${nextRelease.version} are longer than a GitHub release takes: read them whole in [CHANGELOG.md](https://github.com/Ploomes/qazinho/blob/${nextRelease.gitTag}/CHANGELOG.md).<% } else { %><%= nextRelease.notes %><% } %>"
       }
     ]
   ]

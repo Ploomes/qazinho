@@ -3,7 +3,7 @@
 ## Configuração
 
 ```bash
-git clone --recurse-submodules https://github.com/Salve-Software/qazinho.git
+git clone --recurse-submodules https://github.com/Ploomes/qazinho.git
 npm install
 npm run dev
 ```

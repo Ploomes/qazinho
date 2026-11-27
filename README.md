@@ -28,4 +28,4 @@ Veja o [CONTRIBUTING.md](CONTRIBUTING.md) antes de abrir um PR.
 
 ## Licença
 
-Proprietária. © 2026 Salve Software. Todos os direitos reservados. Veja o [LICENSE](LICENSE).
+Proprietária. © 2026 Ploomes. Todos os direitos reservados. Veja o [LICENSE](LICENSE).

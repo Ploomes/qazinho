@@ -1,19 +1,19 @@
 {
-  "name": "@salve-software/qazinho",
+  "name": "@ploomes/qazinho",
   "productName": "QAzinho",
   "desktopName": "qazinho.desktop",
   "version": "0.18.0",
   "private": true,
   "description": "A local-first desktop app where AI agents test your web and mobile apps from a test plan.",
   "license": "UNLICENSED",
-  "author": "Salve Software",
+  "author": "Ploomes",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Salve-Software/qazinho.git"
+    "url": "git+https://github.com/Ploomes/qazinho.git"
   },
-  "homepage": "https://github.com/Salve-Software/qazinho#readme",
+  "homepage": "https://github.com/Ploomes/qazinho#readme",
   "bugs": {
-    "url": "https://github.com/Salve-Software/qazinho/issues"
+    "url": "https://github.com/Ploomes/qazinho/issues"
   },
   "main": "./out/main/index.js",
   "engines": {
