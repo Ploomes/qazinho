@@ -11,8 +11,8 @@ describe('updateFeedOf', () => {
   it('reads a private repository with a token', () => {
     expect(updateFeedOf({ feedUrl: undefined, token: 'gho_x' })).toEqual({
       provider: 'github',
-      owner: 'Salve-Software',
-      repo: 'qazinho-releases',
+      owner: 'Ploomes',
+      repo: 'qazinho',
       private: true,
       token: 'gho_x',
     });

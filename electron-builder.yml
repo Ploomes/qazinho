@@ -1,4 +1,4 @@
-appId: com.salvesoftware.qazinho
+appId: com.ploomes.qazinho
 productName: QAzinho
 protocols:
   - name: QAzinho
@@ -9,8 +9,8 @@ directories:
   buildResources: build
 publish:
   provider: github
-  owner: Salve-Software
-  repo: qazinho-releases
+  owner: Ploomes
+  repo: qazinho
   releaseType: release
 files:
   - out/**/*
@@ -28,7 +28,7 @@ win:
 appx:
   applicationId: QAzinho
   displayName: QAzinho
-  publisherDisplayName: Salve Software
+  publisherDisplayName: Ploomes
   backgroundColor: '#0A0906'
   languages:
     - pt-BR
@@ -39,6 +39,7 @@ appx:
   customManifestPath: appxmanifest.xml
   artifactName: ${productName}-${version}-${arch}.${ext}
 nsis:
+  guid: 88bc01ff-4150-5ea6-a5f0-2d7bad89aaa4
   artifactName: ${productName}-Setup-${version}.${ext}
 linux:
   target: AppImage

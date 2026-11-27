@@ -1,1 +1,1 @@
-export const UPDATE_REPO = { owner: 'Salve-Software', name: 'qazinho-releases' } as const;
+export const UPDATE_REPO = { owner: 'Ploomes', name: 'qazinho' } as const;
