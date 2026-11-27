@@ -20,10 +20,10 @@ jobs:
     name: macOS installer
     runs-on: macos-latest
     permissions:
-      contents: read
+      contents: write
     env:
       TAG: ${{ inputs.tag }}
-      RELEASES_REPO: Salve-Software/qazinho-releases
+      RELEASES_REPO: ${{ github.repository }}
       # O electron-builder baixa o Electron que empacota para cada arquitetura.
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     steps:
@@ -34,10 +34,9 @@ jobs:
           APPLE_API_KEY_P8: ${{ secrets.APPLE_API_KEY_P8 }}
           APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
-          RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
         run: |
           missing=''
-          for name in APPLE_CERTIFICATE_P12 APPLE_CERTIFICATE_PASSWORD APPLE_API_KEY_P8 APPLE_API_KEY_ID APPLE_API_ISSUER RELEASES_TOKEN; do
+          for name in APPLE_CERTIFICATE_P12 APPLE_CERTIFICATE_PASSWORD APPLE_API_KEY_P8 APPLE_API_KEY_ID APPLE_API_ISSUER; do
             if [ -z "${!name}" ]; then missing="$missing $name"; fi
           done
           if [ -n "$missing" ]; then
@@ -79,7 +78,7 @@ jobs:
       # O feed sobe por último: um app nunca lê uma versão cujos arquivos ainda não chegaram.
       - name: Publish
         env:
-          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release view "$TAG" --repo "$RELEASES_REPO" > /dev/null 2>&1 ||
             gh release create "$TAG" --repo "$RELEASES_REPO" --title "$TAG" --notes "QAzinho $TAG" ||
