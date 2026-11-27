@@ -42,7 +42,7 @@ olhos. Toda tela o segue.
    com "uso comum e individual" (a página legal do Claude Code). Vigiar sozinho é da plataforma,
    com os créditos da org. Os limites da conta são a exceção, porque o `/usage` não gasta o plano:
    de 15 em 15 minutos, e de 5 em 5 com a IA trabalhando.
-3. **Um produto da Salve Software, código fechado, em dois planos.** O Free é o app desktop
+3. **Um produto da Ploomes, código fechado, em dois planos.** O Free é o app desktop
    inteiro, sem conta e sem limite artificial: baixe e use. O Pro é uma plataforma web paga para
    uma empresa: uma conta e uma org, onde o QA publica os projetos da máquina dele que escolhe,
    uma org cada, para compartilhar projetos, planos e runs. O app desktop nunca precisa do Pro e
@@ -363,7 +363,7 @@ teste fala com o agente de uma run. O qazinho-server prova o fluxo com o cliente
 cópia do banco, responderam se um PR passou, acharam o plano de um fluxo e recusaram o que o papel não
 deixa, por cerca de seis centavos. Ainda não rodou: o `/mcp` da CLI real com a `/connect` num navegador
 de verdade, e o `get_screenshot` com uma tela de verdade. A rota está publicada
-(`https://qazinho-api.salvesoftware.com/api/mcp`, que responde 401 com os metadados do OAuth).
+na API do Pro, que responde 401 com os metadados do OAuth.
 
 **Uma primeira execução anda pela máquina** (`Onboarding`): idioma, o agente, as ferramentas de
 dispositivo, os trackers. O GitHub e o Jira conectam de verdade. O token do Jira é conferido com o
@@ -537,6 +537,9 @@ fica" foram de 5 em 6 runs para 0 em 6, e uma memória envenenada nunca aprovou 
 `tests/smoke/memory.test.ts` prova o ciclo com um agente fake; o guardião acerta 152 de 162 cenários
 e barrou 36 de 36 perigosos no Haiku. O Codex e uma ida e volta real à org ainda não foram tentados.
 
+**O QAzinho Pro está desligado.** O site da plataforma saiu do ar, e o Pro sumiu do app por uma
+chave (`PRO_SWITCH`); o código continua, e o que segue descreve como ele funciona ligado.
+
 **O QAzinho Pro é a conta no pé do trilho, e nada mais.** Ela fala da conta do QA e nunca
 nomeia um plano, já que o Pro não será o único. Sem login, ele faz este computador entrar por um
 código que o QA confirma no navegador, o token lacrado pelo keychain do SO. Com login, todo projeto
@@ -559,9 +562,7 @@ unitários provam o registro e a tela; o formato do custo foi conferido contra u
 real, e o Codex só contra o formato dos eventos dele.
 
 **O botão de ajuda conta o que há de novo.** No pé do trilho, ele lista a manchete das últimas
-versões, abre todas numa janela, e leva aos guias, ao Discord da Salve Software e a um e-mail
-para relatar um problema ou mandar um comentário, já com a versão e o sistema. Testes unitários
-provam o menu e o e-mail; nenhum QA usou ainda.
+versões e abre todas numa janela. Testes unitários provam o menu; nenhum QA usou ainda.
 
 **Fechar a janela não fecha o app, como no Discord.** A janela some e o QAzinho continua: uma run
 segue andando, a ilha e as notificações chamam o QA de volta, e o agente de fora ainda o alcança. No
@@ -581,9 +582,9 @@ app vira uma tela que atualiza, menos com uma run andando; sem login nada trava.
 instalou de verdade com um certificado descartável: a 0.0.1 achou a 0.0.2 num feed local, baixou,
 mostrou o botão, e o app no disco virou a 0.0.2; uma assinatura recusada tirou o botão. O build real
 gerou neste Mac os feeds dos três sistemas. As releases publicadas levam o Mac assinado e
-notarizado, e o Windows já foi instalado num PC de verdade. O `qazinho-releases` é público. Ainda
-não rodou: uma release pelo CI, uma instalação no Linux, e a recusa do servidor real com um app
-logado.
+notarizado, e o Windows já foi instalado num PC de verdade. As releases ficam no próprio
+repositório, que é público. Ainda não rodou: uma release pelo CI, uma instalação no Linux, e a
+recusa do servidor real com um app logado.
 
 **O Codex está meio verificado.** O QAzinho o dirige por `codex exec --json` e o servidor MCP
 próprio dele, conferido contra um Codex fake construído a partir dos eventos do real. O chat

@@ -62,10 +62,8 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
 - O `window.open` nunca abre uma janela: um link vai para o navegador do sistema, todo o resto é
   negado. Tudo o que o app abre fora dele, o que um agente pede ao `$BROWSER` e a página que a API
   manda abrir incluídos, passa pelo `isOpenableUrl`: https, ou http só nesta máquina. Um outro
-  esquema entregaria o endereço a um programa qualquer do SO, como o `ms-msdt:` no Windows. As
-  exceções são o endereço fixo das atualizações da Microsoft Store (`APP_UPDATE.storeUpdates`) e o
-  e-mail para a Salve Software do botão de ajuda (`salveMailOf`, `SALVE_CONTACT`): a página manda
-  só o assunto e o texto, e nenhuma escolhe o destinatário.
+  esquema entregaria o endereço a um programa qualquer do SO, como o `ms-msdt:` no Windows. A
+  exceção é o endereço fixo das atualizações da Microsoft Store (`APP_UPDATE.storeUpdates`).
 - **O login de um MCP nunca passa pelo QAzinho.** O MCP do Figma vive no agente do próprio QA,
   Claude Code ou Codex: o QAzinho o adiciona lá e roda o login do próprio agente, e o token fica
   com o agente. Os comandos de cada agente são uma receita em `MCP_RECIPES`.
@@ -198,11 +196,9 @@ nunca o que o plano dele cobra.
 ## O botão de ajuda
 
 O `HelpMenu`, no pé da sidebar e no trilho, lista a manchete das três versões mais novas que o app
-traz (`newsLinesOf`), abre todas elas numa janela (`NewsModal`, o modal `news`), os guias do site
-e o Discord da Salve Software (`HELP_LINKS`), e um e-mail para relatar um problema ou mandar um
-comentário, com a versão e o sistema (`Contact.write`). As notas de cada versão são chaves do
-i18n no `RELEASE_NOTES`, a primeira sendo a manchete, e só aparecem num app dessa versão em
-diante (`shippedNotesOf`): uma versão nova ganha a entrada dela antes de sair.
+traz (`newsLinesOf`) e abre todas elas numa janela (`NewsModal`, o modal `news`). As notas de cada
+versão são chaves do i18n no `RELEASE_NOTES`, a primeira sendo a manchete, e só aparecem num app
+dessa versão em diante (`shippedNotesOf`): uma versão nova ganha a entrada dela antes de sair.
 
 ## O workspace
 
@@ -729,9 +725,15 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
 
 ## QAzinho Pro, fora do caminho do QA
 
+**Hoje ele está desligado** (`PRO_SWITCH`), porque o site da plataforma saiu do ar e sem ele ninguém
+entra. O código continua: a chave tira a conta do trilho (`isProShown`), e a página não lê a conta
+nem sincroniza (`useProSync`) nem abre links `qazinho://` (`useProLinks`), e a main não pergunta às
+orgs (`startPulling`). Sem conta no `useProStore`, o resto (a seção Org, a nuvem, os modelos de
+org, o servidor da plataforma) também não aparece. O que segue descreve o Pro ligado.
+
 Entrar no QAzinho Pro não muda nada em como o app é usado, e não manda nada: um projeto só vai a
 uma org quando o QA o publica, do jeito que o GitHub Desktop publica um repositório
-([030](https://github.com/Salve-Software/qazinho-server/blob/main/docs/adrs/030-the-desktop-publishes-and-clones-projects.md)).
+([030](https://github.com/Ploomes/qazinho-server/blob/main/docs/adrs/030-the-desktop-publishes-and-clones-projects.md)).
 A conta no pé da sidebar (`ProAccountCard`), a seção Org da janela do projeto (`ProjectProPane`)
 e uma nuvem em cada projeto ligado na sidebar são onde ele aparece.
 
@@ -990,8 +992,8 @@ pasta de testes do QA. O QAzinho a lê e não muda nada nela:
 
 ## A atualização do app
 
-O app instalado se atualiza pelo `electron-updater`, a partir do `Salve-Software/qazinho-releases`,
-sem parar o QA.
+O app instalado se atualiza pelo `electron-updater`, a partir das releases do próprio
+`Ploomes/qazinho`, sem parar o QA.
 
 - O `AppUpdater` da main procura ao abrir e a cada 4 horas (`APP_UPDATE`), baixa em segundo plano e
   instala quando o app sai. Ele fala com o `electron-updater` por uma porta (`IUpdaterPort`), que a raiz de
@@ -1009,7 +1011,7 @@ sem parar o QA.
   `store`, cujo `UpdateRequired` abre as atualizações da loja (`Updates.openStore`).
 - **Uma atualização obrigatória só trava quem tem conta logada.** O `ProApi` manda a versão em todo
   pedido (`x-qazinho-version`), e a API recusa com 426 uma abaixo do `MIN_DESKTOP_VERSION` dela
-  ([035](https://github.com/Salve-Software/qazinho-server/blob/main/docs/adrs/035-the-minimum-desktop-rises-on-a-near-break.md)).
+  ([035](https://github.com/Ploomes/qazinho-server/blob/main/docs/adrs/035-the-minimum-desktop-rises-on-a-near-break.md)).
   - O `AppUpdater.require` então procura a cada minuto, e a tela vira o `UpdateRequired`, menos com
     uma run andando, que termina antes.
   - O app sem conta nunca fala com a API, então nunca trava, nem sem rede. Publique a versão antes,

@@ -9,7 +9,7 @@ nada veste uma borda de recorte e nada é colado na tela com tapa.
 uma tela escura e baixinha com dois olhos acesos no Sinal, e o ícone do app é ele quadrado. O
 `Logo` desenha o ícone (`isIcon`), e o `Wordmark` é o logotipo: "QAzınho" em Geist 700, o pingo do
 i feito dos dois olhos, na cor do texto no Paper e acesos no Sinal no Night (`--brand-dot`). A `Tag`
-assina o lockup ("POR SALVE SOFTWARE") em Geist Mono baixinha, só no Sobre.
+assina o lockup ("POR PLOOMES") em Geist Mono baixinha, só no Sobre.
 
 Antes era uma mesa de adesivos recortados, depois um Estagiário lima; os dois saíram. O `STICKER`
 e os tokens `--sticker-*`, `--edge-*` e `--tilt-*` mantêm os nomes e guardam os valores calmos.

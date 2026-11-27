@@ -10,8 +10,7 @@ os fluxos num dispositivo real e conta o que viu.
 - **O seu agente.** Claude Code ou Codex, o que já está na sua máquina. Mais agentes depois.
 - **A sua máquina.** Emuladores, simuladores, navegadores e runs ficam locais. Nada vai para um
   servidor do QAzinho.
-- **Grátis para um usuário.** O app desktop inteiro, sem conta e sem limite. Um plano Pro vai
-  hospedar planos e runs para times.
+- **Sem conta.** O app desktop inteiro, sem login e sem limite.
 
 > **Status:** esqueleto inicial. Nada acima funciona ainda.
 
