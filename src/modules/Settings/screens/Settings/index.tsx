@@ -341,7 +341,7 @@ export const Settings: React.FC = () => {
                     <Wordmark />
                   </span>
                   <span className="settings__about-version">{version}</span>
-                  <Tag>{t('COMMON.BY_SALVE')}</Tag>
+                  <Tag>{t('COMMON.BY_PLOOMES')}</Tag>
                 </div>
               </div>
               <div className="settings__about-logs">

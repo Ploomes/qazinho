@@ -126,7 +126,7 @@ describe('useSettingsViewModel', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
     expect(result.current.rights).toBe(
-      `© ${String(new Date().getFullYear())} Salve Software. All rights reserved.`,
+      `© ${String(new Date().getFullYear())} Ploomes. All rights reserved.`,
     );
     expect(result.current.version).not.toContain('MIT');
     expect(result.current).not.toHaveProperty('links');
