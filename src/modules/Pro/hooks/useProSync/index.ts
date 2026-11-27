@@ -7,12 +7,14 @@ import { Pro } from '@/services';
 import { lastWritten, saveLater } from '@/shared/hooks/useArchive/library';
 import { useAppStore, useProStore, useWorkspaceStore } from '@/store';
 
-export const useProSync = () => {
+export const useProSync = (isOn: boolean) => {
   const setStatus = useProStore((state) => state.setStatus);
   const setShares = useProStore((state) => state.setShares);
   const landShare = useProStore((state) => state.landShare);
 
   useEffect(() => {
+    if (!isOn) return undefined;
+
     void Pro.status().then(setStatus);
     void Pro.shares().then(setShares);
 
@@ -35,9 +37,11 @@ export const useProSync = () => {
       if (JSON.stringify(merged) !== JSON.stringify(project.memories ?? []))
         updateProject({ ...project, memories: merged });
     });
-  }, [setStatus, setShares, landShare]);
+  }, [isOn, setStatus, setShares, landShare]);
 
   useEffect(() => {
+    if (!isOn) return undefined;
+
     const sent = lastWritten();
     const later = saveLater(PRO_PUSH.settleMs);
 
@@ -118,5 +122,5 @@ export const useProSync = () => {
 
       for (const stop of stops) stop();
     };
-  }, []);
+  }, [isOn]);
 };

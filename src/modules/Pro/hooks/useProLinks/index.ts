@@ -3,7 +3,7 @@ import { useEffect, useEffectEvent } from 'react';
 import { Pro } from '@/services';
 import { useAppStore, useProStore, useWorkspaceStore } from '@/store';
 
-export const useProLinks = () => {
+export const useProLinks = (isOn: boolean) => {
   const isLoaded = useWorkspaceStore((state) => state.isLoaded);
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
@@ -27,12 +27,12 @@ export const useProLinks = () => {
   });
 
   useEffect(() => {
-    if (!isLoaded) return undefined;
+    if (!isOn || !isLoaded) return undefined;
 
     void Pro.takeLink().then(open);
 
     return Pro.onLink(() => {
       void Pro.takeLink().then(open);
     });
-  }, [isLoaded]);
+  }, [isOn, isLoaded]);
 };

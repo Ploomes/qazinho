@@ -14,7 +14,7 @@ import { useTemplates } from '@/modules/Template';
 import { isRunGoing, useUpdateWatch } from '@/modules/Update';
 import { useChatOnly } from '@/modules/Workspace';
 import { AppWindow, Platform } from '@/services';
-import { SHELL } from '@/shared/constants';
+import { PRO_SWITCH, SHELL } from '@/shared/constants';
 import {
   useArchive,
   useKeybinds,
@@ -81,8 +81,8 @@ export const useAppViewModel = () => {
   useQuestionRoom();
   useBuildEvents();
   useMemoryKeeping();
-  useProSync();
-  useProLinks();
+  useProSync(PRO_SWITCH.isOn);
+  useProLinks(PRO_SWITCH.isOn);
   useVideoSweep();
   useIslandSync();
   useOutsideCalls();

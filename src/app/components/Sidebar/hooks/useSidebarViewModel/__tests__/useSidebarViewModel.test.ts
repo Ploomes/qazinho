@@ -108,6 +108,14 @@ describe('useSidebarViewModel', () => {
     });
   });
 
+  describe('the account', () => {
+    it('leaves the account out of the rail while the Pro is off', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.isProShown).toBe(false);
+    });
+  });
+
   describe('the Usage row', () => {
     it('opens the Usage screen, and is marked while it is on screen', () => {
       useAppStore.setState({ screen: 'welcome', selectedWorkspaceId: null });

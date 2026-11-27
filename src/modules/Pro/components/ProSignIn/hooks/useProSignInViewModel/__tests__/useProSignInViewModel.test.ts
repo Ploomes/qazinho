@@ -24,12 +24,12 @@ describe('useProSignInViewModel', () => {
       phase: 'working',
       at: 'browser',
       code: 'WDJB-MJHT',
-      url: 'https://qazinho.salvesoftware.com/device?code=WDJB-MJHT',
+      url: 'https://qazinho.test/device?code=WDJB-MJHT',
     });
 
     expect(result.current.shownCode).toMatchObject({ code: 'WDJB-MJHT' });
     expect(result.current.page).toMatchObject({
-      url: 'https://qazinho.salvesoftware.com/device?code=WDJB-MJHT',
+      url: 'https://qazinho.test/device?code=WDJB-MJHT',
     });
     expect(result.current.rows.map(({ state }) => state)).toEqual([
       'done',

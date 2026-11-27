@@ -43,10 +43,22 @@ afterEach(() => {
 });
 
 describe('useProLinks', () => {
+  it('leaves a link where it is while the Pro is off', async () => {
+    waiting = LINK;
+    renderHook(() => useProLinks(false));
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(waiting).toEqual(LINK);
+    expect(useProStore.getState().link).toBeNull();
+  });
+
   it('opens the plan of a link the app was started with, once the workspaces are read', async () => {
     useWorkspaceStore.setState({ isLoaded: false, workspaces: [] });
     waiting = LINK;
-    const { rerender } = renderHook(() => useProLinks());
+    const { rerender } = renderHook(() => useProLinks(true));
 
     expect(waiting).toEqual(LINK);
 
@@ -65,7 +77,7 @@ describe('useProLinks', () => {
 
   it('keeps a link to a plan this computer does not hold, for the modal to offer it', async () => {
     useWorkspaceStore.setState({ workspaces: [] });
-    renderHook(() => useProLinks());
+    renderHook(() => useProLinks(true));
 
     waiting = LINK;
     act(() => {

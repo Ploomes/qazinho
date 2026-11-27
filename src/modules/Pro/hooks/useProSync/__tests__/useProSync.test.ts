@@ -65,9 +65,9 @@ function bridgeWith(props: { status: ProStatus; shares?: IProShare[] }) {
   };
 }
 
-async function mounted() {
+async function mounted(isOn = true) {
   const hook = renderHook(() => {
-    useProSync();
+    useProSync(isOn);
   });
 
   await act(async () => {
@@ -100,6 +100,14 @@ afterEach(() => {
 });
 
 describe('useProSync', () => {
+  it('reads no account and sends nothing while the Pro is off', async () => {
+    await mounted(false);
+    await settle();
+
+    expect(synced).toEqual([]);
+    expect(useProStore.getState().status).toBeNull();
+  });
+
   it('sends a linked project once the machine is signed in, after the burst settles', async () => {
     await mounted();
 

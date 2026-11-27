@@ -3,7 +3,7 @@ import { isOpenableUrl } from '@/main/library';
 
 describe('isOpenableUrl', () => {
   it('opens a page on the web', () => {
-    expect(isOpenableUrl('https://qazinho.salvesoftware.com/device')).toBe(true);
+    expect(isOpenableUrl('https://qazinho.test/device')).toBe(true);
     expect(isOpenableUrl('https://www.figma.com/oauth?client_id=x')).toBe(true);
   });
 
@@ -26,7 +26,7 @@ describe('isOpenableUrl', () => {
   });
 
   it('refuses an address with credentials in it, or one that is not an address', () => {
-    expect(isOpenableUrl('https://user:pass@qazinho.salvesoftware.com')).toBe(false);
+    expect(isOpenableUrl('https://user:pass@qazinho.test')).toBe(false);
     expect(isOpenableUrl('not a url')).toBe(false);
     expect(isOpenableUrl('')).toBe(false);
   });

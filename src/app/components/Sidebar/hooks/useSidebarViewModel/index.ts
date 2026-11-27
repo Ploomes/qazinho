@@ -30,7 +30,7 @@ import { currentStepOf, runToContinueOf } from '@/modules/Run/library';
 import { workspaceMeta } from '@/modules/Workspace';
 import { Agent, Archive, Platform, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
-import { SHELL } from '@/shared/constants';
+import { PRO_SWITCH, SHELL } from '@/shared/constants';
 import { comboLabelOf } from '@/shared/hooks/useKeybinds/library';
 import { useAppStore, useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
@@ -403,6 +403,7 @@ export const useSidebarViewModel = () => {
     undoLabel: t('PLAN.UNDO'),
     onProjectSettings: openProjectSettings,
     onProSettings: openProSettings,
+    isProShown: PRO_SWITCH.isOn,
     markSize: SIDEBAR_SIZE.mark,
     railMarkSize: SIDEBAR_SIZE.railMark,
     homeLabel: t('HOME.TITLE'),

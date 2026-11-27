@@ -47,6 +47,7 @@ export const Sidebar: React.FC = () => {
     undoLabel,
     onProjectSettings,
     onProSettings,
+    isProShown,
     markSize,
     railMarkSize,
     homeLabel,
@@ -198,8 +199,12 @@ export const Sidebar: React.FC = () => {
               <Icon name="settings" size={20} />
             </button>
           </Tooltip>
-          <span className="sidebar__rail-line" aria-hidden="true" />
-          <ProAccountCard />
+          {isProShown && (
+            <>
+              <span className="sidebar__rail-line" aria-hidden="true" />
+              <ProAccountCard />
+            </>
+          )}
         </div>
       </div>
 

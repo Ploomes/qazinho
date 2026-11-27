@@ -206,7 +206,12 @@ import {
   sweepDaysOf,
   toldAfterTurn,
 } from '@/main/library';
-import { ASSISTANT_WAIT, CHANNELS, CHAT_ATTACHMENTS } from '@/shared/constants';
+import {
+  ASSISTANT_WAIT,
+  CHANNELS,
+  CHAT_ATTACHMENTS,
+  PRO_SWITCH,
+} from '@/shared/constants';
 import trayIcon from '@brand/app-icon/app-icon-sinal-32.png?asset';
 import {
   Harness,
@@ -1737,7 +1742,7 @@ void app.whenReady().then(async () => {
   void codeCopies.sweep();
   void jiraStories.sweep();
   void builder.sweep();
-  proSync.startPulling();
+  if (PRO_SWITCH.isOn) proSync.startPulling();
 
   ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
   ipcMain.handle(CHANNELS.readResources, () => resources.snapshot());

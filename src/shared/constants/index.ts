@@ -8,6 +8,7 @@ export * from './HOME';
 export * from './ISLAND_ARGUMENT';
 export * from './MEMORY_LIMIT';
 export * from './MOTION';
+export * from './PRO_SWITCH';
 export * from './RECORDER_ARGUMENT';
 export * from './SHELL';
 export * from './STICKER';
