@@ -61,7 +61,7 @@ describe('useProjectModalViewModel', () => {
     const { result } = renderHook(() => useProjectModalViewModel());
 
     act(() => {
-      result.current.onNameChange('Loja Salve');
+      result.current.onNameChange('Loja Ploomes');
     });
     act(() => {
       result.current.onCancel();

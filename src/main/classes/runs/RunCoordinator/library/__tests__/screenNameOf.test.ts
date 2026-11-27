@@ -3,7 +3,7 @@ import { screenNameOf } from '@/main/classes/runs/RunCoordinator/library';
 
 describe('screenNameOf', () => {
   it('names a screen by its path', () => {
-    expect(screenNameOf('https://salvesoftware.com/pt')).toBe('/pt');
+    expect(screenNameOf('https://ploomes.com/pt')).toBe('/pt');
     expect(screenNameOf('https://shop.test/cart/')).toBe('/cart');
   });
 
@@ -12,7 +12,7 @@ describe('screenNameOf', () => {
   });
 
   it('names the root of a site by its host', () => {
-    expect(screenNameOf('https://salvesoftware.com/')).toBe('salvesoftware.com');
+    expect(screenNameOf('https://ploomes.com/')).toBe('ploomes.com');
   });
 
   it('keeps an address it cannot read as it came', () => {

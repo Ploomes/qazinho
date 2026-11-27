@@ -10,7 +10,7 @@ const PROJECT: IProject = {
   id: 'p1',
   name: 'Loja',
   targets: [{ id: 't1', kind: 'web', label: 'Web', value: 'https://loja.dev' }],
-  repositories: [{ id: '1', owner: 'salve', name: 'loja', baseBranch: 'main' }],
+  repositories: [{ id: '1', owner: 'ploomes', name: 'loja', baseBranch: 'main' }],
 };
 
 describe('copiedProjectOf', () => {
