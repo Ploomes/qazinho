@@ -2,7 +2,7 @@ import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import type { IAgentTurn, IWriteSkill } from '@/shared/types';
 import { describe, expect, it, vi } from 'vitest';
 import { SkillWriter } from '@/main/classes/skills/SkillWriter';
-import { Harness } from '@salve-software/qazinho-harness';
+import { Harness } from '@ploomes/qazinho-harness';
 
 const ASK: IWriteSkill = {
   draftId: 'd1',

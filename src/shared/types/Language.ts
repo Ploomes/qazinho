@@ -1,1 +1,1 @@
-export type { Language } from '@salve-software/qazinho-harness/contract';
+export type { Language } from '@ploomes/qazinho-harness/contract';

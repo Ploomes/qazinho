@@ -1,5 +1,5 @@
 import type { IPhoneTarget } from './IPhoneTarget';
-import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
+import type { IDeviceDriver } from '@ploomes/qazinho-harness/engine';
 
 /**
  * O que o PhonePeek precisa: um driver para o app no emulador ou simulador desta máquina,

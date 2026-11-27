@@ -1,1 +1,1 @@
-export type { IntegrationId } from '@salve-software/qazinho-harness/contract';
+export type { IntegrationId } from '@ploomes/qazinho-harness/contract';

@@ -1,1 +1,1 @@
-export type { MemoryScope } from '@salve-software/qazinho-harness/contract';
+export type { MemoryScope } from '@ploomes/qazinho-harness/contract';

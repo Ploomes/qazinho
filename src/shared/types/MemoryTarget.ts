@@ -1,1 +1,1 @@
-export type { MemoryTarget } from '@salve-software/qazinho-harness/contract';
+export type { MemoryTarget } from '@ploomes/qazinho-harness/contract';

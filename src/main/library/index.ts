@@ -51,4 +51,4 @@ export {
   spawnCommand,
   swipeOf,
   withoutRole,
-} from '@salve-software/qazinho-harness/engine';
+} from '@ploomes/qazinho-harness/engine';

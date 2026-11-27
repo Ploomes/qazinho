@@ -1,1 +1,1 @@
-export type { IDesignLink } from '@salve-software/qazinho-harness/contract';
+export type { IDesignLink } from '@ploomes/qazinho-harness/contract';

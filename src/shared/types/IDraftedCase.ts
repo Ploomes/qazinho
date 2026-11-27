@@ -1,1 +1,1 @@
-export type { IDraftedCase } from '@salve-software/qazinho-harness/contract';
+export type { IDraftedCase } from '@ploomes/qazinho-harness/contract';

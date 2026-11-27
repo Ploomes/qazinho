@@ -1,5 +1,5 @@
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
-import type { Harness } from '@salve-software/qazinho-harness';
+import type { Harness } from '@ploomes/qazinho-harness';
 
 export interface IChangeReader {
   runner: Pick<AgentRunner, 'ask'>;

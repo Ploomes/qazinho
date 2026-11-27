@@ -1,1 +1,1 @@
-export type { IMemoryBrief } from '@salve-software/qazinho-harness/contract';
+export type { IMemoryBrief } from '@ploomes/qazinho-harness/contract';

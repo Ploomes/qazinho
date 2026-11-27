@@ -3,9 +3,5 @@ export * from './ChatDevices';
 export * from './DeviceToolDetector';
 export * from './LiveStream';
 export * from './PhonePeek';
-export {
-  AndroidDriver,
-  IosDriver,
-  WebDriver,
-} from '@salve-software/qazinho-harness/engine';
-export type { IDeviceDriver, IShot } from '@salve-software/qazinho-harness/engine';
+export { AndroidDriver, IosDriver, WebDriver } from '@ploomes/qazinho-harness/engine';
+export type { IDeviceDriver, IShot } from '@ploomes/qazinho-harness/engine';

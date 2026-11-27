@@ -1,1 +1,1 @@
-export type { IFlatStep } from '@salve-software/qazinho-harness/contract';
+export type { IFlatStep } from '@ploomes/qazinho-harness/contract';

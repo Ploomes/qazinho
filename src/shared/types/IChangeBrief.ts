@@ -1,1 +1,1 @@
-export type { IChangeBrief } from '@salve-software/qazinho-harness/contract';
+export type { IChangeBrief } from '@ploomes/qazinho-harness/contract';

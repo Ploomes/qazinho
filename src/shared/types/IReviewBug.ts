@@ -1,1 +1,1 @@
-export type { IReviewBug } from '@salve-software/qazinho-harness/contract';
+export type { IReviewBug } from '@ploomes/qazinho-harness/contract';

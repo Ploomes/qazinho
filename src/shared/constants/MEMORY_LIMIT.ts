@@ -1,1 +1,1 @@
-export { MEMORY_LIMIT } from '@salve-software/qazinho-harness/contract';
+export { MEMORY_LIMIT } from '@ploomes/qazinho-harness/contract';

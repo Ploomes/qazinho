@@ -1,6 +1,6 @@
 import type { IVariableValue } from '@/main/types';
 import type { IViewport } from '@/shared/types';
-import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
+import type { IDeviceDriver } from '@ploomes/qazinho-harness/engine';
 
 /**
  * O que os navegadores do chat precisam: onde guardar os perfis, como abrir um Chrome, a

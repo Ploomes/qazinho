@@ -1,1 +1,1 @@
-export type { DialogAnswer } from '@salve-software/qazinho-harness/contract';
+export type { DialogAnswer } from '@ploomes/qazinho-harness/contract';

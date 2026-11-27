@@ -1,1 +1,1 @@
-export type { IJiraAttachment } from '@salve-software/qazinho-harness/contract';
+export type { IJiraAttachment } from '@ploomes/qazinho-harness/contract';

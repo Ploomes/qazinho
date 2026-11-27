@@ -1,1 +1,1 @@
-export type { OutsideCaller } from '@salve-software/qazinho-harness/contract';
+export type { OutsideCaller } from '@ploomes/qazinho-harness/contract';

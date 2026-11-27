@@ -42,13 +42,13 @@ const NO_NODE_FOLDERS_IN_THE_PAGE = {
 };
 
 const NO_HARNESS_IN_THE_PAGE = {
-  regex: '^@salve-software/qazinho-harness$',
+  regex: '^@ploomes/qazinho-harness$',
   message:
     'The harness runs in the main process. A type the page shares with it comes through @/shared/types.',
 };
 
 const NO_HARNESS_CONTRACT_OUTSIDE_SHARED = {
-  regex: '^@salve-software/qazinho-harness/contract$',
+  regex: '^@ploomes/qazinho-harness/contract$',
   message:
     'A type or constant shared with the harness comes through @/shared/types or @/shared/constants, one file each.',
 };

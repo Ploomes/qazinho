@@ -2,11 +2,7 @@ import type { IWalkRun } from '@/main/classes/runs/RunCoordinator/types';
 import type { TargetKind } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { driverFor } from '@/main/classes/runs/RunCoordinator/library';
-import {
-  AndroidDriver,
-  IosDriver,
-  WebDriver,
-} from '@salve-software/qazinho-harness/engine';
+import { AndroidDriver, IosDriver, WebDriver } from '@ploomes/qazinho-harness/engine';
 
 function run(props: { kind: TargetKind; value: string }): IWalkRun {
   return {

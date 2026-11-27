@@ -8,7 +8,7 @@ import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
-import { Harness, McpHost } from '@salve-software/qazinho-harness';
+import { Harness, McpHost } from '@ploomes/qazinho-harness';
 
 const THINKING_SEC = 120;
 const STOP_AFTER_MS = 3_000;

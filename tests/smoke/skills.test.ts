@@ -9,7 +9,7 @@ import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { SkillLibrary } from '@/main/classes/skills/SkillLibrary';
 import { SkillWriter } from '@/main/classes/skills/SkillWriter';
-import { Harness } from '@salve-software/qazinho-harness';
+import { Harness } from '@ploomes/qazinho-harness';
 
 /**
  * As skills do time do jeito que a main as entrega ao chat: guardadas pela SkillLibrary

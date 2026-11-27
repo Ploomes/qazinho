@@ -52,17 +52,17 @@ import type {
   IStepFinding,
   IStepReport,
   McpHost,
-} from '@salve-software/qazinho-harness';
-import type { ISignInRecipe } from '@salve-software/qazinho-harness/contract';
-import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
+} from '@ploomes/qazinho-harness';
+import type { ISignInRecipe } from '@ploomes/qazinho-harness/contract';
+import type { IDeviceDriver } from '@ploomes/qazinho-harness/engine';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { agentFailure, writeAtomically } from '@/main/library';
 import { EXPLORATION } from '@/shared/constants';
-import { mcpConfigWith } from '@salve-software/qazinho-harness';
-import { SessionKeeper, WEB_DRIVER } from '@salve-software/qazinho-harness/engine';
+import { mcpConfigWith } from '@ploomes/qazinho-harness';
+import { SessionKeeper, WEB_DRIVER } from '@ploomes/qazinho-harness/engine';
 import { EXPLORE_PUSHES, RUN_MANUAL, RUN_WALK, RUN_WATCH, UNWALKED } from './constants';
 import {
   answerWords,

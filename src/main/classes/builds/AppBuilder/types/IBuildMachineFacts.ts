@@ -1,4 +1,4 @@
-import type { IBuildMachine } from '@salve-software/qazinho-harness';
+import type { IBuildMachine } from '@ploomes/qazinho-harness';
 
 /**
  * O que um build lê desta máquina: as toolchains de que o harness avisa o agente, e o

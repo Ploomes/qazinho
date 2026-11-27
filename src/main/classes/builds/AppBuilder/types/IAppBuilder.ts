@@ -2,7 +2,7 @@ import type { IBuildMachineFacts } from './IBuildMachineFacts';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { IGithubCode } from '@/main/classes/integrations/CodeCopies/types';
 import type { IBuildEvent } from '@/shared/types';
-import type { Harness } from '@salve-software/qazinho-harness';
+import type { Harness } from '@ploomes/qazinho-harness';
 
 /**
  * O que um build precisa: o gh para o código, o agente do QA e o harness para

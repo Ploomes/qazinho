@@ -1,1 +1,1 @@
-export type { IStepRecipe } from '@salve-software/qazinho-harness/contract';
+export type { IStepRecipe } from '@ploomes/qazinho-harness/contract';

@@ -1,1 +1,1 @@
-export type { IAppProjectBrief } from '@salve-software/qazinho-harness/contract';
+export type { IAppProjectBrief } from '@ploomes/qazinho-harness/contract';

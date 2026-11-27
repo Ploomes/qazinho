@@ -15,4 +15,4 @@ export type {
   ILaunch,
   IVariableValue,
   ShrinkImage,
-} from '@salve-software/qazinho-harness/engine';
+} from '@ploomes/qazinho-harness/engine';

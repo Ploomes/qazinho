@@ -1,5 +1,5 @@
 import type { IFlatStep, IStepOutcome } from '@/shared/types';
-import type { IShot } from '@salve-software/qazinho-harness/engine';
+import type { IShot } from '@ploomes/qazinho-harness/engine';
 import { RUN_MANUAL } from '@/main/classes/runs/RunCoordinator/constants';
 
 /**

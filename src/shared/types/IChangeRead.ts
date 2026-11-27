@@ -1,1 +1,1 @@
-export type { IChangeRead } from '@salve-software/qazinho-harness/contract';
+export type { IChangeRead } from '@ploomes/qazinho-harness/contract';

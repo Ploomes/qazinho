@@ -1,1 +1,1 @@
-export type { IViewport } from '@salve-software/qazinho-harness/contract';
+export type { IViewport } from '@ploomes/qazinho-harness/contract';

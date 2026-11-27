@@ -1,6 +1,6 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import type { AppToolCall, IAgentTurn, IAppSnapshot } from '@/shared/types';
-import type { IAttachApp } from '@salve-software/qazinho-harness';
+import type { IAttachApp } from '@ploomes/qazinho-harness';
 import { describe, expect, it } from 'vitest';
 import { AssistantAgent } from '@/main/classes/assistant/AssistantAgent';
 import { ASSISTANT_WAIT } from '@/shared/constants';

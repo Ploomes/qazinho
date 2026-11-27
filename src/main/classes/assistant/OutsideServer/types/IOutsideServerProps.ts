@@ -1,6 +1,6 @@
 import type { AgentMcp } from '@/main/classes/integrations/AgentMcp';
 import type { IDetectedAgent, OutsideCaller, OutsideToolCall } from '@/shared/types';
-import type { OutsideHost } from '@salve-software/qazinho-harness';
+import type { OutsideHost } from '@ploomes/qazinho-harness';
 
 export interface IOutsideServerProps {
   file: string;

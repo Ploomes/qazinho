@@ -4,7 +4,7 @@ import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IVariableValue, ShrinkImage } from '@/main/types';
 import type { IAndroidSetup, IIosSetup, IRunEvent, ITeamSkill } from '@/shared/types';
-import type { Harness, McpHost } from '@salve-software/qazinho-harness';
+import type { Harness, McpHost } from '@ploomes/qazinho-harness';
 
 export interface IRunCoordinator {
   runner: AgentRunner;

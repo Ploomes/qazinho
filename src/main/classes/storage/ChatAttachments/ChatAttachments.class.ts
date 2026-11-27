@@ -1,6 +1,6 @@
 import type { IChatAttachments } from './types';
 import type { AttachOutcome, IChatAttachment } from '@/shared/types';
-import type { IAttachedFiles } from '@salve-software/qazinho-harness';
+import type { IAttachedFiles } from '@ploomes/qazinho-harness';
 import { randomUUID } from 'node:crypto';
 import { access, copyFile, mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';

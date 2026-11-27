@@ -1,1 +1,1 @@
-export type { BugCategory } from '@salve-software/qazinho-harness/contract';
+export type { BugCategory } from '@ploomes/qazinho-harness/contract';

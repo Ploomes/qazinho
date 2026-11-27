@@ -1,1 +1,1 @@
-export type { ITeamSkill } from '@salve-software/qazinho-harness/contract';
+export type { ITeamSkill } from '@ploomes/qazinho-harness/contract';

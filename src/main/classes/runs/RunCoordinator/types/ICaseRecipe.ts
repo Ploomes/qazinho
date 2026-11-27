@@ -1,1 +1,1 @@
-export type { ICaseRecipe } from '@salve-software/qazinho-harness/contract';
+export type { ICaseRecipe } from '@ploomes/qazinho-harness/contract';

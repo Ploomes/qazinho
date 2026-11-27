@@ -1,1 +1,1 @@
-export type { DeviceKey } from '@salve-software/qazinho-harness/contract';
+export type { DeviceKey } from '@ploomes/qazinho-harness/contract';

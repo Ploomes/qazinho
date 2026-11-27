@@ -1,1 +1,1 @@
-export type { DeviceInput } from '@salve-software/qazinho-harness/contract';
+export type { DeviceInput } from '@ploomes/qazinho-harness/contract';

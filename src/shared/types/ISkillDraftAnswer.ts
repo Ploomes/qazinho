@@ -1,1 +1,1 @@
-export type { ISkillDraftAnswer } from '@salve-software/qazinho-harness/contract';
+export type { ISkillDraftAnswer } from '@ploomes/qazinho-harness/contract';

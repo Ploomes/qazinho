@@ -1,7 +1,7 @@
 import type { IChangeReader } from './types';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { ChangeReading, IReadChange } from '@/shared/types';
-import type { Harness } from '@salve-software/qazinho-harness';
+import type { Harness } from '@ploomes/qazinho-harness';
 import { CHANGE_READER } from './constants';
 
 /**

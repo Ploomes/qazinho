@@ -1,4 +1,4 @@
-import type { IWindowPlace } from '@salve-software/qazinho-harness/engine';
+import type { IWindowPlace } from '@ploomes/qazinho-harness/engine';
 
 /** Encosta o QAzinho ao lado do Chrome de um caso à mão, e o devolve no fim da run. */
 export interface IRunDock {

@@ -1,1 +1,1 @@
-export type { IFiledIssue } from '@salve-software/qazinho-harness/contract';
+export type { IFiledIssue } from '@ploomes/qazinho-harness/contract';

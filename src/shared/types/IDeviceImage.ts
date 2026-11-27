@@ -1,1 +1,1 @@
-export type { IDeviceImage } from '@salve-software/qazinho-harness/contract';
+export type { IDeviceImage } from '@ploomes/qazinho-harness/contract';

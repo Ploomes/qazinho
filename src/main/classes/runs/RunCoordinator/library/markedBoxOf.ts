@@ -1,5 +1,5 @@
 import type { BugCategory, IScreenBox } from '@/shared/types';
-import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
+import type { IDeviceDriver } from '@ploomes/qazinho-harness/engine';
 import { MARKED_BOX } from '@/main/classes/runs/RunCoordinator/constants';
 
 /**

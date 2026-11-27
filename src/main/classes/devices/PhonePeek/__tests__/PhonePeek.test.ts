@@ -1,4 +1,4 @@
-import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
+import type { IDeviceDriver } from '@ploomes/qazinho-harness/engine';
 import { describe, expect, it } from 'vitest';
 import { PhonePeek } from '@/main/classes/devices/PhonePeek';
 

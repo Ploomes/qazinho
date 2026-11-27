@@ -1,6 +1,6 @@
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { AppBridge } from '@/main/classes/assistant/AppBridge';
-import type { Harness, McpHost } from '@salve-software/qazinho-harness';
+import type { Harness, McpHost } from '@ploomes/qazinho-harness';
 
 /**
  * O que o assistente precisa: o agente do QA, o host MCP e o harness do QAzinho, a bridge

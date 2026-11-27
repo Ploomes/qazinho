@@ -1,4 +1,4 @@
-import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
+import type { IDeviceDriver } from '@ploomes/qazinho-harness/engine';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ChatDevices } from '@/main/classes/devices/ChatDevices';
 

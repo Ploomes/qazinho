@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { AppBuilder } from '@/main/classes/builds/AppBuilder';
-import { Harness } from '@salve-software/qazinho-harness';
+import { Harness } from '@ploomes/qazinho-harness';
 
 const COMMIT = 'c0ffee1234567890abcdef';
 

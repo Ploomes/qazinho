@@ -2,7 +2,7 @@ import type { IRecipeBook } from '@/main/classes/runs/RunCoordinator/types';
 import type { IFlatStep } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { developsACase } from '@/main/classes/runs/RunCoordinator/library';
-import { fingerprintOf } from '@salve-software/qazinho-harness/engine';
+import { fingerprintOf } from '@ploomes/qazinho-harness/engine';
 
 const stepOf = (caseId: string): IFlatStep => ({
   caseId,

@@ -1,10 +1,6 @@
 import { copyFile, mkdir, stat } from 'node:fs/promises';
 import { basename, join } from 'node:path';
-import {
-  fileFactsOf,
-  fileRefOf,
-  readFileRef,
-} from '@salve-software/qazinho-harness/engine';
+import { fileFactsOf, fileRefOf, readFileRef } from '@ploomes/qazinho-harness/engine';
 
 /**
  * O caminho que o navegador recebe para um arquivo do QA, ou null se a run não o tem: o

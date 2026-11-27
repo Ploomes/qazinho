@@ -1,1 +1,1 @@
-export type { IReviewSighting } from '@salve-software/qazinho-harness/contract';
+export type { IReviewSighting } from '@ploomes/qazinho-harness/contract';

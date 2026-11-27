@@ -1,1 +1,1 @@
-export type { TargetKind } from '@salve-software/qazinho-harness/contract';
+export type { TargetKind } from '@ploomes/qazinho-harness/contract';

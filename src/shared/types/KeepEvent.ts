@@ -1,1 +1,1 @@
-export type { KeepEvent } from '@salve-software/qazinho-harness/contract';
+export type { KeepEvent } from '@ploomes/qazinho-harness/contract';

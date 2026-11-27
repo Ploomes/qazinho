@@ -1,1 +1,1 @@
-export type { ReviewVerdict } from '@salve-software/qazinho-harness/contract';
+export type { ReviewVerdict } from '@ploomes/qazinho-harness/contract';

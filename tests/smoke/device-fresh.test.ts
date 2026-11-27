@@ -7,7 +7,7 @@ import {
   listAvds,
   IosDriver,
   listSimulators,
-} from '@salve-software/qazinho-harness/engine';
+} from '@ploomes/qazinho-harness/engine';
 import { buildFixtureApk } from './fixtures/buildFixtureApk';
 import { buildFixtureApp } from './fixtures/buildFixtureApp';
 

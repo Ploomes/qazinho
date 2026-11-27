@@ -9,8 +9,8 @@ import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
-import { Harness, McpHost } from '@salve-software/qazinho-harness';
-import { listAvds, AndroidDriver } from '@salve-software/qazinho-harness/engine';
+import { Harness, McpHost } from '@ploomes/qazinho-harness';
+import { listAvds, AndroidDriver } from '@ploomes/qazinho-harness/engine';
 import { buildFixtureApk } from './fixtures/buildFixtureApk';
 
 /**

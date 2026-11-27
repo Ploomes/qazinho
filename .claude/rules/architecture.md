@@ -263,7 +263,7 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
 | schemas | `schemas/`               | o formato que uma resposta precisa ter, pelo `--json-schema`       |
 
 - **O desktop o recebe como pacote.** O `packages/qazinho-harness` é um submódulo git, dependência
-  por `file:` (`@salve-software/qazinho-harness`) e construído pelo `npm run harness:build`, que o
+  por `file:` (`@ploomes/qazinho-harness`) e construído pelo `npm run harness:build`, que o
   `postinstall` roda. O electron-vite empacota o `dist/` dele na main, o corpus incluído, enquanto
   zod, yaml e o SDK do MCP continuam dependências do próprio app. As `.claude/rules/` dele
   descrevem o que é dele; o que segue é o que o desktop usa.
@@ -693,7 +693,7 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
 - **Os dispositivos e a biblioteca do passeio são o engine do harness**, o mesmo código com que o
   runner do CI anda um job: `WebDriver`, `AndroidDriver` e `IosDriver` com as bibliotecas deles, as
   receitas, provas e `variablePort` do passeio, e os auxiliares de processo (`spawnCommand`,
-  `findOnPath`, `killTree`). A main os pega de `@salve-software/qazinho-harness/engine` e os
+  `findOnPath`, `killTree`). A main os pega de `@ploomes/qazinho-harness/engine` e os
   barrels dela os reexportam, então uma correção num driver cai uma vez, para o desktop e o CI.
 - **O harness nunca importa o desktop.** Ele vive no próprio repositório; o que ele precisa de um
   dispositivo é uma porta nos tipos dele (`IDevicePort`), e a main lhe entrega o driver. A página

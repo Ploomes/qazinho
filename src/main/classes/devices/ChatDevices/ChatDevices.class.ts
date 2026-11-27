@@ -1,7 +1,7 @@
 import type { IChatDevices, IOpenChatDevice } from './types';
 import type { IVariableValue } from '@/main/types';
 import type { IViewport } from '@/shared/types';
-import type { IDevicePort } from '@salve-software/qazinho-harness';
+import type { IDevicePort } from '@ploomes/qazinho-harness';
 import { join } from 'node:path';
 import { privateUrlOf, variablePort } from '@/main/classes/runs/RunCoordinator/library';
 import { CHAT_DEVICES } from './constants';

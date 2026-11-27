@@ -1,1 +1,1 @@
-export type { IScreenBox } from '@salve-software/qazinho-harness/contract';
+export type { IScreenBox } from '@ploomes/qazinho-harness/contract';

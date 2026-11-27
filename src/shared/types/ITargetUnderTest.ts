@@ -1,1 +1,1 @@
-export type { ITargetUnderTest } from '@salve-software/qazinho-harness/contract';
+export type { ITargetUnderTest } from '@ploomes/qazinho-harness/contract';

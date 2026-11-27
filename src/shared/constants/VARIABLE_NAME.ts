@@ -1,1 +1,1 @@
-export { VARIABLE_NAME } from '@salve-software/qazinho-harness/contract';
+export { VARIABLE_NAME } from '@ploomes/qazinho-harness/contract';

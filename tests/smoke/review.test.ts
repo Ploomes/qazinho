@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { BugFiler, BugReviewer, GithubCli, JiraApi } from '@/main/classes/integrations';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
-import { Harness } from '@salve-software/qazinho-harness';
+import { Harness } from '@ploomes/qazinho-harness';
 import { fakeJira, JIRA_EMAIL, JIRA_TOKEN } from './fixtures/fakeJira';
 
 const PORT = 4374;

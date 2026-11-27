@@ -1,1 +1,1 @@
-export type { IRecipeBook } from '@salve-software/qazinho-harness/contract';
+export type { IRecipeBook } from '@ploomes/qazinho-harness/contract';

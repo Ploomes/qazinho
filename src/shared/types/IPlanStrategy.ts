@@ -1,1 +1,1 @@
-export type { IPlanStrategy } from '@salve-software/qazinho-harness/contract';
+export type { IPlanStrategy } from '@ploomes/qazinho-harness/contract';

@@ -1,10 +1,10 @@
 import type { IAppPeek } from './types';
-import type { AppLook } from '@salve-software/qazinho-harness';
-import type { IWebAccess } from '@salve-software/qazinho-harness/engine';
+import type { AppLook } from '@ploomes/qazinho-harness';
+import type { IWebAccess } from '@ploomes/qazinho-harness/engine';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { stripAnsi } from '@/main/library';
-import { WebDriver } from '@salve-software/qazinho-harness/engine';
+import { WebDriver } from '@ploomes/qazinho-harness/engine';
 import { APP_PEEK } from './constants';
 
 /**

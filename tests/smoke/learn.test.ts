@@ -8,8 +8,8 @@ import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { ChatDevices } from '@/main/classes/devices/ChatDevices';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
-import { Harness, McpHost } from '@salve-software/qazinho-harness';
-import { WebDriver, webAccessOf } from '@salve-software/qazinho-harness/engine';
+import { Harness, McpHost } from '@ploomes/qazinho-harness';
+import { WebDriver, webAccessOf } from '@ploomes/qazinho-harness/engine';
 
 const PORT = 4356;
 const PASSWORD = 'Shop-Pass-4321';

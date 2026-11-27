@@ -1,1 +1,1 @@
-export type { IConfluencePageRef } from '@salve-software/qazinho-harness/contract';
+export type { IConfluencePageRef } from '@ploomes/qazinho-harness/contract';

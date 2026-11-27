@@ -1,1 +1,1 @@
-export type { StoryReadiness } from '@salve-software/qazinho-harness/contract';
+export type { StoryReadiness } from '@ploomes/qazinho-harness/contract';

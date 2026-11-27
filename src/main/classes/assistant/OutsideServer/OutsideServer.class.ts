@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { chmod, readFile } from 'node:fs/promises';
 import { MCP_RECIPES } from '@/main/classes/integrations/AgentMcp/constants';
 import { writeAtomically } from '@/main/library';
-import { MCP_HOST, outsideAddressOf } from '@salve-software/qazinho-harness';
+import { MCP_HOST, outsideAddressOf } from '@ploomes/qazinho-harness';
 import { OUTSIDE_FILE } from './constants';
 import { outsideSavedOf } from './library';
 

@@ -8,8 +8,8 @@ import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
-import { Harness, McpHost } from '@salve-software/qazinho-harness';
-import { WebDriver } from '@salve-software/qazinho-harness/engine';
+import { Harness, McpHost } from '@ploomes/qazinho-harness';
+import { WebDriver } from '@ploomes/qazinho-harness/engine';
 
 const PORT = 4346;
 const PHONE = { width: 390, height: 844 };

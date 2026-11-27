@@ -1,5 +1,5 @@
 import type { BugCategory } from '@/shared/types';
-import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
+import type { IDeviceDriver } from '@ploomes/qazinho-harness/engine';
 
 /**
  * Rola até o que um bug aponta antes de a tela virar a prova dele; nada para um bug que

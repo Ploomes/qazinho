@@ -1,6 +1,6 @@
 import type { IDockPlaces, IWindowDockProps } from './types';
 import type { IWindowDock } from '@/shared/types';
-import type { IWindowPlace } from '@salve-software/qazinho-harness/engine';
+import type { IWindowPlace } from '@ploomes/qazinho-harness/engine';
 import type { BrowserWindow, Rectangle } from 'electron';
 import { screen } from 'electron';
 import { WINDOW } from '@/main/constants';

@@ -1,5 +1,5 @@
 import type { IWalkRun } from './IWalkRun';
-import type { IQaQuestion } from '@salve-software/qazinho-harness';
+import type { IQaQuestion } from '@ploomes/qazinho-harness';
 
 /**
  * Uma pergunta que o agente faz ao QA no passo em que está, e o que ele ouve depois

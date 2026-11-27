@@ -1,6 +1,6 @@
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { SkillLibrary } from '@/main/classes/skills/SkillLibrary';
-import type { Harness } from '@salve-software/qazinho-harness';
+import type { Harness } from '@ploomes/qazinho-harness';
 
 export interface ISkillWriter {
   runner: Pick<AgentRunner, 'ask' | 'cancel'>;

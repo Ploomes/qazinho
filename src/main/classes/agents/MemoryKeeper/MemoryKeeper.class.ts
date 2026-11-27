@@ -1,7 +1,7 @@
 import type { IMemoryKeeper } from './types';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { IKeepMemories, MemoryKeeping } from '@/shared/types';
-import type { Harness } from '@salve-software/qazinho-harness';
+import type { Harness } from '@ploomes/qazinho-harness';
 import { MEMORY_KEEPER } from './constants';
 
 /** Pergunta ao agente do próprio QA o que muda no que ele guarda sobre um app. */

@@ -20,4 +20,4 @@ export * from './toToolImages';
 export * from './toolCallOf';
 export * from './toUsage';
 export * from './withPermissions';
-export { killTree } from '@salve-software/qazinho-harness/engine';
+export { killTree } from '@ploomes/qazinho-harness/engine';

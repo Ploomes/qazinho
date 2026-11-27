@@ -1,1 +1,1 @@
-export type { BuildPlatform } from '@salve-software/qazinho-harness/contract';
+export type { BuildPlatform } from '@ploomes/qazinho-harness/contract';

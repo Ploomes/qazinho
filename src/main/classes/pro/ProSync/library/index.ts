@@ -23,4 +23,4 @@ export {
   fileRefsIn,
   readBook,
   readFileRef,
-} from '@salve-software/qazinho-harness/engine';
+} from '@ploomes/qazinho-harness/engine';

@@ -1,1 +1,1 @@
-export type { UnwalkedReason } from '@salve-software/qazinho-harness/contract';
+export type { UnwalkedReason } from '@ploomes/qazinho-harness/contract';

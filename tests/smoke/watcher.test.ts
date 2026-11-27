@@ -6,7 +6,7 @@ import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { ChangeReader } from '@/main/classes/agents/ChangeReader';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
-import { Harness } from '@salve-software/qazinho-harness';
+import { Harness } from '@ploomes/qazinho-harness';
 
 /**
  * Uma história que mudou depois do plano, lida pelo Claude Code real (Haiku) do QA do

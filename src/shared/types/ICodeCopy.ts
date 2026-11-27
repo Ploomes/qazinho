@@ -1,1 +1,1 @@
-export type { ICodeCopy } from '@salve-software/qazinho-harness/contract';
+export type { ICodeCopy } from '@ploomes/qazinho-harness/contract';

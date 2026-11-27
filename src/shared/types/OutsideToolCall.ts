@@ -1,1 +1,1 @@
-export type { OutsideToolCall } from '@salve-software/qazinho-harness/contract';
+export type { OutsideToolCall } from '@ploomes/qazinho-harness/contract';

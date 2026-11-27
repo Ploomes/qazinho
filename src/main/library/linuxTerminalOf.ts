@@ -1,4 +1,4 @@
-import { findOnPath } from '@salve-software/qazinho-harness/engine';
+import { findOnPath } from '@ploomes/qazinho-harness/engine';
 
 const TERMINALS = [
   'x-terminal-emulator',

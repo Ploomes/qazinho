@@ -1,1 +1,1 @@
-export type { ISourceChange } from '@salve-software/qazinho-harness/contract';
+export type { ISourceChange } from '@ploomes/qazinho-harness/contract';

@@ -1,6 +1,6 @@
 import type { IRecipeBook } from '@/main/classes/runs/RunCoordinator/types';
 import type { IStartRun } from '@/shared/types';
-import { casesOf, recipeFor } from '@salve-software/qazinho-harness/engine';
+import { casesOf, recipeFor } from '@ploomes/qazinho-harness/engine';
 
 /** Se a run vai ter o agente desenvolvendo algum caso, o que não vale gravar em vídeo. */
 export function developsACase(props: {

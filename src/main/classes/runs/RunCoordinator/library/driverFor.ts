@@ -1,13 +1,13 @@
 import type { IWalkRun } from '@/main/classes/runs/RunCoordinator/types';
 import type { ShrinkImage } from '@/main/types';
-import type { IDeviceScreen } from '@salve-software/qazinho-harness';
-import type { IDeviceDriver, IWindowPlace } from '@salve-software/qazinho-harness/engine';
+import type { IDeviceScreen } from '@ploomes/qazinho-harness';
+import type { IDeviceDriver, IWindowPlace } from '@ploomes/qazinho-harness/engine';
 import {
   AndroidDriver,
   IosDriver,
   WebDriver,
   webAccessOf,
-} from '@salve-software/qazinho-harness/engine';
+} from '@ploomes/qazinho-harness/engine';
 
 /**
  * Um plano, uma porta, seja o Chrome ou um celular, numa janela em `window` para o QA

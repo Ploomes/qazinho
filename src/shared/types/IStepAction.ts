@@ -1,1 +1,1 @@
-export type { IStepAction } from '@salve-software/qazinho-harness/contract';
+export type { IStepAction } from '@ploomes/qazinho-harness/contract';

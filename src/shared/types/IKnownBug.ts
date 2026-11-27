@@ -1,1 +1,1 @@
-export type { IKnownBug } from '@salve-software/qazinho-harness/contract';
+export type { IKnownBug } from '@ploomes/qazinho-harness/contract';

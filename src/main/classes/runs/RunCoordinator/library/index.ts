@@ -41,7 +41,7 @@ export {
   fileRefsIn,
   variablePort,
   withSignIn,
-} from '@salve-software/qazinho-harness/engine';
+} from '@ploomes/qazinho-harness/engine';
 export * from './markedBoxOf';
 export * from './markedOutcomeOf';
 export * from './pageKeyOf';

@@ -1,1 +1,1 @@
-export type { IChatReference } from '@salve-software/qazinho-harness/contract';
+export type { IChatReference } from '@ploomes/qazinho-harness/contract';

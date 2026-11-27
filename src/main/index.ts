@@ -73,11 +73,7 @@ import type {
   SaveOutcome,
   WindowFit,
 } from '@/shared/types';
-import type {
-  AppLook,
-  IAttachSources,
-  SourceCall,
-} from '@salve-software/qazinho-harness';
+import type { AppLook, IAttachSources, SourceCall } from '@ploomes/qazinho-harness';
 import { randomUUID } from 'node:crypto';
 import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { homedir, hostname, release, tmpdir } from 'node:os';
@@ -224,7 +220,7 @@ import {
   pagesFoundOf,
   sourceFailureOf,
   storyAnswerOf,
-} from '@salve-software/qazinho-harness';
+} from '@ploomes/qazinho-harness';
 import {
   bundleOfPlist,
   listSimulators,
@@ -234,7 +230,7 @@ import {
   WEB_DRIVER,
   WebDriver,
   webAccessOf,
-} from '@salve-software/qazinho-harness/engine';
+} from '@ploomes/qazinho-harness/engine';
 
 const agents = new AgentDetector();
 const owners = new ProcessOwners();

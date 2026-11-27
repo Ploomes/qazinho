@@ -7,7 +7,7 @@ import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { AppBridge } from '@/main/classes/assistant/AppBridge';
 import { AssistantAgent } from '@/main/classes/assistant/AssistantAgent';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
-import { Harness, McpHost } from '@salve-software/qazinho-harness';
+import { Harness, McpHost } from '@ploomes/qazinho-harness';
 
 const SDK = join(
   process.cwd(),

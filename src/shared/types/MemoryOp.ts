@@ -1,1 +1,1 @@
-export type { MemoryOp } from '@salve-software/qazinho-harness/contract';
+export type { MemoryOp } from '@ploomes/qazinho-harness/contract';

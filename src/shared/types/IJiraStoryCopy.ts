@@ -1,1 +1,1 @@
-export type { IJiraStoryCopy } from '@salve-software/qazinho-harness/contract';
+export type { IJiraStoryCopy } from '@ploomes/qazinho-harness/contract';

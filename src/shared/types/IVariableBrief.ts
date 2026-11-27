@@ -1,1 +1,1 @@
-export type { IVariableBrief } from '@salve-software/qazinho-harness/contract';
+export type { IVariableBrief } from '@ploomes/qazinho-harness/contract';

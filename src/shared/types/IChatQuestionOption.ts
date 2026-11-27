@@ -1,1 +1,1 @@
-export type { IChatQuestionOption } from '@salve-software/qazinho-harness/contract';
+export type { IChatQuestionOption } from '@ploomes/qazinho-harness/contract';

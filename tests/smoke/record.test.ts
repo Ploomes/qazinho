@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { _electron as electron } from 'playwright-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { mp4FactsOf } from '@/main/library';
-import { fingerprintOf } from '@salve-software/qazinho-harness/engine';
+import { fingerprintOf } from '@ploomes/qazinho-harness/engine';
 
 /**
  * Um agente que responde as checagens do app, depois pensa pelo tempo que a run deixar.

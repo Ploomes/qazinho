@@ -1,5 +1,5 @@
 import type { IDockPlaces } from '@/main/classes/app/WindowDock/types';
-import type { IWindowPlace } from '@salve-software/qazinho-harness/engine';
+import type { IWindowPlace } from '@ploomes/qazinho-harness/engine';
 import { WINDOW_DOCK } from '@/main/classes/app/WindowDock/constants';
 
 /**

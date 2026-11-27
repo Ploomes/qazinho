@@ -1,1 +1,1 @@
-export type { JiraFailure } from '@salve-software/qazinho-harness/contract';
+export type { JiraFailure } from '@ploomes/qazinho-harness/contract';

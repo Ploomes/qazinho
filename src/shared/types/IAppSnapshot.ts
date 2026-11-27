@@ -1,1 +1,1 @@
-export type { IAppSnapshot } from '@salve-software/qazinho-harness/contract';
+export type { IAppSnapshot } from '@ploomes/qazinho-harness/contract';

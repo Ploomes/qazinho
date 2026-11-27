@@ -1,1 +1,1 @@
-export type { IImportFramework } from '@salve-software/qazinho-harness/contract';
+export type { IImportFramework } from '@ploomes/qazinho-harness/contract';

@@ -1,6 +1,6 @@
 import type { IStepOutcome } from '@/shared/types';
-import type { IExploredScreen } from '@salve-software/qazinho-harness';
-import type { IShot } from '@salve-software/qazinho-harness/engine';
+import type { IExploredScreen } from '@ploomes/qazinho-harness';
+import type { IShot } from '@ploomes/qazinho-harness/engine';
 import { EXPLORATION } from '@/shared/constants';
 
 /**

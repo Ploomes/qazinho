@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
-import { WebDriver } from '@salve-software/qazinho-harness/engine';
+import { WebDriver } from '@ploomes/qazinho-harness/engine';
 
 const PAGE = `<!doctype html><html><body>
   <h1 id="title">Before</h1>

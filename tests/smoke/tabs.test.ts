@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { WebDriver } from '@salve-software/qazinho-harness/engine';
+import { WebDriver } from '@ploomes/qazinho-harness/engine';
 
 /**
  * Uma loja cujos termos abrem numa aba nova, e um login que abre uma janela e a fecha
