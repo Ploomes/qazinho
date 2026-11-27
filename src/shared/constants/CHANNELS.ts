@@ -86,7 +86,6 @@ export const CHANNELS = {
   appUpdateEvent: 'update:event',
   installUpdate: 'update:install',
   openStoreUpdates: 'update:open-store',
-  writeToSalve: 'help:write-to-salve',
   readUsage: 'usage:read',
   listIntegrations: 'integrations:list',
   listMcpServers: 'mcp:list',

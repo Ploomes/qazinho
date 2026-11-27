@@ -341,8 +341,6 @@ const api: IQazinhoApi = {
   appUpdate: () => ipcRenderer.invoke(CHANNELS.appUpdate) as Promise<AppUpdate>,
   installUpdate: () => ipcRenderer.invoke(CHANNELS.installUpdate) as Promise<void>,
   openStoreUpdates: () => ipcRenderer.invoke(CHANNELS.openStoreUpdates) as Promise<void>,
-  writeToSalve: (letter: { subject: string; body: string }) =>
-    ipcRenderer.invoke(CHANNELS.writeToSalve, letter) as Promise<void>,
   readUsage: (sinceMs: number) =>
     ipcRenderer.invoke(CHANNELS.readUsage, sinceMs) as Promise<IUsageRecord[]>,
   onAppUpdate: (listener: (update: AppUpdate) => void) => {

@@ -6,7 +6,6 @@ export * from './Assistant';
 export * from './Bugs';
 export * from './Builds';
 export * from './Confluence';
-export * from './Contact';
 export * from './Diagnostics';
 export * from './Files';
 export * from './Github';

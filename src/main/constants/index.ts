@@ -8,7 +8,6 @@ export * from './OUTSIDE_WAIT';
 export * from './PATHS';
 export * from './PRO_API';
 export * from './PRO_LINK';
-export * from './SALVE_CONTACT';
 export * from './SAVED_VIDEO';
 export * from './WINDOW';
 export * from './WINDOW_CONTROLS';

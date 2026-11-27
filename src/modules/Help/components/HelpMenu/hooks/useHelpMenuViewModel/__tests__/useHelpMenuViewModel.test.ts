@@ -3,7 +3,6 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useHelpMenuViewModel } from '@/modules/Help/components/HelpMenu/hooks/useHelpMenuViewModel';
-import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore } from '@/store';
 
 /** O botão de ajuda num lugar da janela, para o menu abrir ao lado dele. */
@@ -94,62 +93,5 @@ describe('useHelpMenuViewModel', () => {
 
     expect(useAppStore.getState().modal).toBe('news');
     expect(result.current.isOpen).toBe(false);
-  });
-
-  it('opens the guides and the Discord of Salve Software in the browser', () => {
-    const open = vi.spyOn(window, 'open').mockReturnValue(null);
-    const { result } = mounted('above');
-
-    act(() => {
-      result.current.onGuides();
-      result.current.onDiscord();
-    });
-
-    expect(open).toHaveBeenNthCalledWith(
-      1,
-      'https://qazinho.salvesoftware.com/docs',
-      '_blank',
-      'noreferrer',
-    );
-    expect(open).toHaveBeenNthCalledWith(
-      2,
-      'https://discord.gg/9pkXVC4UuC',
-      '_blank',
-      'noreferrer',
-    );
-  });
-
-  it('starts an e-mail about a problem, saying the version and the system', () => {
-    const writeToSalve = vi.fn(() => Promise.resolve());
-
-    window.qazinho = { ...fakeQazinhoApi('darwin'), writeToSalve };
-
-    const { result } = mounted('above');
-
-    act(() => {
-      result.current.onReport();
-    });
-
-    expect(writeToSalve).toHaveBeenCalledWith({
-      subject: expect.stringMatching(/^Um problema no QAzinho \d+\.\d+\.\d+/) as string,
-      body: expect.stringContaining('no macOS') as string,
-    });
-  });
-
-  it('starts an e-mail with feedback', () => {
-    const writeToSalve = vi.fn(() => Promise.resolve());
-
-    window.qazinho = { ...fakeQazinhoApi('win32'), writeToSalve };
-
-    const { result } = mounted('above');
-
-    act(() => {
-      result.current.onFeedback();
-    });
-
-    expect(writeToSalve).toHaveBeenCalledWith({
-      subject: 'Comentários sobre o QAzinho',
-      body: expect.stringContaining('no Windows') as string,
-    });
   });
 });

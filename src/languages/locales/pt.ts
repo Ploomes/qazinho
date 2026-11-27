@@ -140,27 +140,15 @@ export const pt: typeof en = {
     LABEL: 'Ajuda',
     NEWS: 'Novidades',
     ALL_NEWS: 'Todas as novidades',
-    GUIDES: 'Guias',
-    DISCORD: 'Entrar no Discord',
-    REPORT: 'Relatar um problema',
-    FEEDBACK: 'Enviar comentários',
-    REPORT_SUBJECT: 'Um problema no QAzinho {{version}}',
-    REPORT_BODY:
-      'O que aconteceu:\n\n\nO que você esperava:\n\n\nQAzinho {{version}} no {{system}}',
-    FEEDBACK_SUBJECT: 'Comentários sobre o QAzinho',
-    FEEDBACK_BODY: '\n\n\nQAzinho {{version}} no {{system}}',
     NEWS_TITLE: 'Novidades do QAzinho',
     NEWS_VERSION: 'Versão {{version}}',
-    SYSTEM_MAC: 'macOS',
-    SYSTEM_WINDOWS: 'Windows',
-    SYSTEM_LINUX: 'Linux',
   },
   NEWS: {
     V0_18_USAGE:
       'Veja o que os seus agentes gastaram, por tipo de trabalho, projeto e dia',
     V0_18_TALK:
       'Acompanhe no chat a conversa do seu agente de código com o agente do QAzinho',
-    V0_18_HELP: 'Novidades, guias e o Discord no botão de ajuda',
+    V0_18_HELP: 'Novidades no botão de ajuda',
     V0_18_LOOK: 'As dicas deslizam de um botão ao outro, e as telas ficam num cartão',
     V0_17_SIGNED_IN: 'Um caso web começa já logado na conta que você escolher',
     V0_17_EXPORT: 'O arquivo do Playwright exportado entra uma vez por conta',

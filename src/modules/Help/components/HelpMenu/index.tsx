@@ -7,10 +7,7 @@ import { Tooltip } from '@/shared/components/molecules';
 import { useHelpMenuViewModel } from './hooks';
 import './styles.css';
 
-/**
- * O botão de ajuda: as novidades das últimas versões, os guias, o Discord, e um e-mail
- * para relatar um problema ou mandar um comentário.
- */
+/** O botão de ajuda: as novidades das últimas versões. */
 export const HelpMenu: React.FC<IHelpMenuProps> = (props) => {
   const {
     anchorRef,
@@ -21,10 +18,6 @@ export const HelpMenu: React.FC<IHelpMenuProps> = (props) => {
     news,
     onToggle,
     onNews,
-    onGuides,
-    onDiscord,
-    onReport,
-    onFeedback,
     tipSide,
     buttonSize,
     entry,
@@ -85,51 +78,6 @@ export const HelpMenu: React.FC<IHelpMenuProps> = (props) => {
               >
                 <Icon name="news" />
                 {t('HELP.ALL_NEWS')}
-              </button>
-
-              <span className="help-menu__line" role="separator" />
-
-              <button
-                type="button"
-                role="menuitem"
-                className="help-menu__item"
-                onClick={onGuides}
-              >
-                <Icon name="guides" />
-                {t('HELP.GUIDES')}
-                <span className="help-menu__out">
-                  <Icon name="external" />
-                </span>
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                className="help-menu__item"
-                onClick={onDiscord}
-              >
-                <Icon name="discord" />
-                {t('HELP.DISCORD')}
-                <span className="help-menu__out">
-                  <Icon name="external" />
-                </span>
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                className="help-menu__item"
-                onClick={onReport}
-              >
-                <Icon name="bug" />
-                {t('HELP.REPORT')}
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                className="help-menu__item"
-                onClick={onFeedback}
-              >
-                <Icon name="feedback" />
-                {t('HELP.FEEDBACK')}
               </button>
             </motion.div>
           )}

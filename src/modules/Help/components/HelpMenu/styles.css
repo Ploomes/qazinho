@@ -72,15 +72,3 @@
   color: var(--ink3);
   font: var(--font-meta-sm);
 }
-
-.help-menu__out {
-  display: inline-flex;
-  margin-left: auto;
-  color: var(--ink3);
-}
-
-.help-menu__line {
-  height: 1px;
-  margin: var(--space-3) calc(var(--space-3) * -1);
-  background: var(--line2);
-}

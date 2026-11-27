@@ -230,7 +230,6 @@ export interface IQazinhoApi {
   appUpdate: () => Promise<AppUpdate>;
   installUpdate: () => Promise<void>;
   openStoreUpdates: () => Promise<void>;
-  writeToSalve: (letter: { subject: string; body: string }) => Promise<void>;
   readUsage: (sinceMs: number) => Promise<IUsageRecord[]>;
   onAppUpdate: (listener: (update: AppUpdate) => void) => () => void;
   listIntegrations: () => Promise<IIntegrationStatus[]>;
