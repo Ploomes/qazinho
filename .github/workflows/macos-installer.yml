@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           submodules: recursive
-          token: ${{ secrets.GH_QAZINHO_TOKEN }}
+          token: ${{ secrets.GH_DEVOPS_TOKEN }}
           ref: ${{ inputs.tag }}
           persist-credentials: false
 
